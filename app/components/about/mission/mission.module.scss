@@ -1,0 +1,83 @@
+/* This contains the scss for the miison component page */
+
+//Libraries -->
+@import "../../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($flex_d: row, $justify: center, $align: flex-start, $gap: 5%);
+    @include position($left: 0%, $top: 165%);
+    @include size($height:70%);
+    //padding: 2% 5%;
+    //border: 2px solid blue;
+    font-family: "Roboto";
+
+    @include tabletPro {
+        top: 85%;
+        @include size($height:30%);
+        //border: 2px solid red;
+    } 
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 130%;
+        height: 60%;
+        //width: 95%;
+        gap: 0%;
+        flex-direction: column;
+    }
+
+    .image {
+        //border: 2px solid black;
+        background-image: linear-gradient(to right, transparent, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1x2qiEubZJOmhSBVpReihZQ8duwEnm9IF");
+        @include size(50%, 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        @include phonePro {
+            background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1.5)), url("https://drive.google.com/uc?export=download&id=1_ii-qH5IlFzJcG2jCTVRUANRUu2XCcsr");
+            @include size(100%, 50%);
+        }
+    }
+
+    .brief {
+        @include flexBar($position: relative, $flex_d: column, $justify: center, $align: none, $gap: 5%);
+        //border: 2px solid green;
+        //padding: 0% 2%;
+        @include size(40%, 100%);
+
+        @include phonePro {
+            //border: 2px solid red;
+            padding: 0% 3%;
+            @include size(90%, 50%);
+        }
+
+        h2 {
+            //border: 2px solid red;
+            @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+            font-weight: 600;
+            @include flexBar($position: relative, $justify: none, $align: center);
+
+            @include phoneMini {
+                font-size: 25px;
+                height: 15%;
+            }
+        }
+
+        span {
+            //border: 2px solid red;
+            @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+
+            @include phonePro {
+                //border: 2px solid red;
+                font-size: 13px;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 20px;
+                height: 70%;
+            }
+        }
+    }
+}

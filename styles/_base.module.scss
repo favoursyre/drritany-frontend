@@ -1,0 +1,141 @@
+/* This would conatin all the utils */
+
+//Libraries -->
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Inter');
+@import url('https://fonts.googleapis.com/css?family=Aclonica');
+//Commencing the code
+/* reset styles */
+// :root {
+//   color: inherit;
+//   margin: 0;
+// }
+
+$primary-color: #1170FF;
+$tertiary-color: #FFFFFF;
+$error-color: #E42C2C;
+$text-color-1: #344563;
+$text-color-2: #111B2B;
+$text-color-3: rgb(154, 158, 166);
+$text-color-4: rgb(18, 183, 106);
+$input-color-1: #F0F1F2;
+$modal-opacity: 0.3;
+
+$breakpoints: (
+  "phoneMini": 0px,
+  "phone": 300px,
+  "phonePro": 400px,
+  "tabletMini": 600px,
+  "tablet": 800px,
+  "tabletPro": 1000px,
+  "desktop": 1200px,
+);
+
+@mixin phoneMini {
+  @media only screen and (min-width: map-get($breakpoints, "phoneMini")) and (max-width: map-get($breakpoints, "phone")) {
+    @content;
+  }
+}
+
+@mixin phone {
+  @media only screen and (min-width: map-get($breakpoints, "phoneMini")) and (max-width: map-get($breakpoints, "phonePro")) {
+    @content;
+  }
+}
+
+@mixin phonePro {
+  @media only screen and (min-width: map-get($breakpoints, "phoneMini")) and (max-width: map-get($breakpoints, "tabletMini")) {
+    @content;
+  }
+}
+
+@mixin tabletMini {
+  @media only screen and (min-width: map-get($breakpoints, "tabletMini")) and (max-width: map-get($breakpoints, "tablet")){
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media only screen and (min-width: map-get($breakpoints, "tabletMini")) and (max-width: map-get($breakpoints, "tabletPro")){
+    @content;
+  }
+}
+
+@mixin tabletPro {
+  @media only screen and (min-width: map-get($breakpoints, "tabletMini")) and (max-width: map-get($breakpoints, "desktop")){
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: map-get($breakpoints, "desktop")) {
+    @content;
+  }
+}
+
+@mixin breakpoint($min: 0, $max: 0) {
+  @media only screen and (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin flexBar ($position: absolute, $display: flex, $wrap: none, $align: flex-start, $justify: space-between, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent) {
+    position: $position;
+    display: $display;
+    flex-wrap: $wrap;
+    flex-direction: $flex_d;
+    background-color: $bg-color;
+    align-items: $align;
+    flex: $flex;
+    justify-content: $justify;
+    gap: $gap;
+}
+
+@mixin size ($width: 100%, $height: 100%, $max-width: 200%, $max-height: 100%) {
+    width: $width;
+    height: $height;
+    max-width: $max-width;
+    max-height: $max-height;
+}
+
+@mixin position ($left: 50%, $top: 50%) {
+    left: $left;
+    top: $top; 
+}
+
+@mixin text-layout($size: 14px, $color: $text-color-1, $l_height: 24px) {
+    font-style: normal;
+    font-size: $size;
+    line-height: $l_height;
+    /* identical to box height, or 171% */
+    color: $color;
+}
+
+@mixin formTag($position: relative, $opacity: 0.9, $indent: 12%) {
+    position: $position;
+    opacity: $opacity;
+    text-indent: $indent;
+    @include text-layout;
+}
+
+
+///Declaring the necessary font families
+@font-face {
+  font-family: "Roboto";
+  src: url("../public/fonts/Roboto-Regular.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../public/fonts/Inter-Regular.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: "Aclonica";
+  src: url("../public/fonts/Aclonica-Regular.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../public/fonts/Poppins-Regular.ttf") format('truetype');
+}

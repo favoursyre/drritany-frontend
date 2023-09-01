@@ -1,0 +1,282 @@
+/** This contains the scss for the search component */
+
+///Libraries -->
+@import "../../../styles/base.module";
+
+///Commencing the code
+.main {
+    //border: 2px solid red;
+    @include flexBar($justify: center, $align: flex-start, $gap: 0%);
+    @include position($left: 0%, $top: 8%);
+    @include size($height: 130%, $max-height: 200%);
+    font-family: "Roboto";
+    //border: 2px solid red;
+    //padding: 2% 5%;
+
+    @include tabletPro {
+        //border: 2px solid red;
+        height: 70%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        height: 70%;
+    }
+
+    .empty_state {
+        //border: 2px solid red;
+        position: relative;
+        flex-direction: column;
+        display: flex;
+        gap: 2%;
+        top: 10%;
+        @include size(80%, 40%);
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 2px 1px rgba(0, 0, 0, 0.12), 0px 1px 3px rgba(0, 0, 0, 0.2);
+        border-radius: 6px;  
+        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+
+        @include phonePro {
+            //border: 2px solid red;
+            text-align: center;
+            height: 55%;
+            padding: 1%;
+            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);
+            box-shadow: none;
+            //margin-bottom: %;
+
+            .image {
+                margin-bottom: 4%;
+            }
+        }
+
+        @include phoneMini {
+            font-size: 12px;
+
+            .image {
+                position: relative;
+                @include size(30%, 30%);
+                //border: 1px solid red;
+
+                img {
+                    position: relative;
+                    object-fit: contain;
+                    @include size(100%, 100%);
+                }
+            }
+        }
+
+        button {
+            background-color: $primary-color;
+            border-radius: 4px;
+            border: 1px solid $primary-color;
+            padding: 1% 2%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); 
+            color: $tertiary-color;
+            font-weight: 600;
+
+            @include phonePro {
+                padding: 4% 4%;
+                font-weight: 400;
+                margin-top: 4%;
+            }
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    .active_state {
+        //border: 2px solid red;  
+        position: relative;
+        flex-direction: column;
+        display: flex;
+        gap: 2%; 
+        @include size(90%, 60%);
+        top: 5%;
+
+        /* Styles for the scrollbar track */
+        ::-webkit-scrollbar {
+            width: 10px;  /* Width of the scrollbar */
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;  /* Background color of the track */
+        }
+        
+        /* Styles for the scrollbar thumb */
+        ::-webkit-scrollbar-thumb {
+            background-color: $text-color-3;  /* Color of the thumb */
+            border-radius: 5px;  /* Rounded corners of the thumb */
+        }
+        
+        /* Styles for the scrollbar thumb when hovering */
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: $text-color-3;  /* Color of the thumb on hover */
+        }
+
+        @include tabletPro {
+            //border: 2px solid red;
+            height: 55%;
+        }
+
+        @include phone {
+            //border: 2px solid red;
+
+        }
+
+        .brief {
+            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);
+            //border: 2px solid red; 
+            
+            @include phoneMini {
+                font-size: 10px;
+            }
+        }
+
+        .product_grid {
+            @include size(100%, 90%); 
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            gap: 5px;
+            justify-content: center;
+            // @include flexBar ($position: relative, $wrap: wrap, $align: flex-start, $justify: center, $gap: 1%, $flex_d:row);
+            column-gap: 5px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            //padding: 1% 1.5%;
+            //border: 2px solid $primary-color;
+
+            @include tabletPro {
+                //border: 2px solid red;
+                //height: 50%;
+                //height: 80%;
+            }
+
+            @include phonePro {
+                //border: 2px solid $primary-color;
+                //height: 70%;
+                //column-gap: 5px;
+                //row-gap: 10px;
+            }
+
+            .product_carousel {
+                //@include flexBar ($position: absolute, $wrap: none, $align: flex-start, $justify: none, $gap: 1%, $flex_d: column);
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                padding: 1%;
+                gap: 1%;
+                border-radius: 4px;
+                border: 2px solid $primary-color;
+                @include size(13%, 55%);
+
+                @include tabletPro {
+                    height: 45%;
+                }
+
+                @include phonePro {
+                    display: flex;
+                    flex-direction: column;
+                    //border: 2px solid $primary-color;
+                    @include size(27%, 55%);
+                    padding: 1.5%;
+                }
+
+                .carousel_image {
+                    @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: column);
+                    //border: 2px solid red;
+                    height: 70%;
+
+                    img {
+                        position: relative;
+                        object-fit: cover;
+                        @include size(100%, 100%);
+                    }
+
+                    @include tabletPro {
+                        height: 50%;
+                     } 
+    
+                    @include phonePro {
+                        height: 50%;
+                     } 
+                }
+
+                .carousel_name {
+                    //border: 2px solid red;
+                    @include text-layout($size: 11px, $l_height: 15px);
+                    position: relative;
+
+                    @include tabletMini {
+                        line-height: 12px;
+                    }
+
+                    @include phonePro {
+                        @include text-layout($size: 10px, $l_height: 15px);
+                    } 
+
+                    @include phoneMini {
+                        font-size: 7px;
+                        line-height: 8px;
+                    }
+                }
+
+                .carousel_price {
+                    //border: 2px solid red;
+                    @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 1%, $flex_d: column);
+
+                    .price_1 {
+                        //border: 2px solid red;
+                        @include size(100%, 50%);
+                        @include text-layout($size: 13px, $l_height: 20px);
+    
+                        @include phonePro {
+                            @include text-layout($size: 12px,  $l_height: 17px);
+                        }
+
+                        @include phoneMini {
+                            height: 40%;
+                            font-size: 10px;
+                            line-height: 15px;
+                        }
+                    }
+    
+                    .price_2 {
+                        //border: 2px solid red;
+                        @include text-layout($size: 11px, $color: $text-color-3, $l_height: 20px);
+                        text-decoration: line-through;
+                        @include size(100%, 50%);
+    
+                        @include phonePro {
+                            @include text-layout($size: 10px, $color: $text-color-3, $l_height: 17px);
+                        }
+
+                        @include phoneMini {
+                            font-size: 8px;
+                            height: 40%;
+                        }
+                    }
+                }
+
+                &:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+
+        .pagination_section {
+            //border: 2px solid red;
+            display: none;
+            position: relative;
+            flex-direction: row;
+            gap: 2%;
+            justify-content: center;
+        }
+    }
+}

@@ -1,0 +1,126 @@
+/** This contains the scss for the hero component */
+
+///Libraries -->
+@import "../../../styles/base.module";
+
+///Commencing the code
+.main {
+    @include flexBar($align: center, $justify: center, $gap: 3%);
+    @include size($height: 90%);
+    background-image: linear-gradient(to bottom, transparent, transparent, transparent, rgba(255, 255, 255, 0.986)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
+    @include position($left: 0%, $top: 8%);
+    //border: 2px solid red;
+
+    @include tabletPro {
+        //
+        top: 6%;
+        @include size($height: 50%);
+        //gap: 5%;
+        //@include flexBar($gap: 5%);
+        //overflow: hidden
+    }
+
+    @include tablet {
+        height: 40%;
+    }
+
+    @include phonePro {
+        flex-direction: column;
+        //border: 2px solid yellow;
+        @include size($height: 80%);
+    }
+
+    .left_section {
+        @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 0%);
+        //border: 2px solid yellow;
+        @include size(40%, 100%);
+        //@include position($left: 8%, $top: 30%);
+
+        @include phonePro {
+            //border: 2px solid yellow;
+            @include size(100%, 40%);
+        }
+
+        h3 {
+            @include text-layout($size: 75px, $color: $text-color-2, $l_height: 82px);
+            @include flexBar($position: relative, $align: center, $justify: flex-end, $gap: 5%);
+            @include size(100%, 15%);
+            font-weight: 500;
+            //margin-bottom: 0px;
+            //@include position($left: 10%, $top: 20%);
+            //border: 2px solid yellow;
+            font-family: "Aclonica";
+            margin-bottom: 10px;
+
+            @include tabletPro {
+                @include text-layout($size: 45px, $color: $text-color-2, $l_height: 82px);
+                font-weight: 600;
+                margin-bottom: 0px;
+                top: 5%;
+            }
+
+            @include phonePro {
+                @include text-layout($size: 45px, $color: $text-color-2, $l_height: 40px);
+                //font-weight: 400;
+                justify-content: center;
+                text-align: center;
+                top: 5%;
+            }
+
+            @include phoneMini {
+                font-size: 35px;
+            }
+
+            span {
+                color: $primary-color;
+            }
+        }
+
+        p {
+            @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+            text-align: justify;
+            @include size(100%, 25%);
+            //border: 2px solid yellow;
+            font-family: "Roboto";
+
+            @include tablet {
+                height: 50%;
+            }
+
+            @include phonePro {
+                @include text-layout($size: 14px, $color: $text-color-2, $l_height: 24px);
+                font-weight: 400;
+                text-align: center;
+                @include size(90%, 55%);
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                height: 75%;
+                line-height: 15px;
+            }
+        }
+    }
+
+    .right_section {
+        @include flexBar($position: relative, $align: center, $justify: center, $gap: 5%);
+        @include size(50%, 100%);
+        //border: 2px solid red;
+
+        .img {
+            position: relative;
+            //border: 2px solid red;
+            object-fit: contain;
+            @include size(100%, 100%);
+
+        }
+
+        @include phonePro {
+            //border: 2px solid red;
+            @include size(100%, 50%);
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+    }
+}

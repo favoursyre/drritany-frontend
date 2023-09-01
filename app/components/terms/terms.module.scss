@@ -1,0 +1,88 @@
+/* This contains the scss for the terms page */
+
+//Libraries -->
+@import "../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($position: absolute, $justify: center, $gap: 0%, $flex_d: column, $align: center);
+    @include size(100%, 200%, 100%, 400%);
+    @include position($left: 0%, $top: 8%);
+    //border: 2px solid $primary-color;
+    //padding: 2% 10%;
+    font-family: "Inter";
+    //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7)), url("../../../public/images/down_back.png");
+
+    @include tabletPro {
+        //border: 2px solid $primary-color;
+        height: 120%;
+    } 
+
+    @include tablet {
+        height: 170%;
+    }
+
+    @include phonePro {
+        height: 230%;
+        align-items: center;
+        //padding: 3% 10%;
+    } 
+
+    @include phone {
+        height: 290%;
+    }
+
+    @include phoneMini {
+        height: 330%;
+    }
+
+    .terms_heading {
+        //border: 2px solid $primary-color;
+        @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+        font-weight: 700;
+
+        @include phonePro {
+            margin-top: 0px;
+            position: relative;
+            //top: -5%;
+        }
+
+        @include phoneMini {
+            font-size: 30px;
+        }
+    }
+
+    .terms_body {
+        @include text-layout($size: 16px, $color: text-color-1, $l_height: 35px);
+        //font-weight: 600;
+       // border: 1px solid red;
+        @include size(90%, 80%);
+        position: relative;
+
+        @include tabletMini {
+            line-height: 30px;
+        }
+
+        @include phonePro {
+            //top: -5%;
+            height: 90%;
+            @include text-layout($size: 14px, $color: text-color-1, $l_height: 25px);
+        } 
+
+        @include phoneMini {
+            font-size: 12px;
+            width: 95%;
+            line-height: 20px;
+        }
+
+        ol {
+            list-style-type: decimal;
+
+            @include phoneMini {
+                left: -5%;
+                position: relative;
+                //border: 1px solid red;
+            }
+        }
+    }
+ }

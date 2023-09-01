@@ -1,0 +1,18 @@
+/* This contains the scss for the terms page */
+
+//Libraries -->
+@import "../styles/base.module";
+
+//Commencing the code -->
+.html {
+    --scroll-behavior: smooth!important;
+    scroll-behavior: smooth!important;
+    overflow-x: hidden;
+    overflow-y: auto;    
+}
+
+.modalState {
+    //border: 2px solid red;
+    overflow-y: hidden;
+    background-color: rgba(0, 0, 0, 0.05);
+}

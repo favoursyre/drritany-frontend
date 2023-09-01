@@ -1,0 +1,224 @@
+/* This contains the scss for the order component */
+
+//Libraries -->
+@import "../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    //border: 1px solid purple;
+    @include flexBar($align: center, $justify: center, $gap: 2%, $flex_d: column);
+    top: 12%;
+    left: 0px;
+    font-family: "Poppins";
+    //padding: 1% 1%;
+    @include size(100%, 120%);
+    //background-image: linear-gradient(to bottom, #ffe0ec, white);
+
+    @include tabletPro {
+        //border: 1px solid red;
+        top: 7.5%;
+        height: 60%;
+    }
+
+    @include phonePro {
+        top: 10%;  
+        height: 100%;
+    }
+
+    h2 {
+        position: relative;
+        @include text-layout($size: 30px, $l_height: 25px, $color: $primary-color);
+        font-weight: 500;
+        margin-bottom: 0px;
+
+        @include phonePro {
+            margin-top: -50px;
+        }
+
+        @include phoneMini {
+            font-size: 25px;
+            top: 1%;
+        }
+    }
+
+    .mainBrief {
+        @include text-layout($size: 16px, $l_height: 20px);
+
+        @include phonePro {
+            margin-top: 0px;
+        }
+
+        @include phoneMini {
+            font-size: 12px;
+            position: relative;
+            //top: -2%;
+        }
+    }
+
+    .container {
+        //border: 1px solid red;
+        @include flexBar($position: relative, $align: center, $justify: center, $gap: 1%, $flex_d: column);
+        @include size(80%, 80%);
+        @include text-layout($size: 14px, $l_height: 25px, $color: $text-color-2);
+
+        @include phonePro {
+            width: 90%;
+        }
+
+        @include phoneMini {
+            font-size: 10px;
+        }
+
+        .orderSection {
+            //border: 1px solid red;
+            border-bottom: 1px solid $primary-color;
+            @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
+            @include size(90%, 5%);
+
+            @include phonePro {
+                line-height: 20px;
+            }
+
+            .orderId {
+                //border: 1px solid red;
+                @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 1%);
+                @include size(45%, 100%);
+                color: $primary-color;
+
+                @include phonePro {
+                    flex-direction: column;
+                    text-align: start;
+                }
+
+                span {
+                    //border: 1px solid red;
+
+                    @include phonePro {
+                        @include size(100%, 50%);
+                    }
+                }
+
+                .span2 {
+                    
+                    @include phoneMini {
+                        //border: 1px solid blue;
+                        font-size: 8px;
+                    }
+                }
+            }
+
+            .orderDate {
+                //border: 1px solid red;
+                @include flexBar($position: relative, $align: center, $justify: flex-end, $gap: 1%);
+                @include size(45%, 100%);
+
+                @include phonePro {
+                    flex-direction: column;
+                    text-align: end;
+                }
+
+                span {
+                    //border: 1px solid red;
+
+                    @include phonePro {
+                        @include size(100%, 50%);
+                    }
+                }
+            }
+        }
+
+        .deliverySection {
+            //border: 1px solid red;
+            //border-top: 1px solid $text-color-3;
+            border-bottom: 1px solid $primary-color;
+            @include size(90%, 25%);
+            @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
+            line-height: 20px;
+
+            .deliveryAddress {
+                //border: 1px solid red;
+                @include size(45%, 90%);
+                @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
+                
+            }
+
+            .deliveryDate {
+               // border: 1px solid red;
+                @include size(45%, 90%);
+                @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 0%);
+            }
+        }
+
+        .cartList {
+            //border: 1px solid red;
+            border-bottom: 1px solid $primary-color;
+            @include size(90%, 40%);
+            @include flexBar($position: relative, $align: center, $justify: flex-start, $flex_d: column, $gap: 0%);
+
+            .cartItem {
+                //border: 1px solid red;
+                border-bottom: 1px solid $text-color-3;
+                @include size(100%, 25%);
+                @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
+
+                .cartImage {
+                    //border: 1px solid red;
+                    @include size(10%, 90%);
+                    @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
+
+                    @include phonePro {
+                        width: 20%;
+                    }
+
+                    img {
+                        position: relative;
+                        @include size(100%, 100%);
+                        object-fit: cover;
+                    }
+                }
+
+                .cartName {
+                    //border: 1px solid red;
+                    @include size(50%, 90%);
+                    @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
+                    left: 5%;
+                }
+
+                .cartPriceQuantity {
+                    //border: 1px solid red;
+                    @include size(15%, 90%);
+                    @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
+                    line-height: 20px;
+                    left: 24%;
+
+                    @include phonePro {
+                        width: 20%;
+                        left: 8%;
+                    }
+                }
+                
+            }
+        }
+
+        .totalSection {
+            //border: 1px solid red;
+            border-bottom: 1px solid $primary-color;
+            @include size(90%, 15%);
+            @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 1%);
+
+            .subTotal,
+            .deliveryFee,
+            .total {
+                //border: 1px solid red;
+                border-bottom: 1px solid $text-color-3;
+                @include size(100%, 25%);
+                @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
+            }
+
+            .total {
+                border: none;
+            }
+        }
+    }
+
+}

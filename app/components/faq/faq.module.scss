@@ -1,0 +1,175 @@
+/* This contains the scss for the faq component page */
+
+//Libraries -->
+@import "../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($flex_d: column, $justify: none, $align: center, $gap: 0%);
+    @include position($left: 0%, $top: 310%);
+    @include size($width: 100%, $height: 145%, $max-width: 100%, $max-height: 300%);
+    //border: 2px solid red;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    font-family: "Roboto";
+    //padding: 1% 3%;
+
+    @include tabletPro {
+        gap: 0.5%;
+        top: 145%;
+        @include size($height:100%);
+        //border: 2px solid red;
+    } 
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 260%;
+        height: 110%;
+        justify-content: center;
+    }
+
+    h2 {
+        @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+        font-weight: 600;
+        //border: 2px solid red;
+
+        @include phoneMini {
+            font-size: 25px;
+        }
+    }
+
+    .brief {
+        @include size(50%, 15%);
+        //border: 2px solid red;
+        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        text-align: center;
+
+        @include tabletPro {
+            @include size(70%, 10%);
+        }
+
+        @include phonePro {
+            //border: 2px solid red;
+            font-size: 13px;
+            @include size(95%, 20%);
+        }
+
+        @include phoneMini {
+            font-size: 12px;
+            line-height: 20px;
+        }
+    }
+
+    .accordian {
+        @include flexBar($position: relative, $justify: flex-start, $gap: 10px, $flex_d: column, $wrap: wrap, $align: none, $flex: none);
+        //border: 2px solid $primary-color;
+        @include size(70%, 70%);
+        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+        @include phonePro {
+            top: 0%;
+            //border: 2px solid red;
+            width: 95%;
+        }
+
+        .accordian_item {
+            border: 3px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            //border: 2px solid red;
+            //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 2%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+            button {
+                border: none;
+                background-color: transparent;
+            }
+
+            .question {
+                @include flexBar($position: sticky, $justify: space-between, $gap: 5px, $flex_d: row, $wrap: none, $align: flex-start, $flex: none);
+                //border: 1px solid $primary-color;
+                padding: 1% 2%;
+                text-align: center;
+                @include size(100%, 55px);
+                text-align: center;
+                @include text-layout($size: 20px, $l_height: 28px);
+                font-weight: 500;
+                //border-radius: 5px;
+                //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+                @include phonePro {
+                    @include text-layout($size: 18px, $l_height: 24px);
+                }
+    
+               @include phoneMini {
+                font-size: 14px;
+                height: 40px;
+               }
+            }
+    
+            .activeQuestion {
+                //border: 1px solid $primary-color;
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+                .active_sign {
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    transform: rotate(45deg);
+                }
+    
+                .activeSymbol {
+                    position: relative;
+                    //border: 1px solid $primary-color;
+                    top: -10%;
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    transform: rotate(45deg);
+                }
+    
+                .inactiveSymbol {
+                    //border: 1px solid $primary-color;
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    transform: rotate(0deg);
+                }
+
+                &:hover {
+                    transform: scale(1.01);
+                }
+            }
+    
+            .answer {
+                //border: 1px solid $primary-color;
+                display: none;
+                @include text-layout($size: 16px, $l_height: 24px);
+                padding: 1% 7% 1% 2%;
+
+                @include phonePro {
+                    font-size: 13px;
+                }
+
+                @include phoneMini {
+                    font-size: 12px;
+                }
+
+                span {
+                    color: $primary-color;
+                    text-decoration: underline;
+                }
+            }
+    
+            .answerActive {
+                display: block;
+                //border: 2px solid $error-color;
+                //transform: rotate(90deg);
+            }
+        }
+
+        .activeAccordian {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            // box-shadow: 0px 106px 82px -10px rgba(0, 0, 0, 0.08);  
+            // border: none;
+        }
+
+        .inactiveAccordian {
+            z-index: 100;
+        }
+    }
+}

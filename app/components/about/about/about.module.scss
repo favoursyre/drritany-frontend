@@ -1,0 +1,102 @@
+/* This contains the scss for the about component page */
+
+//Libraries -->
+@import "../../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%);
+    @include position($left: 0%, $top: 8%);
+    @include size($height:90%);
+    background-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
+    //z-index: -100;
+    //border: 2px solid red;
+    font-family: "Roboto";
+    //padding: 1% 2.5%;
+    //border: 2px solid green;
+
+    @include tabletPro {
+        top: 6%;
+        @include size($height:50%);
+    } 
+
+    @include phonePro {
+        //border: 0.5px solid red;
+        height: 55%;
+        //z-index: -1000;
+        
+    } 
+
+    @include phoneMini {
+        //border: 0.5px solid red;
+        height: 60%;
+        gap: 2%;
+        //z-index: -1000;
+        
+    } 
+
+    .image {
+        //border: 2px solid red;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        @include size(40%, 55%);
+
+        @include tabletPro {
+            @include size(45%, 50%);
+            //border: 2px solid red;
+        } 
+
+        @include phonePro {
+            @include size(100%, 60%);
+            //z-index: -1000;
+        }
+        
+        @include phoneMini {
+            height: 50%;
+        }
+    }
+
+    h2 {
+        //border: 2px solid red;
+        @include flexBar($position: relative, $justify: center, $align: center, $gap: 0%);
+        @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+        font-weight: 600;
+
+        @include phonePro {
+            //border: 2px solid red;
+            @include size(90%, 10%);
+            margin: 5px;
+        } 
+
+        @include phoneMini {
+            font-size: 25px;
+            height: 7%;
+        }
+    }
+
+    span {
+        //border: 2px solid red;
+        @include size(40%, 20%);
+        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        text-align: center;
+
+        @include tabletPro {
+            //@include size(40%, 60%);
+            //border: 2px solid red;
+            @include size(60%, 20%);
+        } 
+
+        @include phonePro {
+            //border: 2px solid red;
+            font-size: 13px;
+            @include size(90%, 30%);
+        } 
+
+        @include phoneMini {
+            font-size: 12px;
+            height: 35%;
+            line-height: 20px;
+        }
+    }
+}

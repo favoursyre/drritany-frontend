@@ -1,0 +1,333 @@
+/** This contains the scss for the testimony component */
+
+///Libraries -->
+@import "../../../styles/base.module";
+
+///Commencing the code
+@keyframes my-animation {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+
+
+.main {
+    @include flexBar($align: center, $justify: center, $flex_d: column);
+    @include position($left: 0%, $top: 300%);
+    @include size(100%, 60%);
+    //border: 2px solid $primary-color;
+    font-family: "Roboto";
+    //padding: 3% 1%;
+    background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.3), rgba(182, 226, 253, 0.45)), url("https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO");
+
+    @include tabletPro {
+        //border: 2px solid red;
+        top: 170%;
+        height: 25%;
+    }
+
+    @include tablet {
+        //border: 2px solid red;
+        top: 145%;
+    }
+
+    @include tabletMini {
+        //border: 2px solid red;
+        top: 150%;
+    }
+    // @include breakpoint(900px, 1024px) {
+    //     //border: 2px solid red;
+    //     height: 30%;
+    // }
+
+    @include phonePro {
+        //border: 2px solid $primary-color;
+        top: 209.9%;
+        height: 65.2%;
+    }
+
+    .testimony_brief {
+        @include flexBar($position: relative, $align: center, $justify: center);
+        @include size(100%, 10%);
+        //border: 2px solid $primary-color;
+        @include text-layout($size: 32px, $l_height: 26px);
+        text-align: center;
+        //@include position($left: 35%, $top: 0%);
+
+        @include tabletPro {
+            //border: 2px solid red;
+            @include text-layout($size: 25px, $l_height: 26px);
+        }
+
+        @include phonePro {
+            //border: 2px solid $primary-color;
+            @include text-layout($size: 16px, $l_height: 26px);
+            font-weight: 600;
+        }
+    }
+
+    .testimonyContainer {
+        @include flexBar($position: relative, $align: center, $justify: flex-start);
+        //border: 2px solid $primary-color;
+        @include size(100%, 70%);
+
+        @include phonePro {
+            flex-direction: column;
+            height: 80%;
+            justify-content: center;
+        }
+
+        .testifierInfo {
+            //border: 2px solid red;
+            @include flexBar($position: relative, $align: center, $justify: center);
+            @include size(20%, 100%);
+            left: 2%;
+
+            @include phonePro {
+                @include size(100%, 20%);
+                left: 0%;
+            }
+
+            .info {
+                @include flexBar($position: relative, $align: center, $justify: space-between, $flex_d: column);
+                @include size(100%, 100%);
+                //border: 2px solid $primary-color;
+
+                @include phonePro {
+                    display: none;
+                }
+
+                .top_blur {
+                    position: absolute;
+                    //border: 2px solid $primary-color;
+                    @include size(100%, 15%);
+                    //@include position($left: 5%, $top: -10%);
+                    z-index: 1;
+                    background: linear-gradient(to top, transparent, rgba(228, 246, 253, 0.9) 82.62%);
+                    //filter: blur(2px);
+        
+                    @include phonePro {
+                        display: none;
+                    }
+                }
+        
+                .testifier_slide {
+                    @include flexBar($position: relative, $flex_d: column, $align: center, $justify: center, $gap: 2.5%);
+                    @include size(100%, 100%);
+                    //border: 2px solid red;
+                    overflow-x: hidden;
+                    overflow-y: hidden;
+                    --scroll-behavior: smooth!important;
+                    scroll-behavior: smooth!important;
+                    //animation: my-animation 2s infinite;
+                    padding: 0% 1%;
+        
+                    @include tablet {
+                        //border: 2px solid red;
+                        @include text-layout($size: 32px, $l_height: 26px);
+                        leftt: 35%;
+                    }
+        
+                    @include phonePro {
+                        display: none;
+                    }
+    
+                    .testifier {
+                        //border: 2px solid $error-color;
+                        border: none;
+                        @include flexBar($position: relative, $align: center, $justify: center, $gap: 2.5%);
+                        border-radius: 8px;
+                        background: inherit;
+                        padding: 3%;
+                        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.08), 0px 1px 18px rgba(0, 0, 0, 0.06), 0px 3px 5px rgba(0, 0, 0, 0.03);
+                        @include size(100%, 25%);
+                        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+                        @include tabletPro {
+                            //height: 20%;
+                        }
+        
+                        .testifier_image {
+                            @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
+                            //border: 1px solid red;
+                            @include size(25%, 100%);
+    
+                            img {
+                                position: relative;
+                                object-fit: contain;
+                                @include size(100%, 100%);
+                            }
+        
+                            @include tabletPro {
+                                
+                            }
+                        }
+        
+                        .testifier_bio {
+                            //position: relative;
+                            //border: 2px solid $error-color;
+                            @include size(70%, 100%);
+                            @include flexBar($position: relative, $align: flex-start, $justify: none, $flex_d: column, $gap: 0%);
+                            //z-index: -1;
+        
+                            @include tabletPro {
+                            }
+        
+                            // @include breakpoint(550px, 900px) {
+                            //    left: 40%;
+                            // }
+        
+                            .testifier_name {
+                                @include text-layout($size: 15px, $l_height: 26px);
+                                font-weight: 600;
+                                //border: 2px solid $error-color;
+                                @include flexBar($position: relative, $align: center, $justify: flex-start);
+                                @include size(100%, 50%);
+        
+                                @include tabletPro {
+                                    font-size: 10px;
+                                    line-height: 20px;;
+                                }
+        
+                                // @include breakpoint(550px, 900px) {
+                                //     font-size: 13px;
+                                // }
+                            }
+        
+                            .testifier_profession {
+                                @include text-layout($size: 12px, $l_height: 20px);
+                                //text-align: center;
+                                font-weight: 400;
+                                //border: 2px solid black;
+                                @include flexBar($position: relative, $align: center, $justify: flex-start);
+                                @include size(100%, 40%);
+        
+                                @include tabletPro {
+                                    font-size: 9px;
+                                    line-height: 15px;
+                                }
+        
+                                // @include breakpoint(550px, 900px) {
+                                //     font-size: 11px;
+                                // }
+                            }
+                        }
+        
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+        
+                        &:active {
+                            transform: scale(1.05);
+                        }
+                    }
+        
+                    .activeTestifier {
+                        border: 2px solid $primary-color;
+                    }
+        
+                    &:hover {
+                        overflow-y: auto;
+                    }
+                }
+        
+                .bottom_blur {
+                    position: absolute;
+                    //border: 2px solid $primary-color;
+                    @include size(100%, 15%);
+                    top: 85%;
+                    //@include position($left: 5%, $top: 77%);
+                    background: linear-gradient(to bottom, transparent, rgba(223, 245, 255, 0.9)  82.62%);
+        
+                    @include phonePro {
+                        display: none;
+                    }
+                }
+            }
+
+            .mobileInfo {
+                @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 1%);
+                padding: 1%;
+                //border: 2px solid red;
+                //@include position($left: 25%, $top: -5%);
+
+                .testifier_image {
+                    //border: 2px solid red;
+                    width: 40px;
+                    height: 40px;
+
+                    img {
+                        //border: 2px solid red;
+                        position: relative;
+                        object-fit: contain;
+                        @include size(100%, 100%);
+                    }
+                }
+
+                .testifier_name {
+                    @include text-layout($size: 16px, $l_height: 20px);
+                    font-weight: 500;
+                    //border: 2px solid red;
+
+                    @include phoneMini {
+                        font-size: 14px;
+                    }
+                }
+
+                .testifier_profession {
+                    @include text-layout($size: 14px, $l_height: 11px);   
+                    //border: 2px solid red;
+
+                    @include phoneMini {
+                        font-size: 12px;
+                    }
+                }
+
+                @include desktop {
+                    display: none;
+                }
+
+                @include tabletPro {
+                    display: none;
+                }
+            }
+    
+            
+        }
+
+        .testimony {
+            @include flexBar($position: relative, $align: center, $justify: center);
+            //border: 2px solid $primary-color;
+            @include size(50%, 100%);
+            text-align: center;
+            left: 5%;
+
+             @include phonePro {
+                @include size(80%, 70%);
+                left: 0%;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+            }
+        }
+    }
+
+    .testimony_slide {
+        @include flexBar($position: absolute, $wrap: none, $justify: space-between, $flex_d: none, $gap: 1%);
+        //border: 2px solid $primary-color;
+        @include position($left: 0%, $top: 20%);
+        @include size(100%, 70%);
+        padding: 1%;
+        //animation: my-animation 2s infinite;
+
+        
+    }
+}  

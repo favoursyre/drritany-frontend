@@ -1,0 +1,167 @@
+/** This contains the scss for the quote component */
+
+///Libraries -->
+@import "../../../styles/base.module";
+
+///Commencing the code
+@keyframes my-animation {
+    from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+  }
+
+.main {
+    @include flexBar($justify: center, $align: center);
+    @include position($left: 0%, $top: 250%);
+    @include size(100%, 50%);
+    //border: 2px solid $primary-color;
+    //padding: 10% 10%;
+    background-image: linear-gradient(to bottom, transparent, rgba(182, 226, 253, 0.25)), url("https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO");
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    font-family: "Roboto";
+
+    @include tabletPro {
+        //border: 2px solid red;
+        top: 150%;
+        height: 20%;
+    }
+
+    @include tablet {
+        //border: 2px solid red;
+        top: 125%;
+    }
+
+    @include tabletMini {
+        //border: 2px solid red;
+        top: 130%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 180%;
+        height: 30%;
+    }
+    
+    button {
+        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        //border: 1px solid red;
+        border: none;
+        @include flexBar($display: flex, $align: center, $justify: center);
+        @include size(5%, 25%);
+
+        .img {
+            position: relative;
+            object-fit: cover;
+            @include size(100%, 100%);
+        }
+
+        @include phonePro {
+            display: none;
+        }
+        
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    .btn1, .btn2 {
+        //border: 1px solid red;
+        left: 10%;
+    }
+
+    .btn2 {
+        //border: 1px solid green;
+        left: 85%;
+    }
+
+    .quote_section {
+        @include flexBar($display: flex, $align: flex-start, $justify: space-between, $gap: 0%);
+        //@include position($left: 25%, $top: 30%);
+        @include size(50%, 60%);
+        //border: 2px solid $primary-color;
+        text-align: center;
+        //opacity: 1;
+        
+        @include tablet {
+            @include size(60%, 80%);
+        }
+
+        @include phonePro {
+            //border: 2px solid red;
+            @include size(90%, 80%);
+        }
+
+        .open_quote {
+            @include flexBar($position: relative, $align: center, $justify: center);
+            //border: 2px solid $primary-color;
+            @include size(5%, 15%);
+            top: 10%;
+            //@include position($left: 0%, $top: 15%);
+
+            .img {
+                position: relative;
+                object-fit: cover;
+                @include size(100%, 100%);
+            }
+
+            @include phonePro {
+                width: 10%;
+            }
+        }
+
+        .quote_text {
+            @include flexBar($position: relative, $align: flex-start, $justify: center);
+            @include text-layout($size: 16px, $l_height: 24px);
+            @include size(87%, 100%);
+            //@include position($left: 2.5%, $top: 15%);
+            //padding: 0% 2%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            //animation: fade-in 1s infinite;
+            //border: 2px solid $primary-color;
+
+            @include phonePro {
+                width: 80%;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 15px;
+            }
+
+            span {
+                //border: 1px solid red;
+                @include flexBar($position: relative, $align: center, $justify: center);
+                @include size(100%, 80%);
+
+                @include tabletPro {
+                    height: 100%;
+                }
+
+                @include phonePro {
+                    @include size(100%, 100%);
+                }
+            }
+        }
+
+        .close_quote {
+            @include flexBar($position: relative, $align: center, $justify: center);
+            //border: 2px solid $primary-color;
+            @include size(5%, 15%);
+            top: 10%;
+
+            .img {
+                position: relative;
+                object-fit: cover;
+                @include size(100%, 100%);
+            }
+
+            @include phonePro {
+                @include size(10%, 15%);
+                //border: 2px solid $primary-color;
+            }
+        }
+    }
+}

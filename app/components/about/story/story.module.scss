@@ -1,0 +1,75 @@
+/* This contains the scss for the about component page */
+
+//Libraries -->
+@import "../../../../styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%, $bg-color: rgba(0, 0, 0, 0.9));
+    @include position($left: 0%, $top: 98%);
+    background-image: url("https://drive.google.com/uc?export=download&id=1U24xYbeAj3jbmEVaEyXVJ82bHVQ7TIMi");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    @include size($height:60%);
+    //border: 1px solid red;
+    font-family: "Roboto";
+
+    @include tabletPro {
+        top: 55%;
+        @include size($height:30%);
+        //border: 2px solid red;
+    } 
+
+    @include phonePro {
+        //border: 0.5px solid red;
+        top: 65%;  
+    } 
+
+    .brief {
+        @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%, $bg-color: rgba(0, 0, 0, 0.5));
+        @include size(100%, 100%);
+        //border: 1px solid red;
+        
+
+        h2 {
+            @include text-layout($size: 30px, $color: $tertiary-color, $l_height: 72px);
+            font-weight: 600;
+            //border: 1px solid red;
+
+            @include phonePro {
+                //border: 0.5px solid red;
+                position: relative;
+                //top: -15%; 
+            } 
+
+            @include phoneMini {
+                font-size: 25px;
+            }
+        }
+
+        span {
+            //border: 2px solid red;
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
+            text-align: center;
+            @include size(50%, 25%);
+
+            @include tabletPro {
+                @include size(60%, 40%);
+            }
+
+            @include phonePro {
+                //border: 0.5px solid red;
+                font-size: 13px;
+                position: relative;
+                //top: -15%; 
+                @include size(80%, 45%);
+            } 
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 20px;
+            }
+        }
+    }
+}

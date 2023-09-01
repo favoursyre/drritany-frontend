@@ -1,0 +1,47 @@
+/** This contains the scss for the map component */
+
+///Libraries -->
+@import "../../../styles/base.module";
+
+///Commencing the code
+.main {
+    @include flexBar($align: center, $justify: center);
+    @include position($left: 0%, $top: 100%);
+    //border: 2px solid red;
+    @include size(100%, 46%);
+
+    @include tabletPro {
+        //border: 2px solid red;
+        top: 60%;
+        height: 30%;
+    }
+
+    @include tablet {
+        top: 50%;
+        height: 25%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 90%;
+        height: 20%;
+    }
+
+    .map_section {
+        //border: 2px solid red;
+        @include flexBar($position: relative, $align: center, $justify: center);
+       overflow: hidden;
+       @include size(70%, 100%);
+
+       @include phonePro {
+        width: 90%;
+       }
+
+       img {
+        transition: opacity 0.8s ease-in-out;
+        object-fit: contain;
+        position: relative;
+        @include size(100%, 100%);
+       }
+    }
+}
