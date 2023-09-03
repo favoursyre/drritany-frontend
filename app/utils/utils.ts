@@ -143,7 +143,7 @@ export const shuffleArray = (array: Array<any>): Array<any> => {
 }
 
 ///The backend api point
-export const backend = "https://drritany-backend-dc538d164ca1.herokuapp.com"
+export const backend = "https://drritany-web-backend-2b4e96f65eb5.herokuapp.com"
 //export const backend = "https://localhost:4050"
 
 ///This contains the sort orders
