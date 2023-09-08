@@ -7,6 +7,7 @@
 
 ## Overview
 This is the frontend of Dr Ritany website.
+The backend code for this website can be found at `https://github.com/favoursyre/drritany_backend.git` 
 
 ## Languages
 * HTML
