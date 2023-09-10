@@ -23,7 +23,7 @@
     @include phonePro {
         //border: 2px solid red;
         top: 260%;
-        height: 110%;
+        height: 120%;
         justify-content: center;
     }
 
@@ -99,6 +99,8 @@
 
                 @include phonePro {
                     @include text-layout($size: 18px, $l_height: 24px);
+                    height: 50px;
+                    //border: 1px solid red;
                 }
     
                @include phoneMini {

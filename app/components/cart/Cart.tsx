@@ -119,7 +119,7 @@ useEffect(() => {
                     </div>
                     <span className={styles.brief_1}>Your cart is empty !</span>
                     <span className={styles.brief_2}>Explore our wide range of products and uncover our unbeatable offers</span>
-                    <button>
+                    <button onClick={() => router.push("/#products")}>
                         <img
                             src="https://drive.google.com/uc?export=download&id=11z0qeMPVU6nfmjllwju6h91fM5enzjCC"
                             alt=""
@@ -194,7 +194,11 @@ useEffect(() => {
                 </button>
             </div>
             <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>
-            <button onClick={e => removeItem(e, null, 1)} className={styles.remove_item_button}>
+            <button onClick={e => {
+                removeItem(e, null, 1)
+                window.location.reload()
+            }} 
+            className={styles.remove_item_button}>
                 <img 
                     src="https://drive.google.com/uc?export=download&id=1y2mMvCsu2xoy-soKb3669DHnTrAwRdc9"
                     alt=""

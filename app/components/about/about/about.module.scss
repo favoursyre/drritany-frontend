@@ -80,6 +80,7 @@
         @include size(40%, 20%);
         @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
         text-align: center;
+        
 
         @include tabletPro {
             //@include size(40%, 60%);
@@ -91,6 +92,7 @@
             //border: 2px solid red;
             font-size: 13px;
             @include size(90%, 30%);
+            margin-bottom: 10px;
         } 
 
         @include phoneMini {

@@ -23,12 +23,12 @@
   @include tabletPro {
     //border: 2px solid $error-color;
     // @include position($left: 0%, $top: 129px);
-    height: 90%;
+    height: 1000px;
   }
 
   @include phonePro {
     //border: 2px solid red;
-    height: 120%;
+    height: 1100px;
   }
 
   .heading {

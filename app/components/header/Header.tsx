@@ -43,6 +43,8 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
   const [message, setMessage] = useState<string | undefined>("")
   //console.log('Length: ', cart)
 
+  //console.log("Path: ", routerPath)
+
   const item = getItem("clientInfo")
  if (item === null || item === "undefined") {
     setItem("clientInfo", clientInfo)
@@ -239,7 +241,7 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
               />
             </div>
           </div>
-          <button className={styles.links} onClick={() => {
+          <button className={`${styles.links} ${routerPath === "/about" ? styles.activeLink : styles.inactiveLink}`} onClick={() => {
             setMenu(() => false)
             router.push('/about')
           }}>
@@ -253,7 +255,7 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
             <span>Products</span>
           </button>
           <button 
-            className={styles.links} 
+            className={`${styles.links}`} 
             onClick={() => {
               setMenu(() => false)
               setContactModal(() => true)

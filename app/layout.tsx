@@ -103,8 +103,8 @@ export default async function RootLayout({
   const contacts = await getContacts()
 
   return (
-    <html lang="en" >
-      <body>
+    <html lang="en" className={styles.html}>
+      <body className={styles.body}>
         <Header clientInfo={clientInfo} />
         <main className='container'>{children}</main>
         <Footer contact_={contacts} />

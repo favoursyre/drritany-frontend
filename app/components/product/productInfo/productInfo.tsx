@@ -259,7 +259,10 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         />
                         <span>Order Now</span>
                     </button>
-                    <button className={styles.cart_button} onClick={e => addToCart(e, false)}>
+                    <button className={styles.cart_button} onClick={e => {
+                        addToCart(e, false)
+                        window.location.reload()
+                    }}>
                         <img 
                             src="https://drive.google.com/uc?export=download&id=1ICxVuZVSkjUDZ1CSHLp_JI7RB-0LbEAQ"
                             alt=""

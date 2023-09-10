@@ -136,6 +136,10 @@
                 padding: 3% 10%;
                 font-family: "Inter";
 
+                @include phonePro {
+                    top: 122%;
+                }
+
                 button {
                     //border: 2px solid red; 
                     background-color: inherit;
@@ -262,7 +266,7 @@
                     }
 
                     @include phonePro {
-                        line-height: 15px;
+                        line-height: 10px;
                     }
 
                     @include phoneMini {

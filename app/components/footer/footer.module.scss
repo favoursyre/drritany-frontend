@@ -428,7 +428,7 @@
         display: none;
     }
 
-    @include phone {
+    @include phonePro {
         height: 40%;
     }
 
@@ -718,11 +718,11 @@
 
     @include phonePro {
         //border: 1px solid red;
-        top: 230%;
+        top: 280%;
     } 
 
     @include phoneMini {
-        top: 240%;
+        top: 290%;
     }
 }
 
@@ -741,7 +741,7 @@
 
     @include phonePro {
         //border: 2px solid $error-color;
-        top: 105%;
+        top: 120%;
     } 
 
 }
@@ -761,16 +761,16 @@
     } 
 
     @include phonePro {
-        top: 240%;
+        top: 300%;
     } 
 
     @include phone {
-        top: 300%;
-    }
-
-    @include phoneMini {
         top: 340%;
     }
+
+    // @include phoneMini {
+    //     top: 340%;
+    // }
 }
 
 .orderPage {
@@ -786,11 +786,11 @@
     }
     
     @include phonePro {
-        top: 130%;
+        top: 165%;
     } 
 
     @include phoneMini {
-        top: 150%;
+        top: 165%;
     }
 }
 
@@ -804,7 +804,7 @@
 
     @include phonePro {
         //border: 1px solid red;
-        top: 375%;
+        top: 385%;
     } 
 }
 
