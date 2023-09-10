@@ -27,7 +27,7 @@
         //border: 2px solid $error-color;
         @include position($left: 0%, $top: 195%);
         height: 30%;
-        top: 200%;
+        top: 220%;
         justify-content: space-between;
     } 
 
@@ -241,7 +241,7 @@
     } 
 
     @include phonePro {
-        top: 70%;
+        top: 90%;
         //border: 2px solid $error-color;
         height: 30%;
     } 
@@ -257,7 +257,7 @@
     }
 
     @include phonePro {
-        top: 60%;
+        top: 80%;
         //border: 2px solid $primary-color;
     }
 }

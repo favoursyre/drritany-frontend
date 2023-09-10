@@ -62,7 +62,7 @@
 
     @include phonePro {
       width: 90%;
-      //height: 0%;
+      height: 600px;
       //border: 2px solid red;
     }
 
@@ -199,12 +199,12 @@
         @include phonePro {
           //border: 0.5px solid red;
           //top: 38%;
-          @include position($left: 7%, $top: 36%);
+          @include position($left: 7%, $top: 30%);
           @include size(20%, 36%);
         }
 
         @include phone {
-          top: 42%;
+          top: 35%;
         }
 
         @include phoneMini {
@@ -379,7 +379,7 @@
         }
 
         @include phone {
-          top: 48%;
+          top: 42%;
           left: 6%;
           width: 22%;
         }

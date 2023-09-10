@@ -312,6 +312,7 @@
              @include phonePro {
                 @include size(80%, 70%);
                 left: 0%;
+                top: -10%;
             }
 
             @include phoneMini {
