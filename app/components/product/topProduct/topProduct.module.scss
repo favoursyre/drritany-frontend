@@ -27,12 +27,12 @@
         //border: 2px solid $error-color;
         @include position($left: 0%, $top: 195%);
         height: 30%;
-        top: 220%;
+        top: 240%;
         justify-content: space-between;
     } 
 
     @include phoneMini {
-        top: 220%;
+        //top: 220%;
     }
     
     .heading {
@@ -103,6 +103,8 @@
             @include position($left: 0%, $top: 5%);
             padding: 0.5% 1%;
             border-radius: 4px;
+            display: flex;
+            flex-direction: column;
             @include size(13%, 80%);
             //border: 2px solid $primary-color;
             transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -117,6 +119,7 @@
                 //border: 2px solid $error-color;
                 width: 50%;
                 height: 90%;
+                gap: 1%;
              } 
 
             .carousel_image {
@@ -135,6 +138,7 @@
                  } 
 
                 @include phonePro {
+                    //border: 1px solid red;
                     height: 50%;
                  } 
                 
@@ -152,6 +156,8 @@
 
                 @include phonePro {
                     @include text-layout($size: 10px, $l_height: 10px);
+                    //border: 1px solid red;
+                    height: 20%;
                 } 
 
                 @include phoneMini {
@@ -168,6 +174,10 @@
 
                 @include tablet {
                     height: 17%;
+                }
+
+                @include phonePro {
+                    //border: 1px solid red;
                 }
 
                 @include phoneMini {
@@ -257,7 +267,7 @@
     }
 
     @include phonePro {
-        top: 80%;
+        top: 70%;
         //border: 2px solid $primary-color;
     }
 }

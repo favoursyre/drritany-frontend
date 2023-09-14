@@ -21,6 +21,7 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
     const [keyword, SetKeyword] = useState(keyword_)
     const [foundProducts, setFoundProducts] = useState(query_)
     const router = useRouter()
+    const [currentURL, setCurrentURL] = useState(window.location.href)
     const clientInfo: IClientInfo = getItem("clientInfo")
     console.log('Query: ', foundProducts)
 
@@ -36,6 +37,23 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
     
         return () => clearInterval(intervalId);
       }, [lastIndex]);
+
+      useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (currentURL === window.location.href) {
+                //console.log('not changed')
+                undefined
+            } else {
+                //console.log("changed")
+                clearInterval(intervalId)
+                setCurrentURL(window.location.href)
+               window.location.reload()
+            }
+            
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [currentURL]);
 
     ///This function triggers when handle click is clicked
     const handleClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>, id: string): void => {

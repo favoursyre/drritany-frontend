@@ -35,6 +35,7 @@
         background-size: cover;
 
         @include phonePro {
+            //border: 2px solid black;
             background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1.5)), url("https://drive.google.com/uc?export=download&id=1_ii-qH5IlFzJcG2jCTVRUANRUu2XCcsr");
             @include size(100%, 50%);
         }
@@ -58,7 +59,14 @@
             font-weight: 600;
             @include flexBar($position: relative, $justify: none, $align: center);
 
+            @include phonePro {
+                //border: 2px solid red;
+                height: 20%;
+                margin-bottom: 5px;
+            }
+
             @include phoneMini {
+                
                 font-size: 25px;
                 height: 15%;
             }
@@ -70,6 +78,7 @@
 
             @include phonePro {
                 //border: 2px solid red;
+                line-height: 20px;
                 font-size: 13px;
             }
 

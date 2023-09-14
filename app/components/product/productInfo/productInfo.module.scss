@@ -33,7 +33,7 @@
     }
 
     .left_section {
-        @include flexBar($position: relative, $justify: center, $gap: 2%, $flex_d: column, $wrap: none, $align: center, $flex: none);
+        @include flexBar($position: relative, $justify: flex-start, $gap: 2%, $flex_d: column, $wrap: none, $align: center, $flex: none);
         @include size(40%, 100%);
         //border: 2px solid $primary-color;
 
@@ -44,6 +44,7 @@
         @include phonePro {
             @include size(90%, 50%);
             top: 2%;
+            justify-content: center;
         }
 
         @include phone {
@@ -54,6 +55,7 @@
             //border: 1px solid red;
             @include flexBar($position: relative, $justify: none, $gap: 0%, $flex_d: column, $wrap: none, $align: none, $flex: none);
             @include size(100%, 45%);
+            top: 3%;
 
             @include tablet {
                 //border: 2px solid $error-color;
@@ -62,7 +64,7 @@
     
              @include phonePro {
                 //border: 2px solid $error-color;
-                top: -2%;
+                top: 0%;
                 @include size(100%, 50%);
             } 
 
@@ -146,7 +148,7 @@
             //border: 1px solid red;
             @include flexBar($position: relative, $justify: none, $gap: 2%, $flex_d: column, $wrap: none, $align: none, $flex: none);
             @include size(100%, 45%);
-            //top: -5%;
+            top: 5%;
 
             .heading {
                 //border: 1px solid red;

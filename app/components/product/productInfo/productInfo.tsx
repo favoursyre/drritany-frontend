@@ -29,6 +29,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const [imageIndex, setImageIndex] = useState<number>(0)
     const spec = product[0].specification
     const clientInfo: IClientInfo = getItem("clientInfo")
+    console.log("Product info: ", product)
 
     ///This contains the accordian details
     const questions = [
@@ -202,7 +203,20 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         ))}
                     </div>
                     </div>
-                    <div className={styles.video_section}>
+                    {product && product[0].videos && product[0].videos.length === 1 ? 
+                        <div className={styles.video_section}>
+                        <div className={styles.heading}><span>Video</span></div>
+                        <div className={styles.video}>
+                            <video controls>
+                                <source src={product[0].videos[0]} type="" />
+                            Your browser does not support the video tag.
+                        </video>
+                        </div>
+                    </div> 
+                        : 
+                        <div></div>
+                    }
+                    {/* <div className={styles.video_section}>
                         <div className={styles.heading}><span>Video</span></div>
                         <div className={styles.video}>
                             <video controls>
@@ -210,7 +224,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             Your browser does not support the video tag.
                         </video>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             ))}
             {product.map((p, _id) => (

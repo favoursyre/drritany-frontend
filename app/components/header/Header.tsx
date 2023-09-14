@@ -31,9 +31,9 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
   const [query, setQuery] = useState(String)
   //const [modalState, setModalState] = useState(getModalState())
   const cart__ = getItem(cartName) 
-  console.log("Cart: ", cart__)
+  //console.log("Cart: ", cart__)
   const [cart, setCart] = useState<ICart | null>(cart__)
-  console.log("Cart New: ", cart)
+  //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
   const [contactModal, setContactModal] = useState<boolean>(false)
@@ -43,7 +43,7 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
   const [message, setMessage] = useState<string | undefined>("")
   //console.log('Length: ', cart)
 
-  //console.log("Path: ", routerPath)
+  //console.log("Path: ", window.location.hostname)
 
   const item = getItem("clientInfo")
  if (item === null || item === "undefined") {
@@ -52,13 +52,19 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
     null
   }
 
+  const urlRouter = async (query: string) => {
+    router.push(`/products/search?query=${query}`)
+  }
+
   //This handles the search
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault()
 
     if (query) {
-      console.log("clicked")
+      console.log("searching: ", query)
       router.push(`/products/search?query=${query}`)
+      //window.location.reload()
+      //window.open(window.location.href, "")
     } 
     setSearch(() => false)
   }
@@ -158,7 +164,10 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
               <SearchIcon />
             </button>
           ) : (
-            <form className={`${styles.search_form}`} onSubmit={(e) => onSearch(e)}>
+            <form className={`${styles.search_form}`} onSubmit={(e) => {
+              onSearch(e)
+              //window.location.reload()
+            }}>
               <input 
                 type="text" 
                 placeholder="Search" 

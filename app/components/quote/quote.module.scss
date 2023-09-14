@@ -41,7 +41,7 @@
 
     @include phonePro {
         //border: 2px solid red;
-        top: 180%;
+        top: 202%;
         height: 30%;
     }
     
@@ -108,6 +108,7 @@
             }
 
             @include phonePro {
+                left: -3%;
                 width: 10%;
             }
         }
@@ -123,7 +124,10 @@
             //border: 2px solid $primary-color;
 
             @include phonePro {
+                //border: 2px solid $primary-color;
+                top: -20%;
                 width: 80%;
+                line-height: 18px;
             }
 
             @include phoneMini {
@@ -160,6 +164,7 @@
 
             @include phonePro {
                 @include size(10%, 15%);
+                left: 3%;
                 //border: 2px solid $primary-color;
             }
         }

@@ -28,7 +28,8 @@
 
   @include phonePro {
     //border: 2px solid red;
-    height: 1100px;
+    height: 1000px;
+    top: 50px;
   }
 
   .heading {
@@ -62,8 +63,8 @@
 
     @include phonePro {
       width: 90%;
-      height: 600px;
-      //border: 2px solid red;
+      height: 70%;
+      //border: 2px solid green;
     }
 
     &:focus {
@@ -91,7 +92,7 @@
 
 
       @include phonePro {
-        height: 6%;
+        height: 35px;
         //border: 2px solid red;
       }
     }
@@ -102,8 +103,8 @@
       border: 1.5px solid #cbd5e1;
       border-radius: 4px;
 
-      @include phone {
-        height: 6%;
+      @include phonePro {
+        height: 35px;
       }
     }
 
@@ -119,7 +120,7 @@
       //border: 0.5px solid red;
 
       @include phonePro {
-        height: 6%;
+        height: 35px;
       }
 
       .dial_code {
@@ -177,6 +178,10 @@
           width: 65%;
         }
 
+        @include phonePro {
+          height: 95%;
+        }
+
         input {
           position: relative;
           z-index: 1;
@@ -191,7 +196,7 @@
         position: absolute;
         display: flex;
         flex-direction: column;
-        z-index: 1;
+        z-index: 10;
         //border: 0.5px solid red;
         @include size(6%, 35%);
         @include position($left: 35.5%, $top: 32%);
@@ -199,12 +204,12 @@
         @include phonePro {
           //border: 0.5px solid red;
           //top: 38%;
-          @include position($left: 7%, $top: 30%);
+          @include position($left: 6%, $top: 39%);
           @include size(20%, 36%);
         }
 
         @include phone {
-          top: 35%;
+          //top: 35%;
         }
 
         @include phoneMini {
@@ -280,7 +285,7 @@
       //border: 0.5px solid red;
 
       @include phonePro {
-        height: 6%;
+        height: 35px;
       }
 
       .dial_code {
@@ -338,6 +343,10 @@
           width: 65%;
         }
 
+        @include phonePro {
+          height: 95%;
+        }
+
         input {
           position: relative;
           z-index: 1;
@@ -374,12 +383,12 @@
         @include phonePro {
           //border: 0.5px solid red;
           //top: 41%;
-         @include position($left: 5%, $top: 42%);
+         @include position($left: 5%, $top: 45%);
           @include size(24%, 36%);
         }
 
         @include phone {
-          top: 42%;
+          //top: 42%;
           left: 6%;
           width: 22%;
         }
@@ -462,7 +471,7 @@
     $flex: none,
     $bg-color: rgba(0, 0, 0, 0.5)
   );
-  //border: 2px solid red;
+  border: 2px solid red;
   left: 0%;
   top: 0%;
   z-index: 100;
@@ -478,7 +487,7 @@
   }
 
   @include phonePro {
-    height: 165%;
+    height: 215%;
   }
 
   @keyframes spin {
@@ -536,6 +545,8 @@
           width: 7%;
           flex-direction: row;
           justify-content: center;
+          border: none;
+          background-color: transparent;
           //border: 2px solid red;
 
           @include phonePro {

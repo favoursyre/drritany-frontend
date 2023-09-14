@@ -52,7 +52,7 @@
             font-weight: 400;
             //border: 2px solid red;
 
-            @include phoneMini {
+            @include phonePro {
                 font-size: 14px;
                 text-align: center;
             }
@@ -71,8 +71,7 @@
             } 
 
             @include phonePro {
-                @include size(80%, 10%);
-
+                @include size(80%, 15%);
             } 
 
             @include phoneMini {
@@ -356,7 +355,7 @@
                 transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 
                 @include phonePro {
-                    @include size(100%, 30%);
+                    @include size(100%, 40%);
                     font-weight: 400;
                     //border: 2px solid red;
                     //left: 25%;

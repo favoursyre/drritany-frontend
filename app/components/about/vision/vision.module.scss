@@ -63,6 +63,11 @@
             font-weight: 600;
             @include flexBar($position: relative, $justify: flex-start, $align: center);
 
+            @include phonePro {
+                height: 20%;
+                margin-bottom: 5px;
+            }
+
             @include phoneMini {
                 font-size: 25px;
                 height: 15%;
@@ -75,6 +80,7 @@
 
             @include phonePro {
                 font-size: 13px;
+                line-height: 20px;
             }
 
             @include phoneMini {

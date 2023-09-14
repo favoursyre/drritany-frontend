@@ -110,6 +110,7 @@ const Order = () => {
                     setItem(cartName, _cart_)
                 } else {
                     setModalState(() => false)
+                    notify("error", `Something went wrong`)
                     throw Error(`${data}`)
                 }
                 
@@ -318,6 +319,7 @@ const Order = () => {
                                 onClick={() => {
                                     setModalState(() => false)
                                     router.push("/")
+                                    window.location.reload()
                                 }}
                             >
                                 <CloseIcon />

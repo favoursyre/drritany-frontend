@@ -100,7 +100,7 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                             </button>
                             <div className={styles.texts}>
                                 <span className={styles.text1}>Have a question?</span>
-                                <span className={styles.text2}>{contact ? contact.phoneNumber : "+234-9090982848"}</span>
+                                <span className={styles.text2}>+234-9090982848</span>
                             </div>
                         </div>
                         <div className={styles.email_social}>
@@ -184,7 +184,7 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                     </button>
                     <div className={styles.texts}>
                         <span className={styles.text1}>Have a question?</span>
-                        <span className={styles.text2}>{contact ? contact.phoneNumber : "+234-9090982848"}</span>
+                        <span className={styles.text2}>+234-9090982848</span>
                     </div>
                 </div>
                 <div className={styles.email_social}>
