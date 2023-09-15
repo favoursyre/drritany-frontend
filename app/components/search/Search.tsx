@@ -119,7 +119,7 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
                         <span className={styles.brief}>- Check for spelling errors</span>
                         <span className={styles.brief}>- Try searching with short and simple keywords</span>
                         <span className={styles.brief}>- Try searching for more general terms</span>
-                        <button>
+                        <button onClick={() => router.push("/")}>
                             <span>GO TO HOMEPAGE</span>
                         </button>
                     </div>

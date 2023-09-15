@@ -290,6 +290,7 @@
                 }
                     
                 input {
+                    border: none;
                     //border: 2px solid rgb(36, 202, 36);
                     @include size(100%, 100%);
                     border-radius: 30px;
@@ -478,6 +479,7 @@
 
             input {
                 //border: 2px solid rgb(36, 202, 36);
+                border: none;
                 @include size(100%, 90%);
                 border-radius: 30px;
                 padding: 1% 25% 1% 9%;

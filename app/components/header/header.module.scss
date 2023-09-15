@@ -142,6 +142,7 @@
                     border-radius: 4px;
                     background-color: $tertiary-color;
                     //border: 1px solid red;
+                    border: none;
 
                     &:focus {
                         outline-color: $primary-color;
@@ -161,6 +162,13 @@
                     top: -25%;
                     height: 100%;
                     width: 12%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    .icon {
+                        left: -2%;
+                    }
 
                     @include tablet {
                         top: -30%;

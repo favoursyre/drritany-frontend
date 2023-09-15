@@ -175,7 +175,7 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
                 value={query}
               />
               <button >
-                <SearchIcon style={{ fontSize: "1rem" }} />
+                <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
               </button>
             </form>
           )}
