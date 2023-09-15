@@ -32,6 +32,10 @@
         height: 160%;
     }
 
+    button {
+        outline: none;
+    }
+
     .left_section {
         @include flexBar($position: relative, $justify: flex-start, $gap: 2%, $flex_d: column, $wrap: none, $align: center, $flex: none);
         @include size(40%, 100%);
@@ -302,8 +306,8 @@
                 justify-content: center;
                 //border: 2px solid $primary-color;
 
-                @include phoneMini {
-                    width: 10%;
+                @include phonePro {
+                    width: 9%;
                 }
             
                 &:hover {

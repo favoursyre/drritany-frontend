@@ -12,6 +12,10 @@
     font-family: "Roboto";
     background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7)), url("https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO");
 
+    button {
+        outline: none;
+    }
+    
     @include tabletPro {
         //border: 2px solid red;
         //position: relative;
@@ -437,6 +441,10 @@
         height: 250px;
     }
 
+    button {
+        outline: none;
+    }
+
     .newsletter_section {
         //border: 2px solid green;
         position: relative;
@@ -460,7 +468,7 @@
         }
 
         span {
-            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 24px);
+            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);
 
             @include phoneMini {
                 font-size: 12px;
@@ -480,7 +488,7 @@
             input {
                 //border: 2px solid rgb(36, 202, 36);
                 border: none;
-                @include size(100%, 90%);
+                @include size(100%, 100%);
                 border-radius: 30px;
                 padding: 1% 25% 1% 9%;
                 @include text-layout($size: 14px, $color: $text-color-1, $l_height: 12px);
@@ -491,7 +499,9 @@
 
                 &:focus {
                     //background-color: red;
-                    outline-color: $primary-color;
+                    outline-color: transparent;
+                    border: 1px solid $primary-color;
+                    border-radius: 30px;
                 }
             }
 
@@ -767,7 +777,7 @@
     } 
 
     @include phonePro {
-        top: 360%;
+        top: 320%;
     } 
 
     @include phone {

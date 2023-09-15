@@ -66,7 +66,7 @@
         @include phonePro {
             //top: -5%;
             height: 90%;
-            @include text-layout($size: 14px, $color: text-color-1, $l_height: 25px);
+            @include text-layout($size: 14px, $color: text-color-1, $l_height: 20px);
         } 
 
         @include phoneMini {

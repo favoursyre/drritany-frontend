@@ -25,6 +25,10 @@
         //border: 2px solid red;
     } 
 
+    button {
+        outline: none;
+    }
+
     .empty_cart {
         @include flexBar($position: relative, $justify: center, $gap: 5%, $flex_d: column, $wrap: none, $align: center, $flex: none);
         //padding: 0% 10%;

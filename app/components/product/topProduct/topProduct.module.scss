@@ -34,6 +34,10 @@
     @include phoneMini {
         //top: 220%;
     }
+
+    button {
+        outline: none;
+    }
     
     .heading {
         @include flexBar($position: relative, $justify: space-between, $gap: 0px, $flex_d: row, $wrap: none, $align: center, $flex: none);

@@ -32,6 +32,18 @@
     top: 50px;
   }
 
+  button, select {
+    outline: none;
+  }
+
+  input {
+    outline: none;
+
+    &:focus {
+      border: 1px solid $primary-color;
+    }
+  }
+
   .heading {
     @include text-layout($size: 36px, $color: $text-color-2, $l_height: 44px);
     font-weight: 600;
@@ -69,7 +81,8 @@
 
     &:focus {
       //background-color: red;
-      outline-color: $primary-color;
+      outline: none;
+      border: 1px solid $primary-color;
     }
 
     ::placeholder {
@@ -443,7 +456,7 @@
         $flex: none,
         $bg-color: $primary-color
       );
-      @include size(100%, 8%);
+      @include size(100%, 50px);
       border: 1px solid $primary-color;
       color: $tertiary-color;
       border-radius: 4px;

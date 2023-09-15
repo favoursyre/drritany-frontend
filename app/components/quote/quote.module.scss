@@ -51,6 +51,7 @@
         border: none;
         @include flexBar($display: flex, $align: center, $justify: center);
         @include size(5%, 25%);
+        outline: none;
 
         .img {
             position: relative;

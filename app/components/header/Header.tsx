@@ -142,108 +142,111 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
 
   return (
     <>
-    <header className={`${styles.header} ${routeStyle(routerPath, styles)}`}>
-      <div className={styles.logo} onClick={() => router.push('/')}>
-        <img
-          src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
-          alt=""
-        />
-      </div>
-      
-      <div className={`${styles.links}`}>
-        <button onClick={() => router.push('/about')}><span>About Us</span></button>
-        <button onClick={() => router.push('/#products')}><span>Products</span></button>
-        <button onClick={() => setContactModal(() => true)}>
-          <span>Contact Us</span>
-        </button>
-      </div>
-      <div id={styles.search_cart}>
-        <div id={styles.search}>
-          {search === false ? (
-            <button onClick={() => setSearch(true)}>
-              <SearchIcon />
-            </button>
-          ) : (
-            <form className={`${styles.search_form}`} onSubmit={(e) => {
-              onSearch(e)
-              //window.location.reload()
-            }}>
-              <input 
-                type="text" 
-                placeholder="Search" 
-                onChange={(e) => setQuery(e.target.value)}
-                value={query}
-              />
-              <button >
-                <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
-              </button>
-            </form>
-          )}
-        </div>
-        <div id={styles.cart}>
-          <button onClick={() => router.push("/cart")}>
-            <div id={styles.cartIcon}>
-              <ShoppingCartIcon className={styles.cart} />
-            </div>
-            <div id={cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
-              <span>{cart?.cart.length}</span>
-            </div>
-          </button>
-        </div>
-      </div>
-      <hr className={styles.slash} />
-    </header>
-    <header className={`${styles.mobile_header} ${routeStyle(routerPath, styles)}`}>
-      <button className={styles.menu_button} onClick={() => setMenu(true)}>
-        <MenuIcon />
-      </button>
-      <div className={styles.logo} onClick={() => router.push('/')}>
-        <img
-          src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
-          alt=""
-        />
-      </div>
-      <div className={styles.search_cart}>
-        <div className={styles.search}>
-            <button onClick={() => setSearch(true)}>
-              <SearchIcon />
-            </button>
-        </div>
-      <div className={styles.cart}>
-          <button onClick={() => router.push("/cart")}>
-            <ShoppingCartIcon className={styles.cartIcon} />
-            <div id={cart !== null && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
-              <span>{cart?.cart.length}</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    </header>
-    <div className={`${search ? styles.activeSearch : styles.inActiveSearch}`}>
-      <form className={`${styles.search_form}`} onSubmit={(e) => onSearch(e)}>
-        <button className={styles.arrow_left} type="button" onClick={() => setSearch(false)}>
-            <ArrowBackIcon />
-          </button>
-          <input 
-            type="text" 
-            placeholder="Search" 
-            onChange={(e) => setQuery(e.target.value)}
-            value={query}
+      <header className={`${styles.header} ${routeStyle(routerPath, styles)}`}>
+        <div className={styles.logo} onClick={() => router.push('/')}>
+          <img
+            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+            alt=""
           />
-          <button className={styles.close} type="button" onClick={(e) => clearSearch(e)}>
-            <CloseIcon />
+        </div>
+        
+        <div className={`${styles.links}`}>
+          <button onClick={() => router.push('/about')}><span>About Us</span></button>
+          <button onClick={() => router.push('/#products')}><span>Products</span></button>
+          <button onClick={() => setContactModal(() => true)}>
+            <span>Contact Us</span>
           </button>
-          <button className={styles.search_icon} type="submit">
-            <SearchIcon />
-          </button>
-        </form>
-    </div>
-    <div className={`${menu ? styles.activeMenu : styles.inActiveMenu}`}>
+        </div>
+        <div id={styles.search_cart}>
+          <div id={styles.search}>
+            {search === false ? (
+              <button onClick={() => setSearch(true)}>
+                <SearchIcon />
+              </button>
+            ) : (
+              <form className={`${styles.search_form}`} onSubmit={(e) => {
+                onSearch(e)
+                //window.location.reload()
+              }}>
+                <input 
+                  type="text" 
+                  placeholder="Search" 
+                  onChange={(e) => setQuery(e.target.value)}
+                  value={query}
+                />
+                <button >
+                  <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
+                </button>
+              </form>
+            )}
+          </div>
+          <div id={styles.cart}>
+            <button onClick={() => router.push("/cart")}>
+              <div id={styles.cartIcon}>
+                <ShoppingCartIcon className={styles.cart} />
+              </div>
+              <div id={cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
+                <span>{cart?.cart.length}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+        <hr className={styles.slash} />
+      </header>
+      <header className={`${styles.mobile_header} ${routeStyle(routerPath, styles)}`}>
+        <button className={styles.menu_button} onClick={() => setMenu(true)}>
+          <MenuIcon />
+        </button>
+        <div className={styles.logo} onClick={() => router.push('/')}>
+          <img
+            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+            alt=""
+          />
+        </div>
+        <div className={styles.search_cart}>
+          <div className={styles.search}>
+              <button onClick={() => setSearch(true)}>
+                <SearchIcon />
+              </button>
+          </div>
+        <div className={styles.cart}>
+            <button onClick={() => router.push("/cart")}>
+              <ShoppingCartIcon className={styles.cartIcon} />
+              <div id={cart !== null && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
+                <span>{cart?.cart.length}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div className={`${search ? styles.activeSearch : styles.inActiveSearch}`}>
+        <form className={`${styles.search_form}`} onSubmit={(e) => onSearch(e)}>
+          <button className={styles.arrow_left} type="button" onClick={() => setSearch(false)}>
+              <ArrowBackIcon />
+            </button>
+            <input 
+              type="text" 
+              placeholder="Search" 
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+            />
+            <button className={styles.close} type="button" onClick={(e) => clearSearch(e)}>
+              <CloseIcon />
+            </button>
+            <button className={styles.search_icon} type="submit">
+              <SearchIcon className={styles.icon} />
+            </button>
+          </form>
+      </div>
+      <div className={`${menu ? styles.activeMenu : styles.inActiveMenu}`}>
           <div className={styles.menu_heading}>
             <button className={styles.close_button} onClick={() => setMenu(false)}>
               <CloseIcon />
             </button>
-            <div className={styles.logo} onClick={() => router.push('/')}>
+            <div className={styles.logo} onClick={() => {
+              setMenu(() => false)
+              router.push('/')
+            }}>
               <img
                 src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
                 alt=""
@@ -272,7 +275,7 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
           >
             <span>Contact Us</span>
           </button>
-        </div>
+      </div>
       <div className={`${styles.contactModal} ${!contactModal ? styles.inActiveContactModal : ""}`}>
         <ToastContainer />
         <div className={styles.container}>

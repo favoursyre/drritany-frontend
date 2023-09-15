@@ -33,7 +33,7 @@
     }
 
     button {
-        
+        outline: none;
     }
     
     .product_list {
@@ -140,7 +140,7 @@
                 @include phonePro {
                     //border: 2px solid black;
                     top: 130%;
-                    height: 600%;
+                    height: 650%;
                 }
 
                 button {

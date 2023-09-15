@@ -53,6 +53,10 @@
         height: 65.2%;
     }
 
+    button {
+        outline: none;
+    }
+
     .testimony_brief {
         @include flexBar($position: relative, $align: center, $justify: center);
         @include size(100%, 10%);
