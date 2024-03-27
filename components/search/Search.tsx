@@ -3,9 +3,9 @@
 
 ///Libraries -->
 import styles from "./search.module.scss"
-import { IProduct, IClientInfo } from "@/app/utils/interfaces";
+import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { getItem, decodedString, getCurrencySymbol, getExchangeRate } from "@/app/utils/utils";
+import { getItem, decodedString, getCurrencySymbol, getExchangeRate } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';

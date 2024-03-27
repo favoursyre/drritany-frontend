@@ -4,7 +4,7 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent, useRef } from "react"
 import styles from "./testimony.module.scss"
-import { ITestimony } from "@/app/utils/interfaces"
+import { ITestimony } from "@/config/interfaces"
 
 ///Commencing the code 
   

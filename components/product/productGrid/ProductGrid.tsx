@@ -5,8 +5,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./productGrid.module.scss"
-import { IProduct, IClientInfo } from '@/app/utils/interfaces';
-import { groupList, sortOptions as sortOption, backend, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '../../../utils/utils'
+import { IProduct, IClientInfo } from '@/config/interfaces';
+import { groupList, sortOptions as sortOption, backend, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '@/config/utils'
 import TuneIcon from '@mui/icons-material/Tune';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';

@@ -4,7 +4,7 @@
 ///Libraries -->
 import styles from "./faq.module.scss"
 import Link from "next/link";
-import { IFAQState } from "@/app/utils/interfaces";
+import { IFAQState } from "@/config/interfaces";
 import { useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 

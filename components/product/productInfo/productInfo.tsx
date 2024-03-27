@@ -6,9 +6,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect, MouseEvent } from "react"
 import styles from "./productInfo.module.scss"
-import { IProduct, ICart, ICartItem, IClientInfo } from '@/app/utils/interfaces';
-import { notify } from '@/app/utils/clientUtils';
-import { setItem, getItem, decodedString, cartName, getCurrencySymbol, getExchangeRate } from '../../../utils/utils'
+import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
+import { notify } from '@/config/clientUtils';
+import { setItem, getItem, decodedString, cartName, getCurrencySymbol, getExchangeRate } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";

@@ -2,10 +2,10 @@
 ///Footer component
 
 ///Libraries -->
-import { notify } from '@/app/utils/clientUtils';
+import { notify } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend } from '../../utils/utils'
-import { IContact, INews } from "@/app/utils/interfaces";
+import { routeStyle, backend } from '@/config/utils'
+import { IContact, INews } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent } from "react";
 import validator from "validator";

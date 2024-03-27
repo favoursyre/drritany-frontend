@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
-import { IOrder } from '@/app/utils/interfaces';
-import { formatDateMongo } from '@/app/utils/utils';
+import { IOrder } from '@/config/interfaces';
+import { formatDateMongo } from '@/config/utils';
 //import ReactDOMServer from 'react-dom/server';
 
 ///Commencing the code 

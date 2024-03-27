@@ -5,8 +5,8 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./topProduct.module.scss"
-import { IProduct, IClientInfo } from '@/app/utils/interfaces';
-import { routeStyle, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '../../../utils/utils'
+import { IProduct, IClientInfo } from '@/config/interfaces';
+import { routeStyle, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '@/config/utils'
 
 ///Commencing the code 
 /**

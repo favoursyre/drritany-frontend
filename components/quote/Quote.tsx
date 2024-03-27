@@ -4,7 +4,7 @@
 ///Libraries -->
 import styles from "./quote.module.scss"
 import { useState, useEffect, MouseEvent } from "react"
-import { IQuoteState } from "@/app/utils/interfaces"
+import { IQuoteState } from "@/config/interfaces"
 
 ///Commencing the code 
 

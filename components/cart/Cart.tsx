@@ -6,9 +6,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
-import { notify } from '@/app/utils/clientUtils';
-import { setItem, getModalState, getItem, decodedString, cartName } from '@/app/utils/utils';
-import { ICart, ICartItem, IClientInfo } from '@/app/utils/interfaces';
+import { notify } from '@/config/clientUtils';
+import { setItem, getModalState, getItem, decodedString, cartName } from '@/config/utils';
+import { ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from "@mui/icons-material/Add";

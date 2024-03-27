@@ -5,10 +5,10 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./header.module.scss"
-import { ICart, IInquiry, IClientInfo } from '@/app/utils/interfaces';
-import { notify } from '@/app/utils/clientUtils';
-import { setItem, getItem } from "../../utils/clientUtils"
-import { getModalState, routeStyle, capitalizeFirstLetter, backend, cartName, } from '../../utils/utils'
+import { ICart, IInquiry, IClientInfo } from '@/config/interfaces';
+import { notify } from '@/config/clientUtils';
+import { setItem, getItem } from "@/config/clientUtils"
+import { getModalState, routeStyle, capitalizeFirstLetter, backend, cartName, } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

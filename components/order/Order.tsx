@@ -5,9 +5,9 @@
 import styles from "./order.module.scss"
 import React, { useState, useEffect } from "react"
 import { ToastContainer } from 'react-toastify';
-import { notify } from '@/app/utils/clientUtils';
-import { countryList, backend, setItem, getItem, getItemByKey, cartName, orderName, capitalizeFirstLetter } from "@/app/utils/utils"
-import { ICart, ICountry, IClientInfo, ICustomerSpec } from "@/app/utils/interfaces";
+import { notify } from '@/config/clientUtils';
+import { countryList, backend, setItem, getItem, getItemByKey, cartName, orderName, capitalizeFirstLetter } from "@/config/utils"
+import { ICart, ICountry, IClientInfo, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from "next/navigation";
