@@ -2,9 +2,9 @@
 ///This handles the products page
 
 ///Libraries -->
-import ProductInfo from '../../components/product/productInfo/productInfo';
-import SimilarProduct from '@/app/components/product/topProduct/topProduct';
-import { backend, shuffleArray } from '@/app/utils/utils';
+import ProductInfo from '@/components/product/productInfo/productInfo';
+import SimilarProduct from '@/components/product/topProduct/topProduct';
+import { domainName, shuffleArray } from '@/config/utils';
 
 ///Commencing the code
 
@@ -12,7 +12,7 @@ import { backend, shuffleArray } from '@/app/utils/utils';
 async function getProduct(id: string) {
   try {
       const response = await fetch(
-          `${backend}/product/info/${id}`,
+          `${domainName}/product/info/${id}`,
           {
             next: {
               revalidate: 60,
@@ -32,7 +32,7 @@ async function getProduct(id: string) {
 async function getProducts() {
   try {
       const response = await fetch(
-          `${backend}/products`,
+          `${domainName}/products`,
           {
             next: {
               revalidate: 60,

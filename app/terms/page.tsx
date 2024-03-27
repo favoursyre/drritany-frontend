@@ -2,7 +2,7 @@
 ///This handles the terms of service page
 
 ///Libraries -->
-import Terms from "../components/terms/Terms"
+import Terms from "@/components/terms/Terms"
 
 ///Commencing the code
 /**

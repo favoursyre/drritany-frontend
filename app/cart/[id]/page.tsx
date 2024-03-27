@@ -2,9 +2,9 @@
 ///This handles the cart receipt page
 
 ///Libraries -->
-import CartReceipt from '@/app/components/receipt/Receipt';
-import { IProduct } from '@/app/utils/interfaces';
-import { backend, shuffleArray, deleteItemByKey } from '@/app/utils/utils';
+import CartReceipt from '@/components/receipt/Receipt';
+//import { IProduct } from '@/config/interfaces';
+import { backend, shuffleArray, deleteItemByKey } from '@/config/utils';
 
 ///Commencing the code
 

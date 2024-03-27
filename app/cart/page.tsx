@@ -2,16 +2,16 @@
 ///This handles the cart page
 
 ///Libraries -->
-import Cart from "../components/cart/Cart"
-import SimilarProduct from "../components/product/topProduct/topProduct"
-import { backend, shuffleArray } from "../utils/utils";
+import Cart from "@/components/cart/Cart"
+import SimilarProduct from "@/components/product/topProduct/topProduct"
+import { domainName, shuffleArray } from "@/config/utils";
 
 ///Commencing the code
 ///This fetches a list of all products
 async function getProducts() {
   try {
       const response = await fetch(
-          `${backend}/products`,
+          `${domainName}/products`,
           {
             next: {
               revalidate: 60,

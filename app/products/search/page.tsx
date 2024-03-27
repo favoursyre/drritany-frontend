@@ -3,9 +3,9 @@
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse } from 'next';
-import { backend, shuffleArray } from '../../utils/utils';
-import Search from '../../components/search/Search';
-import SimilarProduct from '@/app/components/product/topProduct/topProduct';
+import { backend, shuffleArray } from '@/config/utils';
+import Search from '@/components/search/Search';
+import SimilarProduct from '@/components/product/topProduct/topProduct';
 
 ///Commencing the code
 

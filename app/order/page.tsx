@@ -2,7 +2,7 @@
 ///This handles the terms of order page
 
 ///Libraries -->
-import Order from "../components/order/Order"
+import Order from "@/components/order/Order"
 
 ///Commencing the code
 /**
