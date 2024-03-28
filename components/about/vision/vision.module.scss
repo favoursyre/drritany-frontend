@@ -1,7 +1,7 @@
 /* This contains the scss for the vision component page */
 
 //Libraries -->
-@import "../../../../styles/base.module";
+@import "@/styles/base.module";
 
 //Commencing the code -->
 .main {
@@ -30,11 +30,10 @@
         display: flex;
         //border: 2px solid black;
         border: none;
-        background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        @include size(100%, 50%);
+        background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1));
+        position: relative;
+        @include size(90%, 50%);
+        left: 5%;
 
         @include desktop {
             display: none;
@@ -42,6 +41,13 @@
 
         @include tabletPro {
             display: none;
+        }
+
+        .img {
+            object-fit: cover;
+            object-position: center 30%;
+            position: relative;
+            @include size(100%, 100%);
         }
     }
 
@@ -92,7 +98,7 @@
 
     .pc_image {
         //border: 2px solid green;
-        background-image: linear-gradient(to left, transparent, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ");
+        background-image: linear-gradient(to left, transparent, transparent, rgba(255, 255, 255, 1));
         @include size(50%, 100%);
         background-repeat: no-repeat;
         background-size: cover;

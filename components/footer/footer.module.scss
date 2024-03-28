@@ -1,7 +1,7 @@
 /* This contains the scss for the footer component */
 
 //Libraries -->
-@import "../../../styles/base.module";
+@import "@/styles/base.module";
 
 //Commencing the code -->
 .footer {
@@ -10,7 +10,6 @@
     @include position($left: 0%, $top: 360%);
     //border: 2px solid black;
     font-family: "Roboto";
-    background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7)), url("https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO");
 
     button {
         outline: none;
@@ -42,6 +41,14 @@
     @include phonePro {
         display: none;
     } 
+
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+    }
 
     .upper_footer {
         @include size(100%, 70%);
@@ -328,8 +335,10 @@
                 .mailIcon {
                     //border: 1px solid red;
                     position: absolute;
+                    font-size: 1rem;
                     left: 3%;
                     z-index: 10;
+                    color: $text-color-3;
                     
                     //color: $tertiary-color;
                     //background-color: $text-color-3;
@@ -445,6 +454,14 @@
         outline: none;
     }
 
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+    }
+
     .newsletter_section {
         //border: 2px solid green;
         position: relative;
@@ -505,11 +522,17 @@
                 }
             }
 
-            img {
-                //border: 2px solid rgb(36, 202, 36);
+            .mailIcon {
+                //border: 1px solid red;
                 position: absolute;
-                //@include position(3%, 4px);
-                left: 4%;
+                font-size: 1rem;
+                left: 3%;
+                z-index: 10;
+                color: $text-color-3;
+                
+                //color: $tertiary-color;
+                //background-color: $text-color-3;
+                //top: 30%;
             }
 
             button {
@@ -611,7 +634,7 @@
             @include flexBar($position: relative, $justify: center, $gap: 5%);
             padding: 1%;
             @include size(45%, 100%);
-            left: -10%;
+            //left: 10%;
 
             button {
                 @include size(30%, 90%);
@@ -675,7 +698,7 @@
         gap: 10px;
         //align-items: center;
         padding: 1% 2%;
-        @include text-layout($size: 14px, $color: $text-color-3, $l_height: 16px);
+        @include text-layout($size: 14px, $color: $text-color-2, $l_height: 16px);
 
         @include phoneMini {
             font-size: 10px;
@@ -706,9 +729,12 @@
         .copyright {
             display: flex;
             justify-content: center;
+            
 
             @include phonePro {
-                font-size: 10px;
+                font-size: 12px;
+                color: $text-color-2;
+                z-index: 5;
                 //border: 1px solid red;
             }
         }

@@ -2,8 +2,6 @@
 ///Cart component
 
 ///Libraries -->
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { notify } from '@/config/clientUtils';
@@ -13,6 +11,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import Image from 'next/image';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 ///Commencing the code 
 /**
@@ -108,23 +108,21 @@ useEffect(() => {
   return (
     <>
         <main className={`${styles.main}`}>
-            <ToastContainer />
             {!cart || cart?.cart.length === 0 ? (
                 <div className={styles.empty_cart}>
                     <div className={styles.cart_image}>
-                        <img 
+                        <Image 
                             src="https://drive.google.com/uc?export=download&id=1ye9nI6vsVxDvsUyFtnJFLXnhQRVIziml"
                             alt=""
+                            width={102}
+                            height={102}
                         />
                     </div>
                     <span className={styles.brief_1}>Your cart is empty !</span>
                     <span className={styles.brief_2}>Explore our wide range of products and uncover our unbeatable offers</span>
                     <button onClick={() => router.push("/#products")}>
-                        <img
-                            src="https://drive.google.com/uc?export=download&id=11z0qeMPVU6nfmjllwju6h91fM5enzjCC"
-                            alt=""
-                        />
-                        <span>Start Ordering</span>
+                        <AddShoppingCartIcon className={styles.icon} />
+                        <span>Start Shopping</span>
                     </button>
                 </div>
             ) : (
@@ -186,26 +184,26 @@ useEffect(() => {
             )}
         </main>
         <div className={`${styles.modal_container} ${deleteModal ? styles.activeModal : styles.inactiveModa}`}>
-        <div className={`${styles.modal}`}>
-            <div className={styles.modal_heading}>
-                <span>Remove from cart</span>
-                <button onClick={() => setDeleteModal(() => false)}>
-                    <CloseIcon />
+            <div className={`${styles.modal}`}>
+                <div className={styles.modal_heading}>
+                    <span>Remove from cart</span>
+                    <button onClick={() => setDeleteModal(() => false)}>
+                        <CloseIcon />
+                    </button>
+                </div>
+                <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>
+                <button onClick={e => {
+                    removeItem(e, null, 1)
+                    window.location.reload()
+                }} 
+                className={styles.remove_item_button}>
+                    <img 
+                        src="https://drive.google.com/uc?export=download&id=1y2mMvCsu2xoy-soKb3669DHnTrAwRdc9"
+                        alt=""
+                    />
+                    <span>Remove Item</span>
                 </button>
             </div>
-            <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>
-            <button onClick={e => {
-                removeItem(e, null, 1)
-                window.location.reload()
-            }} 
-            className={styles.remove_item_button}>
-                <img 
-                    src="https://drive.google.com/uc?export=download&id=1y2mMvCsu2xoy-soKb3669DHnTrAwRdc9"
-                    alt=""
-                />
-                <span>Remove Item</span>
-            </button>
-        </div>
         </div>
     </>
   );

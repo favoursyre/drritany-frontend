@@ -10,8 +10,6 @@ import { notify } from '@/config/clientUtils';
 import { setItem, getItem } from "@/config/clientUtils"
 import { getModalState, routeStyle, capitalizeFirstLetter, backend, cartName, } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import validator from 'validator';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -143,10 +141,19 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
   return (
     <>
       <header className={`${styles.header} ${routeStyle(routerPath, styles)}`}>
+        {/* <Image
+              className={styles.background}
+              src={"https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt"}
+              alt=""
+              width={1440}
+              height={1676}
+          /> */}
         <div className={styles.logo} onClick={() => router.push('/')}>
-          <img
+          <Image
             src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
             alt=""
+            width={86}
+            height={31}
           />
         </div>
         
@@ -198,9 +205,11 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
           <MenuIcon />
         </button>
         <div className={styles.logo} onClick={() => router.push('/')}>
-          <img
+          <Image
             src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
             alt=""
+            width={86}
+            height={31}
           />
         </div>
         <div className={styles.search_cart}>
@@ -247,9 +256,12 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
               setMenu(() => false)
               router.push('/')
             }}>
-              <img
+              <Image
+                className={styles.img}
                 src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
                 alt=""
+                width={86}
+                height={31}
               />
             </div>
           </div>
@@ -277,12 +289,14 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
           </button>
       </div>
       <div className={`${styles.contactModal} ${!contactModal ? styles.inActiveContactModal : ""}`}>
-        <ToastContainer />
         <div className={styles.container}>
           <div className={styles.image}>
-            <img
-              src="https://drive.google.com/uc?export=download&id=1tOFnt216d95o48IA5mdLQe1lhyq6Sbrt"
+            <Image
+              className={styles.img}
+              src="https://drive.google.com/uc?export=download&id=1m-bSqxTBl6C_XoPtRb6RfijDqXY-nKev"
               alt=""
+              width={209}
+              height={538}
             />
           </div>
           <div className={styles.form}>

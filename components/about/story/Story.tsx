@@ -3,6 +3,7 @@
 
 ///Libraries -->
 import styles from "./story.module.scss"
+import Image from "next/image";
 
 ///Commencing the code 
   
@@ -14,6 +15,13 @@ const Story = () => {
 
     return (
         <main className={`${styles.main}`}>
+            <Image 
+                className={styles.background}
+                src={"https://drive.google.com/uc?export=download&id=1U24xYbeAj3jbmEVaEyXVJ82bHVQ7TIMi"}
+                alt=""
+                width={1440}
+                height={416}
+            />
             <div className={styles.brief}>
             <h2><strong>Our Story</strong></h2>
             <span>

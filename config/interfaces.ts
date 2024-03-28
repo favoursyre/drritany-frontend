@@ -1,26 +1,44 @@
 ///This would contain all interfaces that will be used
 
 ///Libraries -->
+import { Model } from 'mongoose';
 
 ///Commencing the code
 ///IFAQ
 export interface IFAQState {
-    _id: string,
-    question: string,
-    answer: string,
-    createdAt: string,
-    updatedAt: string,
-    __v: number
+    _id?: string,
+    question?: string,
+    answer?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    __v?: number
+}
+
+///This declares the interface for image
+export interface IImage {
+  name?: string,
+  src?: string,
+  width?: number,
+  height?: number
 }
 
 ///IQuote
 export interface IQuoteState {
-    _id: string,
-    quote: string,
-    createdAt: string,
-    updatedAt: string,
-    __v: number
+    _id?: string,
+    quote?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    __v?: number
 }
+
+/**
+ * @notice The interface for Order mongoose schema static
+ */
+export interface IOrderModel extends Model<IOrder> {
+  processOrder(customerSpec: ICustomerSpec, productSpec: ICart): IOrder,
+  getOrders(): Array<IOrder>,
+  getOrderById(id: string): IOrder
+}  
 
 ///Declaring the interface for specification 
 export interface ISpecification {
@@ -35,6 +53,23 @@ export interface ISpecification {
     productOrigin?: String,
     weight?: number
 }
+
+///Declaring the interface for inquiry mongoose schema static
+export interface IInquiryModel extends Model<IInquiry> {
+  createInquiry(inquiry: IInquiry): Array<IInquiry>,
+  getAllInquiries(): Array<IInquiry>,
+  getInquiryById(id: string): Array<IInquiry>
+  deleteInquiry(id: string): IInquiry//
+}
+
+/**
+ * @notice The interface for newsletter subscribers mongoose schema static
+ */
+export interface INewsModel extends Model<INews> {
+  createSubscriber(subscriber: INews): INews,
+  getAllSubscriber(): Array<INews>,
+  deleteSubscriber(id: string): INews
+}  
 
 /**
  * @notice The interface for product mongoose schema api
@@ -94,7 +129,7 @@ export interface ICountry {
  export interface ITestimony {
     _id: string,
     name?: string,
-    image?: string,
+    image?: IImage,
     profession?: string,
     testimony?: string
     createdAt: string,
@@ -163,5 +198,30 @@ export interface IOrder {
   updatedAt?: string,
   __v?: number
 }
+
+/**
+ * @notice The interface for product mongoose schema static
+ */
+export interface IProductModel extends Model<IProduct> {
+  createProduct(
+      category: String,
+      subCategory: String,
+      name: String,
+      images: Array<String>,
+      videos: Array<String>,
+      price: number,
+      orders: number,
+      description: String,
+      specification: ISpecification
+    ): Object,
+  updateProduct(id: String, body: IProduct): Object,
+  deleteProduct(id: String): Object,
+  getProductByLatest(): Array<Object>,
+  getProductById(id: String): Object,
+  getProductByCategory(category: String): Array<Object>,
+  getProductByPrice(_order: any): Array<Object>,
+  getProductByOrder(): Array<Object>,
+  getProductBySearch(query: string): Array<Object>
+} 
 
 

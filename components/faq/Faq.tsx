@@ -7,14 +7,15 @@ import Link from "next/link";
 import { IFAQState } from "@/config/interfaces";
 import { useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import { faqs } from "@/config/database";
 
 ///Commencing the code 
 /**
  * @title FAQ Component
  * @returns The FAQ component
  */
-const FAQ = ({ faq_ }: { faq_: Array<IFAQState> }) => {
-    const [faqs, setFaqs] = useState<Array<IFAQState>>(faq_)
+const FAQ = () => {
+    //const [faqs, setFaqs] = useState<Array<IFAQState>>(faq_)
     const [activeHeading, setActiveHeading] = useState(0);
 
     ///This function triggers when someone opens an accordian

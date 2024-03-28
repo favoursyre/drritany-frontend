@@ -15,6 +15,13 @@ const Hero = () => {
       
     return (
         <main className={styles.main}>
+            {/* <Image
+                className={styles.background}
+                src="https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt"
+                alt=""
+                width={1440}
+                height={1676}
+            /> */}
             <div className={styles.left_section}>
                 <h3>Get <span>33%</span> off</h3>
                 <br />
@@ -25,10 +32,12 @@ const Hero = () => {
                 </p>
             </div>
             <div className={styles.right_section}>
-                <img
+                <Image
                     className={styles.img}
-                    src="https://drive.google.com/uc?export=download&id=1pLXWoXGEslZKm9yoq8KJnTboGFDD3tkX"
+                    src="https://drive.google.com/uc?export=download&id=1Mb0YoVskFKeCTbLxiRm7_E04jWHqFesC"
                     alt=""
+                    width={599}
+                    height={590}
                 />
             </div>
         </main>

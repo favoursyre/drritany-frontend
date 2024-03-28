@@ -46,7 +46,7 @@ const SimilarProduct = ({ product_ }: { product_: Array<IProduct> }) => {
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`}>
             <div  className={styles.heading}>
-                <span className={styles.subheading}>{clientInfo ? clientInfo.groupTest === "A" ? "Similar Products" : "People also ordered" : "Similar Products"}</span>
+                <span className={styles.subheading}>Customers also ordered</span>
                 <button onClick={() => router.push('/#products')}><span>See more {'>'}</span></button>
             </div>
             <br />

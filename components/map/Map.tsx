@@ -16,9 +16,12 @@ const Map = () => {
     return (
         <main className={styles.main}>
             <div className={styles.map_section}>
-                <img
-                    src="https://drive.google.com/uc?export=download&id=1t96yzWmkApyieoIjB0rvmBTt5X-Jkpc0"
+                <Image
+                    className={styles.img}
+                    src={"https://drive.google.com/uc?export=download&id=1IxsKDhyI3gvU2p9DE-sAPmbXS_GVT1e-"}
                     alt=""
+                    width={722}
+                    height={310}
                 />
             </div>
         </main>

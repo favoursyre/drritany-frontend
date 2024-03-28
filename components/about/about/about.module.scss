@@ -1,7 +1,7 @@
 /* This contains the scss for the about component page */
 
 //Libraries -->
-@import "../../../../styles/base.module";
+@import "@/styles/base.module";
 
 //Commencing the code -->
 .main {
@@ -54,6 +54,13 @@
         
         @include phoneMini {
             height: 50%;
+        }
+
+        .img {
+            object-fit: cover;
+            object-position: center 30%;
+            position: relative;
+            @include size(100%, 100%);
         }
     }
 

@@ -1,7 +1,7 @@
 /** This contains the scss for the map component */
 
 ///Libraries -->
-@import "../../../styles/base.module";
+@import "@/styles/base.module";
 
 ///Commencing the code
 .main {
@@ -38,11 +38,12 @@
         left: -5%;
        }
 
-       img {
-        transition: opacity 0.8s ease-in-out;
-        object-fit: contain;
-        position: relative;
-        @include size(100%, 100%);
+       .img {
+            //border: 1px solid red;
+            transition: opacity 0.8s ease-in-out;
+            object-fit: contain;
+            position: relative;
+            @include size(80%, 80%);
        }
     }
 }

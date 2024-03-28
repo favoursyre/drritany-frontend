@@ -3,6 +3,7 @@
 
 ///Libraries -->
 import styles from "./mission.module.scss"
+import Image from "next/image";
 
 ///Commencing the code 
   
@@ -15,10 +16,13 @@ const Mission = () => {
     return (
         <main className={styles.main}>
             <div className={styles.image}>
-                {/* <img 
-                    src="./images/mission.png"
+                <Image
+                    className={styles.background} 
+                    src={"https://drive.google.com/uc?export=download&id=1x2qiEubZJOmhSBVpReihZQ8duwEnm9IF"}
                     alt=""
-                /> */}
+                    width={928}
+                    height={416}
+                />
             </div>
             <div className={styles.brief}>
                 <h2><strong>Our Mission</strong></h2>

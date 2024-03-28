@@ -1,16 +1,12 @@
 /* This contains the scss for the about component page */
 
 //Libraries -->
-@import "../../../../styles/base.module";
+@import "@/styles/base.module";
 
 //Commencing the code -->
 .main {
     @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%, $bg-color: rgba(0, 0, 0, 0.9));
     @include position($left: 0%, $top: 98%);
-    background-image: url("https://drive.google.com/uc?export=download&id=1U24xYbeAj3jbmEVaEyXVJ82bHVQ7TIMi");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     @include size($height:60%);
     //border: 1px solid red;
     font-family: "Roboto";
@@ -24,7 +20,15 @@
     @include phonePro {
         //border: 0.5px solid red;
         top: 65%;  
-    } 
+    }
+    
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+    }
 
     .brief {
         @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%, $bg-color: rgba(0, 0, 0, 0.5));

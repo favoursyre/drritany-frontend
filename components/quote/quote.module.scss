@@ -1,7 +1,7 @@
 /** This contains the scss for the quote component */
 
 ///Libraries -->
-@import "../../../styles/base.module";
+@import "@/styles/base.module";
 
 ///Commencing the code
 @keyframes my-animation {
@@ -53,10 +53,10 @@
         @include size(5%, 25%);
         outline: none;
 
-        .img {
+        .icon {
             position: relative;
-            object-fit: cover;
-            @include size(100%, 100%);
+            object-fit: contain;
+            font-size: 1.5rem;
         }
 
         @include phonePro {
@@ -102,10 +102,11 @@
             top: 10%;
             //@include position($left: 0%, $top: 15%);
 
-            .img {
+            .icon {
                 position: relative;
                 object-fit: cover;
                 @include size(100%, 100%);
+                transform: scaleX(-1);
             }
 
             @include phonePro {
@@ -157,7 +158,7 @@
             @include size(5%, 15%);
             top: 10%;
 
-            .img {
+            .icon {
                 position: relative;
                 object-fit: cover;
                 @include size(100%, 100%);

@@ -5,6 +5,8 @@ import styles from "./layout.module.scss"
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
 import { backend } from '@/config/utils';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ///Commencing the code
 let status: boolean = false
@@ -105,6 +107,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={styles.html}>
       <body suppressHydrationWarning={true} className={styles.body}>
+        <ToastContainer autoClose={5000} limit={5} newestOnTop={true} />
         <Header />
         <main className='container'>{children}</main>
         <Footer />

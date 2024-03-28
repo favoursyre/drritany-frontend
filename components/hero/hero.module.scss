@@ -1,15 +1,16 @@
 /** This contains the scss for the hero component */
 
 ///Libraries -->
-@import "../../../styles/base.module";
+@import "@/styles/base.module";
 
 ///Commencing the code
 .main {
     @include flexBar($align: center, $justify: center, $gap: 2%);
     @include size($height: 90%);
-    background-image: linear-gradient(to bottom, transparent, transparent, transparent, rgba(255, 255, 255, 0.986)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
+    background-image: linear-gradient(to bottom, transparent, transparent, transparent, rgba(255, 255, 255, 0.986));
     @include position($left: 0%, $top: 8%);
     //border: 2px solid red;
+    z-index: -5;
 
     @include tabletPro {
         //
@@ -28,6 +29,14 @@
         flex-direction: column;
         //border: 2px solid yellow;
         @include size($height: 90%);
+    }
+
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        background-image: linear-gradient(to right, transparent, transparent, rgba(255, 255, 255, 1));
     }
 
     .left_section {
@@ -111,10 +120,10 @@
 
         .img {
             position: relative;
-            //border: 2px solid red;
             object-fit: contain;
+            object-position: center 30%;
+            position: relative;
             @include size(100%, 100%);
-
         }
 
         @include phonePro {

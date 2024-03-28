@@ -1,7 +1,7 @@
 /* This contains the scss for the cart component */
 
 //Libraries -->
-@import "../../../styles/base.module";
+@import "@/styles/base.module";
 
 //Commencing the code -->
 .main {
@@ -64,7 +64,7 @@
 
         button {
             border-radius: 5px;
-            @include flexBar($position: relative, $justify: center, $gap: 10%, $flex_d: row, $wrap: none, $align: center, $flex: none, $bg-color: $primary-color);
+            @include flexBar($position: relative, $justify: center, $gap: 5%, $flex_d: row, $wrap: none, $align: center, $flex: none, $bg-color: $primary-color);
             @include size(30%, 15%);
             border: 1px solid $primary-color;
             transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -76,6 +76,7 @@
 
             @include phonePro {
                 @include size(80%, 15%);
+                gap: 5%;
             } 
 
             @include phoneMini {
@@ -88,6 +89,10 @@
 
             span {
                 font-weight: 590;
+                color: $tertiary-color;
+            }
+
+            .icon {
                 color: $tertiary-color;
             }
         }

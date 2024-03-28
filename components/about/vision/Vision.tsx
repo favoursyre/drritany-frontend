@@ -3,6 +3,7 @@
 
 ///Libraries -->
 import styles from "./vision.module.scss"
+import Image from "next/image";
 
 ///Commencing the code 
   
@@ -14,7 +15,15 @@ const Vision = () => {
 
     return (
         <main className={styles.main}>
-        <div className={styles.mobile_image}></div>
+            <div className={styles.mobile_image}>
+                <Image 
+                    className={styles.img}
+                    src={"https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ"}
+                    alt=""
+                    width={653}
+                    height={416}
+                />
+            </div>
             <div className={styles.brief}>
             
                 <h2><strong>Our Vision</strong></h2>
@@ -23,10 +32,13 @@ const Vision = () => {
                 </span>
             </div>
             <div className={styles.pc_image}>
-                {/* <img 
-                    src="./images/mission.png"
+                <Image 
+                    className={styles.img}
+                    src={"https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ"}
                     alt=""
-                /> */}
+                    width={653}
+                    height={416}
+                />
             </div>
         </main>
     );

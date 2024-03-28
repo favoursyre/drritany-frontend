@@ -9,8 +9,8 @@ import { IContact, INews } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent } from "react";
 import validator from "validator";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Image from 'next/image';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
 ///Commencing the code 
   
@@ -78,20 +78,28 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
     return (
         <>
         <footer className={`${styles.footer} ${routeStyle(routerPath, styles)}`} id="contacts">
-           <ToastContainer />
+            <Image 
+                className={styles.background}
+                src={"https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO"}
+                alt=""
+                width={1440}
+                height={1462}
+            />
            <div className={styles.upper_footer}>
                 <div className={styles.contact_section}>
                     <div className={styles.logo}>
-                        <img
+                        <Image
                             src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
                             alt=""
+                            width={86}
+                            height={31}
                         />
                     </div>
                     <span className={styles.brief}>
                         We are committed to providing high-quality, effective products that support your health and well-being.
                     </span>
                     <div className={styles.socials}>
-                        <div className={styles.whatsapp_social}>
+                        {/* <div className={styles.whatsapp_social}>
                             <button>
                                 <img
                                     src="https://drive.google.com/uc?export=download&id=19bUJMJNtW8KywhjRaVRQZVxFtJFPjVQ8"
@@ -102,12 +110,14 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                                 <span className={styles.text1}>Have a question?</span>
                                 <span className={styles.text2}>+234-9090982848</span>
                             </div>
-                        </div>
+                        </div> */}
                         <div className={styles.email_social}>
                             <button>
-                                <img
+                                <Image
                                     src="https://drive.google.com/uc?export=download&id=1xBD5VMMs720V9OkNwxYaStgXqez975Rj"
                                     alt=""
+                                    width={48}
+                                    height={49}
                                 />
                             </button>
                             <div className={styles.texts}>
@@ -125,11 +135,7 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                         Join our community today and take the first step towards a healthier, happier you!</span>
                     </div>
                     <form className={styles.news_form} onSubmit={(e) => subNewsLetter(e)}>
-                        <img 
-                            className={styles.mailIcon}
-                            src="https://drive.google.com/uc?export=download&id=1yadiQBni0UpA4tBxLeKYxDv4rtiIiWxR"
-                            alt=""
-                        />
+                        <MailOutlineIcon className={styles.mailIcon}/>
                         <input 
                             type="email" 
                             placeholder="example@mail.com" 
@@ -154,6 +160,13 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
            </div>
         </footer>
         <footer className={`${styles.mobile_footer} ${routeStyle(routerPath, styles)}`} id="contacts">
+            <Image 
+                className={styles.background}
+                src={"https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO"}
+                alt=""
+                width={1440}
+                height={1462}
+            />
             <div className={styles.newsletter_section}>
                 <h3><strong>Newsletter</strong></h3>
                 <span className={styles.text2}>Be the first to know about discounts, new products and special offers. 
@@ -165,17 +178,14 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                         onChange={(e) => setEmail(() => e.target.value)}
                         value={email}
                     />
-                    <img
-                        src="https://drive.google.com/uc?export=download&id=1yadiQBni0UpA4tBxLeKYxDv4rtiIiWxR"
-                        alt=""
-                    />
+                    <MailOutlineIcon className={styles.mailIcon}/>
                     <button>
                         Submit
                     </button>
                 </form>
             </div>
             <div className={styles.contact_section}>
-                <div className={styles.whatsapp_social}>
+                {/* <div className={styles.whatsapp_social}>
                     <button>
                         <img
                             src="https://drive.google.com/uc?export=download&id=19bUJMJNtW8KywhjRaVRQZVxFtJFPjVQ8"
@@ -186,12 +196,14 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                         <span className={styles.text1}>Have a question?</span>
                         <span className={styles.text2}>+234-9090982848</span>
                     </div>
-                </div>
+                </div> */}
                 <div className={styles.email_social}>
                     <button>
-                        <img
+                        <Image
                             src="https://drive.google.com/uc?export=download&id=1xBD5VMMs720V9OkNwxYaStgXqez975Rj"
                             alt=""
+                            width={48}
+                            height={49}
                         />
                     </button>
                     <div className={styles.texts}>

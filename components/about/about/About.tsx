@@ -16,10 +16,12 @@ const About = () => {
     return (
         <main className={`${styles.main}`}>
             <div className={styles.image}>
-                <img 
+                <Image 
                     className={styles.img}
                     src="https://drive.google.com/uc?export=download&id=1F0YJtpb6r1Fsh31sOEw1JSLaRC23KHkF"
                     alt=""
+                    width={674}
+                    height={505}
                 />
             </div>
             <h2><strong>About Us</strong></h2>
