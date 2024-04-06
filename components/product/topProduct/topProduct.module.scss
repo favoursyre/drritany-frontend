@@ -131,7 +131,7 @@
                 height: 65%;
                 @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: column);
 
-                img {
+                .img {
                     position: relative;
                     object-fit: contain;
                     @include size (100%, 100%);

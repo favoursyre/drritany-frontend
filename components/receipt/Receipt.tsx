@@ -2,7 +2,7 @@
 ///Cart Receipt component
 
 ///Libraries -->
-import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
@@ -54,9 +54,12 @@ const CartReceipt = ({ cart_ }: { cart_: IOrder }) => {
                 {cart && cart.productSpec ? cart.productSpec.cart.map((c, id) => (
                     <div className={styles.cartItem} key={id}>
                         <div className={styles.cartImage}>
-                            <img 
-                                src={c.image}
+                            <Image
+                                className={styles.img}
+                                src={c.image.src}
                                 alt=''
+                                width={c.image.width}
+                                height={c.image.height}
                             />
                         </div>
                         <div className={styles.cartName}>

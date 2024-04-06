@@ -5,10 +5,12 @@
 import styles from "./search.module.scss"
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { getItem, decodedString, getCurrencySymbol, getExchangeRate } from "@/config/utils";
+import { decodedString, slashedPrice, getExchangeRate, nairaSymbol, nairaRate, discount } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Image from "next/image";
+import { getItem } from "@/config/clientUtils";
 
 ///Commencing the code 
 
@@ -73,9 +75,12 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
                         {foundProducts.map((product, _id) => (
                             <div className={styles.product_carousel} key={_id} onClick={event => handleClick(event, product._id)}>
                                 <div className={styles.carousel_image}>
-                                    <img 
-                                        src={product.images[0]}
+                                    <Image 
+                                        className={styles.img}
+                                        src={product.images[0].src}
                                         alt=""
+                                        width={product.images[0].width}
+                                        height={product.images[0].height}
                                     />
                                 </div>
                                 <div className={styles.carousel_name}>
@@ -84,13 +89,13 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
                                 <div className={styles.carousel_price}>
                                     <div className={styles.price_1}>
                                         <strong>
-                                            <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                                            <span>{product.price ? (Math.round(product.price * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                            <span>{product.price ? (Math.round(product.price * nairaRate)).toLocaleString("en-US") : ""}</span>
                                         </strong>
                                     </div>
                                     <div className={styles.price_2}>
-                                        <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                                        <span>{product.slashedPrice ? (Math.round(product.slashedPrice * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                                        <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                        <span>{product.price ? (Math.round(slashedPrice(product.price * nairaRate, discount))).toLocaleString("en-US") : ""}</span>
                                     </div>
                                 </div>
                             </div>
@@ -110,9 +115,12 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
                 <>
                     <div className={styles.empty_state}>
                         <div className={styles.image}>
-                            <img 
+                            <Image
+                                className={styles.img} 
                                 src="https://drive.google.com/uc?export=download&id=1u3nIrX-Mg4Zmep4HphaopUL_C2ixuP05"
                                 alt=""
+                                width={103}
+                                height={103}
                             />
                         </div>
                         <span className={styles.brief}>There are no results for <strong>&apos;{keyword}&apos;</strong></span>

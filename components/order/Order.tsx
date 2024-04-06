@@ -5,12 +5,16 @@
 import styles from "./order.module.scss"
 import React, { useState, useEffect } from "react"
 import { ToastContainer } from 'react-toastify';
-import { notify } from '@/config/clientUtils';
-import { countryList, backend, setItem, getItem, getItemByKey, cartName, orderName, capitalizeFirstLetter } from "@/config/utils"
+import { setItem, getItem, notify } from '@/config/clientUtils';
+import { domainName, getItemByKey, cartName, orderName, capitalizeFirstLetter } from "@/config/utils"
 import { ICart, ICountry, IClientInfo, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { countryList } from "@/config/database";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import Loading from "../loadingCircle/Circle";
 
 ///Commencing the code 
   
@@ -84,9 +88,9 @@ const Order = () => {
                     const productSpec: ICart = cart
                     const order = {customerSpec, productSpec, clientInfo}
                     console.log("Order: ", order)
-                    const res = await fetch(`${backend}/user/dashboard/order`, {
+                    const res = await fetch(`${domainName}/api/order`, {
                         method: 'POST',
-                        body: JSON.stringify(order),
+                        body: JSON.stringify({ customerSpec, productSpec }),
                         headers: {
                         'Content-Type': 'application/json',
                         },
@@ -124,6 +128,9 @@ const Order = () => {
                 console.log("error: ", error)
                 notify("error", `${error}`)
             }
+
+            setModalState(() => false)
+            setIsLoading(() => false)
         } else {
             notify('error', "Cart is empty")
             return
@@ -177,7 +184,7 @@ const Order = () => {
             <main className={styles.main}>
                 <ToastContainer />
                 <h3 className={styles.heading}>Delivery Form</h3>
-                <span className={styles.brief}><em><strong>NOTE:</strong><strong> To ensure smooth and efficient processing of orders, we kindly request that you only place an order when you are fully prepared to receive the delivery and have the necessary funds available. Thank you for your cooperation.</strong>            </em></span>
+                <span className={styles.brief}><em><strong>Payment on Delivery;</strong><strong> We spend a lot of resources in getting your products delivered to you, we kindly request that you only place an order when you are fully physically and financially prepared to receive your delivery. Thank you for your cooperation.</strong></em></span>
                 <form className={styles.form} onSubmit={(e) => processOrder(e)}>
                     <label>Fullname</label>
                     <br />
@@ -191,14 +198,34 @@ const Order = () => {
                     <label>Phone Number</label> 
                     <br /> 
                     <div className={styles.number_form}>
-                        <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
-                            <img 
-                                src={countryCode1.flag}
-                                alt=""
-                            />
-                            <span>{countryCode1.dial_code}</span>
-                            <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
-                        </button>
+                        <div className={styles.dial_code_container}>
+                            <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
+                                <Image 
+                                    className={styles.img}
+                                    src={countryCode1.flag.src}
+                                    alt=""
+                                    width={countryCode1.flag.width}
+                                    height={countryCode1.flag.height}
+                                />
+                                <span>{countryCode1.dial_code}</span>
+                                <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
+                            </button>
+                            <div className={`${styles.dial_code_option}`} style={{ display: dropList1 ? "flex" : "none"}}>
+                                {countryList.map((country, cid) => (
+                                    <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>
+                                        <Image
+                                            className={styles.img} 
+                                            src={country.flag.src}
+                                            alt=""
+                                            width={country.flag.width}
+                                            height={country.flag.height}
+                                        />
+                                        {country.dial_code}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
                         <div className={styles.number_input}>
                             <input 
                                 placeholder="123456789"
@@ -207,30 +234,40 @@ const Order = () => {
                                 value={phoneNumber1}
                             />
                         </div>
-                        <div className={`${styles.dial_code_option} ${!dropList1 ? styles.inactive : ""}`}>
-                            {countryList.map((country, cid) => (
-                                <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>
-                                    <img 
-                                        src={country.flag}
-                                        alt=""
-                                    />
-                                    {country.dial_code}
-                                </button>
-                            ))}
-                        </div>
+
                     </div>
                     
                     <label>Other number (optional)</label>
                     <br />
                     <div className={styles.other_number_form}>
-                        <button className={styles.dial_code} onClick={(e) => showDropDown(e, "2")}>
-                            <img 
-                                src={countryCode2.flag}
-                                alt=""
-                            />
-                            <span>{countryCode2.dial_code}</span>
-                            <span className={`${styles.arrow} ${dropList2 ? styles.active_arrow : ""}`}>{">"}</span>
-                        </button>
+                        <div className={styles.dial_code_container}>
+                            <button className={styles.dial_code} onClick={(e) => showDropDown(e, "2")}>
+                                <Image
+                                    className={styles.img} 
+                                    src={countryCode2.flag.src}
+                                    alt=""
+                                    width={countryCode2.flag.width}
+                                    height={countryCode2.flag.height}
+                                />
+                                <span>{countryCode2.dial_code}</span>
+                                <span className={`${styles.arrow} ${dropList2 ? styles.active_arrow : ""}`}>{">"}</span>
+                            </button>
+                            <div className={`${styles.dial_code_option}`} style={{ display: dropList2 ? "flex" : "none"}}>
+                                {countryList.map((country, cid) => (
+                                    <button key={cid} onClick={(e) => chooseCode(e, "2", country)}>
+                                        <Image
+                                            className={styles.img} 
+                                            src={country.flag.src}
+                                            alt=""
+                                            width={country.flag.width}
+                                            height={country.flag.height}
+                                        />
+                                        {country.dial_code}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
                         <div className={styles.number_input}>
                             <input 
                                 placeholder="123456789"
@@ -238,17 +275,6 @@ const Order = () => {
                                 onChange={(e) => setPhoneNumber2(e.target.value)}
                                 value={phoneNumber2}
                             />
-                        </div>
-                        <div className={`${styles.dial_code_option} ${!dropList2 ? styles.inactive : ""}`}>
-                            {countryList.map((country, cid) => (
-                                <button key={cid} onClick={(e) => chooseCode(e, "2", country)}>
-                                    <img 
-                                        src={country.flag}
-                                        alt=""
-                                    />
-                                    {country.dial_code}
-                                </button>
-                            ))}
                         </div>
                     </div>
                     <label>Email Address</label>
@@ -297,10 +323,7 @@ const Order = () => {
                     <br />
                     
                     <button className={styles.order_button}>
-                        <img 
-                            src="https://drive.google.com/uc?export=download&id=11z0qeMPVU6nfmjllwju6h91fM5enzjCC"
-                            alt=""
-                        />
+                        <LocalShippingIcon className={styles.icon} />
                         <span>Order Now</span>
                     </button>
                 </form>
@@ -310,7 +333,7 @@ const Order = () => {
                     {isLoading ? (
                         <div className={styles.loadingModal}>
                             <span>Processing order...</span>
-                            <div className={styles.circle}></div>
+                            <Loading width="30px" height="30px" />
                         </div>
                     ) : (
                         <div className={styles.completeModal}>
@@ -318,17 +341,20 @@ const Order = () => {
                             <button 
                                 onClick={() => {
                                     setModalState(() => false)
-                                    router.push("/")
                                     window.location.reload()
+                                    router.push("/")
                                 }}
                             >
                                 <CloseIcon />
                             </button>
                             </div>
                             <div className={styles.modal_image}>
-                                <img 
+                                <Image
+                                    className={styles.img} 
                                     src="https://drive.google.com/uc?export=download&id=16aHqsYZeXgATabkyTI_HN6jdglBYwvjz"
                                     alt=""
+                                    width={221}
+                                    height={216}
                                 />
                             </div>
                             <span className={styles.modal_body}>Thanks for Ordering</span>

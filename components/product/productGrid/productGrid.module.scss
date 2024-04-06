@@ -237,7 +237,7 @@
                     @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%);
                     //left: 13.5%;
 
-                    img {
+                    .img {
                         position: relative;
                         object-fit: contain;
                         @include size(100%, 100%);
@@ -292,6 +292,10 @@
                         //border: 2px solid red;
                         @include text-layout($size: 13px, $l_height: 20px);
                         @include size(100%, 50%);
+
+                        @include phonePro {
+                            font-size: 12px;
+                        }
 
                         @include phoneMini {
                             height: 40%;

@@ -5,10 +5,10 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./header.module.scss"
-import { ICart, IInquiry, IClientInfo } from '@/config/interfaces';
+import { ICart, IInquiry, IClientInfo, IError } from '@/config/interfaces';
 import { notify } from '@/config/clientUtils';
 import { setItem, getItem } from "@/config/clientUtils"
-import { getModalState, routeStyle, capitalizeFirstLetter, backend, cartName, } from '@/config/utils'
+import { routeStyle, capitalizeFirstLetter, domainName, cartName, } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
 import validator from 'validator';
 import SearchIcon from '@mui/icons-material/Search';
@@ -16,6 +16,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
+import Loading from "../loadingCircle/Circle";
+//import { ErrorConstruc}
 
 ///Commencing the code 
 
@@ -23,13 +25,13 @@ import CloseIcon from '@mui/icons-material/Close';
  * @title Header Component
  * @returns The Header component
  */
-const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
+const Header = () => {
   const [search, setSearch] = useState(false)
   const [menu, setMenu] = useState(false)
   const [query, setQuery] = useState(String)
-  //const [modalState, setModalState] = useState(getModalState())
+ const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
   const cart__ = getItem(cartName) 
-  //console.log("Cart: ", cart__)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [cart, setCart] = useState<ICart | null>(cart__)
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
@@ -43,12 +45,12 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
 
   //console.log("Path: ", window.location.hostname)
 
-  const item = getItem("clientInfo")
- if (item === null || item === "undefined") {
-    setItem("clientInfo", clientInfo)
-  } else {
-    null
-  }
+//   const item = getItem("clientInfo")
+//  if (item === null || item === "undefined") {
+//     setItem("clientInfo", clientInfo)
+//   } else {
+//     null
+//   }
 
   const urlRouter = async (query: string) => {
     router.push(`/products/search?query=${query}`)
@@ -58,6 +60,8 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault()
 
+    setSearchIsLoading(() => true)
+
     if (query) {
       console.log("searching: ", query)
       router.push(`/products/search?query=${query}`)
@@ -65,6 +69,8 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
       //window.open(window.location.href, "")
     } 
     setSearch(() => false)
+
+    // setSearchIsLoading(() => false)
   }
 
   ///This clears the search bar 
@@ -95,12 +101,14 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
         return
     }
 
+    setIsLoading(() => true)
+
     //Send the order to the backend
     try {
       //console.log('Clicked')
-      const inquiry: IInquiry = {firstName, lastName, emailAddress, message}
+      const inquiry: IInquiry = { firstName, lastName, emailAddress, message }
       console.log("Order: ", inquiry)
-      const res = await fetch(`${backend}/inquiry/add/`, {
+      const res = await fetch(`${domainName}/api/inquiry/`, {
           method: 'POST',
           body: JSON.stringify(inquiry),
           headers: {
@@ -108,21 +116,23 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
           },
       });
       
-    const data = await res.json();
-    console.log("Data: ", data);
+      const data = await res.json();
+      console.log("Data: ", data);
 
-    if (res.ok) {
-      notify("success", `Your message was sent successfully`)
-      setContactModal(() => false)
-      typeof window !== 'undefined' && window.location ? window.location.reload() : null
-    } else {
-      throw Error(`${data}`)
-    }
+      if (res.ok) {
+        notify("success", `Your message was sent successfully`)
+        setContactModal(() => false)
+        typeof window !== 'undefined' && window.location ? window.location.reload() : null
+      } else {
+        throw Error(`${data.message}`)
+      }
     
-    } catch (error) {
+    } catch (error: any) {
         console.log("error: ", error)
-        notify("error", `${error}`)
+        notify("error", `${error.message}`)
     }
+
+    setIsLoading(() => false)
   }
 
   useEffect(() => {
@@ -168,7 +178,11 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
           <div id={styles.search}>
             {search === false ? (
               <button onClick={() => setSearch(true)}>
-                <SearchIcon />
+                {searchIsLoading ? (
+                    <Loading width="10px" height="10px" />
+                  ) : (
+                    <SearchIcon />
+                  )}
               </button>
             ) : (
               <form className={`${styles.search_form}`} onSubmit={(e) => {
@@ -182,7 +196,11 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
                   value={query}
                 />
                 <button >
-                  <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
+                  {searchIsLoading ? (
+                    <Loading width="10px" height="10px" />
+                  ) : (
+                    <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
+                  )}
                 </button>
               </form>
             )}
@@ -215,7 +233,11 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
         <div className={styles.search_cart}>
           <div className={styles.search}>
               <button onClick={() => setSearch(true)}>
-                <SearchIcon />
+                {searchIsLoading ? (
+                  <Loading width="10px" height="10px" />
+                ) : (
+                  <SearchIcon />
+                )}
               </button>
           </div>
         <div className={styles.cart}>
@@ -346,7 +368,11 @@ const Header = ({ clientInfo }: { clientInfo: IClientInfo }) => {
                 ></textarea>
               </div>
               <button>
-                <span>SEND</span>
+                {isLoading ? (
+                  <Loading width="20px" height="20px" />
+                ) : (
+                  <span>SEND</span>
+                )}
               </button>
             </form>
           </div>

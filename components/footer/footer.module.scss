@@ -357,6 +357,10 @@
                     @include text-layout($size: 12px, $color: $tertiary-color, $l_height: 12px);
                     text-align: center;
                     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
 
                     &:hover {
                         transform: scale(1.05);
@@ -546,6 +550,10 @@
                 text-align: center;
                 transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
                 left: 78%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
 
                 @include phoneMini {
                     font-size: 10px;

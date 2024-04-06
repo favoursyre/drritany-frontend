@@ -17,7 +17,7 @@ export interface IFAQState {
 ///This declares the interface for image
 export interface IImage {
   name?: string,
-  src?: string,
+  src: string,
   width?: number,
   height?: number
 }
@@ -79,10 +79,11 @@ export interface INewsModel extends Model<INews> {
     category?: String,
     subCategory?: string,
     name?: string,
-    images: Array<string>,
+    images: Array<IImage>,
     videos?: Array<string>,
     price?: number,
     slashedPrice?: number,
+    discount?: number,
     orders?: number,
     description?: String,
     specification?: ISpecification
@@ -94,7 +95,7 @@ export interface INewsModel extends Model<INews> {
 ///Declaring the interface for cart term
 export interface ICartItem {
     readonly _id: string,
-    readonly image: string,
+    readonly image: IImage,
     readonly name?: string,
     readonly unitPrice: number,
     quantity: number
@@ -112,7 +113,7 @@ export interface ICountry {
     name: string;
     dial_code: string;
     code: string;
-    flag: string;
+    flag: IImage;
 }
 
 /**
@@ -127,14 +128,14 @@ export interface ICountry {
 
 ///Declaring the inteface for the testimonial
  export interface ITestimony {
-    _id: string,
+    _id?: string,
     name?: string,
-    image?: IImage,
+    image: IImage,
     profession?: string,
     testimony?: string
-    createdAt: string,
-    updatedAt: string,
-    __v: number
+    createdAt?: string,
+    updatedAt?: string,
+    __v?: number
   }
 
 /**
@@ -203,25 +204,58 @@ export interface IOrder {
  * @notice The interface for product mongoose schema static
  */
 export interface IProductModel extends Model<IProduct> {
-  createProduct(
-      category: String,
-      subCategory: String,
-      name: String,
-      images: Array<String>,
-      videos: Array<String>,
-      price: number,
-      orders: number,
-      description: String,
-      specification: ISpecification
-    ): Object,
-  updateProduct(id: String, body: IProduct): Object,
-  deleteProduct(id: String): Object,
-  getProductByLatest(): Array<Object>,
-  getProductById(id: String): Object,
-  getProductByCategory(category: String): Array<Object>,
-  getProductByPrice(_order: any): Array<Object>,
-  getProductByOrder(): Array<Object>,
-  getProductBySearch(query: string): Array<Object>
+  createProduct(product: IProduct): IProduct,
+  updateProduct(id: string, product: IProduct): IProduct,
+  deleteProduct(id: string): IProduct,
+  getProductByLatest(): Array<IProduct>,
+  getProductById(id: string): IProduct,
+  getProductByCategory(category: string): Array<IProduct>,
+  getProductByPrice(_order: any): Array<IProduct>,
+  getProductByOrder(): Array<IProduct>,
+  getProductBySearch(query: string): Array<IProduct>
 } 
 
+///This is the interface for error
+export interface IError {
+  message?: string,
+  cause?: string,
+  solution?: string
+}
 
+///This is the interface for params
+export interface IParams {
+  params: {
+    id?: string
+  }
+}
+
+///Declaring the interface for order sheet
+export interface IOrderSheet {
+  OrderId?: string,
+  CartId?: string,
+  FullName?: string,
+  EmailAddress?: string,
+  PhoneNo1?: string,
+  PhoneNo2?: string,
+  Country?: string,
+  State?: string,
+  DeliveryAddress?: string,
+  PostalCode?: string,
+  ProductName?: string,
+  Quantity?: string,
+  UnitPrice?: string,
+  TotalPrice?: string,
+  DateOrdered?: string,
+  TimeOrdered?: string,
+  TestGroup?: string,
+  LogStatus?: string,
+  DeliveryStatus?: string,
+  DateDelivered?: string
+}
+
+
+///Type for metadata arg props
+export type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}

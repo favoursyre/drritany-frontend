@@ -1,8 +1,8 @@
 ///This handles the schema for the details of the various products offered by the company
 
 ///Libraries -->
-import {Schema, model, Types,} from "mongoose";
-import { ISpecification, IProduct, IProductModel } from "@/config/interfaces";
+import {Schema, model, Types, models } from "mongoose";
+import { ISpecification, IProduct, IProductModel, IImage } from "@/config/interfaces";
 
 ///Commencing the app
 const discount: number = 33 
@@ -26,9 +26,26 @@ const productSchema = new Schema<IProduct, IProductModel>(
       trim: true,
     },
     images: [{
-      type: String,
-      required: true,
-      trim: true,
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      src: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      width: {
+        type: Number,
+        required: true,
+        //trim: true,
+      },
+      height: {
+        type: Number,
+        required: true,
+        //trim: true,
+      }
     }],
     videos: [{
         type: String,
@@ -40,6 +57,10 @@ const productSchema = new Schema<IProduct, IProductModel>(
       required: true,
     },
     slashedPrice: {
+      type: Number,
+      required: true,
+    },
+    discount: {
       type: Number,
       required: true,
     },
@@ -126,32 +147,12 @@ const productSchema = new Schema<IProduct, IProductModel>(
  * @param specification The detailed specifications of the product
  * @returns The created product including it's id
  */
-productSchema.statics.createProduct = async function (
-  category: string,
-  subCategory: string,
-  name: String,
-  images: Array<string>,
-  videos: Array<string>,
-  price: number,
-  orders: number,
-  description: String,
-  specification: ISpecification
-) {
-  let slashedPrice: number = (price * 100) / (100 - discount)
+productSchema.statics.createProduct = async function (product: IProduct) {
+  //let slashedPrice: number = (price * 100) / (100 - discount)
+  
   //Creating the database
-  const product = await this.create({
-    category,
-    subCategory,
-    name,
-    images,
-    videos,
-    price,
-    slashedPrice,
-    orders,
-    description,
-    specification
-  });
-  return product;
+  const product_ = await this.create({ ...product });
+  return product_;
 };
 
 /**
@@ -160,24 +161,21 @@ productSchema.statics.createProduct = async function (
  * @param res The response of the query by client request
  * @returns The updated data
  */
-productSchema.statics.updateProduct = async function (
-  id: string,
-  body: IProduct
-) {
+productSchema.statics.updateProduct = async function (id: string, product: IProduct) {
   
   //Checking if price is also updated
   let slashedPrice: number
-  if (body.hasOwnProperty("price")) {
-    let { price } = body
+  if (product.hasOwnProperty("price")) {
+    let { price } = product
     if (price) {
       slashedPrice = (price * 100) / (100 - discount)
-      body = { ...body, slashedPrice }
+      product = { ...product, slashedPrice }
     }
   }
   //This updates the value in the database
   const update = await this.findOneAndUpdate(
     { _id: id },
-    { ...body }
+    { ...product }
   );
   return update;
 };
@@ -271,4 +269,4 @@ productSchema.statics.getProductBySearch = async function (query: string) {
   return products
 }
 
-export const Product = model<IProduct, IProductModel>("Product", productSchema);
+export const Product: IProductModel = (models.Product || model<IProduct, IProductModel>("Product", productSchema)) as unknown as IProductModel;

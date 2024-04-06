@@ -4,13 +4,14 @@
 ///Libraries -->
 import { notify } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend } from '@/config/utils'
-import { IContact, INews } from "@/config/interfaces";
+import { routeStyle, domainName, GoogleSheetDB, orderSheetId } from '@/config/utils'
+import { IContact, INews, IOrderSheet } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent } from "react";
 import validator from "validator";
 import Image from 'next/image';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import Loading from '../loadingCircle/Circle';
 
 ///Commencing the code 
   
@@ -18,8 +19,8 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
  * @title Footer Component
  * @returns The Footer component
  */
-const Footer = ({ contact_ }: { contact_: IContact }) => {
-    const [contact, setContact] = useState(contact_)
+const Footer = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const routerPath = usePathname();
     const [email, setEmail] = useState<string>("")
     const router = useRouter()
@@ -48,12 +49,14 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
             notify("error", "Email Address is not valid")
             return
         }
+
+        setIsLoading(() => true)
         
         try {
             const subscriber = email
             const newsletter: INews = { subscriber }
             //console.log("Email: ", subscriber)
-            const res = await fetch(`${backend}/newsletter-subsriber/add/`, {
+            const res = await fetch(`${domainName}/api/news/`, {
                 method: 'POST',
                 body: JSON.stringify(newsletter),
                 headers: {
@@ -67,12 +70,15 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
             if (res.ok) {
                 notify("success", "Your subscription was successful")
             } else {
-                throw Error(`${data}`)
+                //console.log("error front: ", data)
+                throw new Error(`${data.message}`)
             }
-        } catch (error) {
-            console.log("error: ", error)
-            notify("error", `${error}`)
+        } catch (error: any) {
+            console.log("error front1: ", error)
+            notify("error", `${error.message}`)
         }
+
+        setIsLoading(() => false)
       }
 
     return (
@@ -143,7 +149,11 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                             value={email}
                         />
                         <button>
-                            Submit
+                            {isLoading ? (
+                                <Loading width='20px' height='20px' />
+                            ) : (
+                                <span>Submit</span>
+                            )}
                         </button>
                     </form>
                 </div>
@@ -180,7 +190,11 @@ const Footer = ({ contact_ }: { contact_: IContact }) => {
                     />
                     <MailOutlineIcon className={styles.mailIcon}/>
                     <button>
-                        Submit
+                        {isLoading ? (
+                            <Loading width='10px' height='10px' />
+                        ) : (
+                            <span>Submit</span>
+                        )}
                     </button>
                 </form>
             </div>

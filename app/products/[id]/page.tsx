@@ -4,46 +4,65 @@
 ///Libraries -->
 import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/topProduct/topProduct';
-import { domainName, shuffleArray } from '@/config/utils';
+import { shuffleArray, domainName } from '@/config/utils';
+import { Metadata } from 'next';
+import { IProduct, Props } from '@/config/interfaces';
 
-///Commencing the code
+///Commencing the code -->
 
 ///This fetches the product info page
 async function getProduct(id: string) {
   try {
-      const response = await fetch(
-          `${domainName}/product/info/${id}`,
-          {
-            next: {
-              revalidate: 60,
-            },
-          }
-        );
-      
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-        const product = await response.json();
-        return product;
+    const res = await fetch(`${domainName}/api/product/${id}`, {
+      method: "GET",
+      cache: "no-store",
+    })
+
+    if (res.ok) {
+      return res.json()
+    } else {
+      console.log("not refetching")
+      //getProduct(id)
+    }
+    
   } catch (error) {
       console.error(error);
   }
 }
 
+
+///Declaring the metadata
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const product: Array<IProduct> | undefined = await getProduct(params.id)
+  if (!product || product?.length === 0) {
+    return {
+      title: "Not found",
+      description: "Page not found"
+    }
+  } else {
+    return {
+      title: `${product[0].name}`,
+      description: `${product[0].description}`,
+      alternates: {
+        canonical: `/products/${params.id}`
+      }
+    }
+  }
+}
+
 async function getProducts() {
   try {
-      const response = await fetch(
-          `${domainName}/products`,
-          {
-            next: {
-              revalidate: 60,
-            },
-          }
-        );
-      
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-        const quotes = await response.json();
-        return quotes;
+    const res = await fetch(`${domainName}/api/product?action=order`, {
+      method: "GET",
+      cache: "no-store",
+    })
+
+    if (res.ok) {
+      return res.json()
+    } else {
+      getProducts()
+    }
+    
   } catch (error) {
       console.error(error);
   }

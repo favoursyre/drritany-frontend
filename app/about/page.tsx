@@ -6,9 +6,16 @@ import Story from "@/components/about/story/Story"
 import Mission from "@/components/about/mission/Mission"
 import Vision from "@/components/about/vision/Vision"
 import FAQ from "@/components/faq/Faq"
-import { backend } from "@/config/utils"
+import { Metadata } from "next"
 
 ///Commencing the code
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: `We are a team of health and wellness enthusiasts who are passionate about helping people achieve optimal health through natural and effective products.`,
+  alternates: {
+    canonical: `/about`
+  }
+}
 ///This function fetches all the faqs
 // async function getFaqs() {
 //   try {

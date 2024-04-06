@@ -9,7 +9,12 @@ import { IInquiry, IInquiryModel } from "@/config/interfaces";
 //This is the schema for the inquiry database
 const inquirySchema = new Schema<IInquiry, IInquiryModel>(
   {
-    fullName: {
+    firstName: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    lastName: {
       type: String,
       required: true,
       trim: true
@@ -18,11 +23,6 @@ const inquirySchema = new Schema<IInquiry, IInquiryModel>(
       type: String,
       required: true,
       trim: true
-    },
-    subject: {
-        type: String,
-        required: true,
-        trim: true
     },
     message: {
       type: String,
@@ -92,4 +92,4 @@ const delete_ = await this.findOneAndDelete({ _id: id });
 return delete_;
 }
 
-export const Inquiry: IInquiryModel = (models.Inquiry || model<IInquiry, IInquiryModel>("Inquiry", inquirySchema)) as IInquiryModel;
+export const Inquiry: IInquiryModel = (models.Inquiry || model<IInquiry, IInquiryModel>("Inquiry", inquirySchema)) as unknown as IInquiryModel;

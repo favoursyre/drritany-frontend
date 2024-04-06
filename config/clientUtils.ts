@@ -5,6 +5,7 @@
 import { toast } from 'react-toastify';
 
 ///Commencing the code
+//console.log("Domain: ", domainName)
 
 ///This function triggers a notification when called
 export const notify = (type: string, message: string): void => {

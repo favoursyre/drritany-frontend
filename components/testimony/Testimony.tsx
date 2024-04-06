@@ -4,7 +4,9 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent, useRef } from "react"
 import styles from "./testimony.module.scss"
-import { ITestimony } from "@/config/interfaces"
+import { testimonies } from "@/config/database";
+import { ITestimony } from "@/config/interfaces";
+import Image from "next/image";
 
 ///Commencing the code 
   
@@ -12,11 +14,13 @@ import { ITestimony } from "@/config/interfaces"
  * @title Testimony Component
  * @returns The Testimony component
  */
-const Testimony = ({ testimonial_ }: { testimonial_: Array<ITestimony> }) => {
+const Testimony = () => {
     const [activeTestifier, setActiveTestifier] = useState(0)
-    const [testimony, setTestimony] = useState(testimonial_)
+    const [testimony, setTestimony] = useState<Array<ITestimony>>(testimonies)
     const [testimonyText, setTestimonyText] = useState<string | undefined>(testimony ? testimony[activeTestifier].testimony : undefined)
     const containerRef = useRef<HTMLDivElement>(null);
+
+    //console.log("Test: ", testimony)
     
 
     ///This function triggers when someone opens an accordian
@@ -26,8 +30,8 @@ const Testimony = ({ testimonial_ }: { testimonial_: Array<ITestimony> }) => {
     }
     
 
-    setTestimonyText(testimony[index].testimony)
-    setActiveTestifier(index === activeTestifier ? null : index);
+    // setTestimonyText(testimony[index].testimony)
+    // setActiveTestifier(index === activeTestifier ? null : index);
   };
 
   ///This handles the changing of the testifiers and their testimony
@@ -84,9 +88,12 @@ const Testimony = ({ testimonial_ }: { testimonial_: Array<ITestimony> }) => {
                     {testimony ? testimony.map((t, _id) => (
                         <button key={_id} className={`${styles.testifier} ${activeTestifier === _id ? styles.activeTestifier : styles.inactiveTestifier}`} onClick={(e) => handleClick(e, _id)} >
                             <div className={styles.testifier_image}>
-                                <img 
-                                    src={t.image}
+                                <Image
+                                    className={styles.img} 
+                                    src={t.image?.src ? t.image.src : ""}
                                     alt=""
+                                    width={t.image?.width}
+                                    height={t.image?.height}
                                 />
                             </div>
                             <div className={styles.testifier_bio}>
@@ -103,9 +110,12 @@ const Testimony = ({ testimonial_ }: { testimonial_: Array<ITestimony> }) => {
                     </div>
                     <div className={styles.mobileInfo}>
                         <div className={styles.testifier_image}>
-                            <img 
-                                src={testimony ? testimony[activeTestifier].image : ""}
+                            <Image
+                                className={styles.img} 
+                                src={testimony[activeTestifier] && testimony[activeTestifier].image && testimony[activeTestifier].image?.src ? testimony[activeTestifier].image?.src : ""}
                                 alt=""
+                                width={testimony[activeTestifier].image?.width}
+                                height={testimony[activeTestifier].image?.height}
                             />
                         </div>
                         <span className={styles.testifier_name}><strong>{testimony ? testimony[activeTestifier].name : ""}</strong></span>

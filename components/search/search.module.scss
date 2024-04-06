@@ -63,7 +63,7 @@
                 @include size(30%, 30%);
                 //border: 1px solid red;
 
-                img {
+                .img {
                     position: relative;
                     object-fit: contain;
                     @include size(100%, 100%);
@@ -196,7 +196,7 @@
                     //border: 2px solid red;
                     height: 70%;
 
-                    img {
+                    .img {
                         position: relative;
                         object-fit: cover;
                         @include size(100%, 100%);

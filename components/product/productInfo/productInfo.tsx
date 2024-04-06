@@ -7,11 +7,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect, MouseEvent } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
-import { notify } from '@/config/clientUtils';
-import { setItem, getItem, decodedString, cartName, getCurrencySymbol, getExchangeRate } from '@/config/utils'
+import { setItem, getItem, notify } from '@/config/clientUtils';
+import { decodedString, cartName, getCurrencySymbol, getExchangeRate, nairaSymbol, nairaRate, slashedPrice, discount } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import Image from 'next/image';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 ///Commencing the code 
 /**
@@ -67,7 +70,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
     useEffect(() => {
         const currentDate = new Date();
-        const nextWeek = new Date(currentDate.getTime() + 8 * 24 * 60 * 60 * 1000);
+        const nextWeek = new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000);
         const options: Intl.DateTimeFormatOptions = { weekday: "long", year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = nextWeek.toLocaleDateString('en-US', options);
         //console.log("One week from now: ", formattedDate);
@@ -187,17 +190,23 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 <div className={styles.left_section} key={_id}>
                     <div className={styles.image_section}>
                     <div className={styles.profile_image}>
-                        <img
-                            src={product[0].images[imageIndex]}
+                        <Image
+                            className={styles.img}
+                            src={product[0].images[imageIndex].src}
                             alt=""
+                            width={product[0].images[imageIndex].width}
+                            height={product[0].images[imageIndex].height}
                         />
                     </div>
                     <div className={styles.image_slide}>
                         {p.images.map((image, imageId) => (
                             <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => setImageIndex(() => imageId)}>
-                                <img 
-                                    src={image}
+                                <Image 
+                                    className={styles.img}
+                                    src={image.src}
                                     alt=""
+                                    width={image.width}
+                                    height={image.height}
                                 />
                             </div>
                         ))}
@@ -234,26 +243,21 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 <div className={styles.product_price_orders}>
                     <div className={styles.product_price}>
                         <div className={styles.price}>
-                            <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                            <span>{p.price ? (Math.round(p.price * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                            <span>{p.price ? (Math.round(p.price * nairaRate)).toLocaleString("en-US") : ""}</span>
                         </div>
                         <div className={styles.slashed_price}>
-                            <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                            <span>{p.slashedPrice ? (Math.round(p.slashedPrice * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                            <span>{p.price ? (Math.round(slashedPrice(p.price * nairaRate, discount)).toLocaleString("en-US")) : ""}</span>
                         </div>
                     </div>
                     <div className={styles.product_orders}>
-                        <div>
-                            <img 
-                                src="https://drive.google.com/uc?export=download&id=1j7Lk8ITWSU5r1pH0gCdKA9xY7EYxJsVr"
-                                alt=""
-                            />
-                        </div>
+                        <LocalShippingIcon className={styles.icon} />
                         <span>{p.orders?.toLocaleString("en-US")} orders</span>
                     </div>
                     
                 </div>
-                <span className={styles.product_deliveryDate}><em>Delivered before {deliveryDate}</em></span>
+                <span className={styles.product_deliveryDate}><em>Free Delivery to be delivered before {deliveryDate}.</em></span>
                 <div className={styles.product_quantity}>
                     <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
                         <RemoveIcon style={{ fontSize: "1rem" }} />
@@ -267,20 +271,14 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 
                 <div className={styles.product_cart_order}>
                     <button className={styles.order_button} onClick={(e) => orderNow(e)}>
-                        <img 
-                            src="https://drive.google.com/uc?export=download&id=11z0qeMPVU6nfmjllwju6h91fM5enzjCC"
-                            alt=""
-                        />
+                        <LocalShippingIcon className={styles.icon} />
                         <span>Order Now</span>
                     </button>
                     <button className={styles.cart_button} onClick={e => {
                         addToCart(e, false)
                         window.location.reload()
                     }}>
-                        <img 
-                            src="https://drive.google.com/uc?export=download&id=1ICxVuZVSkjUDZ1CSHLp_JI7RB-0LbEAQ"
-                            alt=""
-                        />
+                        <AddShoppingCartIcon className={styles.icon} />
                         <span>Add to cart</span>
                     </button>
                 </div>

@@ -170,7 +170,7 @@
                         width: 20%;
                     }
 
-                    img {
+                    .img {
                         position: relative;
                         @include size(100%, 100%);
                         object-fit: cover;

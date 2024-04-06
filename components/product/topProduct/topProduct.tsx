@@ -6,7 +6,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./topProduct.module.scss"
 import { IProduct, IClientInfo } from '@/config/interfaces';
-import { routeStyle, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '@/config/utils'
+import Image from 'next/image';
+import { getItem } from '@/config/clientUtils';
+import { routeStyle, decodedString, getCurrencySymbol, getExchangeRate, nairaSymbol, nairaRate, discount, slashedPrice } from '@/config/utils'
 
 ///Commencing the code 
 /**
@@ -54,9 +56,12 @@ const SimilarProduct = ({ product_ }: { product_: Array<IProduct> }) => {
                 {similarProducts?.slice(0, lastIndex).map((product, _id) => (
                     <div className={styles.product_carousel} key={_id} onClick={e => handleClick(e, product._id)}>
                         <div className={styles.carousel_image}>
-                            <img 
-                                src={product.images[0]}
+                            <Image
+                                className={styles.img} 
+                                src={product.images[0].src}
                                 alt=""
+                                width={product.images[0].width}
+                                height={product.images[0].height}
                             />
                         </div>
                         <div className={styles.carousel_name}>
@@ -65,13 +70,13 @@ const SimilarProduct = ({ product_ }: { product_: Array<IProduct> }) => {
                         <div className={styles.carousel_price}>
                             <div className={styles.price_1}>
                               <strong>
-                                <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                                <span>{product.price ? (Math.round(product.price * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                                <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                <span>{product.price ? (Math.round(product.price * nairaRate)).toLocaleString("en-US") : ""}</span>
                               </strong>
                             </div>
                             <div className={styles.price_2}>
-                              <span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />
-                              <span>{product.slashedPrice ? (Math.round(product.slashedPrice * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                              <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                              <span>{product.price ? (Math.round(slashedPrice(product.price * nairaRate, discount)).toLocaleString("en-US")) : ""}</span>
                             </div>
                         </div>
                     </div>

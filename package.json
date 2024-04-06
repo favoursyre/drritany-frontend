@@ -20,8 +20,12 @@
     "autoprefixer": "10.4.14",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
+    "google-auth-library": "^9.7.0",
     "google-libphonenumber": "^3.2.32",
+    "google-spreadsheet": "^4.1.1",
+    "googleapis": "^134.0.0",
     "mongoose": "^8.2.4",
+    "net": "^1.0.2",
     "next": "^14.1.4",
     "nodemailer-express-handlebars": "^6.1.0",
     "react": "18.2.0",
@@ -31,7 +35,8 @@
     "react-toastify": "^9.1.2",
     "tailwindcss": "^3.3.1",
     "typescript": "5.0.4",
-    "validator": "^13.9.0"
+    "validator": "^13.9.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/google-libphonenumber": "^7.4.23",
@@ -39,5 +44,8 @@
     "@types/react-scroll": "^1.8.6",
     "@types/validator": "^13.7.15",
     "sass": "^1.62.0"
+  },
+  "browser": {
+    "child_process": false
   }
 }

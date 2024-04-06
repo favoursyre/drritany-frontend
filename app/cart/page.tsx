@@ -5,24 +5,30 @@
 import Cart from "@/components/cart/Cart"
 import SimilarProduct from "@/components/product/topProduct/topProduct"
 import { domainName, shuffleArray } from "@/config/utils";
+import { Metadata } from "next";
 
 ///Commencing the code
+export const metadata: Metadata = {
+  title: 'Cart',
+  description: `Add products to your cart and checkout.`,
+  alternates: {
+    canonical: `/cart`
+  }
+}
+
 ///This fetches a list of all products
 async function getProducts() {
   try {
-      const response = await fetch(
-          `${domainName}/products`,
-          {
-            next: {
-              revalidate: 60,
-            },
-          }
-        );
-      
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-        const quotes = await response.json();
-        return quotes;
+    const res = await fetch(`${domainName}/api/product?action=order`, {
+      method: "GET",
+      cache: "no-store",
+    })
+
+    if (res.ok) {
+      return res.json()
+    } else {
+      getProducts()
+    }
   } catch (error) {
       console.error(error);
   }

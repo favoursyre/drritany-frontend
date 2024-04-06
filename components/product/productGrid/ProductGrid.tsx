@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./productGrid.module.scss"
 import { IProduct, IClientInfo } from '@/config/interfaces';
-import { groupList, sortOptions as sortOption, backend, getItem, decodedString, getCurrencySymbol, getExchangeRate } from '@/config/utils'
+import { getItem } from "@/config/clientUtils"
+import { groupList, sortOptions as sortOption, decodedString, getCurrencySymbol, getExchangeRate, nairaSymbol, nairaRate, discount, slashedPrice, domainName, sortProductByOrder, sortProductByLatest, sortProductByPrice } from '@/config/utils'
 import TuneIcon from '@mui/icons-material/Tune';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Image from 'next/image';
 
 ///Commencing the code 
 /**
@@ -31,6 +33,9 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
     const [width, setWidth] = useState<number>(typeof window !== 'undefined' && window.screen ? window.screen.width : 0)
     const clientInfo: IClientInfo = getItem("clientInfo")
     //console.log("Products: ", productList)
+
+    // const res_ = await fetch(`${domainName}/api/product`)
+    // console.log("Res: ", res_.json())
 
 
     ///
@@ -147,26 +152,17 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
         setSortId(sort)
 
         if (sort === 0) {
+            product_ = sortProductByOrder(productList)
             setProductList(product_)
-        } else if (sort === 1 || sort === 2 || sort === 3) {
-            try {
-                const response = await fetch(
-                    `${backend}/products/sort/${sort}`,
-                    {
-                      next: {
-                        revalidate: 60,
-                      },
-                    }
-                  );
-                  await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-                
-                  const products = await response.json();
-                  setProductList(products)
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            null
+        } else if (sort === 1) {
+            product_ = sortProductByLatest(productList)
+            setProductList(() => product_)
+        } else if (sort === 2) {
+            product_ = sortProductByPrice(productList, "descend")
+            setProductList(() => product_)
+        } else if (sort === 3) {
+            product_ = sortProductByPrice(productList, "ascend")
+            setProductList(() => product_)
         }
     }
 
@@ -191,9 +187,12 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                     {products ? products.map((product, _id) => (
                         <div className={styles.product_carousel} key={_id} onClick={event => handleClick(event, product._id)}>
                         <div className={styles.carousel_image}>
-                            <img 
-                                src={product.images[0]}
+                            <Image
+                                className={styles.img} 
+                                src={product.images[0].src}
                                 alt=""
+                                width={product.images[0].width}
+                                height={product.images[0].height}
                             />
                         </div>
                         <div className={styles.carousel_name}>
@@ -202,13 +201,14 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                         <div className={styles.carousel_price}>
                             <div className={styles.price_1}>
                                 <strong>
-                                    {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)}
-                                    <span>{product.price && clientInfo ? (Math.round(product.price * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                    <span>{product.price ? (Math.round(product.price * nairaRate)).toLocaleString("en-US") : ""}</span>
                                 </strong>
                             </div>
                             <div className={styles.price_2}>
-                                {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)}
-                                <span>{product.slashedPrice && clientInfo ? (Math.round(product.slashedPrice * getExchangeRate(clientInfo))).toLocaleString("en-US") : ""}</span>
+                                {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
+                                <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                <span>{product.price ? (Math.round(slashedPrice(product.price * nairaRate, discount))).toLocaleString("en-US") : (<></>)}</span>
                             </div>
                         </div>
                     </div>

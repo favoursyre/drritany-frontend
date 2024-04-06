@@ -176,7 +176,7 @@
                         display: flex;
 
 
-                        img {
+                        .img {
                             //border: 1px solid red;
                             position: relative;
                             object-fit: cover;
@@ -186,7 +186,7 @@
                         @include phonePro {
                             @include size(10%, 100%);
 
-                            img {
+                            .img {
                                 position: relative;
                                 top: 0%;
                             }
@@ -300,7 +300,7 @@
                             //border: 1px solid red;
                         }
 
-                        img {
+                        .icon {
                             position: relative;
                             //border: 1px solid red;
                             @include size(20px, 20px);
@@ -362,6 +362,10 @@
                 border-radius: 4px;
                 font-size: 14px;
                 transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+                .icon {
+                    font-size: 1.2rem
+                }
 
                 @include phonePro {
                     @include size(100%, 40%);

@@ -49,6 +49,7 @@
 
         @include phonePro {
             @include size(100%, 60%);
+            //padding: 2px;
             //z-index: -1000;
         }
         
@@ -57,7 +58,7 @@
         }
 
         .img {
-            object-fit: cover;
+            object-fit: contain;
             object-position: center 30%;
             position: relative;
             @include size(100%, 100%);

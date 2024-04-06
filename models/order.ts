@@ -1,10 +1,10 @@
 ///This handles the schema for product order details
 
 ///Libraries -->
-import "dotenv/config";
-import {Schema, model, Types} from "mongoose";
+//import "dotenv/config";
+import { Schema, model, Types, models } from "mongoose";
 import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem } from "@/config/interfaces";
-import { Product } from "./productModel";
+import { Product } from "./product";
 //import { sendEmail } from "../utils/utils";
 
 ///Commencing the app
@@ -105,4 +105,4 @@ orderSchema.statics.getOrderById = async function (id: string) {
     return order;
 }
 
-export const Order = model<IOrder, IOrderModel>("Order", orderSchema);
+export const Order: IOrderModel = (models.Order || model<IOrder, IOrderModel>("Order", orderSchema)) as unknown as IOrderModel;

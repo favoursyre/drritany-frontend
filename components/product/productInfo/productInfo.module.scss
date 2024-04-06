@@ -85,7 +85,7 @@
                     //height: 40%;
                 } 
                 
-                img {
+                .img {
                     position: relative;
                     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
                     //border: 2px solid $primary-color;
@@ -127,7 +127,7 @@
                         height: 70%;
                     } 
     
-                    img {
+                    .img {
                         position: relative;
                         object-fit: cover;
                         transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);

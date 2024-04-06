@@ -2,9 +2,11 @@
 
 ///Libraries -->
 import styles from "./layout.module.scss"
-import Header from "@/components/header/Header";
+import dynamic from "next/dynamic";
+const Header = dynamic(() => import("@/components/header/Header"), { ssr: false })
+//import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
-import { backend } from '@/config/utils';
+import { domainName, companyName } from '@/config/utils';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,7 +15,11 @@ let status: boolean = false
 
 ///Declaring the metadata
 export const metadata = {
-  title: 'Dr Ritany',
+  metadataBase: new URL(domainName), 
+  title: {
+    default: `${companyName}`,
+    template: `%s | ${companyName}`
+  },
   icons: {
     icon: 'favicon.png',
   },

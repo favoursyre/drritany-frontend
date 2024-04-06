@@ -3,9 +3,24 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICountry, IClientInfo } from './interfaces';
+import { IClientInfo, IOrderSheet, IProduct } from './interfaces';
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { JWT } from 'google-auth-library';
+import credentials from "../drritany-f60889c0b640.json"
 
 ///Commencing the code
+export const companyName: string = "Dr Ritany"
+
+export const nairaSymbol: string = "&#8358;"
+
+export const nairaRate: number = 1250
+
+export const discount: number = 33
+
+export const domainName: string = "http://localhost:3000"
+//export const domainName: string = "https://dr-ritany.vercel.app"
+
+export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
 ///This function gets an array and sends the regrouped array of specified length
 export const groupList = (arr: Array<any>, length: number): Array<any> => {
@@ -18,48 +33,6 @@ export const groupList = (arr: Array<any>, length: number): Array<any> => {
 
     return result
 }
-
-///This function saves a value to localstorage
-export const setItem = (key: string, value: any): void => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-        let jsonData = JSON.stringify(value)
-        localStorage.setItem(key, jsonData);
-    } else {
-        null
-    }
-}
-  
-export const getItem = (key: string): any => {
-    // Parse the retrieved data string back into an object
-    //console.log('Local: ', localStorage.getItem(key))
-    if (typeof window !== 'undefined' && window.localStorage) {
-        const item = localStorage.getItem(key)
-        //console.log('Item New: ', item)
-        if (item === null) {
-            return null
-        } else {
-            if (item === "undefined") {
-                return null
-            } else {
-                return JSON.parse(item);
-            }
-        }
-    } else {
-        return null
-    }
-}
-
-export const removeItem = (key: string) => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.removeItem(key);
-    } else {
-        null
-    }
-}
-
-export const getModalState = (): boolean | any => {
-    return getItem("modalState")
-} 
 
 //Cart name
 export const cartName: string = "DrRitanyCart"
@@ -96,22 +69,7 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
     }
 }
 
-///This contains the number of countries that we operate in
-export const countryList: Array<ICountry> = [
-    {name: 'United States', dial_code: '+1', code: 'US',  flag: 'https://drive.google.com/uc?export=download&id=1M0gkMQjwoKCUsKlhniy6jKSBIYddfapJ'},
-    {name: 'Canada', dial_code: '+1', code: 'CA', flag: 'https://drive.google.com/uc?export=download&id=1q6y6HolsOzkDWxDtdB-Oj9ZiSCWEP2Ql'},
-    {name: 'United Kingdom', dial_code: '+44', code: 'GB', flag: 'https://drive.google.com/uc?export=download&id=1CF8YeyOYiv95SHIwzeYv3FHjkHO80ZlY'},
-    {name: 'Egypt', dial_code: '+20', code: 'EG', flag: 'https://drive.google.com/uc?export=download&id=1xVq4WCAUahbtXKvxSfeeDqi25BDzqYt4'},
-    {name: 'Ghana', dial_code: '+233', code: 'GH', flag: 'https://drive.google.com/uc?export=download&id=1_CF51QMet_fPRH_Mo58zbijjZa1aHIEa'},
-    {name: 'Nigeria', dial_code: '+234', code: 'NG', flag: 'https://drive.google.com/uc?export=download&id=1LCz4DZBzTJxKNcBd5NLYQFwwr10LkHGO'},
-    {name: 'South Africa', dial_code: '+27', code: 'ZA', flag: 'https://drive.google.com/uc?export=download&id=1iZStelnWq4kYndejJqW5p-pPLbNbiooi'},
-    {name: 'Rwanda', dial_code: '+250', code: 'RW', flag: 'https://drive.google.com/uc?export=download&id=1nv3ffhBvKpmXuzXN6g14IuZvR6vlVAEa'},
-    {name: 'Uganda', dial_code: '+256', code: 'UG', flag: 'https://drive.google.com/uc?export=download&id=1T3kWn_0S-WVzDDPjKq39eoVb3Jel8fNX'},
-    {name: 'Kenya', dial_code: '+254', code: 'KE', flag: 'https://drive.google.com/uc?export=download&id=1y76iXqrFo-dXxck80UdIieBLA41VFzrd'},
-    {name: 'Germany', dial_code: '+49', code: 'DE', flag: 'https://drive.google.com/uc?export=download&id=1RwXP8xZfNzdCCLiGU2FBPijWZHe6mjjt'}, 
-    {name: 'Australia', dial_code: '+61', code: 'AU', flag: 'https://drive.google.com/uc?export=download&id=1_Q4LIoic4KKoEDlc6ET-aTmzmAVQgANX'},
-    {name: 'India', dial_code: '+91', code: 'IN', flag: 'https://drive.google.com/uc?export=download&id=1mR1UlTlPJEGeHJJfRl37RbA1IJRlLMlq'}
-]
+
 
 ///This function gets the countryList info of a particular client
 // export const getClientCountryInfo = (countryCode: string): ICountry => {
@@ -213,3 +171,195 @@ export const formatDateMongo = (dateString: string): string => {
 export const deleteItemByKey = (array: Array<any>, key: string, value: string): Array<any> => {
     return array.filter((arr) => arr[key] !== value);
   }
+
+///This function gets the slashed price depending on the discount
+export const slashedPrice = (price: number, discount: number): number => {
+    return (price * 100) / (100 - discount)
+}
+
+///This function sorts the array by orders in descending order
+export const sortProductByOrder = (products: Array<IProduct>): Array<IProduct> => {
+    // Sort the array based on the orders property in descending order
+    const sortedProducts = products.sort((a, b) => {
+        // If orders property is present in both objects, sort in descending order
+        if (a.orders !== undefined && b.orders !== undefined) {
+            return b.orders - a.orders;
+        } 
+        // If orders property is not present in one of the objects, move it to the end
+        else if (a.orders === undefined && b.orders !== undefined) {
+            return 1;
+        } else if (a.orders !== undefined && b.orders === undefined) {
+            return -1;
+        } else {
+            return 0; // If both orders properties are undefined, maintain current order
+        }
+    });
+    return sortedProducts
+}
+
+///This function sorts the array from latest to oldest
+export const sortProductByLatest = (products: Array<IProduct>): Array<IProduct> => {
+    // Sort the array based on the createdAt property in descending order
+    const sortedProducts = products.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }); 
+    return sortedProducts
+}
+
+///This function sorts the array by the price property
+export const sortProductByPrice = (products: Array<IProduct>, action: string): Array<IProduct> => {
+    ///This function sorts the price property from highest price to lowest price
+    if (action === "descend") {
+        const sortedProducts = products.sort((a, b) => {
+            const priceA = a.price ?? 0; // Default to 0 if price is undefined
+            const priceB = b.price ?? 0; // Default to 0 if price is undefined
+            return priceB - priceA;
+        });
+        return sortedProducts
+    } else if (action === "ascend") {
+        ///This function sorts the price property from lowest price to highest price
+        const sortedProducts = products.sort((a, b) => {
+            const priceA = a.price ?? 0; // Default to 0 if price is undefined
+            const priceB = b.price ?? 0; // Default to 0 if price is undefined
+            return priceA - priceB;
+        });
+        return sortedProducts
+    } else {
+        return products
+    }
+}
+
+///This function allows us to perform CRUD operation using Google Sheet
+export class GoogleSheetDB {
+    private doc: GoogleSpreadsheet
+    private auth: JWT
+
+    constructor(sheetId: string) {
+        this.auth = new JWT({
+            // env var values here are copied from service account credentials generated by google
+            // see "Authentication" section in docs for more info
+            email: credentials.client_email,
+            key: credentials.private_key,
+            scopes: [
+              'https://www.googleapis.com/auth/spreadsheets',
+            ],
+          });
+        this.doc = new GoogleSpreadsheet(sheetId, this.auth)
+    }
+
+    ///This function gets a row using the ID property
+    public async getRow(cartId: string, sheetIndex: number) {
+        // load the documents info
+        await this.doc.loadInfo();
+
+        // Index of the sheet
+        let sheet = this.doc.sheetsByIndex[sheetIndex];
+
+        // Get all the rows
+        let rows = await sheet.getRows();
+
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index];
+            if (row.get("CartId") === cartId) {
+                console.log(row);
+                return row
+            }
+        };
+    }
+
+    ///This function deletes a row using the ID property
+    public async deleteRow(sheetIndex: number, cartId: string) {
+        await this.doc.loadInfo();
+
+        // Index of the sheet
+        let sheet = this.doc.sheetsByIndex[sheetIndex];
+    
+        let rows = await sheet.getRows();
+    
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index];
+            if (row.get("CartId") === cartId) {
+                await row.delete();
+                break; 
+            }
+        };
+    }
+
+    ///This function adds new row to the sheet
+    public async addRow(sheetIndex: number, rows: Array<IOrderSheet>) {
+        await this.doc.loadInfo();
+
+        // Index of the sheet
+        let sheet = this.doc.sheetsByIndex[sheetIndex];
+        console.log("Sheet: ", sheet)
+
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index] as unknown as any;
+            console.log("Add: ", row)
+
+            await sheet.addRow(row);
+        }
+    }
+
+    ///This function updates a row in the sheet using the ID property
+    public async updateRow(sheetIndex: number, cartId: string, data: IOrderSheet) {
+        await this.doc.loadInfo();
+
+        // Index of the sheet
+        let sheet = this.doc.sheetsByIndex[sheetIndex];
+
+        let rows = await sheet.getRows();
+
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index]
+            //console.log("Row: ", row.get("CartId"))
+            if (row.get("CartId") === cartId) {
+                const data_ = Object.entries(data)
+                for (let i = 0; i < data_.length; i++) {
+                    row.set(data_[i][0], data_[i][1])
+                    await row.save();
+                }
+                break; 
+            }
+        };
+    }
+}
+
+/**
+ * @notice This gets the current date
+ * @returns The current date
+ */
+export const getCurrentDate = (): string => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    
+    // Format the date as desired, e.g., "YYYY-MM-DD"
+    const formattedDate = `${year}-${month}-${day}`;
+  
+    return formattedDate;
+}
+  
+/**
+ * @notice This gets the current time
+ * @returns The current time
+ */
+export const getCurrentTime = (): string => {
+    const currentDate = new Date();
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+    const meridian = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours to 12-hour format
+    hours = hours % 12 || 12;
+
+    // Add leading zeros if necessary
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+
+    // Format the time as desired, e.g., "hh:mm AM/PM"
+    const formattedTime = `${formattedHours}:${formattedMinutes} ${meridian}`;
+
+    return formattedTime;
+}

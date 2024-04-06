@@ -4,8 +4,8 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
-import { notify } from '@/config/clientUtils';
-import { setItem, getModalState, getItem, decodedString, cartName } from '@/config/utils';
+import { setItem, getItem, notify } from '@/config/clientUtils';
+import { decodedString, cartName, nairaSymbol, nairaRate } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
@@ -13,6 +13,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { DeleteOutline, ShoppingCartCheckout } from '@mui/icons-material';
+//import  from '@mui/icons-material/ShoppingCartCheckout';
 
 ///Commencing the code 
 /**
@@ -134,9 +136,12 @@ useEffect(() => {
                             {cart ? cart.cart.map((c, cid) => (
                                 <div className={styles.cart_item} key={cid}>
                                 <div className={styles.list_image}>
-                                    <img 
-                                        src={c.image}
+                                    <Image
+                                        className={styles.img} 
+                                        src={c.image.src}
                                         alt=""
+                                        width={c.image.width}
+                                        height={c.image.height}
                                     />
                                 </div>
                                 <span className={styles.list_title}>{c.name}</span>
@@ -150,12 +155,7 @@ useEffect(() => {
                                     </button>
                                 </div>
                                 <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
-                                    <div>
-                                        <img 
-                                            src="https://drive.google.com/uc?export=download&id=1qeMeNTXGeGIKql4XTAWHCm4MDMq-NGwY"
-                                            alt=""
-                                        />
-                                    </div>
+                                    <DeleteOutline className={styles.icon} />
                                     <span>Remove</span>
                                 </button>
                             </div>
@@ -167,15 +167,12 @@ useEffect(() => {
                         <div className={styles.price_items}>
                             <span>Total</span>
                             <div>
-                                {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(clientInfo.currencySymbol) }} />) : (<></>)}
-                                <span>{cart && clientInfo ? (Math.round(cart.totalPrice * clientInfo.exchangeRate)).toLocaleString("en-US") : ""}</span>
+                                <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                <span>{cart ? (Math.round(cart.totalPrice * nairaRate)).toLocaleString("en-US") : ""}</span>
                             </div>
                         </div>
                         <button onClick={(e) => checkoutOrder(e)}>
-                            <img 
-                                src="https://drive.google.com/uc?export=download&id=11z0qeMPVU6nfmjllwju6h91fM5enzjCC"
-                                alt=""
-                            />
+                            <ShoppingCartCheckout className={styles.icon} />
                             <span>Checkout</span>
                         </button>
                     </div>
@@ -197,10 +194,7 @@ useEffect(() => {
                     window.location.reload()
                 }} 
                 className={styles.remove_item_button}>
-                    <img 
-                        src="https://drive.google.com/uc?export=download&id=1y2mMvCsu2xoy-soKb3669DHnTrAwRdc9"
-                        alt=""
-                    />
+                    <DeleteOutline className={styles.icon} />
                     <span>Remove Item</span>
                 </button>
             </div>

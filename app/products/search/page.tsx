@@ -2,30 +2,37 @@
 ///This handles the product query page
 
 ///Libraries -->
-import { NextApiRequest, NextApiResponse } from 'next';
-import { backend, shuffleArray } from '@/config/utils';
+import { NextApiRequest, NextApiResponse, Metadata } from 'next';
+import { domainName, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
 import Search from '@/components/search/Search';
 import SimilarProduct from '@/components/product/topProduct/topProduct';
+import { Props } from '@/config/interfaces';
 
 ///Commencing the code
-
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  return {
+    title: `${searchParams.query}`,
+    description: `Search our range of natural health products.`,
+    alternates: {
+      canonical: `/products/search`
+    }
+  } as Metadata
+}
 
 ///This function searches for passed in query
 async function getQueriedProducts(query: string | string[] | undefined) {
     try {
-      const response = await fetch(
-          `${backend}/products/search?query=${query}`,
-          {
-            next: {
-              revalidate: 60,
-            },
-          }
-        );
+      const res = await fetch(`${domainName}/api/product?action=search&query=${query}`, {
+        method: "GET",
+        cache: "no-store",
+      });
       
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-        const products = await response.json();
-        return products;
+      if (res.ok) {
+        return res.json()
+      } else {
+        //getQueriedProducts(query)
+        console.log("request not ok")
+      }
   } catch (error) {
       console.error(error);
   }
@@ -35,19 +42,16 @@ async function getQueriedProducts(query: string | string[] | undefined) {
 ///This fetches the products
 async function getProducts() {
     try {
-        const response = await fetch(
-            `${backend}/products`,
-            {
-              next: {
-                revalidate: 60,
-              },
-            }
-          );
-        
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-        
-          const quotes = await response.json();
-          return quotes;
+      const res = await fetch(`${domainName}/api/product?action=order`, {
+        method: "GET",
+        cache: "no-store",
+      })
+  
+      if (res.ok) {
+        return res.json()
+      } else {
+        getProducts()
+      }
     } catch (error) {
         console.error(error);
     }

@@ -91,7 +91,7 @@
         .testifierInfo {
             //border: 2px solid red;
             @include flexBar($position: relative, $align: center, $justify: center);
-            @include size(20%, 100%);
+            @include size(20%, 130%);
             left: 2%;
 
             @include phonePro {
@@ -163,7 +163,7 @@
                             //border: 1px solid red;
                             @include size(25%, 100%);
     
-                            img {
+                            .img {
                                 position: relative;
                                 object-fit: contain;
                                 @include size(100%, 100%);
@@ -267,7 +267,7 @@
                     width: 40px;
                     height: 40px;
 
-                    img {
+                    .img {
                         //border: 2px solid red;
                         position: relative;
                         object-fit: contain;

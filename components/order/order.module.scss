@@ -136,63 +136,138 @@
         height: 35px;
       }
 
-      .dial_code {
-        display: flex;
-        position: relative;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        left: 1%;
-        gap: 1.5%;
-        border: none;
-        //border: 0.5px solid red;
-        @include size(29%, 100%);
-        padding: 2% 0% 2% 0%;
-        background-color: $tertiary-color;
-        //font-weight: 600;
-        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      .dial_code_container {
+        //border: 1px solid blue;
+        @include flexBar($position: absolute, $display: flex, $flex_d: column, $align: center, $gap: 0%);
+        @include size(5%, auto);
+        z-index: 10;
+
+        @include tabletPro {
+          width: 7%;
+        }
 
         @include phonePro {
+          width: 20%;
+        }
+
+        @include phoneMini {
+          width: 25%;
+        }
+
+        .dial_code {
+          display: flex;
+          position: relative;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          left: 1%;
+          gap: 5%;
+          border: none;
           //border: 0.5px solid red;
-          gap: 2.5%;
-        }
-
-        img {
-          position: relative;
-          margin: 0px;
-          height: 16px;
-          width: 21px;
-        }
-
-        .arrow {
-          position: relative;
-          left: 5%;
+          @include size(100%, 28px);
+          padding: 2% 0% 2% 0%;
+          background-color: $tertiary-color;
+          //font-weight: 600;
           transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-          //transform: rotate(90deg);
+  
+          @include phonePro {
+            //border: 0.5px solid red;
+            //gap: 2.5%;
+            height: 32px;
+          }
+  
+          .img {
+            position: relative;
+            margin: 0px;
+            height: 16px;
+            width: 21px;
+          }
+  
+          .arrow {
+            position: relative;
+            left: 5%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            //transform: rotate(90deg);
+          }
+  
+          .active_arrow {
+            transform: rotate(90deg);
+          }
+  
+          &:hover {
+            transform: scale(1.02);
+          }
         }
 
-        .active_arrow {
-          transform: rotate(90deg);
-        }
-
-        &:hover {
-          transform: scale(1.02);
+        .dial_code_option {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          z-index: 10;
+          //border: 0.5px solid red;
+          @include size(100%, 92%);
+          z-index: 10;
+          //@include position($left: 35.5%, $top: 32%);
+  
+          button {
+            position: relative;
+            background-color: $tertiary-color;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2%;
+            //border: none;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            //padding: 1% 1% 1% 1%;
+            padding: 3% 5%;
+            @include size(100%, 28px);
+  
+            @include phonePro {
+              left: 1%;
+              width: 100%;
+              height: 32px;
+            }
+  
+            @include tabletPro {
+              width: 100%;
+            }
+  
+            .img {
+              position: relative;
+              margin: 0px;
+              height: 16px;
+              width: 21px;
+            }
+  
+            &:hover {
+              border: 1px solid $primary-color;
+            }
+          }
         }
       }
 
       .number_input {
         //border: 0.5px solid red;
-        @include size(100%, 100%);
+        @include size(80%, 100%);
         position: relative;
+        left: 20%;
         //@include position($left: 1px, $top: 28%);
 
         @include tabletPro {
           //border: 0.5px solid red;
-          width: 65%;
+          width: 73%;
+          left: 26%;
         }
 
         @include phonePro {
-          height: 95%;
+          //border: 0.5px solid red;
+          width: 75%;
+          left: 24%;
+        }
+
+        @include phoneMini {
+          width: 69%;
+          left: 30%;
         }
 
         input {
@@ -202,82 +277,6 @@
           height: 85%;
           border-color: $tertiary-color;
           //padding: 1%;
-        }
-      }
-
-      .dial_code_option {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        z-index: 10;
-        //border: 0.5px solid red;
-        @include size(6%, 35%);
-        @include position($left: 35.5%, $top: 32%);
-
-        @include phonePro {
-          //border: 0.5px solid red;
-          //top: 38%;
-          @include position($left: 6%, $top: 39%);
-          @include size(20%, 36%);
-        }
-
-        @include phone {
-          //top: 35%;
-        }
-
-        @include phoneMini {
-          top: 56%;
-        }
-
-        @include tabletPro {
-          z-index: 100;
-          left: 36%;
-          //border: 2px solid $error-color;
-          top: 35%;
-          @include size(8.5%, 35%);
-          //top: 44%;
-        }
-
-        @include tablet {
-          top: 41%;
-        }
-
-        @include tabletMini {
-          top: 48%;
-        }
-
-        button {
-          position: relative;
-          background-color: $tertiary-color;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 2%;
-          //border: none;
-          border: 1px solid rgba(0, 0, 0, 0.09);
-          //padding: 1% 1% 1% 1%;
-          padding: 3% 5%;
-          @include size(100%, 8%);
-
-          @include phonePro {
-            left: 1%;
-            width: 100%;
-          }
-
-          @include tabletPro {
-            width: 100%;
-          }
-
-          img {
-            position: relative;
-            margin: 0px;
-            height: 16px;
-            width: 21px;
-          }
-
-          &:hover {
-            border: 1px solid $primary-color;
-          }
         }
       }
 
@@ -301,141 +300,148 @@
         height: 35px;
       }
 
-      .dial_code {
-        display: flex;
-        position: relative;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        left: 1%;
-        gap: 1.5%;
-        z-index: 0;
-        //border: 0.5px solid red;
-        border: none;
-        @include size(29%, 100%);
-        padding: 2% 0% 2% 0%;
-        //font-weight: 600;
-        background-color: $tertiary-color;
-        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      .dial_code_container {
+        //border: 1px solid blue;
+        @include flexBar($position: absolute, $display: flex, $flex_d: column, $align: center, $gap: 0%);
+        @include size(5%, auto);
+        //z-index: 10;
 
-        @include phonePro {
-          //border: 0.5px solid red;
-          gap: 2.5%;
+        @include tabletPro {
+          width: 7%;
         }
 
-        img {
+        @include phonePro {
+          width: 20%;
+        }
+
+        @include phoneMini {
+          width: 25%;
+        }
+
+        .dial_code {
+          display: flex;
+          position: relative;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          left: 1%;
+          gap: 5%;
+          //z-index: -5;
+          border: none;
+          //border: 0.5px solid red;
+          @include size(100%, 28px);
+          padding: 2% 0% 2% 0%;
+          background-color: $tertiary-color;
+          //font-weight: 600;
+          transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  
+          @include phonePro {
+            //border: 0.5px solid red;
+            //gap: 2.5%;
+            height: 32px;
+          }
+  
+          .img {
             position: relative;
             margin: 0px;
             height: 16px;
             width: 21px;
+          }
+  
+          .arrow {
+            position: relative;
+            left: 5%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            //transform: rotate(90deg);
+          }
+  
+          .active_arrow {
+            transform: rotate(90deg);
+          }
+  
+          &:hover {
+            transform: scale(1.02);
+          }
         }
 
-        .arrow {
+        .dial_code_option {
           position: relative;
-          left: 5%;
-          transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-          //transform: rotate(90deg);
-        }
-
-        .active_arrow {
-          transform: rotate(90deg);
-        }
-
-        &:hover {
-          transform: scale(1.02);
+          display: flex;
+          flex-direction: column;
+          z-index: 10;
+          //border: 0.5px solid red;
+          @include size(100%, 92%);
+          z-index: 30;
+          //@include position($left: 35.5%, $top: 32%);
+  
+          button {
+            position: relative;
+            background-color: $tertiary-color;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2%;
+            //border: none;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            //padding: 1% 1% 1% 1%;
+            padding: 3% 5%;
+            @include size(100%, 28px);
+  
+            @include phonePro {
+              left: 1%;
+              width: 100%;
+              height: 32px;
+            }
+  
+            @include tabletPro {
+              width: 100%;
+            }
+  
+            .img {
+              position: relative;
+              margin: 0px;
+              height: 16px;
+              width: 21px;
+            }
+  
+            &:hover {
+              border: 1px solid $primary-color;
+            }
+          }
         }
       }
 
       .number_input {
         //border: 0.5px solid red;
-        width: 100%;
+        @include size(80%, 100%);
+        position: relative;
+        left: 20%;
         //@include position($left: 1px, $top: 28%);
 
         @include tabletPro {
           //border: 0.5px solid red;
-          width: 65%;
+          width: 73%;
+          left: 26%;
         }
 
         @include phonePro {
-          height: 95%;
+          //border: 0.5px solid red;
+          width: 75%;
+          left: 24%;
+        }
+
+        @include phoneMini {
+          width: 69%;
+          left: 30%;
         }
 
         input {
           position: relative;
           z-index: 1;
+          //@include size(100%, 100%);
           height: 85%;
           border-color: $tertiary-color;
           //padding: 1%;
-        }
-      }
-
-      .dial_code_option {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        z-index: 1;
-        //border: 0.5px solid red;
-        @include size(6%, 35%);
-        @include position($left: 35.5%, $top: 37%);
-
-        @include tabletPro {
-          z-index: 100;
-          //border: 2px solid $error-color;
-          top: 40%;
-          @include size(8.5%, 35%);
-        }
-
-        @include tablet {
-          top: 46%;
-        }
-
-        @include tabletMini {
-          top: 54%;
-        }
-
-        @include phonePro {
-          //border: 0.5px solid red;
-          //top: 41%;
-         @include position($left: 5%, $top: 45%);
-          @include size(24%, 36%);
-        }
-
-        @include phone {
-          //top: 42%;
-          left: 6%;
-          width: 22%;
-        }
-
-        @include phoneMini {
-          top: 63%;
-        }
-
-        button {
-          position: relative;
-          background-color: $tertiary-color;
-          display: flex;
-          flex-direction: row;
-          gap: 2%;
-          border: 1px solid rgba(0, 0, 0, 0.09);
-          //border: none;
-          //padding: 1% 1% 1% 1%;
-          padding: 3% 4%;
-          @include size(100%, 8%);
-
-          @include tabletPro {
-            width: 100%;
-          }
-
-          img {
-            position: relative;
-            margin: 0px;
-            height: 16px;
-            width: 21px;
-          }
-
-          &:hover {
-            border: 1px solid $primary-color;
-          }
         }
       }
 
@@ -484,7 +490,7 @@
     $flex: none,
     $bg-color: rgba(0, 0, 0, 0.5)
   );
-  border: 2px solid red;
+  //border: 2px solid red;
   left: 0%;
   top: 0%;
   z-index: 100;
@@ -583,7 +589,7 @@
           width: 100%;
         }
 
-        img {
+        .img {
           object-fit: contain;
           position: relative;
           @include size(100%, 100%);

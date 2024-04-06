@@ -66,4 +66,4 @@ newsSchema.statics.deleteSubscriber = async function (id: string) {
   return delete_;
 }
 
-export const News: INewsModel = (models.News || model<INews, INewsModel>("News", newsSchema)) as INewsModel;
+export const News: INewsModel = (models.News || model<INews, INewsModel>("News", newsSchema)) as unknown as INewsModel;
