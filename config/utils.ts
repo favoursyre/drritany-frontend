@@ -6,7 +6,7 @@ import React from 'react';
 import { IClientInfo, IOrderSheet, IProduct } from './interfaces';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
-import credentials from "../drritany-f60889c0b640.json"
+//import credentials from "../drritany-f60889c0b640.json"
 
 ///Commencing the code
 export const companyName: string = "Dr Ritany"
