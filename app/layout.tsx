@@ -21,7 +21,7 @@ export const metadata = {
     template: `%s | ${companyName}`
   },
   icons: {
-    icon: 'favicon.png',
+    icon: 'favicon.ico',
   },
   description: 'E-Commerce website for all sort of health products',
   keywords: "drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce"
