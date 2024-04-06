@@ -40,7 +40,7 @@ const Order = () => {
     const [dropList1, setDropList1] = useState(false)
     const [dropList2, setDropList2] = useState(false)
     const router = useRouter()
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     //console.log("Testing: ", getItemByKey(countryList, 'code', "SQ"))
     
 
@@ -79,7 +79,8 @@ const Order = () => {
                 return
             }
 
-            setModalState(() => true)
+            //
+            setIsLoading(() => true)
 
             //Send the order to the backend
             try {
@@ -103,6 +104,7 @@ const Order = () => {
                 if (res.ok) {
                     notify("success", `Your order was logged successfully`)
 
+                    setModalState(() => true)
                     setIsLoading(() => false)
 
                     //Clear the cart
@@ -113,8 +115,8 @@ const Order = () => {
 
                     setItem(cartName, _cart_)
                 } else {
-                    setModalState(() => false)
-                    notify("error", `Something went wrong`)
+                    //setModalState(() => false)
+                    //notify("error", `Something went wrong`)
                     throw Error(`${data}`)
                 }
                 
@@ -129,7 +131,7 @@ const Order = () => {
                 notify("error", `${error}`)
             }
 
-            setModalState(() => false)
+            //setModalState(() => false)
             setIsLoading(() => false)
         } else {
             notify('error', "Cart is empty")
@@ -323,43 +325,42 @@ const Order = () => {
                     <br />
                     
                     <button className={styles.order_button}>
-                        <LocalShippingIcon className={styles.icon} />
-                        <span>Order Now</span>
+                        {isLoading ? (
+                            <Loading width="20px" height="20px" />
+                        ) : (
+                            <>
+                                <LocalShippingIcon className={styles.icon} />
+                                <span>Order Now</span>
+                            </>
+                        )}
                     </button>
                 </form>
             </main>
             <div className={`${styles.modal_container} ${!modalState ? styles.modal_inactive : ""}`}>
                 <div className={`${styles.modal}`}>
-                    {isLoading ? (
-                        <div className={styles.loadingModal}>
-                            <span>Processing order...</span>
-                            <Loading width="30px" height="30px" />
-                        </div>
-                    ) : (
-                        <div className={styles.completeModal}>
-                            <div className={styles.modal_head}>
-                            <button 
-                                onClick={() => {
-                                    setModalState(() => false)
-                                    window.location.reload()
-                                    router.push("/")
-                                }}
-                            >
-                                <CloseIcon />
-                            </button>
-                            </div>
-                            <div className={styles.modal_image}>
-                                <Image
-                                    className={styles.img} 
-                                    src="https://drive.google.com/uc?export=download&id=16aHqsYZeXgATabkyTI_HN6jdglBYwvjz"
-                                    alt=""
-                                    width={221}
-                                    height={216}
-                                />
-                            </div>
-                            <span className={styles.modal_body}>Thanks for Ordering</span>
-                        </div>
-                    )}
+                <div className={styles.completeModal}>
+                    <div className={styles.modal_head}>
+                    <button 
+                        onClick={() => {
+                            setModalState(() => false)
+                            //window.location.reload()
+                            router.push("/")
+                        }}
+                    >
+                        <CloseIcon />
+                    </button>
+                    </div>
+                    <div className={styles.modal_image}>
+                        <Image
+                            className={styles.img} 
+                            src="https://drive.google.com/uc?export=download&id=16aHqsYZeXgATabkyTI_HN6jdglBYwvjz"
+                            alt=""
+                            width={221}
+                            height={216}
+                        />
+                    </div>
+                    <span className={styles.modal_body}>Thanks for Ordering</span>
+                </div>
                 </div>
             </div>
         </>
