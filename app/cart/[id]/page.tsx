@@ -2,7 +2,7 @@
 ///This handles the cart receipt page
 
 ///Libraries -->
-import CartReceipt from '@/components/receipt/Receipt';
+import CartReceipt from '@/components/invoice/Invoice';
 //import { IProduct } from '@/config/interfaces';
 import { backend, shuffleArray, deleteItemByKey } from '@/config/utils';
 

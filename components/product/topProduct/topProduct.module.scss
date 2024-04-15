@@ -73,6 +73,7 @@
             @include text-layout($size: 16px, $l_height: 24px);
             transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
             @include flexBar($position: relative, $justify: flex-start, $flex_d: row, $wrap: none, $align: center);
+            background-color: transparent;
 
             @include phoneMini {
                 font-size: 12px;

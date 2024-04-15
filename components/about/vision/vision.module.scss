@@ -102,9 +102,25 @@
         @include size(50%, 100%);
         background-repeat: no-repeat;
         background-size: cover;
+        position: relative;
+
+        @include tabletPro {
+            height: 90%;
+        }
+
+        @include tabletMini {
+            top: 10%;
+        }
 
         @include phonePro {
             display: none;
+        }
+
+        img {
+            object-fit: cover;
+            object-position: center 30%;
+            position: relative;
+            @include size(100%, 100%);
         }
     }
 }

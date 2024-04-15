@@ -4,12 +4,11 @@
 ///Libraries -->
 import styles from "./order.module.scss"
 import React, { useState, useEffect } from "react"
-import { ToastContainer } from 'react-toastify';
 import { setItem, getItem, notify } from '@/config/clientUtils';
 import { domainName, getItemByKey, cartName, orderName, capitalizeFirstLetter } from "@/config/utils"
 import { ICart, ICountry, IClientInfo, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
-import CloseIcon from '@mui/icons-material/Close';
+import { useOrderModalStore, useModalBackgroundStore } from "@/config/store";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { countryList } from "@/config/database";
@@ -31,7 +30,6 @@ const Order = () => {
     const [phoneNumber2, setPhoneNumber2] = useState<string>("")
     const [emailAddress, setEmailAddress] = useState<string>("")
     const [country, setCountry] = useState("United States")
-    const [modalState, setModalState] = useState(false)
     const [state, setState] = useState<string | undefined>("")
     const [postalCode, setPostalCode] = useState<string>("")
     const [deliveryAddress, setDeliveryAddress] = useState<string>("")
@@ -41,6 +39,8 @@ const Order = () => {
     const [dropList2, setDropList2] = useState(false)
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setOrderModal = useOrderModalStore(state => state.setOrderModal);
     //console.log("Testing: ", getItemByKey(countryList, 'code', "SQ"))
     
 
@@ -104,12 +104,15 @@ const Order = () => {
                 if (res.ok) {
                     notify("success", `Your order was logged successfully`)
 
-                    setModalState(() => true)
+                    setModalBackground(true)
+                    setOrderModal(true)
+
                     setIsLoading(() => false)
 
                     //Clear the cart
                     const _cart_: ICart = {
                         totalPrice: 0,
+                        totalDiscount: 0,
                         cart: []
                     }
 
@@ -184,7 +187,6 @@ const Order = () => {
     return (
         <>
             <main className={styles.main}>
-                <ToastContainer />
                 <h3 className={styles.heading}>Delivery Form</h3>
                 <span className={styles.brief}><em><strong>Payment on Delivery;</strong><strong> We spend a lot of resources in getting your products delivered to you, we kindly request that you only place an order when you are fully physically and financially prepared to receive your delivery. Thank you for your cooperation.</strong></em></span>
                 <form className={styles.form} onSubmit={(e) => processOrder(e)}>
@@ -336,7 +338,7 @@ const Order = () => {
                     </button>
                 </form>
             </main>
-            <div className={`${styles.modal_container} ${!modalState ? styles.modal_inactive : ""}`}>
+            {/* <div className={`${styles.modal_container} ${!modalState ? styles.modal_inactive : ""}`}>
                 <div className={`${styles.modal}`}>
                 <div className={styles.completeModal}>
                     <div className={styles.modal_head}>
@@ -362,7 +364,7 @@ const Order = () => {
                     <span className={styles.modal_body}>Thanks for Ordering</span>
                 </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 };

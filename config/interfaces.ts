@@ -2,6 +2,7 @@
 
 ///Libraries -->
 import { Model } from 'mongoose';
+import { NextResponse } from "next/server";
 
 ///Commencing the code
 ///IFAQ
@@ -37,7 +38,7 @@ export interface IQuoteState {
 export interface IOrderModel extends Model<IOrder> {
   processOrder(customerSpec: ICustomerSpec, productSpec: ICart): IOrder,
   getOrders(): Array<IOrder>,
-  getOrderById(id: string): IOrder
+  getOrderById(id: string): Array<IOrder>
 }  
 
 ///Declaring the interface for specification 
@@ -71,10 +72,44 @@ export interface INewsModel extends Model<INews> {
   deleteSubscriber(id: string): INews
 }  
 
+//Interface for modal store
+export interface IModalBackgroundStore {
+  modal: boolean;
+  setModalBackground: (status: boolean) => void
+}
+
+//Interface for contact modal store
+export interface IContactModalStore {
+  modal: boolean;
+  setContactModal: (status: boolean) => void
+}
+
+//Interface for order modal store
+export interface IOrderModalStore {
+  modal: boolean;
+  setOrderModal: (status: boolean) => void
+}
+
+//Interface for discount modal store
+export interface IDiscountModalStore {
+  modal: boolean,
+  product: {
+    name: string,
+    freeOption: boolean,
+    poppedUp: boolean
+  },
+  setDiscountModal: (status: boolean) => void
+  setDiscountProduct: (product: {
+    name: string,
+    freeOption: boolean,
+    poppedUp: boolean
+  }) => void
+}
+
 /**
  * @notice The interface for product mongoose schema api
  */
- export interface IProduct {
+export interface IProduct {
     _id: string,
     category?: String,
     subCategory?: string,
@@ -85,6 +120,8 @@ export interface INewsModel extends Model<INews> {
     slashedPrice?: number,
     discount?: number,
     orders?: number,
+    freeOption?: boolean,
+    rating?: number,
     description?: String,
     specification?: ISpecification
     createdAt: string,
@@ -98,14 +135,28 @@ export interface ICartItem {
     readonly image: IImage,
     readonly name?: string,
     readonly unitPrice: number,
-    quantity: number
-    subTotalPrice: number
+    quantity: number,
+    freeOption: boolean,
+    subTotalPrice: number,
+    subTotalDiscount: number
 } 
 
 ///Declaring the interface for the cart
 export interface ICart {
   totalPrice: number,
+  totalDiscount: number,
   cart: Array<ICartItem>
+}
+
+///Declaring an interface for request parameters 
+export interface IResponse extends NextResponse {
+  params?: {
+    id?: string
+  },
+  searchParams?: {
+    id?: string,
+    query?: string
+  }
 }
 
 ///Declaring the inteface for the country

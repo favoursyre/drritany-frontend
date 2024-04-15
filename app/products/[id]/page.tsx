@@ -50,6 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+//This function sets the products
 async function getProducts() {
   try {
     const res = await fetch(`${domainName}/api/product?action=order`, {
@@ -73,7 +74,7 @@ async function getProducts() {
  */
 export default async function ProductByIdPage({ params: { id } }: { params: { id: string }}) {
   const product = await getProduct(id)
-  const products = shuffleArray(await getProducts())
+  const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
 
   return (
     <main className="product_info_page">

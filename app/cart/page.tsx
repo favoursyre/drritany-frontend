@@ -4,6 +4,7 @@
 ///Libraries -->
 import Cart from "@/components/cart/Cart"
 import SimilarProduct from "@/components/product/topProduct/topProduct"
+import { IProduct } from "@/config/interfaces";
 import { domainName, shuffleArray } from "@/config/utils";
 import { Metadata } from "next";
 
@@ -38,7 +39,7 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function CartPage() {
-  const products = shuffleArray(await getProducts())
+  const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
 
   return (
     <main className="cart_page">

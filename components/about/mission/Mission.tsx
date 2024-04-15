@@ -27,7 +27,7 @@ const Mission = () => {
             <div className={styles.brief}>
                 <h2><strong>Our Mission</strong></h2>
                 <span>
-                    With that, we decided to research a line of detoxifying products that are safe, effective, and easy to use. Our products are made from high-quality, natural ingredients that are carefully selected to help remove toxins from the body and support optimal health.
+                    With that, we decided to research a line of healthy 100% natural products that are safe, effective and easy to use. Our products are made from high-quality, natural ingredients that are carefully and professionally selected to help remove toxins from the body, cure chronic illness and support optimal health.
                 </span>
             </div>
         </main>

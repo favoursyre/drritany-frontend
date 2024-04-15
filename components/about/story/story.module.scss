@@ -5,9 +5,10 @@
 
 //Commencing the code -->
 .main {
-    @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%, $bg-color: rgba(0, 0, 0, 0.9));
+    @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%);
     @include position($left: 0%, $top: 98%);
     @include size($height:60%);
+    background-color: rgba(0, 0, 0, 0.9);
     //border: 1px solid red;
     font-family: "Roboto";
 
@@ -31,8 +32,9 @@
     }
 
     .brief {
-        @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%, $bg-color: rgba(0, 0, 0, 0.5));
+        @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%);
         @include size(100%, 100%);
+        background-color: (0, 0, 0, 0.5);
         //border: 1px solid red;
         
 

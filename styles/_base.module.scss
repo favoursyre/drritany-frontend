@@ -16,6 +16,7 @@ $tertiary-color: #FFFFFF;
 $error-color: #E42C2C;
 $text-color-1: #344563;
 $text-color-2: #111B2B;
+$star-color: #E9AC00;
 $text-color-3: rgb(154, 158, 166);
 $text-color-4: rgb(18, 183, 106);
 $input-color-1: #F0F1F2;
@@ -79,7 +80,7 @@ $breakpoints: (
   }
 }
 
-@mixin flexBar ($position: absolute, $display: flex, $wrap: none, $align: flex-start, $justify: space-between, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent) {
+@mixin flexBar ($position: absolute, $display: flex, $wrap: none, $align: flex-start, $justify: space-between, $gap: 1%, $flex_d: row, $flex: none, $bg-color: none) {
     position: $position;
     display: $display;
     flex-wrap: $wrap;

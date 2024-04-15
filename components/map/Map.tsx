@@ -16,6 +16,7 @@ const Map = () => {
     return (
         <main className={styles.main}>
             <div className={styles.map_section}>
+                {/* when updating the new map image with new countries, dont forget to update the countries in the order form */}
                 <Image
                     className={styles.img}
                     src={"https://drive.google.com/uc?export=download&id=1IxsKDhyI3gvU2p9DE-sAPmbXS_GVT1e-"}

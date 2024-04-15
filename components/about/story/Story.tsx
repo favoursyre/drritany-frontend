@@ -25,7 +25,7 @@ const Story = () => {
             <div className={styles.brief}>
             <h2><strong>Our Story</strong></h2>
             <span>
-                Our journey began when we realized that many people struggle with health issues that are caused by toxins in their bodies. We discovered that detoxifying the body can be a powerful way to improve overall health, boost energy levels, and prevent chronic illnesses.
+            Our journey began with a deep understanding of the health challenges that people from various part of the world go through on a daily basis, we discovered the profound impact of nurturing the body with healthy natural remedies — an empowering path to enhance overall well-being, elevate energy levels and fortify against chronic ailments.
             </span>
             </div>
             

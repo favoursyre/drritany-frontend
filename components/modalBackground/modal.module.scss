@@ -1,0 +1,16 @@
+/* This contains the scss for the modal background component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    //border: 1px solid green;
+    @include flexBar ($position: fixed, $align: center, $justify: center, $gap: 1%, $flex_d: row);
+    @include size;
+    margin: 0px;
+    left: 0px;
+    top: 0px;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+}

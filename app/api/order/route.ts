@@ -5,11 +5,29 @@ import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
 import { NextResponse, NextRequest } from "next/server";
 //import { sendSubnewsletterEmail } from "@/config/email";
-import { ICartItem, IOrder, IOrderSheet, IProduct } from "@/config/interfaces";
+import { ICartItem, IOrder, IOrderSheet, IProduct, ICart } from "@/config/interfaces";
 import { GoogleSheetDB, orderSheetId, getCurrentTime, getCurrentDate, nairaRate } from "@/config/utils";
 //import { IInquiry } from "@/config/interfaces";
 
 ///Commencing the code
+//This function returns the correct number of quantities
+function getValidQuantity(product: ICartItem): string {
+    if (product.freeOption) {
+        let quantity
+        if (product.quantity >= 10) {
+            quantity = product.quantity + 2
+            return quantity.toString()
+        } else if (product.quantity >= 5) {
+            quantity = product.quantity + 1
+            return quantity.toString()
+        } else {
+            return product.quantity.toString()
+        }
+    } else {
+        return product.quantity.toString()
+    }
+}
+
 ///Creating a product
 export async function POST(request: NextRequest) {
     try {
@@ -38,9 +56,9 @@ export async function POST(request: NextRequest) {
                 DeliveryAddress: customer.deliveryAddress,
                 PostalCode: customer.postalCode,
                 ProductName: cart_.name,
-                Quantity: cart_.quantity.toString(),
+                Quantity: getValidQuantity(cart_),
                 UnitPrice: (cart_.unitPrice * nairaRate).toString(),
-                TotalPrice: (cart_.subTotalPrice * nairaRate).toString(),
+                TotalPrice: ((cart_.subTotalPrice - cart_.subTotalDiscount) * nairaRate).toString(),
                 DateOrdered: getCurrentDate(), ///Convert the mongodb to date and time format and assign it respectively
                 TimeOrdered: getCurrentTime()
             })
@@ -65,6 +83,7 @@ export async function POST(request: NextRequest) {
 
 ///Getting all products
 export async function GET() {
+
     try {
         await connectMongoDB();
         //console.log("getting")

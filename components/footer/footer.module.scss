@@ -7,7 +7,7 @@
 .footer {
     @include flexBar($position: absolute, $flex_d: column, $gap: 0%);
     @include size(100%, 50%);
-    @include position($left: 0%, $top: 360%);
+    @include position($left: 0%, $top: 370%);
     //border: 2px solid black;
     font-family: "Roboto";
 
@@ -25,12 +25,12 @@
     @include tablet {
         //border: 2px solid red;
         //position: relative;
-        top: 170%;
+        top: 175%;
         height: 25%;
     }
 
     @include tabletMini {
-        top: 175%;
+        top: 180%;
     }
 
     // @include breakpoint(900px, 1024px) {
@@ -401,11 +401,17 @@
             }
         }
 
+        .address {
+            @include flexBar($position: relative, $align: center, $justify: center, $flex_d: row, $gap: 15px);
+            @include text-layout($size: 14px, $color: $text-color-3, $l_height: 16px);
+            top: 5%;
+        }
+
         .copyright {
             @include flexBar($position: relative, $align: center, $justify: center, $flex_d: row, $gap: 15px);
             //border: 2px solid red;
             @include size(100%, 30%);
-            @include text-layout($size: 14px, $color: $text-color-3, $l_height: 16px);
+            @include text-layout($size: 12px, $color: $text-color-3, $l_height: 16px);
         }
     }
 }
@@ -447,11 +453,11 @@
     }
 
     @include phonePro {
-        height: 300px;
+        height: 330px;
     }
 
     @include phoneMini {
-        height: 250px;
+        height: 280px;
     }
 
     button {
@@ -698,7 +704,7 @@
     .lower_footer {
         //border: 1px solid red;
         width: 95%;
-        height: 20%;
+        height: 23%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -710,6 +716,7 @@
 
         @include phoneMini {
             font-size: 10px;
+            //height: 25%;
         }
 
         .footer_menu {
@@ -719,8 +726,6 @@
             flex-direction: row;
             justify-content: space-between;
             width: 95%;
-
-            
 
             button {
                 background-color: transparent;
@@ -734,16 +739,44 @@
             }
         }
 
+        .address {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            //border: 1px solid red;
+
+            @include phonePro {
+                font-size: 14px;
+                color: $text-color-2;
+                z-index: 5;
+                text-align: center;
+                top: 5%;
+                //border: 1px solid red;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+            }
+        }
+
         .copyright {
             display: flex;
             justify-content: center;
-            
+            position: relative;
 
             @include phonePro {
                 font-size: 12px;
                 color: $text-color-2;
                 z-index: 5;
+                top: -5px;
+                text-align: center;
                 //border: 1px solid red;
+            }
+
+            @include phoneMini {
+                //border: 1px solid red;
+                font-size: 10px;
+                top: -10px;
             }
         }
     }
@@ -874,7 +907,7 @@
     }
 }
 
-.cartReceiptPage {
+.orderInvoicePage {
     //border: 1px solid red;
     @extend %footer-layout;
     top: 135%;
@@ -886,7 +919,7 @@
 
     @include phonePro {
         //border: 1px solid red;
-        top: 200%;
+        top: 130%;
     }
 }
 

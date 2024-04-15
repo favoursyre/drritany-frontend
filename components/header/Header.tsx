@@ -17,6 +17,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import Loading from "../loadingCircle/Circle";
+import Modal from "../modalBackground/Modal";
+import ContactModal from "../contactModal/ContactModal";
+import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
 //import { ErrorConstruc}
 
 ///Commencing the code 
@@ -29,14 +32,15 @@ const Header = () => {
   const [search, setSearch] = useState(false)
   const [menu, setMenu] = useState(false)
   const [query, setQuery] = useState(String)
- const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
+  const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
   const cart__ = getItem(cartName) 
+  const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+  const setContactModal = useContactModalStore(state => state.setContactModal);
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [cart, setCart] = useState<ICart | null>(cart__)
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
-  const [contactModal, setContactModal] = useState<boolean>(false)
   const [firstName, setFirstName] = useState<string | undefined>("") 
   const [lastName, setLastName] = useState<string | undefined>("")
   const [emailAddress, setEmailAddress] = useState<string | undefined>("")
@@ -55,6 +59,14 @@ const Header = () => {
   const urlRouter = async (query: string) => {
     router.push(`/products/search?query=${query}`)
   }
+
+  ///This function is triggered when the user clicks on contact
+  const openContactModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault()
+
+    setContactModal(true)
+    setModalBackground(true)
+}
 
   //This handles the search
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
@@ -121,7 +133,11 @@ const Header = () => {
 
       if (res.ok) {
         notify("success", `Your message was sent successfully`)
-        setContactModal(() => false)
+
+        ///Closing the modals
+        setContactModal(false)
+        setModalBackground(false)
+
         typeof window !== 'undefined' && window.location ? window.location.reload() : null
       } else {
         throw Error(`${data.message}`)
@@ -170,7 +186,7 @@ const Header = () => {
         <div className={`${styles.links}`}>
           <button onClick={() => router.push('/about')}><span>About Us</span></button>
           <button onClick={() => router.push('/#products')}><span>Products</span></button>
-          <button onClick={() => setContactModal(() => true)}>
+          <button onClick={(e) => openContactModal(e)}>
             <span>Contact Us</span>
           </button>
         </div>
@@ -216,7 +232,7 @@ const Header = () => {
             </button>
           </div>
         </div>
-        <hr className={styles.slash} />
+        {/* <hr className={styles.slash} /> */}
       </header>
       <header className={`${styles.mobile_header} ${routeStyle(routerPath, styles)}`}>
         <button className={styles.menu_button} onClick={() => setMenu(true)}>
@@ -302,15 +318,15 @@ const Header = () => {
           </button>
           <button 
             className={`${styles.links}`} 
-            onClick={() => {
+            onClick={(e) => {
               setMenu(() => false)
-              setContactModal(() => true)
+              openContactModal(e)
             }}
           >
             <span>Contact Us</span>
           </button>
       </div>
-      <div className={`${styles.contactModal} ${!contactModal ? styles.inActiveContactModal : ""}`}>
+      {/* <div className={`${styles.contactModal} ${!contactModal ? styles.inActiveContactModal : ""}`}>
         <div className={styles.container}>
           <div className={styles.image}>
             <Image
@@ -377,7 +393,10 @@ const Header = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div> */}
+      {/* <Modal>
+        <ContactModal />
+      </Modal> */}
     </>
   );
 };

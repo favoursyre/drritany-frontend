@@ -51,8 +51,11 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
     productSpec: {
         totalPrice: {
           type: Number,
-          required: true,
-          trim: true
+          required: true
+        },
+        totalDiscount: {
+          type: Number,
+          required: true
         },
         cart: {
           type: Array<ICartItem>,
@@ -93,7 +96,7 @@ orderSchema.statics.getOrders = async function () {
 
 /**
  * @notice Static get order by Id method
- * @param Id of the order to be queried
+ * @param id of the order to be queried
  * @returns Order with the given id
  */
 orderSchema.statics.getOrderById = async function (id: string) {

@@ -5,9 +5,11 @@
 import styles from "./quote.module.scss"
 import { useState, useEffect, MouseEvent } from "react"
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { quotes } from "@/config/database"
+import { shuffleArray } from "@/config/utils";
+import { quotes as q } from "@/config/database"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+import { IQuoteState } from "@/config/interfaces";
 
 ///Commencing the code 
 
@@ -17,7 +19,7 @@ import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
  */
 const Quote = () => {
     const [currentIndex, setCurrentIndex] = useState(0)
-    //const [quotes, setQuotes] = useState<Array<IQuoteState>>(quote_)
+    const [quotes, setQuotes] = useState<Array<IQuoteState>>(shuffleArray(q))
 
     ///This function slides the quote to the right
     const goToPrev = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | void): void => {
@@ -52,6 +54,8 @@ const Quote = () => {
 
     return (
         <main className={`${styles.main}`}>
+            <span className={styles.heading}>Did you know?</span>
+            <div className={styles.container}>
             <button className={styles.btn1} onClick={(e) => goToPrev(e)}>
                 <ArrowBackIosIcon className={styles.icon} />
             </button>
@@ -75,6 +79,7 @@ const Quote = () => {
             <button className={styles.btn2} onClick={(e) => goToNext(e)}>
                 <ArrowForwardIosIcon className={styles.icon} />
             </button>
+            </div>
         </main>
     );
 };

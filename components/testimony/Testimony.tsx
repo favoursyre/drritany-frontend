@@ -7,6 +7,7 @@ import styles from "./testimony.module.scss"
 import { testimonies } from "@/config/database";
 import { ITestimony } from "@/config/interfaces";
 import Image from "next/image";
+import { shuffleArray } from "@/config/utils";
 
 ///Commencing the code 
   
@@ -16,12 +17,9 @@ import Image from "next/image";
  */
 const Testimony = () => {
     const [activeTestifier, setActiveTestifier] = useState(0)
-    const [testimony, setTestimony] = useState<Array<ITestimony>>(testimonies)
+    const [testimony, setTestimony] = useState<Array<ITestimony>>(shuffleArray(testimonies))
     const [testimonyText, setTestimonyText] = useState<string | undefined>(testimony ? testimony[activeTestifier].testimony : undefined)
     const containerRef = useRef<HTMLDivElement>(null);
-
-    //console.log("Test: ", testimony)
-    
 
     ///This function triggers when someone opens an accordian
   const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | void, index: any) => {

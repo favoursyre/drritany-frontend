@@ -132,7 +132,7 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.09);
                 @include size(100%, 7%);
                 @include text-layout($size: 16px, $color: $text-color-2, $l_height: 20px);
-                font-weight: 500;
+                font-weight: 600;
 
                 @include phonePro {
                     //border: 2px solid blue;
@@ -344,12 +344,45 @@
             .price_heading {
                 //border: 2px solid red;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+                font-weight: 600;
+                position: relative;
+
+                @include phonePro {
+                    top: -2%;
+                }
             }
 
             .price_items {
                 //border: 2px solid red;
                 top: 2%;
-                @include flexBar($position: relative, $justify: space-between, $gap: 5%, $flex_d: row, $wrap: none, $align: flex-start, $flex: none);
+                @include flexBar($position: relative, $justify: space-between, $gap: 5%, $flex_d: column, $wrap: none, $align: flex-start, $flex: none);
+
+                .subtotal, .discount, .total {
+                    //border: 1px solid red;
+                    @include flexBar($position: relative, $justify: space-between, $display: flex, $align: flex-start, $flex_d: row);
+                    @include size(100%, 35%);
+                    font-size: 14px;
+
+                    // .title {
+
+                    // }
+
+                    .amount {
+                        @include flexBar($position: relative, $display: flex, $justify: flex-end, $align: center, $flex_d: row);
+                        font-weight: 600;
+
+                        .minus {
+                            position: relative;
+                            left: -10%;
+                        }
+                    }
+                }
+
+                .total {
+                    height: 40%;
+                    padding-top: 10px;
+                    border-top: 2px dashed rgba(95, 103, 173, 0.6);
+                }
             }
             
             button {
@@ -370,6 +403,7 @@
                 @include phonePro {
                     @include size(100%, 40%);
                     font-weight: 400;
+                    top: 30%;
                     //border: 2px solid red;
                     //left: 25%;
                 } 
@@ -423,13 +457,15 @@
         } 
 
         @include phonePro {
-            @include size(65%, 20%);
+            @include size(65%, 15%);
             padding: 3% 2.5%;
             top: 10%;
+            align-items: center;
+            justify-content: center;
         } 
 
         @include phoneMini {
-            width: 75%;
+            @include size(75%, 20%);
         }
 
         .modal_heading {
@@ -441,9 +477,20 @@
             font-weight: 600;
             //border: 2px solid red;
 
+            @include phonePro {
+                width: 80%;
+            }
+
             button {
                 background-color: transparent;
                 border-color: transparent;
+
+                .icon {
+
+                    @include phonePro {
+                        font-size: 1rem;
+                    }
+                }
             }
         }
 
@@ -454,6 +501,8 @@
 
             @include phonePro {
                 text-align: center;
+                width: 80%;
+                line-height: 20px;
             }
         }
 
@@ -470,8 +519,9 @@
                 top: 0%;
             }
 
-            @include phone {
-                top: 10%;
+            @include phonePro {
+                top: 0%;
+                @include size(80%, 20%);
             } 
 
             @include phoneMini {

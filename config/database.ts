@@ -6,8 +6,8 @@ import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
 ///Commencing the code -->
 export const faqs: Array<IFAQState> = [
     {
-        question: "Why is detoxifying important?",
-        answer: "Detoxifying is important because it helps the body to get rid of harmful toxins that can accumulate over time and cause various health problems. Toxins can come from a variety of sources, including environmental pollutants, processed foods, alcohol, drugs, and medications."
+        question: "Why are natural remedies essential?",
+        answer: "Embracing natural health practices is key to nurturing our bodies from the inside out. By incorporating wholesome, natural-based solutions into our daily routines, we fortify our well-being, enhance vitality and foster a harmonious balance between the mind, soul and body."
     },
     {
         question: "How do we source our products?",
@@ -15,7 +15,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "When should I expect my delivery?",
-        answer: "Deliveries are usually within 7 business days, be rest assured that we would do everything to deliver your products to you as soon as possible."
+        answer: "Deliveries are usually within 1 - 4 business days, be rest assured that we would do everything to deliver your products to you as soon as possible."
     },
     {
         question: "Where do we deliver to?",
@@ -30,6 +30,12 @@ export const faqs: Array<IFAQState> = [
 export const quotes: Array<IQuoteState> = [
     {
         quote: "Vinyl Chloride is a deadly toxin that is present in our air and drinking water, long-term exposure to this toxin has been known to cause liver damage and cancer."
+    },
+    {
+        quote: "True happiness comes from within."
+    },
+    {
+        quote: "It’s up to you today to start making healthy choices. Not choices that are just healthy for your body, but healthy for your mind."
     },
     {
         quote: "Arsenic is a toxin found in some food crops and water, long-term exposure to this toxin can cause cancer and skin lesions."
@@ -82,7 +88,7 @@ export const testimonies: Array<ITestimony> = [
             height: 101
         },
         profession: "Financial Advisor",
-        testimony: "My wife and I use the ginseng tea as a dietary supplement. The product has proven to be an enery boost and is easily disolvable in our coffee or tea drinks. It's like a rejuvenating elixir in a cup!"
+        testimony: "My wife and I use the ginseng tea as a dietary supplement. The product has proven to be an energy boost and is easily disolvable in our coffee or tea drinks. It's like a rejuvenating elixir in a cup!"
     },
     {
         name: "Linh Nguyen",

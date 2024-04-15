@@ -54,7 +54,9 @@ useEffect(() => {
         if (cart !== null) {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
+            cart.cart[index].subTotalDiscount = cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             setCart(() => ({ ...cart }))
             setItem(cartName, cart)
         }
@@ -73,7 +75,9 @@ useEffect(() => {
                 console.log("before: ", cart)
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
+                cart.cart[index].subTotalDiscount = cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
                 console.log("after: ", cart)
@@ -165,10 +169,27 @@ useEffect(() => {
                     <div className={styles.cart_price}>
                         <span className={styles.price_heading}>Cart Price</span>
                         <div className={styles.price_items}>
-                            <span>Total</span>
-                            <div>
-                                <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                <span>{cart ? (Math.round(cart.totalPrice * nairaRate)).toLocaleString("en-US") : ""}</span>
+                            <div className={styles.subtotal}>
+                                <span className={styles.title}>Subtotal</span>
+                                <div className={styles.amount}>
+                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                    <span>{cart ? (Math.round(cart.totalPrice * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                </div>
+                            </div>
+                            <div className={styles.discount}>
+                                <span className={styles.title}>Discount</span>
+                                <div className={styles.amount}>
+                                    <RemoveIcon className={styles.minus} style={{ fontSize: "1rem" }} />
+                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                    <span>{cart ? (Math.round(cart.totalDiscount * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                </div>
+                            </div>
+                            <div className={styles.total}>
+                                <span className={styles.title}>Total</span>
+                                <div className={styles.amount}>
+                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                    <span>{cart ? (Math.round((cart.totalPrice - cart.totalDiscount) * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                </div>
                             </div>
                         </div>
                         <button onClick={(e) => checkoutOrder(e)}>
@@ -185,7 +206,7 @@ useEffect(() => {
                 <div className={styles.modal_heading}>
                     <span>Remove from cart</span>
                     <button onClick={() => setDeleteModal(() => false)}>
-                        <CloseIcon />
+                        <CloseIcon className={styles.icon} />
                     </button>
                 </div>
                 <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>

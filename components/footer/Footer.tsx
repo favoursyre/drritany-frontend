@@ -166,6 +166,7 @@ const Footer = () => {
                 <button onClick={() => router.push('/about/#faqs')}><span>FAQ</span></button>
                 <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
             </div>
+            <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
             <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} Dr Ritany Inc., All rights reserved</span>
            </div>
         </footer>
@@ -233,6 +234,7 @@ const Footer = () => {
                     <button onClick={() => router.push('/about/#faqs')}><span>FAQ</span></button>
                     <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
                 </div>
+                <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
             <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} Dr Ritany Inc., All rights reserved</span>
            </div>
         </footer>

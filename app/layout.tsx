@@ -8,7 +8,11 @@ const Header = dynamic(() => import("@/components/header/Header"), { ssr: false 
 import Footer from "@/components/footer/Footer";
 import { domainName, companyName } from '@/config/utils';
 import { ToastContainer } from 'react-toastify';
+import Modal from "@/components/modalBackground/Modal";
+import ContactModal from "@/components/contactModal/ContactModal";
 import 'react-toastify/dist/ReactToastify.css';
+import DiscountModal from "@/components/discountModal/DiscountModal";
+import OrderModal from "@/components/orderModal/OrderModal";
 
 ///Commencing the code
 let status: boolean = false
@@ -23,8 +27,8 @@ export const metadata = {
   icons: {
     icon: 'favicon.ico',
   },
-  description: 'E-Commerce website for all sort of health products',
-  keywords: "drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce"
+  description: 'E-Commerce website for all sorts of natural health products',
+  keywords: "drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce, natural"
 }
 
 ///This function gets the client details
@@ -115,6 +119,11 @@ export default async function RootLayout({
       <body suppressHydrationWarning={true} className={styles.body}>
         <ToastContainer autoClose={5000} limit={5} newestOnTop={true} />
         <Header />
+        <Modal>
+          <DiscountModal />
+          <ContactModal />
+          <OrderModal />
+        </Modal>
         <main className='container'>{children}</main>
         <Footer />
       </body>

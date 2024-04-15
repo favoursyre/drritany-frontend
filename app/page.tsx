@@ -6,8 +6,11 @@ import Hero from '@/components/hero/Hero';
 import { domainName } from '@/config/utils';
 import Map from "@/components/map/Map"
 import Products from '@/components/product/productGrid/ProductGrid';
-import Quote from '@/components/quote/Quote';
-import Testimony from '@/components/testimony/Testimony';
+import dynamic from "next/dynamic"
+const Quote = dynamic(() => import("@/components/quote/Quote"), { ssr: false })
+const Testimony = dynamic(() => import("@/components/testimony/Testimony"), { ssr: false })
+//import Quote from '@/components/quote/Quote';
+//import Testimony from '@/components/testimony/Testimony';
 import { IProduct } from '@/config/interfaces';
 
 ///Commencing the code

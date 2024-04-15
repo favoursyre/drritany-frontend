@@ -20,7 +20,7 @@
 
 .main {
     @include flexBar($align: center, $justify: center, $flex_d: column);
-    @include position($left: 0%, $top: 300%);
+    @include position($left: 0%, $top: 310%);
     @include size(100%, 60%);
     //border: 2px solid $primary-color;
     font-family: "Roboto";
@@ -35,12 +35,12 @@
 
     @include tablet {
         //border: 2px solid red;
-        top: 145%;
+        top: 150%;
     }
 
     @include tabletMini {
         //border: 2px solid red;
-        top: 150%;
+        top: 155%;
     }
     // @include breakpoint(900px, 1024px) {
     //     //border: 2px solid red;

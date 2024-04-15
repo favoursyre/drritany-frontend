@@ -207,6 +207,18 @@
             @include text-layout($size: 30px, $l_height: 45px);
             //border: 2px solid $primary-color;
             margin-bottom: 10px;
+            @include flexBar($position: relative, $display: flex, $justify: flex-start, $align: center, $gap: 2%, $flex_d: row);
+
+            .icon {
+                font-size: 1rem;
+                color: $star-color;
+                top: 5px;
+                position: relative;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
 
             @include phoneMini {
                 font-size: 25px;
@@ -234,47 +246,143 @@
             }
         }
 
-        .product_price_orders {
-            @include flexBar($position: relative, $justify: none, $gap: 5%, $flex_d: row, $wrap: none, $align: none, $flex: none);
+        .product_price_orders_rating {
+            @include flexBar($position: relative, $justify: space-between, $gap: 5%, $flex_d: row, $wrap: none, $align: none, $flex: none);
             //border: 2px solid $primary-color;
 
-            .product_price {
-                display: flex;
-                flex-direction: column;
-                position: relative;
-                //border: 2px solid $primary-color;
+            .price_orders {
+                @include flexBar($position: relative, $justify: flex-start, $gap: 7%, $flex_d: row, $wrap: none, $align: none, $flex: none);
+                //border: 2px solid green;
+                @include size(50%, auto);
 
-                .price {
-                    @include text-layout($size: 16px, $l_height: 20px);
-                    font-weight: 600;
-                    //border: 2px solid $primary-color;
-
-                    @include phoneMini {
-                        font-size: 14px;
-                    }
+                @include tablet {
+                    width: 60%;
                 }
 
-                .slashed_price {
-                    @include text-layout($size: 13px, $color: $text-color-3, $l_height: 20px);
-                    letter-spacing: 0.1px;
-                    text-decoration-line: line-through;    
-                    //border: 2px solid $primary-color; 
+                @include phonePro {
+                    width: 63%;
+                    gap: 5%;
+                }
+
+                .product_price {
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                    //border: 2px solid $primary-color;
+                    @include size(auto, auto);
+    
+                    .price {
+                        @include text-layout($size: 16px, $l_height: 20px);
+                        font-weight: 600;
+                        //border: 2px solid $primary-color;
+    
+                        @include phone {
+                            font-size: 14px;
+                        }
+
+                        @include phoneMini {
+                            font-size: 12px;
+                        }
+                    }
+    
+                    .slashed_price {
+                        @include text-layout($size: 13px, $color: $text-color-3, $l_height: 20px);
+                        letter-spacing: 0.1px;
+                        text-decoration-line: line-through;    
+                        //border: 2px solid $primary-color; 
+    
+                        @include phone {
+                            font-size: 12px;
+                        }
+
+                        @include phoneMini {
+                            font-size: 10px;
+                        }
+                    }
+                }
+    
+                .product_orders {
+                    @include flexBar($position: relative, $justify: flex-start, $gap: 3%, $flex_d: row, $wrap: none, $align: none, $flex: none);
+                    //border: 2px solid $primary-color;
+                    @include size(45%, 100%);
+                    @include text-layout($size: 14px, $l_height: 24px);
+
+                    @include tablet {
+                        width: 55%;
+                    }
+
+                    @include phonePro {
+                        line-height: 20px;
+                        width: 55%;
+                    }
+    
+                    @include phone {
+                        width: 59%;
+                        font-size: 12px;
+                        line-height: 18px;
+                    }
 
                     @include phoneMini {
-                        font-size: 12px;
+                        font-size: 10px;
+                    }
+
+                    .icon {
+                        font-size: 1.5rem;
+
+                        @include phoneMini {
+                            font-size: 1.3rem;
+                        }
                     }
                 }
             }
 
-            .product_orders {
-                @include flexBar($position: relative, $justify: flex-start, $gap: 3%, $flex_d: row, $wrap: none, $align: none, $flex: none);
-                //border: 2px solid $primary-color;
-                @include size(45%, 100%);
-                @include text-layout($size: 14px, $l_height: 24px);
+            .rating {
+                //border: 1px solid red;
+                position: relative;
+                @include size(30%, auto);
+                @include flexBar($position: relative, $justify: flex-end, $gap: 3%, $flex_d: row, $wrap: none, $align: flex-start, $flex: none);
 
-                @include phoneMini {
-                    font-size: 12px;
-                    width: 55%;
+                @include tabletPro {
+                    left: -5%;
+                }
+
+                .stars {
+                    //border: 1px solid red;
+                    position: relative;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 0px;
+                    flex-direction: row;
+                
+                    .star {
+                        font-size: 1.1rem;
+                        color: $star-color;
+
+                        @include phone {
+                            font-size: 0.9rem;
+                        }
+
+                        @include phoneMini {
+                            font-size: 0.7rem;
+                        }
+                    }
+                }
+
+                span {
+                    font-size: 14px;
+                    color: $star-color;
+                    //border: 1px solid red;
+                    position: relative;
+
+                    @include phone {
+                        font-size: 13px;
+                        top: 5%;
+                    }
+
+                    @include phoneMini {
+                        font-size: 11px;
+                        //top: 5%;
+                    }
                 }
             }
         }

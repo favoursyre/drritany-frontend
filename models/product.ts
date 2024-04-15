@@ -64,6 +64,14 @@ const productSchema = new Schema<IProduct, IProductModel>(
       type: Number,
       required: true,
     },
+    rating: {
+      type: Number,
+      required: true,
+    },
+    freeOption: {
+      type: Boolean,
+      required: true,
+    },
     orders: {
         type: Number,
         required: true,

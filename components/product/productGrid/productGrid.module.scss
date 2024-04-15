@@ -329,7 +329,7 @@
         }
 
         .pagination_section {
-            @include flexBar($position: relative, $display: none, $wrap: none, $justify: center, $gap: 2%, $flex_d: row, $flex: auto);
+            @include flexBar($position: relative, $display: flex, $wrap: none, $justify: center, $gap: 2%, $flex_d: row, $flex: auto);
             padding: 1%;
             top: 1%;
             align-items: center;
@@ -355,6 +355,11 @@
                 border-radius: 4px;
                 justify-content: center;
                 align-items: center;
+
+                &:hover {
+                    background-color: $primary-color;
+                    color: $tertiary-color;
+                }
             }
         }
     }

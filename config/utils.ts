@@ -17,6 +17,8 @@ export const nairaRate: number = 1250
 
 export const discount: number = 33
 
+export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
+
 export const domainName: string = "http://localhost:3000"
 //export const domainName: string = "https://dr-ritany.vercel.app"
 
@@ -61,8 +63,8 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
         default:
             if (router.includes("/products/")) {
                 return styles.productInfoPage
-            } else if (router.includes("/cart/")) {
-                return styles.cartReceiptPage
+            } else if (router.includes("/order/invoice")) {
+                return styles.orderInvoicePage
             } else {
                 return styles.others
             }
@@ -86,7 +88,7 @@ export const parsedHtml = (htmlTag: string, tagType: string): React.ReactElement
 
 
 ///This function exports a array shuffler function
-export const shuffleArray = (array: Array<any>): Array<any> => {
+export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     if (array) {
         const newArray = [...array];
         for (let i = newArray.length - 1; i > 0; i--) {
@@ -175,6 +177,11 @@ export const deleteItemByKey = (array: Array<any>, key: string, value: string): 
 ///This function gets the slashed price depending on the discount
 export const slashedPrice = (price: number, discount: number): number => {
     return (price * 100) / (100 - discount)
+}
+
+///The function delays the code
+export const sleep = (seconds: number): Promise<void> => {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
 
 ///This function sorts the array by orders in descending order

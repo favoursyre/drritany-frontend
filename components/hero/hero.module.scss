@@ -7,7 +7,7 @@
 .main {
     @include flexBar($align: center, $justify: center, $gap: 2%);
     @include size($height: 90%);
-    background-image: linear-gradient(to bottom, transparent, transparent, transparent, rgba(255, 255, 255, 0.986));
+    //background-image: linear-gradient(to bottom, transparent, transparent, transparent, rgba(255, 255, 255, 0.986)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
     @include position($left: 0%, $top: 8%);
     //border: 2px solid red;
     z-index: -5;
@@ -32,6 +32,7 @@
     }
 
     .background {
+        //border: 1px solid red;
         object-fit: cover;
         object-position: center 30%;
         position: absolute;

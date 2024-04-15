@@ -31,12 +31,17 @@
         font-weight: 500;
         margin-bottom: 0px;
 
+        @include tabletPro {
+            font-size: 25px;
+        }
+
         @include phonePro {
-            margin-top: -50px;
+            margin-top: -10px;
+            font-size: 25px;
         }
 
         @include phoneMini {
-            font-size: 25px;
+            
             top: 1%;
         }
     }
@@ -60,6 +65,11 @@
         @include flexBar($position: relative, $align: center, $justify: center, $gap: 1%, $flex_d: column);
         @include size(80%, 80%);
         @include text-layout($size: 14px, $l_height: 25px, $color: $text-color-2);
+        top: 10%;
+
+        @include tablet {
+            width: 90%;
+        }
 
         @include phonePro {
             width: 90%;
@@ -88,6 +98,7 @@
                 @include phonePro {
                     flex-direction: column;
                     text-align: start;
+                    padding-bottom: 5px
                 }
 
                 span {
@@ -115,6 +126,7 @@
                 @include phonePro {
                     flex-direction: column;
                     text-align: end;
+                    padding-bottom: 5px
                 }
 
                 span {
@@ -135,30 +147,59 @@
             @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
             line-height: 20px;
 
+            @include phonePro {
+                flex-direction: column;
+            }
+
             .deliveryAddress {
                 //border: 1px solid red;
                 @include size(45%, 90%);
                 @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
+
+                @include phonePro {
+                    @include size(100%, 60%);
+                    align-items: flex-start;
+                    line-height: 17px;
+                }
+
+                @include phoneMini {
+                    line-height: 13px
+                }
                 
             }
 
             .deliveryDate {
-               // border: 1px solid red;
+                //border: 1px solid red;
                 @include size(45%, 90%);
                 @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 0%);
+                //display: block;
+                
+
+
+                @include phonePro {
+                    @include size(100%, 40%);
+                    line-height: 17px;
+                    border-bottom: 1px dashed $primary-color;
+                }
+
+                @include phoneMini {
+                    line-height: 13px
+                }
+                
             }
         }
 
         .cartList {
             //border: 1px solid red;
             border-bottom: 1px solid $primary-color;
-            @include size(90%, 40%);
+            @include size(90%, 50%);
             @include flexBar($position: relative, $align: center, $justify: flex-start, $flex_d: column, $gap: 0%);
+            overflow: auto;
 
             .cartItem {
                 //border: 1px solid red;
                 border-bottom: 1px solid $text-color-3;
-                @include size(100%, 25%);
+                @include size(100%, 20%);
                 @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
 
                 .cartImage {
@@ -173,7 +214,7 @@
                     .img {
                         position: relative;
                         @include size(100%, 100%);
-                        object-fit: cover;
+                        object-fit: contain;
                     }
                 }
 
@@ -203,13 +244,15 @@
         .totalSection {
             //border: 1px solid red;
             border-bottom: 1px solid $primary-color;
-            @include size(90%, 15%);
+            @include size(90%, 20%);
             @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 1%);
 
             .subTotal,
             .deliveryFee,
             .total {
                 //border: 1px solid red;
+                //padding-top: 5px;
+                //padding-bottom: 5px;
                 border-bottom: 1px solid $text-color-3;
                 @include size(100%, 25%);
                 @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
@@ -217,6 +260,8 @@
 
             .total {
                 border: none;
+                padding-top: 5px;
+                //padding-bottom: 15px;
             }
         }
     }

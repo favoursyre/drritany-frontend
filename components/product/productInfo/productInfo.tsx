@@ -2,19 +2,22 @@
 ///Product Info component
 
 ///Libraries -->
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import { useState, useEffect, MouseEvent } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { decodedString, cartName, getCurrencySymbol, getExchangeRate, nairaSymbol, nairaRate, slashedPrice, discount } from '@/config/utils'
+import { decodedString, cartName, getCurrencySymbol, getExchangeRate, sleep, nairaSymbol, nairaRate, slashedPrice, discount, deliveryPeriod } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { Star, AddShoppingCart, StarHalf, Discount } from '@mui/icons-material';
+import Modal from '@/components/modalBackground/Modal';
+import DiscountModal from '@/components/discountModal/DiscountModal';
+import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
 
 ///Commencing the code 
 /**
@@ -29,9 +32,14 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const [quantity, setQuantity] = useState(1)
     const [deliveryDate, setDeliveryDate] = useState(String)
     const router = useRouter()
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
+    const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
+    const discountProduct = useDiscountModalStore(state => state.product);
     const [imageIndex, setImageIndex] = useState<number>(0)
     const spec = product[0].specification
     const clientInfo: IClientInfo = getItem("clientInfo")
+    const stars: Array<number> = [1, 2, 3, 4]
     console.log("Product info: ", product)
 
     ///This contains the accordian details
@@ -64,13 +72,35 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     useEffect(() => {
         // This function will be called every time the component is mounted, and
         // whenever the `count` state variable changes
-        console.log("main: ", mainImage)
+        //console.log("main: ", mainImage)
       }, [mainImage, mainImageId]);
 
 
+      //This counts up to 5secs before popping up the discount modal
+      useEffect(() => {
+        const productName = product[0].name as unknown as string
+        const productFreeOption = product[0].freeOption as unknown as boolean
+        //const popped = false
+        async function openDiscountModal(seconds: number) {
+            //setDiscountProduct({ name: productName, freeOption: productFreeOption, poppedUp: false })
+            await sleep(seconds)
+
+            if (discountProduct.poppedUp) {
+                return
+            } else {
+                setDiscountProduct({ name: productName, freeOption: true, poppedUp: true })
+                setModalBackground(true)
+                setDiscountModal(true)
+            }
+            //console.log("finished counting")
+        }
+
+        openDiscountModal(5)
+      })
+
     useEffect(() => {
         const currentDate = new Date();
-        const nextWeek = new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+        const nextWeek = new Date(currentDate.getTime() + deliveryPeriod * 24 * 60 * 60 * 1000);
         const options: Intl.DateTimeFormatOptions = { weekday: "long", year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = nextWeek.toLocaleDateString('en-US', options);
         //console.log("One week from now: ", formattedDate);
@@ -96,25 +126,38 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         e.preventDefault()
         const p = product[0]
 
+        //Arranging the cart details
         const cartItem: ICartItem = {
             _id: p._id,
             image: p.images[0],
             name: p.name,
             unitPrice: p.price || 0,
             quantity: quantity,
-            subTotalPrice: p.price || 0 * quantity
+            freeOption: p.freeOption ? p.freeOption : false,
+            subTotalPrice: p.price || 0 * quantity,
+            subTotalDiscount: 0
         }
         //console.log("Quantity: ", quantity)
         cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
         const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
+        
+        let discount
+        if (cartItem.quantity >= 3) {
+            cartItem.subTotalDiscount = Number(((10 / 100) * totalPrice).toFixed(2))
+            //discount = (10 / 100) * totalPrice
+        } else {
+            cartItem.subTotalDiscount = 0
+        }
+        const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
         const cart_ = localStorage.getItem(cartName)
-        const cart = JSON.parse(cart_ || "{}")
+        const cart = JSON.parse(cart_ || "{}") as unknown as ICart
 
         if (cart_) {
             //console.log(true)
             const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
             if (!result) {
                 cart.totalPrice = Number((cart.totalPrice + totalPrice).toFixed(2))
+                cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
                 cart.cart.push(cartItem)
                 setItem(cartName, cart)
                 if (!order) {
@@ -130,7 +173,9 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 } else {
                     cart.cart[index].quantity = quantity
                     cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
+                    cart.cart[index].subTotalDiscount = quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                     cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                    cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                     setItem(cartName, cart)
                     if (!order) {
                         notify('success', "Product has been updated to cart")
@@ -146,6 +191,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
             const cart: ICart = {
                 totalPrice: totalPrice,
+                totalDiscount: totalDiscount,
                 cart: [cartItem]
             }
 
@@ -160,6 +206,14 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         
     }
 
+    ///This function opens discount modal
+    const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
+        e.preventDefault()
+
+        setModalBackground(true)
+        setDiscountModal(true)
+    }
+
     ///This function is triggered when the order now is pressed
     const orderNow = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
@@ -168,7 +222,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         addToCart(e, true)
 
         //Routing the user to order form
-        router.push("/order")
+        router.push("/cart")
     }
      
     ///This function triggers when someone opens an accordian
@@ -184,8 +238,8 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     }
     
     return (
-        <main className={`${styles.main}`}>
-            <ToastContainer />
+        <>
+            <main className={`${styles.main}`}>
             {product.map((p, _id) => (
                 <div className={styles.left_section} key={_id}>
                     <div className={styles.image_section}>
@@ -238,9 +292,10 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             ))}
             {product.map((p, _id) => (
                 <div className={styles.right_section} key={_id}>
-                <h3><strong>{p.name}</strong></h3>
+                <h3><strong>{p.name}</strong> <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} /></h3>
                 <span className={styles.product_about}>{p.description}</span>
-                <div className={styles.product_price_orders}>
+                <div className={styles.product_price_orders_rating}>
+                    <div className={styles.price_orders}>
                     <div className={styles.product_price}>
                         <div className={styles.price}>
                             <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
@@ -255,7 +310,16 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         <LocalShippingIcon className={styles.icon} />
                         <span>{p.orders?.toLocaleString("en-US")} orders</span>
                     </div>
-                    
+                    </div>
+                    <div className={styles.rating}>
+                        <div className={styles.stars}>
+                            {stars.map((star, id) => (
+                                <Star className={styles.star} key={id} />
+                            ))}
+                            <StarHalf className={styles.star} />
+                        </div>
+                        <span>4.7</span>
+                    </div>
                 </div>
                 <span className={styles.product_deliveryDate}><em>Free Delivery to be delivered before {deliveryDate}.</em></span>
                 <div className={styles.product_quantity}>
@@ -278,7 +342,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         addToCart(e, false)
                         window.location.reload()
                     }}>
-                        <AddShoppingCartIcon className={styles.icon} />
+                        <AddShoppingCart className={styles.icon} />
                         <span>Add to cart</span>
                     </button>
                 </div>
@@ -312,6 +376,10 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 </div>
             ))}
         </main>
+        {/* <Modal>
+            <DiscountModal product={product[0].name ? product[0].name : ""} />
+        </Modal> */}
+        </>
     );
 };
   
