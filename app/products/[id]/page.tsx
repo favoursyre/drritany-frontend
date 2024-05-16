@@ -2,9 +2,9 @@
 ///This handles the products page
 
 ///Libraries -->
-import ProductInfo from '@/components/product/productInfo/productInfo';
-import SimilarProduct from '@/components/product/topProduct/topProduct';
-import { shuffleArray, domainName } from '@/config/utils';
+import ProductInfo from '@/components/product/productInfo/ProductInfo';
+import SimilarProduct from '@/components/product/productSlide/ProductSlide';
+import { shuffleArray, domainName, removeProductFromArray } from '@/config/utils';
 import { Metadata } from 'next';
 import { IProduct, Props } from '@/config/interfaces';
 
@@ -73,8 +73,9 @@ async function getProducts() {
  * @title Product info page
  */
 export default async function ProductByIdPage({ params: { id } }: { params: { id: string }}) {
-  const product = await getProduct(id)
-  const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
+  const product = await getProduct(id) as unknown as Array<IProduct>
+  const products_ = await getProducts() as unknown as Array<IProduct>
+  const products = shuffleArray(removeProductFromArray(product[0], products_))
 
   return (
     <main className="product_info_page">

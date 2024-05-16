@@ -6,12 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./productGrid.module.scss"
 import { IProduct, IClientInfo } from '@/config/interfaces';
-import { getItem } from "@/config/clientUtils"
-import { groupList, sortOptions as sortOption, decodedString, getCurrencySymbol, getExchangeRate, nairaSymbol, nairaRate, discount, slashedPrice, domainName, sortProductByOrder, sortProductByLatest, sortProductByPrice } from '@/config/utils'
+import { groupList, sortOptions as sortOption, decodedString, slashedPrice, sortProductByOrder, sortProductByLatest, sortProductByPrice } from '@/config/utils'
 import TuneIcon from '@mui/icons-material/Tune';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Image from 'next/image';
+import { useClientInfoStore } from "@/config/store";
+import ProductCard from '@/components/cards/product/ProductCard';
 
 ///Commencing the code 
 /**
@@ -31,12 +32,15 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
     const [mobileTotalPage, setMobileTotalPage] = useState<Array<any>>([])
     const [timeLeft, setTimeLeft] = useState<number>(54400);
     const [width, setWidth] = useState<number>(typeof window !== 'undefined' && window.screen ? window.screen.width : 0)
-    const clientInfo: IClientInfo = getItem("clientInfo")
+    const clientInfo = useClientInfoStore(state => state.info)
     //console.log("Products: ", productList)
 
     // const res_ = await fetch(`${domainName}/api/product`)
     // console.log("Res: ", res_.json())
 
+    useEffect(() => {
+
+    }, [products])
 
     ///
     useEffect(() => {
@@ -45,7 +49,7 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [products]);
 
     ///
     useEffect(() => {
@@ -102,17 +106,21 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                 //console.log("first: ", mobileCurrentIndex)
                 setMobileCurrentIndex(mobileCurrentIndex+1)
                 //console.log("second: ", mobileCurrentIndex)
-                setProducts(mobileTotalPage[mobileCurrentIndex])
+                const newProducts: Array<IProduct> = mobileTotalPage[mobileCurrentIndex]
+                setProducts(() => [...newProducts])
+                console.log('Products: ', products)
                 //console.log("clicked")
             }
           } else {
             if (pcCurrentIndex + 1 >= pcTotalPage.length) {
                 null
             } else {
-                //console.log("first: ", pcCurrentIndex)
+                console.log("first: ", pcCurrentIndex)
                 setPcCurrentIndex(pcCurrentIndex + 1)
-                //console.log("second: ", mobileCurrentIndex)
-                setProducts(pcTotalPage[pcCurrentIndex])
+                console.log("second: ", pcCurrentIndex)
+                const newProducts: Array<IProduct> = pcTotalPage[pcCurrentIndex]
+                setProducts(() => [...newProducts])
+                console.log('Products: ', products)
                 console.log("clicked")
             }
           }
@@ -129,17 +137,19 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                 console.log("first: ", mobileCurrentIndex)
                 setMobileCurrentIndex(mobileCurrentIndex - 1)
                 console.log("second: ", mobileCurrentIndex)
-                setProducts(mobileTotalPage[mobileCurrentIndex])
+                const newProducts: Array<IProduct> = mobileTotalPage[mobileCurrentIndex]
+                setProducts(() => [...newProducts])
                 console.log("clicked")
             }
         } else {
             if (pcCurrentIndex + 1 <= 1) {
                 null
             } else {
-                //console.log("first: ", mobileCurrentIndex)
-                setMobileCurrentIndex(pcCurrentIndex - 1)
-                //console.log("second: ", mobileCurrentIndex)
-                setProducts(pcTotalPage[pcCurrentIndex])
+                console.log("first: ", pcCurrentIndex)
+                setPcCurrentIndex(pcCurrentIndex - 1)
+                console.log("second: ", pcCurrentIndex)
+                const newProducts: Array<IProduct> = pcTotalPage[pcCurrentIndex]
+                setProducts(() => [...newProducts])
                 //console.log("clicked")
             }
         }
@@ -153,16 +163,16 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
 
         if (sort === 0) {
             product_ = sortProductByOrder(productList)
-            setProductList(product_)
+            setProductList(() => [...product_])
         } else if (sort === 1) {
             product_ = sortProductByLatest(productList)
-            setProductList(() => product_)
+            setProductList(() => [...product_])
         } else if (sort === 2) {
             product_ = sortProductByPrice(productList, "descend")
-            setProductList(() => product_)
+            setProductList(() => [...product_])
         } else if (sort === 3) {
             product_ = sortProductByPrice(productList, "ascend")
-            setProductList(() => product_)
+            setProductList(() => [...product_])
         }
     }
 
@@ -185,35 +195,43 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                 </div>
                 <div className={styles.product_carousel_section}>
                     {products ? products.map((product, _id) => (
-                        <div className={styles.product_carousel} key={_id} onClick={event => handleClick(event, product._id)}>
-                        <div className={styles.carousel_image}>
-                            <Image
-                                className={styles.img} 
-                                src={product.images[0].src}
-                                alt=""
-                                width={product.images[0].width}
-                                height={product.images[0].height}
-                            />
-                        </div>
-                        <div className={styles.carousel_name}>
-                            <span>{product.name}</span>
-                        </div>
-                        <div className={styles.carousel_price}>
-                            <div className={styles.price_1}>
-                                <strong>
-                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                    <span>{product.price ? (Math.round(product.price * nairaRate)).toLocaleString("en-US") : ""}</span>
-                                </strong>
-                            </div>
-                            <div className={styles.price_2}>
-                                {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
-                                <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                <span>{product.price ? (Math.round(slashedPrice(product.price * nairaRate, discount))).toLocaleString("en-US") : (<></>)}</span>
-                            </div>
-                        </div>
-                    </div>
+                        // <div className={styles.product_carousel} key={_id} onClick={event => handleClick(event, product._id)}>
+                        // <div className={styles.carousel_image}>
+                        //     <Image
+                        //         className={styles.img} 
+                        //         src={product.images[0].src}
+                        //         alt=""
+                        //         width={product.images[0].width}
+                        //         height={product.images[0].height}
+                        //     />
+                        // </div>
+                        // <div className={styles.carousel_name}>
+                        //     <span>{product.name}</span>
+                        // </div>
+                        // <div className={styles.carousel_price}>
+                        //     <div className={styles.prices}>
+                        //         <div className={styles.price_1}>
+                        //             <strong>
+                        //                 {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                        //                 {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
+                        //                 {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.price ? (Math.round(product.price * clientInfo.country?.currency?.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
+                        //             </strong>
+                        //         </div>
+                        //         <div className={styles.price_2}>
+                        //             {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
+                        //             {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
+                        //             {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.price ? (Math.round(slashedPrice(product.price * clientInfo.country?.currency?.exchangeRate, product.discount))).toLocaleString("en-US") : (<></>)}</span> : <></>}
+                        //         </div>
+                        //     </div>
+                        //     <div className={styles.discount}>
+                        //         <span>-{product.discount}%</span>
+                        //     </div>
+                        // </div>
+                        // </div>
+                        <ProductCard key={_id} product_={product} view={undefined} />
                     )) : (<></>)}
-                    <div className={styles.pagination_section}>
+                </div>
+                <div className={styles.pagination_section}>
                         <button onClick={e => goPrev(e)}>
                             <KeyboardArrowLeftIcon />
                         </button>
@@ -222,7 +240,6 @@ const Product = ({ product_ }: { product_: Array<IProduct> }) => {
                             <KeyboardArrowRightIcon />
                         </button>
                     </div>
-                </div>
             </div>
             
         </main>

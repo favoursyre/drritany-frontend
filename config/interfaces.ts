@@ -19,8 +19,9 @@ export interface IFAQState {
 export interface IImage {
   name?: string,
   src: string,
+  alt?: string,
   width?: number,
-  height?: number
+  height?: number,
 }
 
 ///IQuote
@@ -107,6 +108,20 @@ export interface IDiscountModalStore {
 }
 
 /**
+ * @notice The interface for client info
+ */
+export interface IClientInfo {
+  groupTest?: string,
+  country?: ICountry
+}
+
+//Interface for client info store
+export interface IClientInfoStore {
+  info?: IClientInfo
+  setClientInfo: (info: IClientInfo) => void
+}
+
+/**
  * @notice The interface for product mongoose schema api
  */
 export interface IProduct {
@@ -118,7 +133,7 @@ export interface IProduct {
     videos?: Array<string>,
     price?: number,
     slashedPrice?: number,
-    discount?: number,
+    discount: number,
     orders?: number,
     freeOption?: boolean,
     rating?: number,
@@ -159,12 +174,62 @@ export interface IResponse extends NextResponse {
   }
 }
 
+//Interface for currency
+export interface ICurrency {
+  name?: string,
+  abbreviation?: string,
+  symbol?: string,
+  exchangeRate?: number //Unit in USD
+}
+
+//Interface for country name
+export interface ICountryName {
+  common?: string,
+  official?: string,
+  abbreviation?: string,
+  demonym?: string,
+  capital?: string | Array<string>
+}
+
+//Interface for country location
+export interface ICountryLocation {
+  continent?: string,
+  subContinent?: string,
+  geoCordinates?: {
+    longitude?: number,
+    latitude?: number
+  },
+  mapLink?: string
+}
+
 ///Declaring the inteface for the country
 export interface ICountry {
-    name: string;
-    dial_code: string;
-    code: string;
-    flag: IImage;
+    name?: ICountryName,
+    states?: Array<{
+      name?: string,
+      abbreviation?: string,
+      counties?: Array<{
+        name?: string,
+        abbreviation?: string
+      }>
+    }>,
+    location?: ICountryLocation,
+    dial_code?: string,
+    currency?: ICurrency,
+    timezones?: Array<string>,
+    languages?: Array<{ 
+      name?: string, 
+      code?: string 
+    }>,
+    independence?: {
+      date?: string, //DD-MM-YYYY
+      age?: number //Age in years
+    },
+    gdp?: { //Unit in USD
+      total?: number,
+      perCapital?: number
+    },
+    flag?: IImage
 }
 
 /**
@@ -188,19 +253,6 @@ export interface ICountry {
     updatedAt?: string,
     __v?: number
   }
-
-/**
- * @notice The interface for client info
- * @param country The country of the client
- */
-export interface IClientInfo {
-  country: string,
-  countryCode: string,
-  currency: string,
-  currencySymbol: string,
-  exchangeRate: number,
-  groupTest: string
-}
 
 ///Declaring the interface for inquiry
 export interface IInquiry {

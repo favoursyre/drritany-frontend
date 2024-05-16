@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Cart from "@/components/cart/Cart"
-import SimilarProduct from "@/components/product/topProduct/topProduct"
+import SimilarProduct from "@/components/product/productSlide/ProductSlide"
 import { IProduct } from "@/config/interfaces";
 import { domainName, shuffleArray } from "@/config/utils";
 import { Metadata } from "next";

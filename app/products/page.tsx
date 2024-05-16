@@ -4,9 +4,9 @@
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
 import { domainName, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
-import Search from '@/components/search/Search';
-import SimilarProduct from '@/components/product/topProduct/topProduct';
-import { Props } from '@/config/interfaces';
+import ProductQuery from '@/components/product/productQuery/ProductQuery';
+import SimilarProduct from '@/components/product/productSlide/ProductSlide';
+import { IProduct, Props } from '@/config/interfaces';
 
 ///Commencing the code
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
@@ -14,7 +14,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     title: `${searchParams.query}`,
     description: `Search our range of natural health products.`,
     alternates: {
-      canonical: `/products/search`
+      canonical: `/products?query=${searchParams.query}`
     }
   } as Metadata
 }
@@ -63,13 +63,13 @@ async function getProducts() {
  export default async function ProductPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
     const { query } = req.searchParams
     //const { query: query_ } = req
-    console.log("Query: ", query )
+    //console.log("Query: ", query )
     const queryProducts = await getQueriedProducts(query)
-    const products = shuffleArray(await getProducts())
+    const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
   
     return (
       <main className="search_page">
-        <Search keyword_={query} query_={queryProducts} />
+        <ProductQuery keyword_={query} query_={queryProducts} />
         <SimilarProduct product_={products} />
       </main>
     )

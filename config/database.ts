@@ -2,8 +2,855 @@
 
 ///Libraries -->
 import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
+import { deliveryPeriod, formatArrayToString } from "./utils"
 
 ///Commencing the code -->
+
+///This contains the number of countries that we operate in
+export const countryList: Array<ICountry> = [
+    // {
+    //     name: {
+    //         common: "Angola",
+    //         official: "Republic of Angola",
+    //         abbreviation: "AO",
+    //         demonym: "Angolan",
+    //         capital: "Luanda"
+    //     },
+    //     dial_code: "+244",
+    //     location: {
+    //         continent: "Africa",
+    //         subContinent: "Middle Africa"
+    //     }
+    // },
+    {
+        name: {
+            common: "Australia",
+            official: "Commonwealth of Australia",
+            abbreviation: "AU",
+            demonym: "Australian",
+            capital: "Canberra"
+        },
+        dial_code: '+61', 
+        currency: {
+            name: "Australian Dollar",
+            abbreviation: "AUD",
+            symbol: "$",
+            exchangeRate: 1.51
+        },
+        location: {
+            continent: "Oceania",
+            subContinent: "Australasia",
+            geoCordinates: {
+                latitude: -27,
+                longitude: 133
+            },
+            mapLink: "https://goo.gl/maps/DcjaDa7UbhnZTndH6"
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        timezones: [
+            "UTC+05:00",
+            "UTC+06:30",
+            "UTC+07:00",
+            "UTC+08:00",
+            "UTC+09:30",
+            "UTC+10:00",
+            "UTC+10:30",
+            "UTC+11:30"
+        ],
+        flag: {
+            src: "https://flagcdn.com/w320/au.png",
+            alt: "The flag of Australia has a dark blue field. It features the flag of the United Kingdom — the Union Jack — in the canton, beneath which is a large white seven-pointed star. A representation of the Southern Cross constellation, made up of one small five-pointed and four larger seven-pointed white stars, is situated on the fly side of the field.",
+            width: 320,
+            height: 160
+        }
+    },
+    {
+        name: {
+            common: "Botswana",
+            official: "Republic of Botswana",
+            abbreviation: "BW",
+            demonym: "Motswana",
+            capital: "Gaborone"
+        },
+        dial_code: '+267', 
+        currency: {
+            name: "Botswana Pula",
+            abbreviation: "BWP",
+            symbol: "P",
+            exchangeRate: 13.6
+        },
+        location: {
+            continent: "Africa",
+            subContinent: "Southern Africa",
+            geoCordinates: {
+                latitude: -22,
+                longitude: 24
+            },
+            mapLink: "https://goo.gl/maps/E364KeLy6N4JwxwQ8"
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Tswana",
+                code: "tsn"
+            }
+        ],
+        timezones: [
+            "UTC+02:00"
+        ],
+        flag: {
+            src: "https://flagcdn.com/w320/bw.png",
+            alt: "The flag of Botswana has a light blue field with a white-edged black horizontal band across its center.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Canada",
+            official: "Canada",
+            abbreviation: 'CA',
+            demonym: "Canadian",
+            capital: "Ottawa"
+        },
+        dial_code: '+1',  
+        currency: {
+            name: "Canadian Dollar",
+            abbreviation: "CAD",
+            symbol: "$",
+            exchangeRate: 1.37
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "French",
+                code: "fra"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/ca.png',
+            alt: "The flag of Canada is composed of a red vertical band on the hoist and fly sides and a central white square that is twice the width of the vertical bands. A large eleven-pointed red maple leaf is centered in the white square.",
+            width: 320,
+            height: 160
+        }
+    },
+    {
+        name: {
+            common: "Egypt",
+            official: "Arab Republic of Egypt",
+            abbreviation: 'EG',
+            demonym: "Egyptian",
+            capital: "Cairo"
+        }, 
+        dial_code: '+20',  
+        currency: {
+            name: "Egyptian Pound",
+            abbreviation: "EGP",
+            symbol: "£",
+            exchangeRate: 47.94
+        },
+        languages: [
+            {
+                name: "Arabic",
+                code: "ara"
+            },
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/eg.png',
+            alt: "The flag of Egypt is composed of three equal horizontal bands of red, white and black, with Egypt's national emblem — a hoist-side facing gold eagle of Saladin — centered in the white band.",
+            width: 320, 
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Eswatini",
+            official: "Kingdom of Eswatini",
+            abbreviation: 'SZ',
+            demonym: "Swazi",
+            capital: "Mbabane"
+        }, 
+        dial_code: '+268',  
+        currency: {
+            name: "Swazi lilangeni",
+            abbreviation: "SZL",
+            symbol: "L",
+            exchangeRate: 18.48
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Swati",
+                code: "ssw"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/sz.png',
+            alt: "The flag of Eswatini is composed of three horizontal bands — a large central yellow-edged red band, and a light blue band above and beneath the red band. The red band is three times the height of the blue bands and bears a centered emblem made up of a large black and white Nguni shield covering two spears and a staff decorated with feather tassels, all placed horizontally.",
+            width: 320, 
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Ethiopia",
+            official: "Federal Democratic Republic of Ethiopia",
+            abbreviation: 'ET',
+            demonym: "Ethiopian",
+            capital: "Addis Ababa"
+        }, 
+        dial_code: '+251',  
+        currency: {
+            name: "Ethiopian Birr",
+            abbreviation: "ETB",
+            symbol: "Br",
+            exchangeRate: 57.31
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Amharic",
+                code: "amh"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/et.png',
+            alt: "The flag of Ethiopia is composed of three equal horizontal bands of green, yellow and red, with the national emblem superimposed at the center of the field. The national emblem comprises a light blue circle bearing a golden-yellow pentagram with single yellow rays emanating from the angles between the points of the pentagram.",
+            width: 320, 
+            height: 160
+        }
+    },
+    {
+        name: {
+            common: "Gambia",
+            official: "Republic of the Gambia",
+            abbreviation: 'GM',
+            demonym: "Gambian",
+            capital: "Banjul"
+        },
+        dial_code: '+220',
+        currency: {
+            name: "Gambian Dalasi",
+            abbreviation: "GMD",
+            symbol: "D",
+            exchangeRate: 67.75
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Amharic",
+            //     code: "amh"
+            // }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/gm.png',
+            alt: "The flag of Gambia is composed of three equal horizontal bands of red, blue with white top and bottom edges, and green.",
+            width: 320, 
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Germany",
+            official: "Federal Republic of Germany",
+            abbreviation: 'DE',
+            demonym: "German",
+            capital: "Berlin"
+        }, 
+        dial_code: '+49',
+        currency: {
+            name: "Euro",
+            abbreviation: "EUR",
+            symbol: "€",
+            exchangeRate: 0.93
+        },
+        languages: [
+            {
+                name: "German",
+                code: "ger"
+            },
+            {
+                name: "English",
+                code: "eng"
+            }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/de.png',
+            alt: "The flag of Germany is composed of three equal horizontal bands of black, red and gold.",
+            width: 320,
+            height: 192
+        }
+    }, 
+    {
+        name: {
+            common: "Ghana",
+            official: "Republic of Ghana",
+            abbreviation: 'GH',
+            demonym: "Ghanaian",
+            capital: "Accra"
+        },
+        dial_code: '+233',
+        currency: {
+            name: "Ghanaian Cedi",
+            abbreviation: "GHS",
+            symbol: "₵",
+            exchangeRate: 13.7
+        }, 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Amharic",
+            //     code: "amh"
+            // }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/gh.png',
+            alt: "The flag of Ghana is composed of three equal horizontal bands of red, gold and green, with a five-pointed black star centered in the gold band.",
+            width: 320, 
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "India",
+            official: "Republic of India",
+            abbreviation: 'IN',
+            demonym: "Indian",
+            capital: "New Delhi"
+        },
+        currency: {
+            name: "Indian Rupee",
+            abbreviation: "INR",
+            symbol: "₵",
+            exchangeRate: 83.51
+        }, 
+        languages: [
+            {
+                name: "Hindi",
+                code: "hin"
+            },
+            {
+                name: "English",
+                code: "eng"
+            }
+        ], 
+        dial_code: '+91', 
+        flag: {
+            src: 'https://flagcdn.com/w320/in.png',
+            alt: "The flag of India is composed of three equal horizontal bands of saffron, white and green. A navy blue wheel with twenty-four spokes — the Ashoka Chakra — is centered in the white band.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Kenya",
+            official: "Republic of Kenya",
+            abbreviation: 'KE',
+            demonym: "Kenyan",
+            capital: "Nairobi"
+        }, 
+        dial_code: '+254', 
+        currency: {
+            name: "Kenya Shilling",
+            abbreviation: "KES",
+            symbol: "Sh",
+            exchangeRate: 133.5
+        }, 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Swahili",
+                code: "swa"
+            }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/ke.png',
+            alt: "The flag of Kenya is composed of three equal horizontal bands of black, red with white top and bottom edges, and green. An emblem comprising a red, black and white Maasai shield covering two crossed white spears is superimposed at the center of the field.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Lesotho",
+            official: "Kingdom of Lesotho",
+            abbreviation: 'LS',
+            demonym: "Mosotho",
+            capital: "Maseru"
+        }, 
+        dial_code: '+266', 
+        currency: {
+            name: "Lesotho Loti",
+            abbreviation: "LSL",
+            symbol: "L",
+            exchangeRate: 18.48
+        }, 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Sotho",
+                code: "sot"
+            }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/ls.png',
+            alt: "The flag of Lesotho is composed of three horizontal bands of blue, white and green in the ratio of 3:4:3. A black mokorotlo — a Basotho hat — is centered in the white band.",
+            width: 320,
+            height: 213
+        }
+    },
+    // {
+    //     name: {
+    //         common: "Libya",
+    //         official: "State of Libya",
+    //         abbreviation: 'LY',
+    //         demonym: "Libyan",
+    //         capital: "Tripoli"
+    //     }, 
+    //     dial_code: '+266', 
+    //     currency: {
+    //         name: "Lesotho Loti",
+    //         abbreviation: "LSL",
+    //         symbol: "L",
+    //         exchangeRate: 18.48
+    //     }, 
+    //     languages: [
+    //         {
+    //             name: "English",
+    //             code: "eng"
+    //         },
+    //         {
+    //             name: "Sotho",
+    //             code: "sot"
+    //         }
+    //     ], 
+    //     flag: {
+    //         src: 'https://flagcdn.com/w320/ls.png',
+    //         alt: "The flag of Lesotho is composed of three horizontal bands of blue, white and green in the ratio of 3:4:3. A black mokorotlo — a Basotho hat — is centered in the white band.",
+    //         width: 320,
+    //         height: 213
+    //     }
+    // },
+    {
+        name: {
+            common: "Mauritius",
+            official: "Republic of Mauritius",
+            abbreviation: 'MU',
+            demonym: "Mauritian",
+            capital: "Port Louis"
+        }, 
+        dial_code: '+230', 
+        currency: {
+            name: "Mauritian Rupee",
+            abbreviation: "MUR",
+            symbol: "₨",
+            exchangeRate: 46.19
+        }, 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "French",
+                code: "fre"
+            },
+            {
+                name: "Mauritian Creole",
+                code: "mfe"
+            }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/mu.png',
+            alt: "The flag of Mauritius is composed of four equal horizontal bands of red, blue, yellow and green.",
+            width: 320,
+            height: 213
+        }
+    },
+    // {
+    //     name: {
+    //         common: "Mozambique",
+    //         official: "Republic of Mozambique",
+    //         abbreviation: 'MZ',
+    //         demonym: "Mauritian",
+    //         capital: "Maputo"
+    //     }, 
+    //     dial_code: '+230', 
+    //     currency: {
+    //         name: "Mauritian Rupee",
+    //         abbreviation: "MUR",
+    //         symbol: "₨",
+    //         exchangeRate: 46.19
+    //     }, 
+    //     languages: [
+    //         {
+    //             name: "English",
+    //             code: "eng"
+    //         },
+    //         {
+    //             name: "French",
+    //             code: "fre"
+    //         },
+    //         {
+    //             name: "Mauritian Creole",
+    //             code: "mfe"
+    //         }
+    //     ], 
+    //     flag: {
+    //         src: 'https://flagcdn.com/w320/mu.png',
+    //         alt: "The flag of Mauritius is composed of four equal horizontal bands of red, blue, yellow and green.",
+    //         width: 320,
+    //         height: 213
+    //     }
+    // },
+    {
+        name: {
+            common: "Nigeria",
+            official: "Federal Republic of Nigeria",
+            abbreviation: 'NG',
+            demonym: "Nigerian",
+            capital: "Abuja"
+        }, 
+        dial_code: '+234', 
+        currency: {
+            name: "Nigerian Naira",
+            abbreviation: "NGN",
+            symbol: "₦",
+            exchangeRate: 1200
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Swahili",
+            //     code: "swa"
+            // }
+        ], 
+        flag: {
+            src: 'https://flagcdn.com/w320/ng.png',
+            alt: "The flag of Nigeria is composed of three equal vertical bands of green, white and green.",
+            width: 320,
+            height: 160
+        } 
+    },
+    {
+        name: {
+            common: "Rwanda",
+            official: "Republic of Rwanda",
+            abbreviation: 'RW',
+            demonym: "Rwandan",
+            capital: "Kigali"
+        }, 
+        currency: {
+            name: "Rwandan Franc",
+            abbreviation: "RWF",
+            symbol: "Fr",
+            exchangeRate: 1290.13
+        },
+        dial_code: '+250', 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Kinyarwanda",
+                code: "kin"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/rw.png',
+            alt: "The flag of Rwanda is composed of three horizontal bands of light blue, yellow and green. The light blue band is twice the height of the other two bands and bears a yellow sun with twenty-four rays on its fly side.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Sierra Leone",
+            official: "Republic of Sierra Leone",
+            abbreviation: 'SL',
+            demonym: "Sierra Leonean",
+            capital: "Freetown"
+        }, 
+        currency: {
+            name: "Sierra Leonean Leone",
+            abbreviation: "SLL",
+            symbol: "Le",
+            exchangeRate: 20969.5
+        },
+        dial_code: '+232', 
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/sl.png',
+            alt: "The flag of Sierra Leone is composed of three equal horizontal bands of green, white and blue.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "South Africa",
+            official: "Republic of South Africa",
+            abbreviation: 'ZA',
+            demonym: "South African",
+            capital: ["Pretoria", "Bloemfontein", "Cape Town"]
+        },  
+        dial_code: '+27', 
+        currency: {
+            name: "South African Rand",
+            abbreviation: "ZAR",
+            symbol: "R",
+            exchangeRate: 18.48
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Zulu",
+                code: "zul"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/za.png',
+            alt: "The flag of South Africa is composed of two equal horizontal bands of red and blue, with a yellow-edged black isosceles triangle superimposed on the hoist side of the field. This triangle has its base centered on the hoist end, spans about two-fifth the width and two-third the height of the field, and is enclosed on its sides by the arms of a white-edged green horizontally oriented Y-shaped band which extends along the boundary of the red and blue bands to the fly end of the field.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Tanzania",
+            official: "United Republic of Tanzania",
+            abbreviation: 'TZ',
+            demonym: "Tanzanian",
+            capital: "Dodoma"
+        }, 
+        dial_code: '+255', 
+        currency: {
+            name: "Tanzanian Shilling",
+            abbreviation: "TZS",
+            symbol: "Sh",
+            exchangeRate: 2595
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Swahili",
+                code: "swa"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/tz.png',
+            alt: "The flag of Tanzania features a yellow-edged black diagonal band that extends from the lower hoist-side corner to the upper fly-side corner of the field. Above and beneath this band are a green and light blue triangle respectively.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Uganda",
+            official: "Republic of Uganda",
+            abbreviation: 'UG',
+            demonym: "Ugandan",
+            capital: "Kampala"
+        }, 
+        dial_code: '+256', 
+        currency: {
+            name: "Ugandan Shilling",
+            abbreviation: "UGX",
+            symbol: "Sh",
+            exchangeRate: 3765.14
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Swahili",
+                code: "swa"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/ug.png',
+            alt: "The flag of Uganda is composed of six equal horizontal bands of black, yellow, red, black, yellow and red. A white circle bearing a hoist-side facing grey red-crested crane is superimposed in the center of the field.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "United Kingdom",
+            official: "United Kingdom of Great Britain and Northern Ireland",
+            abbreviation: 'GB',
+            demonym: "British",
+            capital: "London"
+        }, 
+        dial_code: '+44', 
+        currency: {
+            name: "British Pound",
+            abbreviation: "GBP",
+            symbol: "£",
+            exchangeRate: 0.8
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/gb.png',
+            alt: "The flag of the United Kingdom — the Union Jack — has a blue field. It features the white-edged red cross of Saint George superimposed on the diagonal red cross of Saint Patrick which is superimposed on the diagonal white cross of Saint Andrew.",
+            width: 320,
+            height: 160
+        }
+    },
+    {
+        name: {
+            common: "United States",
+            official: 'United States of America', 
+            abbreviation: "US",
+            demonym: "American",
+            capital: "Washington, D.C."
+        },
+        dial_code: '+1',
+        currency: {
+            name: "United States Dollar",
+            abbreviation: "USD",
+            symbol: "$",
+            exchangeRate: 1
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Swahili",
+            //     code: "swa"
+            // }
+        ],  
+        flag: {
+            src: 'https://flagcdn.com/w320/us.png',
+            alt: "The flag of the United States of America is composed of thirteen equal horizontal bands of red alternating with white. A blue rectangle, bearing fifty small five-pointed white stars arranged in nine rows where rows of six stars alternate with rows of five stars, is superimposed in the canton.",
+            width: 320,
+            height: 168
+        }
+    },
+    {
+        name: {
+            common: "Zambia",
+            official: "Republic of Zambia",
+            abbreviation: 'ZM',
+            demonym: "Zambian",
+            capital: "Lusaka"
+        }, 
+        dial_code: '+260', 
+        currency: {
+            name: "Zambian Kwacha",
+            abbreviation: "ZMW",
+            symbol: "ZK",
+            exchangeRate: 27.1
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Swahili",
+            //     code: "swa"
+            // }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/zm.png',
+            alt: "The flag of Zambia has a green field, on the fly side of which is a soaring orange African fish eagle above a rectangular area divided into three equal vertical bands of red, black and orange.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Zimbabwe",
+            official: "Republic of Zimbabwe",
+            abbreviation: 'ZW',
+            demonym: "Zimbabwean",
+            capital: "Harare"
+        }, 
+        dial_code: '+263', 
+        currency: {
+            name: "Zimbabwean dollar",
+            abbreviation: "ZWL",
+            symbol: "$",
+            exchangeRate: 322
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            // {
+            //     name: "Swahili",
+            //     code: "swa"
+            // }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/zw.png',
+            alt: "The flag of Zimbabwe is composed of seven equal horizontal bands of green, yellow, red, black, red, yellow and green, with a white isosceles triangle superimposed on the hoist side of the field. This triangle is edged in black, spans about one-fourth the width of the field and has its base on the hoist end. A yellow Zimbabwe bird superimposed on a five-pointed red star is centered in the triangle.",
+            width: 320,
+            height: 160
+        }
+    },
+]
+
 export const faqs: Array<IFAQState> = [
     {
         question: "Why are natural remedies essential?",
@@ -15,11 +862,11 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "When should I expect my delivery?",
-        answer: "Deliveries are usually within 1 - 4 business days, be rest assured that we would do everything to deliver your products to you as soon as possible."
+        answer: `Deliveries are usually within 1 - ${deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
     },
     {
         question: "Where do we deliver to?",
-        answer: "Currently we only deliver to USA, UK, Canada, Egypt, Ghana, Nigeria, South Africa, Rwanda, Uganda, Kenya, Germany, Australia and India."
+        answer: `Currently we only deliver to ${formatArrayToString(countryList.map(country => country.name?.common) as unknown as Array<string>)}`
     },
     {
         question: "How is my data used?",
@@ -32,7 +879,19 @@ export const quotes: Array<IQuoteState> = [
         quote: "Vinyl Chloride is a deadly toxin that is present in our air and drinking water, long-term exposure to this toxin has been known to cause liver damage and cancer."
     },
     {
+        quote: "Health is a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity."
+    },
+    {
+        quote: "We are what we repeatedly eat. Healthy eating is not an act but a habit."
+    },
+    {
+        quote: "Those who have no time for healthy eating will sooner or later have to find the time for illness."
+    },
+    {
         quote: "True happiness comes from within."
+    },
+    {
+        quote: "Every living cell in your body is made from the food you eat. If you consistently eat junk food then you’ll have a junk body."
     },
     {
         quote: "It’s up to you today to start making healthy choices. Not choices that are just healthy for your body, but healthy for your mind."
@@ -79,6 +938,66 @@ export const testimonies: Array<ITestimony> = [
         },
         profession: "Accountant",
         testimony: "Since using the Norland Detox Pack I've experienced improved digestion, increased energy levels, and a renewed sense of well-being,  The combination of natural ingredients and innovative formulas has proven to be incredibly effective."
+    },
+    {
+        name: "Emily Johnson",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=1nYP_Jwu7WOnAusZDcBx_E47C6KBMUPEp",
+            width: 101,
+            height: 101
+        },
+        profession: "Nurse",
+        testimony: "I've struggled with hair loss for years, trying countless products with little success. But then I discovered Jaysuing Hair Treatment, and it's been a game-changer for me. Within just a few weeks of using this product, I started noticing significant improvements in my hair thickness and volume."
+    },
+    {
+        name: "Michael Williams",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=1QEMbw4tZ80lDlv85WXVyIFVMDb_FQFVc",
+            width: 101,
+            height: 101
+        },
+        profession: "Medical Doctor",
+        testimony: "Norland Calcium Iron Zinc Capsules have significantly boosted my overall health and vitality since I started taking them. I've noticed a remarkable improvement in my energy levels and immune system, making them an essential part of my daily routine. Highly recommend for anyone looking to enhance their overall health."
+    },
+    {
+        name: "Maya Thompson",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=16Y_bSwPOIwJSQzGkQCPNV6Ch7MwTJmKe",
+            width: 101,
+            height: 101
+        },
+        profession: "Human Resource Manager",
+        testimony: "Jaysuing Advanced Scar Gel has transformed my skin. It's incredible how it's fading my scars and giving me renewed confidence. I highly recommend it to anyone looking to fade off their scars and improve the appearance of their skin"
+    },
+    {
+        name: "Emeka Okafor",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=1LU8uTt9NacZXFSpaif0hTqoWlAYmklQH",
+            width: 101,
+            height: 101
+        },
+        profession: "Trader",
+        testimony: "Norland GI Vital Softgel has been a breakthrough for my ulcer. After years of discomfort, this product brought the much-needed relief and restored my digestive health. I'm truly thankful for its remarkable effectiveness"
+    },
+    {
+        name: "Ethan Bullock",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=14XterurRHXO-hSV84zXaMW1dUMhM7nm5",
+            width: 101,
+            height: 101
+        },
+        profession: "Civil Engineer",
+        testimony: "Ever since I started using Norland Healthway Vision Capsules, my eyesight has experienced a remarkable transformation. These capsules effectively addressed various eye issues I was facing, providing me with clearer and sharper vision. I highly recommend them to anyone seeking to improve their eye health."
+    },
+    {
+        name: "Sofia Martinez",
+        image: {
+            src: "https://drive.google.com/uc?export=download&id=1BWEuuHi6prjJwjR8R2fZYMJkiamxwq8o",
+            width: 101,
+            height: 101
+        },
+        profession: "Nutritionist",
+        testimony: "Norland Healthway Hypoglycemic Capsules has effectively managed my abnormal blood sugar levels. I've experienced remarkable improvements in my health and energy levels since incorporating it into my daily routine. Highly recommend for anyone seeking natural support for blood sugar management."
     },
     {
         name: "Daniel Mukasa",
@@ -169,140 +1088,6 @@ export const testimonies: Array<ITestimony> = [
         },
         profession: "Event Planner",
         testimony: "Wuqing Women health care is a very nicely packaged, good quality and reasonable priced product! I like it very much and recommend it. I'll buy it again."
-    }
-]
-
-///This contains the number of countries that we operate in
-export const countryList: Array<ICountry> = [
-    {
-        name: 'United States', 
-        dial_code: '+1', 
-        code: 'US',  
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1M0gkMQjwoKCUsKlhniy6jKSBIYddfapJ',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Canada', 
-        dial_code: '+1', 
-        code: 'CA', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1q6y6HolsOzkDWxDtdB-Oj9ZiSCWEP2Ql',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'United Kingdom', 
-        dial_code: '+44', 
-        code: 'GB', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1CF8YeyOYiv95SHIwzeYv3FHjkHO80ZlY',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Egypt', 
-        dial_code: '+20', 
-        code: 'EG', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1xVq4WCAUahbtXKvxSfeeDqi25BDzqYt4',
-            width: 28, 
-            height: 20
-        }
-    },
-    {
-        name: 'Ghana', 
-        dial_code: '+233', 
-        code: 'GH', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1_CF51QMet_fPRH_Mo58zbijjZa1aHIEa',
-            width: 28, 
-            height: 20
-        }
-    },
-    {
-        name: 'Nigeria', 
-        dial_code: '+234', 
-        code: 'NG', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1LCz4DZBzTJxKNcBd5NLYQFwwr10LkHGO',
-            width: 28,
-            height: 20
-        } 
-    },
-    {
-        name: 'South Africa', 
-        dial_code: '+27', 
-        code: 'ZA', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1iZStelnWq4kYndejJqW5p-pPLbNbiooi',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Rwanda', 
-        dial_code: '+250', 
-        code: 'RW', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1nv3ffhBvKpmXuzXN6g14IuZvR6vlVAEa',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Uganda', 
-        dial_code: '+256', 
-        code: 'UG', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1T3kWn_0S-WVzDDPjKq39eoVb3Jel8fNX',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Kenya', 
-        dial_code: '+254', 
-        code: 'KE', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1y76iXqrFo-dXxck80UdIieBLA41VFzrd',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'Germany', 
-        dial_code: '+49', 
-        code: 'DE', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1RwXP8xZfNzdCCLiGU2FBPijWZHe6mjjt',
-            width: 28,
-            height: 20
-        }
-    }, 
-    {
-        name: 'Australia', 
-        dial_code: '+61', 
-        code: 'AU', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1_Q4LIoic4KKoEDlc6ET-aTmzmAVQgANX',
-            width: 28,
-            height: 20
-        }
-    },
-    {
-        name: 'India', 
-        dial_code: '+91', 
-        code: 'IN', 
-        flag: {
-            src: 'https://drive.google.com/uc?export=download&id=1mR1UlTlPJEGeHJJfRl37RbA1IJRlLMlq',
-            width: 28,
-            height: 20
-        }
     }
 ]
 

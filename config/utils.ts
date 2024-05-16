@@ -13,7 +13,7 @@ export const companyName: string = "Dr Ritany"
 
 export const nairaSymbol: string = "&#8358;"
 
-export const nairaRate: number = 1250
+export const nairaRate: number = 1200
 
 export const discount: number = 33
 
@@ -127,32 +127,48 @@ export const capitalizeFirstLetter = (str: string | undefined): string | undefin
   }
 
   ///This function returns all item with a key in array
-export const getItemByKey = (array: Array<any>, key: string, value: string | null): Array<any> => {
-    if (value) {
+export const getItemByKey = <T>(
+    array: Array<T>, 
+    key: keyof T, 
+    value: any
+): Array<T> => {
+    if (value !== null) {
         return array.filter((arr) => arr[key] === value);
     } else {
         return array
     }
-  }
+}
 
+//This function converts ["a", "b", "c"] to a, b and c
+export const formatArrayToString = (arr: Array<string>): string => {
+    if (arr.length === 0) {
+      return "";
+    } else if (arr.length === 1) {
+      return arr[0];
+    } else {
+      const lastItem = arr.pop();
+      const joinedItems = arr.join(", ");
+      return `${joinedItems}, and ${lastItem}`;
+    }
+};
 
   ///This function types check the currency symbol
-  export const getCurrencySymbol = (clientInfo: IClientInfo | null): string => {
-    if (clientInfo === null) {
-        return "&#36;"
-    } else {
-        return clientInfo.currencySymbol
-    }
-  }
+//   export const getCurrencySymbol = (clientInfo: IClientInfo | null): string => {
+//     if (clientInfo === null) {
+//         return "&#36;"
+//     } else {
+//         return clientInfo.currencySymbol as unknown as string
+//     }
+//   }
 
    ///This function types check the exchange rate
-   export const getExchangeRate = (clientInfo: IClientInfo | null): number => {
-    if (clientInfo === null) {
-        return 1
-    } else {
-        return clientInfo.exchangeRate
-    }
-  }
+//    export const getExchangeRate = (clientInfo: IClientInfo | null): number => {
+//     if (clientInfo === null) {
+//         return 1
+//     } else {
+//         return clientInfo.exchangeRate as unknown as number
+//     }
+//   }
 
   ///This format mongo db time
 export const formatDateMongo = (dateString: string): string => {
@@ -370,6 +386,20 @@ export const getCurrentTime = (): string => {
 
     return formattedTime;
 }
+
+///This function removes an item from an array
+export const removeProductFromArray = (productToRemove: IProduct, products: Array<IProduct>): Array<IProduct> => {
+    // Check if the product exists in the array
+    const index = products.findIndex(product => product._id === productToRemove._id);
+    
+    // If the product exists, remove it from the array
+    if (index !== -1) {
+        return products.filter((_, i) => i !== index);
+    }
+    
+    // If the product doesn't exist, return the original array
+    return products;
+};
 
 ///Confidential data -- I know, I'm a fool
 export const sheetEmail: string = "dr-ritany@drritany.iam.gserviceaccount.com"

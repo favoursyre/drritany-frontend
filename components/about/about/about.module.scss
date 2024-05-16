@@ -8,7 +8,8 @@
     @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%);
     @include position($left: 0%, $top: 8%);
     @include size($height:90%);
-    background-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
+    background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.75), transparent);
+    //background-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
     //z-index: -100;
     //border: 2px solid red;
     font-family: "Roboto";

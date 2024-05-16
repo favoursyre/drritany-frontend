@@ -15,6 +15,7 @@ const Story = () => {
 
     return (
         <main className={`${styles.main}`}>
+            <div className={styles.gradientOverlay}></div>
             <Image 
                 className={styles.background}
                 src={"https://drive.google.com/uc?export=download&id=1U24xYbeAj3jbmEVaEyXVJ82bHVQ7TIMi"}
@@ -23,10 +24,12 @@ const Story = () => {
                 height={416}
             />
             <div className={styles.brief}>
-            <h2><strong>Our Story</strong></h2>
-            <span>
-            Our journey began with a deep understanding of the health challenges that people from various part of the world go through on a daily basis, we discovered the profound impact of nurturing the body with healthy natural remedies — an empowering path to enhance overall well-being, elevate energy levels and fortify against chronic ailments.
-            </span>
+                <h2>
+                    <strong>Our Story</strong>
+                </h2>
+                <span>
+                Our journey began with a deep understanding of the health challenges that people from various part of the world go through on a daily basis, we discovered the profound impact of nurturing the body with healthy natural remedies — an empowering path to enhance overall well-being, elevate energy levels and fortify against chronic ailments.
+                </span>
             </div>
             
         </main>

@@ -5,6 +5,9 @@
 import styles from "./modal.module.scss"
 import { useModalBackgroundStore } from "@/config/store";
 import { MouseEvent } from "react";
+import ContactModal from "@/components/contactModal/ContactModal";
+import DiscountModal from "@/components/discountModal/DiscountModal";
+import OrderModal from "@/components/orderModal/OrderModal";
 
 ///Commencing the code 
 
@@ -12,7 +15,7 @@ import { MouseEvent } from "react";
  * @title Modal Component
  * @returns The Modal component
  */
-const Modal = ({ children }: { children: React.ReactNode }) => {
+const Modal = () => {
     const setModal = useModalBackgroundStore(state => state.setModalBackground);
     const modalBackground = useModalBackgroundStore(state => state.modal);
 
@@ -24,8 +27,10 @@ const Modal = ({ children }: { children: React.ReactNode }) => {
     }
 
   return (
-    <div className={styles.main} style={{ display: modalBackground ? "flex" : "none"}}>
-        {children}
+    <div className={styles.main} style={{ display: modalBackground ? "flex" : "none" }}>
+        <DiscountModal />
+        <ContactModal />
+        <OrderModal />
     </div>
   );
 };

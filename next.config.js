@@ -10,6 +10,10 @@ const nextConfig = {
         {
           protocol: 'https',
           hostname: 'files.edgestore.dev'
+        },
+        {
+          protocol: 'https',
+          hostname: 'flagcdn.com'
         }
       ],
         //formats: ['image/svg+xml'],

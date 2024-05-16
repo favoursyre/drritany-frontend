@@ -28,7 +28,7 @@ const Vision = () => {
             
                 <h2><strong>Our Vision</strong></h2>
                 <span>
-                    We believe that everyone deserves to feel their best and that&apos;s why we&apos;re committed to making our products easily accessible to everyone. We offer a range of affordable and effective healthy 100% natural products that are suitable for people of all ages and lifestyles.
+                    We believe that everyone deserves to feel, look and live their best and that&apos;s why we&apos;re committed to making our products easily accessible to everyone. We offer a range of affordable and effective healthy 100% natural products that are suitable for people of all ages and lifestyles.
                 </span>
             </div>
             <div className={styles.pc_image}>

@@ -97,7 +97,7 @@ async function getProducts() {
  */
 export default async function Home() {
   const products = await getProducts()
-  console.log("Prod1: ", products)
+  //console.log("Prod1: ", products)
   // const quotes = shuffleArray(await getQuotes()) 
   // const testimonials = shuffleArray(await getTestimonials())
  

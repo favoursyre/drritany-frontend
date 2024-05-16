@@ -28,7 +28,6 @@ const productSchema = new Schema<IProduct, IProductModel>(
     images: [{
       name: {
         type: String,
-        required: true,
         trim: true,
       },
       src: {
@@ -58,7 +57,6 @@ const productSchema = new Schema<IProduct, IProductModel>(
     },
     slashedPrice: {
       type: Number,
-      required: true,
     },
     discount: {
       type: Number,

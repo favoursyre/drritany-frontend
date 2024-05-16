@@ -6,18 +6,16 @@ import { toast } from 'react-toastify';
 import { useState, useEffect, MouseEvent } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
-import { setItem, getItem, notify } from '@/config/clientUtils';
-import { decodedString, cartName, getCurrencySymbol, getExchangeRate, sleep, nairaSymbol, nairaRate, slashedPrice, discount, deliveryPeriod } from '@/config/utils'
+import { setItem, notify } from '@/config/clientUtils';
+import { decodedString, cartName, sleep, slashedPrice, deliveryPeriod } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { Star, AddShoppingCart, StarHalf, Discount } from '@mui/icons-material';
-import Modal from '@/components/modalBackground/Modal';
-import DiscountModal from '@/components/discountModal/DiscountModal';
 import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
+import { useClientInfoStore } from "@/config/store";
 
 ///Commencing the code 
 /**
@@ -38,7 +36,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const discountProduct = useDiscountModalStore(state => state.product);
     const [imageIndex, setImageIndex] = useState<number>(0)
     const spec = product[0].specification
-    const clientInfo: IClientInfo = getItem("clientInfo")
+    const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
     console.log("Product info: ", product)
 
@@ -238,8 +236,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     }
     
     return (
-        <>
-            <main className={`${styles.main}`}>
+        <main className={`${styles.main}`}>
             {product.map((p, _id) => (
                 <div className={styles.left_section} key={_id}>
                     <div className={styles.image_section}>
@@ -298,12 +295,13 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                     <div className={styles.price_orders}>
                     <div className={styles.product_price}>
                         <div className={styles.price}>
-                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                            <span>{p.price ? (Math.round(p.price * nairaRate)).toLocaleString("en-US") : ""}</span>
+                            {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                            {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
+                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(p.price * clientInfo.country.currency.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
                         </div>
                         <div className={styles.slashed_price}>
-                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                            <span>{p.price ? (Math.round(slashedPrice(p.price * nairaRate, discount)).toLocaleString("en-US")) : ""}</span>
+                            {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}  
+                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount)).toLocaleString("en-US")) : ""}</span> : <></>}
                         </div>
                     </div>
                     <div className={styles.product_orders}>
@@ -321,7 +319,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         <span>4.7</span>
                     </div>
                 </div>
-                <span className={styles.product_deliveryDate}><em>Free Delivery to be delivered before {deliveryDate}.</em></span>
+                <span className={styles.product_deliveryDate}><em>Free Delivery to <strong>{clientInfo?.country?.name?.common}</strong> before {deliveryDate}.</em></span>
                 <div className={styles.product_quantity}>
                     <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
                         <RemoveIcon style={{ fontSize: "1rem" }} />
@@ -376,10 +374,6 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 </div>
             ))}
         </main>
-        {/* <Modal>
-            <DiscountModal product={product[0].name ? product[0].name : ""} />
-        </Modal> */}
-        </>
     );
 };
   

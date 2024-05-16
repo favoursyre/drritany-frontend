@@ -19,7 +19,7 @@ const Map = () => {
                 {/* when updating the new map image with new countries, dont forget to update the countries in the order form */}
                 <Image
                     className={styles.img}
-                    src={"https://drive.google.com/uc?export=download&id=1IxsKDhyI3gvU2p9DE-sAPmbXS_GVT1e-"}
+                    src={"https://drive.google.com/uc?export=download&id=1Ip6PyZ3YXnFqI7qDqfdRmRpNNLicLA_f"}
                     alt=""
                     width={722}
                     height={310}

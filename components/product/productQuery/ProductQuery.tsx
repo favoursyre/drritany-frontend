@@ -1,30 +1,31 @@
 "use client"
-///Search component
+///Product Query component
 
 ///Libraries -->
-import styles from "./search.module.scss"
+import styles from "./productQuery.module.scss"
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { decodedString, slashedPrice, getExchangeRate, nairaSymbol, nairaRate, discount } from "@/config/utils";
+import { decodedString, slashedPrice } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Image from "next/image";
-import { getItem } from "@/config/clientUtils";
+import { useClientInfoStore } from "@/config/store";
+import ProductCard from "@/components/cards/product/ProductCard";
 
 ///Commencing the code 
 
 /**
- * @title Search Component
- * @returns The Search component
+ * @title Product Query Component
+ * @returns The Product Query component
  */
-const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined, query_: Array<IProduct> }) => {
+const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | undefined, query_: Array<IProduct> }) => {
     const [lastIndex, setLastIndex] = useState(12)
     const [keyword, SetKeyword] = useState(keyword_)
-    const [foundProducts, setFoundProducts] = useState(query_)
+    const [foundProducts, setFoundProducts] = useState<Array<IProduct>>(query_)
     const router = useRouter()
     const [currentURL, setCurrentURL] = useState(window.location.href)
-    const clientInfo: IClientInfo = getItem("clientInfo")
+    const clientInfo = useClientInfoStore(state => state.info)
     console.log('Query: ', foundProducts)
 
     ///This hook constantly checks for the screen's width
@@ -57,13 +58,6 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
         return () => clearInterval(intervalId);
     }, [currentURL]);
 
-    ///This function triggers when handle click is clicked
-    const handleClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>, id: string): void => {
-        e.preventDefault()
-
-        router.push(`/products/${id}`);
-    }
-
     return (
         <main className={`${styles.main}`}>
             
@@ -73,32 +67,7 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
                     
                     <div className={styles.product_grid}>
                         {foundProducts.map((product, _id) => (
-                            <div className={styles.product_carousel} key={_id} onClick={event => handleClick(event, product._id)}>
-                                <div className={styles.carousel_image}>
-                                    <Image 
-                                        className={styles.img}
-                                        src={product.images[0].src}
-                                        alt=""
-                                        width={product.images[0].width}
-                                        height={product.images[0].height}
-                                    />
-                                </div>
-                                <div className={styles.carousel_name}>
-                                    <span>{product.name}</span>
-                                </div>
-                                <div className={styles.carousel_price}>
-                                    <div className={styles.price_1}>
-                                        <strong>
-                                            <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                            <span>{product.price ? (Math.round(product.price * nairaRate)).toLocaleString("en-US") : ""}</span>
-                                        </strong>
-                                    </div>
-                                    <div className={styles.price_2}>
-                                        <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                        <span>{product.price ? (Math.round(slashedPrice(product.price * nairaRate, discount))).toLocaleString("en-US") : ""}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard product_={product} key={_id} view={undefined} />
                         ))}
                     </div>
                     <div className={styles.pagination_section}>
@@ -138,4 +107,4 @@ const Search = ({ keyword_, query_ }: { keyword_: string | string[] | undefined,
     );
 };
   
-export default Search;
+export default ProductQuery;

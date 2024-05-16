@@ -5,56 +5,40 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./header.module.scss"
-import { ICart, IInquiry, IClientInfo, IError } from '@/config/interfaces';
-import { notify } from '@/config/clientUtils';
-import { setItem, getItem } from "@/config/clientUtils"
-import { routeStyle, capitalizeFirstLetter, domainName, cartName, } from '@/config/utils'
+import { ICart } from '@/config/interfaces';
+import { getItem } from "@/config/clientUtils"
+import { routeStyle, cartName } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
-import validator from 'validator';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import Loading from "../loadingCircle/Circle";
-import Modal from "../modalBackground/Modal";
-import ContactModal from "../contactModal/ContactModal";
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
-//import { ErrorConstruc}
 
 ///Commencing the code 
-
 /**
  * @title Header Component
  * @returns The Header component
  */
 const Header = () => {
-  const [search, setSearch] = useState(false)
-  const [menu, setMenu] = useState(false)
-  const [query, setQuery] = useState(String)
+  const [search, setSearch] = useState<boolean>(false)
+  const [menu, setMenu] = useState<boolean>(false)
+  const [query, setQuery] = useState<string>("")
   const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
   const setContactModal = useContactModalStore(state => state.setContactModal);
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [cart, setCart] = useState<ICart | null>(cart__)
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
-  const [firstName, setFirstName] = useState<string | undefined>("") 
-  const [lastName, setLastName] = useState<string | undefined>("")
-  const [emailAddress, setEmailAddress] = useState<string | undefined>("")
-  const [message, setMessage] = useState<string | undefined>("")
-  //console.log('Length: ', cart)
 
-  //console.log("Path: ", window.location.hostname)
-
-//   const item = getItem("clientInfo")
-//  if (item === null || item === "undefined") {
-//     setItem("clientInfo", clientInfo)
-//   } else {
-//     null
-//   }
+  useEffect(() => {
+    //getClientInfo()
+    //console.log("Loc: ", getUserCountry())
+  });
 
   const urlRouter = async (query: string) => {
     router.push(`/products/search?query=${query}`)
@@ -76,7 +60,7 @@ const Header = () => {
 
     if (query) {
       console.log("searching: ", query)
-      router.push(`/products/search?query=${query}`)
+      router.push(`/products?query=${query}`)
       //window.location.reload()
       //window.open(window.location.href, "")
     } 
@@ -89,66 +73,6 @@ const Header = () => {
   const clearSearch = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault()
     setQuery("")
-  }
-
-  ///This sends the message from contact-us
-  const sendInquiry = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
-
-    //Validating args
-    if (!firstName) {
-      notify("error", "First Name is required")
-      return
-    } else if (!lastName) {
-        notify("error", "Last Name is required")
-        return
-    } else if (!emailAddress) {
-        notify("error", "Email address is required")
-        return
-    } else if (!validator.isEmail(emailAddress)) {
-        notify("error", "Email address is not valid")
-        return
-    } else if (!message) {
-        notify("error", "Message is required")
-        return
-    }
-
-    setIsLoading(() => true)
-
-    //Send the order to the backend
-    try {
-      //console.log('Clicked')
-      const inquiry: IInquiry = { firstName, lastName, emailAddress, message }
-      console.log("Order: ", inquiry)
-      const res = await fetch(`${domainName}/api/inquiry/`, {
-          method: 'POST',
-          body: JSON.stringify(inquiry),
-          headers: {
-          'Content-Type': 'application/json',
-          },
-      });
-      
-      const data = await res.json();
-      console.log("Data: ", data);
-
-      if (res.ok) {
-        notify("success", `Your message was sent successfully`)
-
-        ///Closing the modals
-        setContactModal(false)
-        setModalBackground(false)
-
-        typeof window !== 'undefined' && window.location ? window.location.reload() : null
-      } else {
-        throw Error(`${data.message}`)
-      }
-    
-    } catch (error: any) {
-        console.log("error: ", error)
-        notify("error", `${error.message}`)
-    }
-
-    setIsLoading(() => false)
   }
 
   useEffect(() => {
@@ -167,13 +91,6 @@ const Header = () => {
   return (
     <>
       <header className={`${styles.header} ${routeStyle(routerPath, styles)}`}>
-        {/* <Image
-              className={styles.background}
-              src={"https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt"}
-              alt=""
-              width={1440}
-              height={1676}
-          /> */}
         <div className={styles.logo} onClick={() => router.push('/')}>
           <Image
             src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
@@ -326,77 +243,6 @@ const Header = () => {
             <span>Contact Us</span>
           </button>
       </div>
-      {/* <div className={`${styles.contactModal} ${!contactModal ? styles.inActiveContactModal : ""}`}>
-        <div className={styles.container}>
-          <div className={styles.image}>
-            <Image
-              className={styles.img}
-              src="https://drive.google.com/uc?export=download&id=1m-bSqxTBl6C_XoPtRb6RfijDqXY-nKev"
-              alt=""
-              width={209}
-              height={538}
-            />
-          </div>
-          <div className={styles.form}>
-            <header>
-              <button onClick={() => setContactModal(() => false)}>
-                <CloseIcon />
-              </button>
-            </header>
-            <div className={styles.brief}>
-              <span id={styles.brief_1}>
-                <strong>We&apos;d love to help</strong>
-              </span>
-              <span id={styles.brief_2}>Reach out and we&apos;ll get in touch within 24 hours</span>
-            </div>
-            <form onSubmit={(e) => sendInquiry(e)}>
-              <div className={styles.div_1}>
-                <div className={styles.div_11}>
-                  <input
-                    placeholder="First Name"
-                    type="text"
-                    onChange={(e) => setFirstName(() => capitalizeFirstLetter(e.target.value))}
-                    value={firstName}
-                  />
-                </div>
-                <div className={styles.div_12}>
-                  <input
-                    placeholder="Last Name"
-                    type="text"
-                    onChange={(e) => setLastName(() => capitalizeFirstLetter(e.target.value))}
-                    value={lastName}
-                  />
-                </div>
-              </div>
-              <div className={styles.div_2}>
-                <input
-                  placeholder="Email Address"
-                  type="email"
-                  onChange={(e) => setEmailAddress(() => e.target.value)}
-                  value={emailAddress}
-                />
-              </div>
-              <div className={styles.div_3}>
-                <textarea
-                  placeholder="Message"
-                  onChange={(e) => setMessage(() => e.target.value)}
-                  value={message}
-                ></textarea>
-              </div>
-              <button>
-                {isLoading ? (
-                  <Loading width="20px" height="20px" />
-                ) : (
-                  <span>SEND</span>
-                )}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div> */}
-      {/* <Modal>
-        <ContactModal />
-      </Modal> */}
     </>
   );
 };

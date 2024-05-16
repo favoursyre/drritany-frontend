@@ -22,6 +22,14 @@
         //border: 0.5px solid red;
         top: 65%;  
     }
+
+    .gradientOverlay {
+        //border: 1px solid green;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+        z-index: 1;
+        position: absolute;
+        @include size(100%, 100%);
+    }
     
     .background {
         object-fit: cover;
@@ -35,6 +43,7 @@
         @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%);
         @include size(100%, 100%);
         background-color: (0, 0, 0, 0.5);
+        z-index: 10;
         //border: 1px solid red;
         
 

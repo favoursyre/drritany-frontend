@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
             if (query) {
                 products = await Product.getProductBySearch(query)
             }
+        } else {
+            return NextResponse.json({ message: "Wrong action" }, { status: 400 });
         }
         
         //console.log("Sub: ", products)

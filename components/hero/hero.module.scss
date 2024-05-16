@@ -11,6 +11,7 @@
     @include position($left: 0%, $top: 8%);
     //border: 2px solid red;
     z-index: -5;
+    background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.75), transparent);
 
     @include tabletPro {
         //
@@ -53,8 +54,8 @@
         }
 
         h3 {
-            @include text-layout($size: 75px, $color: $text-color-2, $l_height: 82px);
-            @include flexBar($position: relative, $align: center, $justify: flex-end, $gap: 5%);
+            @include text-layout($size: 60px, $color: $text-color-2, $l_height: 62px);
+            @include flexBar($position: relative, $align: center, $justify: flex-end, $gap: 3%);
             @include size(90%, 10%);
             font-weight: 500;
             //margin-bottom: 0px;
@@ -70,8 +71,12 @@
                 top: 5%;
             }
 
+            @include tablet {
+                font-size: 35px;
+            }
+
             @include phonePro {
-                @include text-layout($size: 45px, $color: $text-color-2, $l_height: 40px);
+                @include text-layout($size: 40px, $color: $text-color-2, $l_height: 40px);
                 //font-weight: 400;
                 justify-content: center;
                 text-align: center;
