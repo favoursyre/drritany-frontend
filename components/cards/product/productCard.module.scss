@@ -72,7 +72,7 @@
 
     .card_name {
         //border: 2px solid red;
-        @include text-layout($size: 11px, $l_height: 20px);
+        @include text-layout($size: 11px, $l_height: 15px);
         @include size(100%, 15%);
         @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 1%);
 
@@ -156,6 +156,8 @@
 
 .slideView {
     height: 80%;
+    //border: 1px solid red;
+    top: 3%;
 
     @include tabletPro {
         //border: 2px solid $error-color;

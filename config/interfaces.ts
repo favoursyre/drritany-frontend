@@ -126,13 +126,13 @@ export interface IClientInfoStore {
  */
 export interface IProduct {
     _id: string,
-    category?: String,
-    subCategory?: string,
+    category?: Array<string> | string,
+    subCategory?: Array<string> | string,
     name?: string,
     images: Array<IImage>,
     videos?: Array<string>,
     price?: number,
-    slashedPrice?: number,
+    extraDiscount?: boolean,
     discount: number,
     orders?: number,
     freeOption?: boolean,

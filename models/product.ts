@@ -11,12 +11,12 @@ const discount: number = 33
 const productSchema = new Schema<IProduct, IProductModel>(
   {
     category: {
-      type: String,
+      type: Array<String>,
       required: true,
       trim: true,
     },
     subCategory: {
-        type: String,
+      type: Array<String>,
       required: true,
       trim: true,
     },
@@ -55,8 +55,9 @@ const productSchema = new Schema<IProduct, IProductModel>(
       type: Number,
       required: true,
     },
-    slashedPrice: {
-      type: Number,
+    extraDiscount: {
+      type: Boolean,
+      required: true,
     },
     discount: {
       type: Number,
@@ -168,16 +169,6 @@ productSchema.statics.createProduct = async function (product: IProduct) {
  * @returns The updated data
  */
 productSchema.statics.updateProduct = async function (id: string, product: IProduct) {
-  
-  //Checking if price is also updated
-  let slashedPrice: number
-  if (product.hasOwnProperty("price")) {
-    let { price } = product
-    if (price) {
-      slashedPrice = (price * 100) / (100 - discount)
-      product = { ...product, slashedPrice }
-    }
-  }
   //This updates the value in the database
   const update = await this.findOneAndUpdate(
     { _id: id },
