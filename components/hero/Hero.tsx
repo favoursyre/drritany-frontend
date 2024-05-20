@@ -23,7 +23,7 @@ const Hero = () => {
                 height={1676}
             /> */}
             <div className={styles.left_section}>
-                <h3>Don't<span>miss</span>out</h3>
+                <h3>Don&apos;t<span>miss</span>out</h3>
                 <br />
                 <p>
                     Get exclusive discounts off all our natural health collections! Elevate your health with our handpicked essentials crafted to rejuvenate your body, soul and mind. Shop now and prioritize your health with confidence and joy!

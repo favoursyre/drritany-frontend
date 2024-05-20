@@ -20,7 +20,7 @@ export const discount: number = 33
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
 export const domainName: string = "http://localhost:3000"
-//export const domainName: string = "https://dr-ritany.vercel.app"
+//export const domainName: string = "https://drritany.vercel.app"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 

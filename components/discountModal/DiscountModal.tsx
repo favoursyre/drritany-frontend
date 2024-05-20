@@ -48,7 +48,7 @@ const DiscountModal = () => {
               </button>
             </header>
             <div className={styles.brief}>
-                <span className={styles.brief_1}>Don't miss out! The more you shop, the more you save!</span>
+            <span className={styles.brief_1}>Don&apos;t miss out! The more you shop, the more you save!</span>
                 <ul>
                     <li>Order 3 or more {discountProduct.name} products and enjoy an extra 10% discount off each item.</li>
                     {discountProduct.freeOption ? (
