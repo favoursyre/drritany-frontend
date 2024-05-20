@@ -21,7 +21,7 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
     const [deliveryDate, setDeliveryDate] = useState<string>("")
     const routerPath = usePathname()
 
-    console.log("cart: ", cart)
+    //console.log("cart: ", cart)
 
     useEffect(() => {
         const createdAt = cart?.createdAt as unknown as string
@@ -37,7 +37,7 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
         // Print the formatted date
         console.log(formattedDate);
         setDeliveryDate(() => formattedDate)
-    })
+    }, [cart?.createdAt])
 
     //console.log("cart: ", cart ? formatDateMongo(cart?.createdAt) : "")
 

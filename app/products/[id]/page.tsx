@@ -2,7 +2,7 @@
 ///This handles the products page
 
 ///Libraries -->
-import ProductInfo from '@/components/product/productInfo/ProductInfo';
+import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import { shuffleArray, domainName, removeProductFromArray } from '@/config/utils';
 import { Metadata } from 'next';
