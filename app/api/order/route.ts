@@ -4,10 +4,9 @@
 import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
 import { NextResponse, NextRequest } from "next/server";
-//import { sendSubnewsletterEmail } from "@/config/email";
-import { ICartItem, IOrder, IOrderSheet, IProduct, ICart } from "@/config/interfaces";
+import { sendOrderEmail } from "@/config/email";
+import { ICartItem, IOrder, IOrderSheet } from "@/config/interfaces";
 import { GoogleSheetDB, orderSheetId, getCurrentTime, getCurrentDate, nairaRate } from "@/config/utils";
-//import { IInquiry } from "@/config/interfaces";
 
 ///Commencing the code
 //This function returns the correct number of quantities
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
         console.log("Successfully logged to database")
 
         ///Sending confirmation email to the person
-        //const status = await sendSubnewsletterEmail(newsletter?.subscriber)
+        //const status = await sendOrderEmail(order)
         //console.log('Email: ', await status)
 
         return NextResponse.json({ message: "Order Sent Successfully" }, { status: 200 });

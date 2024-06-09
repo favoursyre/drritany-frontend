@@ -5,7 +5,7 @@
 import styles from "./contactModal.module.scss"
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
 import { MouseEvent, useState, FormEvent } from "react";
-import Loading from "../loadingCircle/Circle";
+import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { capitalizeFirstLetter, domainName } from "@/config/utils";
@@ -23,8 +23,8 @@ const ContactModal = () => {
     const setContactModal = useContactModalStore(state => state.setContactModal);
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const contactModal = useContactModalStore(state => state.modal);
-    const [firstName, setFirstName] = useState<string | undefined>("") 
-    const [lastName, setLastName] = useState<string | undefined>("")
+    const [fullName, setFullName] = useState<string | undefined>("") 
+    const [subject, setSubject] = useState<string | undefined>("")
     const [emailAddress, setEmailAddress] = useState<string | undefined>("")
     const [message, setMessage] = useState<string | undefined>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -43,11 +43,11 @@ const ContactModal = () => {
     e.preventDefault()
 
     //Validating args
-    if (!firstName) {
-      notify("error", "First Name is required")
+    if (!fullName) {
+      notify("error", "Name is required")
       return
-    } else if (!lastName) {
-        notify("error", "Last Name is required")
+    } else if (!subject) {
+        notify("error", "Subject is required")
         return
     } else if (!emailAddress) {
         notify("error", "Email address is required")
@@ -65,7 +65,7 @@ const ContactModal = () => {
     //Send the order to the backend
     try {
       //console.log('Clicked')
-      const inquiry: IInquiry = { firstName, lastName, emailAddress, message }
+      const inquiry: IInquiry = { fullName, emailAddress, subject, message }
       console.log("Order: ", inquiry)
       const res = await fetch(`${domainName}/api/inquiry/`, {
           method: 'POST',
@@ -99,10 +99,10 @@ const ContactModal = () => {
           <div className={styles.image}>
             <Image
               className={styles.img}
-              src="https://drive.google.com/uc?export=download&id=1m-bSqxTBl6C_XoPtRb6RfijDqXY-nKev"
+              src="https://drive.google.com/uc?export=download&id=1wPg8X3MF-Kymuu5g5pNe6FRcMZp9ie61"
               alt=""
-              width={209}
-              height={538}
+              width={2048}
+              height={1341}
             />
           </div>
           <div className={styles.form}>
@@ -121,27 +121,27 @@ const ContactModal = () => {
               <div className={styles.div_1}>
                 <div className={styles.div_11}>
                   <input
-                    placeholder="First Name"
+                    placeholder="Name"
                     type="text"
-                    onChange={(e) => setFirstName(() => capitalizeFirstLetter(e.target.value))}
-                    value={firstName}
+                    onChange={(e) => setFullName(() => capitalizeFirstLetter(e.target.value))}
+                    value={fullName}
                   />
                 </div>
                 <div className={styles.div_12}>
                   <input
-                    placeholder="Last Name"
-                    type="text"
-                    onChange={(e) => setLastName(() => capitalizeFirstLetter(e.target.value))}
-                    value={lastName}
+                    placeholder="Email Address"
+                    type="email"
+                    onChange={(e) => setEmailAddress(() => e.target.value)}
+                    value={emailAddress}
                   />
                 </div>
               </div>
               <div className={styles.div_2}>
                 <input
-                  placeholder="Email Address"
-                  type="email"
-                  onChange={(e) => setEmailAddress(() => e.target.value)}
-                  value={emailAddress}
+                  placeholder="Subject"
+                  type="text"
+                  onChange={(e) => setSubject(() => capitalizeFirstLetter(e.target.value))}
+                  value={subject}
                 />
               </div>
               <div className={styles.div_3}>

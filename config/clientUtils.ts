@@ -3,6 +3,7 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
+import { MouseEvent } from 'react';
 
 ///Commencing the code
 //console.log("Domain: ", domainName)
@@ -76,5 +77,30 @@ export const removeItem = (key: string) => {
         localStorage.removeItem(key);
     } else {
         null
+    }
+}
+
+///This links opens the social link
+export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, social: string) => {
+    e.preventDefault()
+
+    if (window) {
+        if (social === "instagram") {
+            window.open("https://www.instagram.com/official.idealplug", '_blank');
+        } else if (social === "facebook") {
+            window.open("https://web.facebook.com/profile.php?id=61559971113003", "_blank")
+        } else if (social === "twitter") {
+            window.open("https://twitter.com/favoursyre", "_blank")
+        } else if (social === "linkedin") {
+            window.open("https://www.linkedin.com/in/favour-ndubuisi-7b019786/", "_blank")
+        } else if (social === "github") {
+            window.open("https://github.com/favoursyre", "_blank")
+        } else if (social === "whatsapp") {
+            window.open("https://github.com/favoursyre", "_blank")
+        } else {
+            undefined
+        }
+    } else {
+        undefined
     }
 }

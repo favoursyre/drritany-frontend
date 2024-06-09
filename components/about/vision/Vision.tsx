@@ -15,29 +15,21 @@ const Vision = () => {
 
     return (
         <main className={styles.main}>
-            <div className={styles.mobile_image}>
-                <Image 
-                    className={styles.img}
-                    src={"https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ"}
-                    alt=""
-                    width={653}
-                    height={416}
-                />
-            </div>
             <div className={styles.brief}>
-            
-                <h2><strong>Our Vision</strong></h2>
+                <h2>
+                    <strong>Our Vision</strong>
+                </h2>
                 <span>
-                    We believe that everyone deserves to feel, look and live their best and that&apos;s why we&apos;re committed to making our products easily accessible to everyone. We offer a range of affordable and effective healthy 100% natural products that are suitable for people of all ages and lifestyles.
+                We aim to be the leading ecommerce platform known for innovation, quality and customer-centricity. We aspire to create a global community of satisfied customers who trust us for all their shopping needs. By continually evolving and adapting to the latest trends and technologies, we aim to set new standards in the ecommerce industry.
                 </span>
             </div>
-            <div className={styles.pc_image}>
+            <div className={styles.image}>
                 <Image 
                     className={styles.img}
-                    src={"https://drive.google.com/uc?export=download&id=1KrkjsbEeRmQxJ3c2sBIIpLyqidBCYmTZ"}
+                    src={"https://drive.google.com/uc?export=download&id=1g4TFVlmEsL9B6tDBASAUs1z66rns5qhl"}
                     alt=""
-                    width={653}
-                    height={416}
+                    width={2048}
+                    height={1366}
                 />
             </div>
         </main>

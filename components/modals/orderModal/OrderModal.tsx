@@ -5,7 +5,7 @@
 import styles from "./orderModal.module.scss"
 import { useModalBackgroundStore, useOrderModalStore } from "@/config/store";
 import { MouseEvent, useState, FormEvent } from "react";
-import Loading from "../loadingCircle/Circle";
+import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

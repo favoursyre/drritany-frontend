@@ -13,8 +13,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import { DeleteOutline, ShoppingCartCheckout } from '@mui/icons-material';
-//import  from '@mui/icons-material/ShoppingCartCheckout';
+import { DeleteOutline, ShoppingCartCheckout, ProductionQuantityLimits } from '@mui/icons-material';
+//import Icon from '@mui/icons-material/ProductionQuantityLimits';
 
 ///Commencing the code 
 /**
@@ -54,7 +54,7 @@ useEffect(() => {
         if (cart !== null) {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
-            cart.cart[index].subTotalDiscount = cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             setCart(() => ({ ...cart }))
@@ -75,7 +75,7 @@ useEffect(() => {
                 console.log("before: ", cart)
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
-                cart.cart[index].subTotalDiscount = cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 setItem(cartName, cart)
@@ -116,15 +116,10 @@ useEffect(() => {
         <main className={`${styles.main}`}>
             {!cart || cart?.cart.length === 0 ? (
                 <div className={styles.empty_cart}>
-                    <div className={styles.cart_image}>
-                        <Image 
-                            src="https://drive.google.com/uc?export=download&id=1ye9nI6vsVxDvsUyFtnJFLXnhQRVIziml"
-                            alt=""
-                            width={102}
-                            height={102}
-                        />
+                    <div className={styles.cart_icon}>
+                        <ProductionQuantityLimits className={styles.icon} />
                     </div>
-                    <span className={styles.brief_1}>Your cart is empty !</span>
+                    <span className={styles.brief_1}>Your cart is empty!</span>
                     <span className={styles.brief_2}>Explore our wide range of products and uncover our unbeatable offers</span>
                     <button onClick={() => router.push("/#products")}>
                         <AddShoppingCartIcon className={styles.icon} />
@@ -182,6 +177,14 @@ useEffect(() => {
                                     <RemoveIcon className={styles.minus} style={{ fontSize: "1rem" }} />
                                     <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
                                     <span>{cart ? (Math.round(cart.totalDiscount * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                </div>
+                            </div>
+                            <div className={styles.deliveryFee}>
+                                <span className={styles.title}>Delivery Fee</span>
+                                <div className={styles.amount}>
+                                    <AddIcon className={styles.minus} style={{ fontSize: "1rem" }} />
+                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                                    <span>0</span>
                                 </div>
                             </div>
                             <div className={styles.total}>

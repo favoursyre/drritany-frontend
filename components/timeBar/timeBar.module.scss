@@ -1,0 +1,71 @@
+/** This contains the scss for the time bar component */
+
+///Libraries -->
+@import "@/styles/base.module";
+
+.main {
+    @include flexBar($align: center, $justify: center, $flex_d: column);
+    @include position($left: 0%, $top: 158%);
+    @include size(100%, 40px);
+    //border: 1px solid red;
+
+    @include tabletPro {
+        //border: 2px solid red;
+        top: 83%;
+        //height: 65%;
+    }
+
+    @include tablet {
+        top: 78%;
+    }
+
+    @include tabletMini {
+        //height: 70%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 123%;
+        //height: 90%;
+    }
+
+    .time_section {
+        //position: relative;
+        background: #E42C2C;
+        //left: 0%;
+        display: flex;
+        @include size(95%, 100%);
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 10px 10px 0px 0px;
+        //border: 2px solid $primary-color;
+
+        @include tabletPro {
+            //border: 2px solid red;
+            //@include size(100%, 1%);
+        }
+
+        @include phonePro {
+            position: relative;
+            //height: 7%;
+            //border: 2px solid yellow;
+            //top: -3%;
+            //justify-content: center;
+        }
+
+        span {
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 20px);
+            position: relative;
+            top: 1%;
+            font-family: "Inter";
+
+            @include phonePro {
+                position: relative;
+                top: 3%;
+                left: 0%;
+                font-size: 14px;
+            }
+        }
+    }
+}

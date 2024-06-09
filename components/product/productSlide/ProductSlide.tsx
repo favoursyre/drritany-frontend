@@ -3,13 +3,21 @@
 
 ///Libraries -->
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./productSlide.module.scss"
-import { IProduct, IClientInfo } from '@/config/interfaces';
-import Image from 'next/image';
-import { routeStyle, decodedString, slashedPrice } from '@/config/utils'
-import { useClientInfoStore } from "@/config/store";
+import { IProduct, ICart } from '@/config/interfaces';
+import { routeStyle, cartName } from '@/config/utils'
 import ProductCard from '@/components/cards/product/ProductCard';
+import { getItem } from '@/config/clientUtils';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Swiper as SwiperCore } from 'swiper/types';
+import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 ///Commencing the code 
 /**
@@ -21,43 +29,106 @@ const ProductSlide = ({ product_ }: { product_: Array<IProduct> }) => {
     const router = useRouter();
     const [similarProducts, setSimilarProducts] = useState(product_)
     const [lastIndex, setLastIndex] = useState(6)
-    const clientInfo = useClientInfoStore(state => state.info)
+    const [title, setTitle] = useState<string>("")
+    const swiperRef = useRef<SwiperCore>();
 
-    //console.log("Router: ", routerPath)
+    //console.log("Path: ", routerPath)
 
-    const handleClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>, pid: string) => {
-      e.preventDefault()
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        if (screen.width < 600) {
+          setLastIndex(3)
+        } else if (600 < screen.width && screen.width < 1000) {
+          setLastIndex(5)
+        } else {
+          setLastIndex(6)
+        }
+      }, 1000);
+  
+      return () => clearInterval(intervalId);
+    }, [lastIndex]);
 
-      router.push(`/products/${pid}`);
-    }
+    useEffect(() => {
 
-      useEffect(() => {
-        const intervalId = setInterval(() => {
-          if (screen.width <= 550) {
-            setLastIndex(4)
+      switch(routerPath) {
+        case "/":
+          setTitle(() => "Recommended for you")
+          break
+        case "/cart":
+          const cart: ICart | null = getItem(cartName)
+          if (cart) {
+            setTitle(() => "Customers also ordered")
           } else {
-            setLastIndex(6)
+            setTitle(() => "Recommended for you")
           }
-        }, 1000);
-    
-        return () => clearInterval(intervalId);
-      }, [lastIndex]);
+          break
+        default:
+          // if (routerPath.includes("/products/")) {
+          //   setTitle(() => "Customers also viewed")
+          //   break
+          // } else
+          //   setTitle(() => "Customers also viewed")
+          //   break
+          setTitle(() => "Customers also viewed")
+          break
+      }
 
-
-      ///This function 
+    }, [title])
+    ///This function 
 
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`}>
-            <div  className={styles.heading}>
-                <span className={styles.subheading}>Customers also ordered</span>
+            <div className={styles.heading}>
+                <span className={styles.subheading}>{title}</span>
                 <button onClick={() => router.push('/#products')}><span>See more {'>'}</span></button>
             </div>
             <br />
-            <div className={styles.product_slide}>
+            <Swiper
+              effect={'slide'}
+              spaceBetween={10}
+              grabCursor={true}
+              centeredSlides={false}
+              loop={false}
+              autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+              slidesPerView={'auto'}
+              onBeforeInit={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
+              coverflowEffect={{
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+              }}
+              fadeEffect={{ crossFade: true }}
+              pagination={{ el: '.swiper-pagination', clickable: true }}
+              //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+              modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+              className={styles.swipeContainer}
+          >
+            {similarProducts.map((product, id) => (
+                <SwiperSlide className={styles.slider} key={id}>
+                    <ProductCard product_={product} view={"slide"} />
+                </SwiperSlide>
+            ))}
+            
+           
+        </Swiper>
+        <div className={styles.controller}>
+            <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
+                <KeyboardArrowLeftIcon />
+            </button>
+            {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+            <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
+                <KeyboardArrowRightIcon />
+            </button>
+            
+        </div>
+            {/* <div className={styles.product_slide}>
                 {similarProducts?.slice(0, lastIndex).map((product, _id) => (
                     <ProductCard product_={product} key={_id} view={"slide"} />
                 ))}
-            </div>
+            </div> */}
         </main>
     );
 };

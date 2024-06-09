@@ -27,7 +27,7 @@ const DiscountModal = () => {
 
         setModalBackground(false)
         setDiscountModal(false)
-        //console.log("modal closed")
+        console.log("modal closed: ", discountProduct.freeOption)
     }
 
   return (
@@ -51,7 +51,7 @@ const DiscountModal = () => {
             <span className={styles.brief_1}>Don&apos;t miss out! The more you shop, the more you save!</span>
                 <ul>
                     <li>Order 3 or more {discountProduct.name} products and enjoy an extra 10% discount off each item.</li>
-                    {discountProduct.freeOption ? (
+                    {discountProduct.freeOption === true ? (
                       <>
                         <li>Order 5 or more {discountProduct.name} products and get 1 extra free product.</li>
                         <li>Order 10 or more {discountProduct.name} products and get 2 extra free products.</li>

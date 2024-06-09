@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Image from "next/image";
-import { useState, useEffect, MouseEvent, FormEvent } from 'react';
+import { useState, useEffect, MouseEvent, FormEvent, useCallback } from 'react';
 import styles from "./header.module.scss"
 import { ICart } from '@/config/interfaces';
 import { getItem } from "@/config/clientUtils"
@@ -34,15 +34,23 @@ const Header = () => {
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
+  const [scrollY, setScrollY] = useState<number>(window.scrollY);
 
   useEffect(() => {
-    //getClientInfo()
-    //console.log("Loc: ", getUserCountry())
-  });
+    const interval = setInterval(() => {
+        //Updating scroll position
+        setScrollY(() => window.scrollY)
 
-  const urlRouter = async (query: string) => {
-    router.push(`/products/search?query=${query}`)
-  }
+        //Updating cart info
+        const cart__ = getItem(cartName)
+        setCart(() => cart__)
+      }, 100);
+  
+      return () => {
+        clearInterval(interval);
+      };
+    
+  }, [scrollY, cart]);
 
   ///This function is triggered when the user clicks on contact
   const openContactModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -56,9 +64,8 @@ const Header = () => {
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault()
 
-    setSearchIsLoading(() => true)
-
     if (query) {
+      setSearchIsLoading(() => true)
       console.log("searching: ", query)
       router.push(`/products?query=${query}`)
       //window.location.reload()
@@ -75,33 +82,25 @@ const Header = () => {
     setQuery("")
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      }, 100);
-  
-      return () => {
-        clearInterval(interval);
-      };
-    
-  }, [cart]);
-
-  
-  //console.log('Current page:', routerPath);
-
   return (
     <>
-      <header className={`${styles.header} ${routeStyle(routerPath, styles)}`}>
+      <header className={`${styles.header} ${scrollY >= 1 ? styles.scrolled : ""} ${routeStyle(routerPath, styles)}`}>
+        <button className={styles.menu_button} onClick={() => setMenu(true)}>
+          <MenuIcon className={styles.icon} />
+        </button>
         <div className={styles.logo} onClick={() => router.push('/')}>
           <Image
-            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+            className={styles.img}
+            src="https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG"
             alt=""
-            width={86}
-            height={31}
+            width={2500}
+            height={2500}
           />
         </div>
-        
         <div className={`${styles.links}`}>
-          <button onClick={() => router.push('/about')}><span>About Us</span></button>
+          <button onClick={() => {
+            router.push('/about')
+          }}><span>About Us</span></button>
           <button onClick={() => router.push('/#products')}><span>Products</span></button>
           <button onClick={(e) => openContactModal(e)}>
             <span>Contact Us</span>
@@ -149,39 +148,6 @@ const Header = () => {
             </button>
           </div>
         </div>
-        {/* <hr className={styles.slash} /> */}
-      </header>
-      <header className={`${styles.mobile_header} ${routeStyle(routerPath, styles)}`}>
-        <button className={styles.menu_button} onClick={() => setMenu(true)}>
-          <MenuIcon />
-        </button>
-        <div className={styles.logo} onClick={() => router.push('/')}>
-          <Image
-            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
-            alt=""
-            width={86}
-            height={31}
-          />
-        </div>
-        <div className={styles.search_cart}>
-          <div className={styles.search}>
-              <button onClick={() => setSearch(true)}>
-                {searchIsLoading ? (
-                  <Loading width="10px" height="10px" />
-                ) : (
-                  <SearchIcon />
-                )}
-              </button>
-          </div>
-        <div className={styles.cart}>
-            <button onClick={() => router.push("/cart")}>
-              <ShoppingCartIcon className={styles.cartIcon} />
-              <div id={cart !== null && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
-                <span>{cart?.cart.length}</span>
-              </div>
-            </button>
-          </div>
-        </div>
       </header>
       <div className={`${search ? styles.activeSearch : styles.inActiveSearch}`}>
         <form className={`${styles.search_form}`} onSubmit={(e) => onSearch(e)}>
@@ -213,10 +179,10 @@ const Header = () => {
             }}>
               <Image
                 className={styles.img}
-                src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+                src="https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG"
                 alt=""
-                width={86}
-                height={31}
+                width={2500}
+                height={2500}
               />
             </div>
           </div>

@@ -13,18 +13,23 @@
     font-family: "Roboto";
 
     @include tabletPro {
-        top: 85%;
+        top: 80%;
         @include size($height:30%);
         //border: 2px solid red;
     } 
 
+    @include tabletMini {
+        top: 85%;
+    }
+
     @include phonePro {
         //border: 2px solid red;
-        top: 130%;
-        height: 60%;
+        top: 120%;
+        height: 70%;
         //width: 95%;
         gap: 0%;
         flex-direction: column;
+        align-items: center;
     }
 
     .image {
@@ -50,8 +55,8 @@
             //border: 2px solid black;
             position: relative;
             //background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1.5)), url("https://drive.google.com/uc?export=download&id=1_ii-qH5IlFzJcG2jCTVRUANRUu2XCcsr");
-            @include size(90%, 50%);
-            left: 5%;
+            @include size(90%, 55%);
+            //left: 5%;
         }
     }
 
@@ -61,10 +66,14 @@
         //padding: 0% 2%;
         @include size(40%, 100%);
 
+        @include tablet {
+            gap: 0%;
+        }
+
         @include phonePro {
             //border: 2px solid red;
             padding: 0% 3%;
-            @include size(90%, 50%);
+            @include size(90%, 35%);
         }
 
         h2 {
@@ -72,6 +81,10 @@
             @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
             font-weight: 600;
             @include flexBar($position: relative, $justify: none, $align: center);
+
+            @include tablet {
+                margin: 0px;
+            }
 
             @include phonePro {
                 //border: 2px solid red;

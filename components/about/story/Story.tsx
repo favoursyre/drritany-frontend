@@ -15,23 +15,23 @@ const Story = () => {
 
     return (
         <main className={`${styles.main}`}>
-            <div className={styles.gradientOverlay}></div>
-            <Image 
-                className={styles.background}
-                src={"https://drive.google.com/uc?export=download&id=1U24xYbeAj3jbmEVaEyXVJ82bHVQ7TIMi"}
-                alt=""
-                width={1440}
-                height={416}
-            />
             <div className={styles.brief}>
                 <h2>
                     <strong>Our Story</strong>
                 </h2>
                 <span>
-                Our journey began with a deep understanding of the health challenges that people from various part of the world go through on a daily basis, we discovered the profound impact of nurturing the body with healthy natural remedies — an empowering path to enhance overall well-being, elevate energy levels and fortify against chronic ailments.
+                Our journey began with a simple idea, to create a shopping experience that blends convenience, quality and exceptional service. Every step of our journey has been inspired by our desire to make shopping more enjoyable and fulfilling for you.
                 </span>
             </div>
-            
+            <div className={styles.image}>
+                <Image 
+                    className={styles.img}
+                    src={"https://drive.google.com/uc?export=download&id=1V3sWqZxc6hEDuIoVxWI4pH64X3yaDNmA"}
+                    alt=""
+                    width={1224}
+                    height={816}
+                />
+            </div>
         </main>
     );
 };

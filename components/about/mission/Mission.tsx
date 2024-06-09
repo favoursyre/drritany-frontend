@@ -18,16 +18,16 @@ const Mission = () => {
             <div className={styles.image}>
                 <Image
                     className={styles.background} 
-                    src={"https://drive.google.com/uc?export=download&id=1x2qiEubZJOmhSBVpReihZQ8duwEnm9IF"}
+                    src={"https://drive.google.com/uc?export=download&id=19eI2s25pxLUP49L1uPpYX_xXrRwICgWJ"}
                     alt=""
-                    width={928}
-                    height={416}
+                    width={1224}
+                    height={904}
                 />
             </div>
             <div className={styles.brief}>
                 <h2><strong>Our Mission</strong></h2>
                 <span>
-                    With that, we decided to research a line of healthy 100% natural products that are safe, effective and easy to use. Our products are made from high-quality, natural ingredients that are carefully and professionally selected to help remove toxins from the body, cure chronic illness, boost overall appearance and support optimal health.
+                    We aim to offer a wide range of high-quality products at competitive prices, backed by outstanding customer service. We believe in the power of choice and strive to bring you a curated selection that meets your diverse needs and preferences. Our goal is to make your shopping experience seamless, enjoyable, and rewarding.
                 </span>
             </div>
         </main>

@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
-import { useState, useEffect, MouseEvent } from "react"
+import React, { useState, useEffect, MouseEvent } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, notify } from '@/config/clientUtils';
@@ -16,6 +16,8 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Star, AddShoppingCart, StarHalf, Discount } from '@mui/icons-material';
 import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
 import { useClientInfoStore } from "@/config/store";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { IconButton } from '@mui/material';
 
 ///Commencing the code 
 /**
@@ -86,14 +88,16 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             if (discountProduct.poppedUp) {
                 return
             } else {
-                setDiscountProduct({ name: productName, freeOption: true, poppedUp: true })
+                setDiscountProduct({ name: productName, freeOption: product[0].freeOption as unknown as boolean, poppedUp: true })
                 setModalBackground(true)
                 setDiscountModal(true)
             }
             //console.log("finished counting")
         }
 
-        openDiscountModal(5)
+        if (product[0].extraDiscount) {
+            openDiscountModal(5)
+        }
       })
 
     useEffect(() => {
@@ -131,6 +135,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             name: p.name,
             unitPrice: p.price || 0,
             quantity: quantity,
+            extraDiscount: p.extraDiscount,
             freeOption: p.freeOption ? p.freeOption : false,
             subTotalPrice: p.price || 0 * quantity,
             subTotalDiscount: 0
@@ -236,144 +241,176 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     }
     
     return (
-        <main className={`${styles.main}`}>
-            {product.map((p, _id) => (
-                <div className={styles.left_section} key={_id}>
-                    <div className={styles.image_section}>
-                    <div className={styles.profile_image}>
-                        <Image
-                            className={styles.img}
-                            src={product[0].images[imageIndex].src}
-                            alt=""
-                            width={product[0].images[imageIndex].width}
-                            height={product[0].images[imageIndex].height}
-                        />
+        <>
+            <div className={styles.header}>
+                <span>{product[0].category}</span>
+                {product[0].subCategory ? (
+                    <>
+                        <KeyboardArrowRightIcon className={styles.icon} />
+                        <span>{product[0].subCategory}</span>
+                        {product[0].miniCategory ? (
+                            <>
+                                <KeyboardArrowRightIcon className={styles.icon} />
+                                <span>{product[0].miniCategory}</span>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </>
+                ) : (
+                    <></>
+                )}
+            </div>
+            <main className={`${styles.main}`}>
+                {product.map((p, _id) => (
+                    <div className={styles.left_section} key={_id}>
+                        <div className={styles.image_section}>
+                        <div className={styles.profile_image}>
+                            <Image
+                                className={styles.img}
+                                src={product[0].images[imageIndex].src}
+                                alt=""
+                                width={product[0].images[imageIndex].width}
+                                height={product[0].images[imageIndex].height}
+                            />
+                        </div>
+                        <div className={styles.image_slide}>
+                            {p.images.map((image, imageId) => (
+                                <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => setImageIndex(() => imageId)}>
+                                    <Image 
+                                        className={styles.img}
+                                        src={image.src}
+                                        alt=""
+                                        width={image.width}
+                                        height={image.height}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        </div>
+                        {product && product[0].videos && product[0].videos.length === 1 ? 
+                            <div className={styles.video_section}>
+                            <div className={styles.heading}><span>Video</span></div>
+                            <div className={styles.video}>
+                                <video controls>
+                                    <source src={product[0].videos[0]} type="" />
+                                Your browser does not support the video tag.
+                            </video>
+                            </div>
+                        </div> 
+                            : 
+                            <div></div>
+                        }
+                        {/* <div className={styles.video_section}>
+                            <div className={styles.heading}><span>Video</span></div>
+                            <div className={styles.video}>
+                                <video controls>
+                                    <source src="https://drive.google.com/uc?export=download&id=1sE5wjZnceYu9lFqacDLeO5tVEnNoppBk" type="" />
+                                Your browser does not support the video tag.
+                            </video>
+                            </div>
+                        </div> */}
                     </div>
-                    <div className={styles.image_slide}>
-                        {p.images.map((image, imageId) => (
-                            <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => setImageIndex(() => imageId)}>
-                                <Image 
-                                    className={styles.img}
-                                    src={image.src}
-                                    alt=""
-                                    width={image.width}
-                                    height={image.height}
-                                />
+                ))}
+                {product.map((p, _id) => (
+                    <div className={styles.right_section} key={_id}>
+                    <h3>
+                        <strong>{p.name}</strong> 
+                        {p.extraDiscount ? (
+                            // <Tooltip title="Discount Offer" placement='top'>
+                            //     <IconButton>
+                                <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
+                            //     </IconButton>
+                            // </Tooltip>
+                        ) : (
+                            <></>
+                        )}
+                    </h3>
+                    <span className={styles.product_about}>{p.description}</span>
+                    <div className={styles.product_price_orders_rating}>
+                        <div className={styles.price_orders}>
+                        <div className={styles.product_price}>
+                            <div className={styles.price}>
+                                {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                                {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
+                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(p.price * clientInfo.country.currency.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
+                            </div>
+                            <div className={styles.slashed_price}>
+                                {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}  
+                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount)).toLocaleString("en-US")) : ""}</span> : <></>}
+                            </div>
+                        </div>
+                        <div className={styles.product_orders}>
+                            <LocalShippingIcon className={styles.icon} />
+                            <span>{p.orders?.toLocaleString("en-US")} orders</span>
+                        </div>
+                        </div>
+                        <div className={styles.rating}>
+                            <div className={styles.stars}>
+                                {stars.map((star, id) => (
+                                    <Star className={styles.star} key={id} />
+                                ))}
+                                <StarHalf className={styles.star} />
+                            </div>
+                            <span>4.7</span>
+                        </div>
+                    </div>
+                    <span className={styles.product_deliveryDate}><em>Free Delivery to <strong>{clientInfo?.country?.name?.common}</strong> before {deliveryDate}.</em></span>
+                    <div className={styles.product_quantity}>
+                        <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
+                            <RemoveIcon style={{ fontSize: "1rem" }} />
+                        </button>
+                        <span>{quantity}</span>
+                        <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
+                            <AddIcon style={{ fontSize: "1rem" }} />
+                        </button>
+                        
+                    </div>
+                    
+                    <div className={styles.product_cart_order}>
+                        <button className={styles.order_button} onClick={(e) => orderNow(e)}>
+                            <LocalShippingIcon className={styles.icon} />
+                            <span>Order Now</span>
+                        </button>
+                        <button className={styles.cart_button} onClick={e => {
+                            addToCart(e, false)
+                            window.location.reload()
+                        }}>
+                            <AddShoppingCart className={styles.icon} />
+                            <span>Add to cart</span>
+                        </button>
+                    </div>
+                    <div className={styles.product_accordian}>
+                        {questions.map((q, index) => (
+                            <div key={index}>
+                                <button
+                                    className={`${styles.question} ${activeHeading === index ? styles.activeQuestion : styles.inactiveQuestion}`}
+                                    onClick={() => handleHeadingClick(index)}
+                                >
+                                    {q.question}
+                                    <span className={`${activeHeading === index ? styles.activeSymbol : styles.inactiveSymbol}`}>
+                                        {"+"}
+                                    </span>
+                                </button>
+                                <div
+                                    className={`${styles.answer} ${
+                                        activeHeading === index ? styles.answerActive : ''
+                                    }`}
+                                >
+                                    <ul >
+                                    {questions[index].answer?.map((a, a_id) => (
+                                    <li key={a_id}>{a}</li>
+                                    ))}
+                                    </ul>
+                                    
+                                </div>
                             </div>
                         ))}
                     </div>
                     </div>
-                    {product && product[0].videos && product[0].videos.length === 1 ? 
-                        <div className={styles.video_section}>
-                        <div className={styles.heading}><span>Video</span></div>
-                        <div className={styles.video}>
-                            <video controls>
-                                <source src={product[0].videos[0]} type="" />
-                            Your browser does not support the video tag.
-                        </video>
-                        </div>
-                    </div> 
-                        : 
-                        <div></div>
-                    }
-                    {/* <div className={styles.video_section}>
-                        <div className={styles.heading}><span>Video</span></div>
-                        <div className={styles.video}>
-                            <video controls>
-                                <source src="https://drive.google.com/uc?export=download&id=1sE5wjZnceYu9lFqacDLeO5tVEnNoppBk" type="" />
-                            Your browser does not support the video tag.
-                        </video>
-                        </div>
-                    </div> */}
-                </div>
-            ))}
-            {product.map((p, _id) => (
-                <div className={styles.right_section} key={_id}>
-                <h3><strong>{p.name}</strong> <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} /></h3>
-                <span className={styles.product_about}>{p.description}</span>
-                <div className={styles.product_price_orders_rating}>
-                    <div className={styles.price_orders}>
-                    <div className={styles.product_price}>
-                        <div className={styles.price}>
-                            {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
-                            {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
-                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(p.price * clientInfo.country.currency.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
-                        </div>
-                        <div className={styles.slashed_price}>
-                            {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}  
-                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount)).toLocaleString("en-US")) : ""}</span> : <></>}
-                        </div>
-                    </div>
-                    <div className={styles.product_orders}>
-                        <LocalShippingIcon className={styles.icon} />
-                        <span>{p.orders?.toLocaleString("en-US")} orders</span>
-                    </div>
-                    </div>
-                    <div className={styles.rating}>
-                        <div className={styles.stars}>
-                            {stars.map((star, id) => (
-                                <Star className={styles.star} key={id} />
-                            ))}
-                            <StarHalf className={styles.star} />
-                        </div>
-                        <span>4.7</span>
-                    </div>
-                </div>
-                <span className={styles.product_deliveryDate}><em>Free Delivery to <strong>{clientInfo?.country?.name?.common}</strong> before {deliveryDate}.</em></span>
-                <div className={styles.product_quantity}>
-                    <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
-                        <RemoveIcon style={{ fontSize: "1rem" }} />
-                    </button>
-                    <span>{quantity}</span>
-                    <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
-                        <AddIcon style={{ fontSize: "1rem" }} />
-                    </button>
-                    
-                </div>
-                
-                <div className={styles.product_cart_order}>
-                    <button className={styles.order_button} onClick={(e) => orderNow(e)}>
-                        <LocalShippingIcon className={styles.icon} />
-                        <span>Order Now</span>
-                    </button>
-                    <button className={styles.cart_button} onClick={e => {
-                        addToCart(e, false)
-                        window.location.reload()
-                    }}>
-                        <AddShoppingCart className={styles.icon} />
-                        <span>Add to cart</span>
-                    </button>
-                </div>
-                <div className={styles.product_accordian}>
-                    {questions.map((q, index) => (
-                        <div key={index}>
-                            <button
-                                className={`${styles.question} ${activeHeading === index ? styles.activeQuestion : styles.inactiveQuestion}`}
-                                onClick={() => handleHeadingClick(index)}
-                            >
-                                {q.question}
-                                <span className={`${activeHeading === index ? styles.activeSymbol : styles.inactiveSymbol}`}>
-                                    {"+"}
-                                </span>
-                            </button>
-                            <div
-                                className={`${styles.answer} ${
-                                    activeHeading === index ? styles.answerActive : ''
-                                }`}
-                            >
-                                <ul >
-                                {questions[index].answer?.map((a, a_id) => (
-                                   <li key={a_id}>{a}</li>
-                                ))}
-                                </ul>
-                                
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                </div>
-            ))}
-        </main>
+                ))}
+            </main>
+        </>
     );
 };
   

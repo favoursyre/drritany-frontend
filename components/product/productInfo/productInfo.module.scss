@@ -4,16 +4,48 @@
 @import "@/styles/base.module";
 
 ///Commencing the code
+
+.header {
+    //border: 1px solid red;
+    @include flexBar($justify: flex-start, $gap: 0%, $flex_d: row,  $align: flex-end);
+    @include position($left: 0%, $top: 10%);
+    @include size(95%, 7%, $max-height: 200%);
+    //border: 2px solid $primary-color;
+    font-family: "Roboto";
+    //padding: 2% 0%;
+    left: 3%;
+
+    @include tabletPro {
+        height: 5%;
+        top: 7%;
+    }
+
+    @include phonePro {
+        height: 6%;
+        top: 10%;
+    }
+    
+    span {
+        color: $primary-color;
+    }
+
+    .icon {
+        font-size: 1.3rem;
+        color: $secondary-color-2;
+    }
+}
+
 .main {
     @include flexBar($justify: center, $gap: 2%, $flex_d: row, $wrap: none, $align: flex-start);
-    @include position($left: 0%, $top: 8%);
+    @include position($left: 0%, $top: 17%);
     @include size(100%, 140%, $max-height: 200%);
     //border: 2px solid $primary-color;
     font-family: "Roboto";
     //padding: 3% 8%;
 
     @include tabletPro {
-            height: 80%;
+        height: 80%;
+        top: 13%;
     }
 
     @include tablet {
@@ -23,8 +55,9 @@
     @include phonePro {
         //border: 2px solid $error-color;
         flex-direction: column;
-        max-height: 300%;
-        height: 135%;
+        max-height: 400%;
+        height: 200%;
+        top: 17%;
         align-items: center;
     } 
 
@@ -126,6 +159,10 @@
                         //border: 2px solid $error-color;
                         height: 70%;
                     } 
+
+                    @include phonePro {
+                        width: 22%;
+                    }
     
                     .img {
                         position: relative;
@@ -508,7 +545,7 @@
             @include flexBar($position: relative, $justify: flex-start, $gap: 5px, $flex_d: column, $wrap: wrap, $align: none, $flex: none);
             //border: 1px solid $primary-color;
             @include position ($left: inherit, $top: 0%);
-            z-index: 10;
+            z-index: 2;
             // overflow-x: hidden;
             // overflow-y: auto;
             //background-color: red;

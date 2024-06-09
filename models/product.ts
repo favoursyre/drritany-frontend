@@ -5,19 +5,22 @@ import {Schema, model, Types, models } from "mongoose";
 import { ISpecification, IProduct, IProductModel, IImage } from "@/config/interfaces";
 
 ///Commencing the app
-const discount: number = 33 
 
 ///This is the schema for the product database
 const productSchema = new Schema<IProduct, IProductModel>(
   {
     category: {
-      type: Array<String>,
+      type: String,
       required: true,
       trim: true,
     },
     subCategory: {
-      type: Array<String>,
+      type: String,
       required: true,
+      trim: true,
+    },
+    miniCategory: {
+      type: String,
       trim: true,
     },
     name: {

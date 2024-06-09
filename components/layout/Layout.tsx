@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 const Header = dynamic(() => import("@/components/header/Header"), { ssr: false })
 import Footer from "@/components/footer/Footer";
 import { ToastContainer } from 'react-toastify';
-import Modal from "@/components/modalBackground/Modal";
+import Modal from "@/components/modals/modalBackground/Modal";
 import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore } from "@/config/store";
 import { IClientInfo } from "@/config/interfaces";

@@ -6,7 +6,7 @@
 //Commencing the code -->
 .main {
     @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%);
-    @include position($left: 0%, $top: 8%);
+    @include position($left: 0%, $top: 0%);
     @include size($height:90%);
     background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.75), transparent);
     //background-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 1)), url("https://drive.google.com/uc?export=download&id=1pj3Qwosp72TAarXQchvwtw77Z5y0GpTt");
@@ -17,7 +17,7 @@
     //border: 2px solid green;
 
     @include tabletPro {
-        top: 6%;
+        //top: 6%;
         @include size($height:50%);
     } 
 
@@ -36,46 +36,34 @@
         
     } 
 
-    .image {
-        //border: 2px solid red;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        @include size(40%, 55%);
+    .gradientOverlay {
+        //border: 1px solid green;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+        z-index: 1;
+        position: absolute;
+        @include size(100%, 100%);
+    }
 
-        @include tabletPro {
-            @include size(45%, 50%);
-            //border: 2px solid red;
-        } 
-
-        @include phonePro {
-            @include size(100%, 60%);
-            //padding: 2px;
-            //z-index: -1000;
-        }
-        
-        @include phoneMini {
-            height: 50%;
-        }
-
-        .img {
-            object-fit: contain;
-            object-position: center 30%;
-            position: relative;
-            @include size(100%, 100%);
-        }
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 0.7));
     }
 
     h2 {
         //border: 2px solid red;
         @include flexBar($position: relative, $justify: center, $align: center, $gap: 0%);
-        @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+        @include text-layout($size: 30px, $color: $tertiary-color, $l_height: 72px);
         font-weight: 600;
+        z-index: 3;
 
         @include phonePro {
             //border: 2px solid red;
             @include size(90%, 10%);
             margin: 10px;
+            top: 10%;
         } 
 
         @include phoneMini {
@@ -87,9 +75,10 @@
     span {
         //border: 2px solid red;
         @include size(40%, 20%);
-        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
         text-align: center;
-        
+        z-index: 3;
+        position: relative;
 
         @include tabletPro {
             //@include size(40%, 60%);
@@ -103,6 +92,7 @@
             font-size: 13px;
             @include size(90%, 30%);
             margin-bottom: 10px;
+            top: 10%;
         } 
 
         @include phoneMini {

@@ -6,7 +6,7 @@
 ///Commencing the code
 .main {
     @include flexBar($position: absolute, $justify: flex-start, $flex_d: column, $wrap: none, $align: center, $flex: none);
-    @include position($left: 0%, $top: 150%);
+    @include position($left: 0%, $top: 325%);
     @include size(100%, 55%);
     //border: 2px solid $error-color;
     font-family: "Roboto";
@@ -15,19 +15,24 @@
 
     @include tabletPro {
         //border: 2px solid $error-color;
-        @include position($left: 0%, $top: 95%);
+        @include position($left: 0%, $top: 160%);
         height: 30%;
     } 
 
     @include tablet {
-        top: 115%;
+        top: 147%;
+    }
+
+    @include tabletMini {
+        top: 155%;
+        height: 32%;
     }
 
     @include phonePro {
         //border: 2px solid $error-color;
         @include position($left: 0%, $top: 195%);
-        height: 30%;
-        top: 240%;
+        height: 40%;
+        top: 230%;
         justify-content: space-between;
     } 
 
@@ -62,7 +67,7 @@
             }
 
             @include phoneMini {
-                font-size: 16px;
+                font-size: 14px;
                 @include size(60%, 100%);
             }
         }
@@ -87,6 +92,111 @@
         }
     }
     
+    .swipeContainer {
+        //border: 1px solid red;
+        @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 0%);
+        @include size(90%, 78%);
+        padding: 0.5%;
+
+        @include tabletPro {
+            height: 75%;
+        }
+
+        .slider {
+            //border: 1px solid red;
+            @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 0%);
+            @include size(16%, 98%);
+            background-color: white;
+            border-radius: 5px;
+            //box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            //padding: 1%;
+            top: 1%;
+            //font-family: "Poppins";
+
+            @include tabletPro {
+                width: 18%;
+                //gap: 5%;
+            }
+
+            @include tablet {
+               width: 20%;
+            }
+
+            @include phonePro {
+                width: 33%;
+            }
+
+            &:hover {
+                transform: scale(1.05);
+                box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+
+    .controller {
+        //border: 1px solid red;
+        @include flexBar($position: absolute, $align: center, $flex_d: row, $justify: space-between, $gap: 5%);
+        @include size(99%, 15%);
+        top: 50%;
+        color: $primary-color;
+
+        @include phonePro {
+            gap: 1%;
+            //justify-content: space-between;
+        }
+
+        .prev, .next {
+            color: white;
+            border: none;
+            border-radius: 5px;
+            border: 1px solid $primary-color;
+            @include size(3%, 100%);
+            @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+            z-index: 5;
+            //top: -10%;
+
+            @include phonePro {
+                width: 10%;
+                display: none;
+            }
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+
+        .pagination {
+            color: $text-color-3;
+            position: relative;
+            top: 22%;
+            align-items: center;
+            //@include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+            //border: 1px solid red;
+            //display: none;
+            @include size(30%, 100%);
+
+            @include tablet {
+                width: 40%;
+            }
+
+            @include phonePro {
+                gap: 0%;
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+                top: 15%;
+            }
+
+            @include phone {
+                //width: 80%;
+            }
+
+            @include phoneMini {
+                top: -5%;
+                line-height: 12px;
+            }
+        }
+    }
 
     .product_slide {
         @include flexBar($position: relative, $justify: center, $gap: 1%, $flex_d: row, $wrap: auto, $align: none, $flex: auto);
@@ -98,7 +208,6 @@
 
         @include phonePro {
            //border: 2px solid $error-color;
-           justify-content: space-between;
            @include size(95%, 80%);
            //top: 13%;
         } 
@@ -245,6 +354,19 @@
     //border: 2px solid $primary-color;
 }
 
+.productInfoPage {
+    top: 152%;
+    //border: 2px solid black;
+
+    @include tabletPro {
+        top: 105%;
+    }
+
+    @include phonePro {
+        top: 250%;
+    }
+}
+
 .cartPage {
     //border: 2px solid $primary-color;
     top: 85%;
@@ -258,13 +380,13 @@
     @include phonePro {
         top: 90%;
         //border: 2px solid $error-color;
-        height: 30%;
+        //height: 30%;
     } 
 }
 
 .searchPage {
-    //border: 2px solid $primary-color;
-    top: 100%;
+    //border: 2px solid black;
+    top: 115%;
     //height: 43%;
 
     @include tabletPro {
@@ -272,7 +394,7 @@
     }
 
     @include phonePro {
-        top: 70%;
+        top: 80%;
         //border: 2px solid $primary-color;
     }
 }

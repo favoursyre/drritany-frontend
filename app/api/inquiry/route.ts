@@ -5,7 +5,7 @@ import connectMongoDB from "@/config/mongodb";
 import { Inquiry } from "@/models/inquiry";
 import { NextResponse, NextRequest } from "next/server";
 import { IInquiry } from "@/config/interfaces";
-//import { sendInquiryEmail } from "@/config/email";
+import { sendInquiryEmail } from "@/config/email";
 
 ///Commencing the code
 ///Creating an inquiry
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         await Inquiry.createInquiry( inquiry );
 
         //Sending confirmation letter to the customerinquiry
-        //const status = await sendInquiryEmail(inquiry)
+        const status = await sendInquiryEmail(inquiry)
         //console.log('Email Status: ', status)
 
         return NextResponse.json({ message: "Inquiry submitted" }, { status: 200 });

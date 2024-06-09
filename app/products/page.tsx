@@ -3,16 +3,16 @@
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
-import { domainName, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
+import { domainName, shuffleArray } from '@/config/utils';
 import ProductQuery from '@/components/product/productQuery/ProductQuery';
-import SimilarProduct from '@/components/product/productSlide/ProductSlide';
+import ProductSlide from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
 
 ///Commencing the code
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   return {
     title: `${searchParams.query}`,
-    description: `Search our range of natural health products.`,
+    description: `Search our range of products.`,
     alternates: {
       canonical: `/products?query=${searchParams.query}`
     }
@@ -70,7 +70,7 @@ async function getProducts() {
     return (
       <main className="search_page">
         <ProductQuery keyword_={query} query_={queryProducts} />
-        <SimilarProduct product_={products} />
+        <ProductSlide product_={products} />
       </main>
     )
   }

@@ -5,87 +5,104 @@
 
 //Commencing the code -->
 .main {
-    @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 0%);
-    @include position($left: 0%, $top: 98%);
-    @include size($height:60%);
-    background-color: rgba(0, 0, 0, 0.9);
+    @include flexBar($flex_d: row, $justify: center, $align: center, $gap: 5%);
+    @include position($left: 0%, $top: 95%);
+    @include size($height: 65%);
     //border: 1px solid red;
     font-family: "Roboto";
 
     @include tabletPro {
-        top: 55%;
+        top: 50%;
         @include size($height:30%);
         //border: 2px solid red;
     } 
 
     @include phonePro {
+        flex-direction: column-reverse;
         //border: 0.5px solid red;
-        top: 65%;  
-    }
-
-    .gradientOverlay {
-        //border: 1px solid green;
-        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
-        z-index: 1;
-        position: absolute;
-        @include size(100%, 100%);
-    }
-    
-    .background {
-        object-fit: cover;
-        object-position: center 30%;
-        position: absolute;
-        @include size(100%, 100%);
-        //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+        top: 55%;  
+        gap: 0%;
+        height: 65%;
     }
 
     .brief {
-        @include flexBar($flex_d: column, $justify: center, $align: center, $gap: 2.5%);
-        @include size(100%, 100%);
-        background-color: (0, 0, 0, 0.5);
-        z-index: 10;
-        //border: 1px solid red;
-        
+        @include flexBar($position: relative, $flex_d: column, $justify: center, $align: none, $gap: 5%);
+        //border: 2px solid green;
+        @include size(40%, 100%);
+
+        @include tablet {
+            gap: 0%;
+        }
+
+        @include phonePro {
+            //border: 2px solid red;
+            @include size(90%, 30%);
+            padding: 0% 3%;
+        }
 
         h2 {
-            @include text-layout($size: 30px, $color: $tertiary-color, $l_height: 72px);
-            font-weight: 600;
             //border: 1px solid red;
+            @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+            font-weight: 600;
+            @include flexBar($position: relative, $justify: flex-start, $align: center);
+
+            @include tablet {
+                margin: 0px;
+            }
 
             @include phonePro {
-                //border: 0.5px solid red;
-                position: relative;
-                //top: -15%; 
-            } 
+                height: 20%;
+                margin-bottom: 5px;
+            }
 
             @include phoneMini {
                 font-size: 25px;
+                height: 15%;
             }
         }
 
         span {
-            //border: 2px solid red;
-            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
-            text-align: center;
-            @include size(50%, 25%);
-
-            @include tabletPro {
-                @include size(60%, 40%);
-            }
+            //border: 1px solid red;
+            @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
 
             @include phonePro {
-                //border: 0.5px solid red;
                 font-size: 13px;
                 line-height: 20px;
-                position: relative;
-                //top: -15%; 
-                @include size(80%, 45%);
-            } 
+            }
 
             @include phoneMini {
                 font-size: 12px;
                 line-height: 20px;
             }
+        }
+    }
+
+    .image {
+        //border: 2px solid black;
+        background-image: linear-gradient(to left, transparent, transparent, rgba(255, 255, 255, 1));
+        @include size(50%, 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+
+        @include tabletPro {
+            height: 90%;
+        }
+
+        @include tabletMini {
+            top: 10%;
+        }
+
+        @include phonePro {
+            //display: none;
+            @include size(90%, 60%);
+        }
+
+        img {
+            object-fit: cover;
+            object-position: center 30%;
+            position: relative;
+            @include size(100%, 100%);
         }
     }
 }

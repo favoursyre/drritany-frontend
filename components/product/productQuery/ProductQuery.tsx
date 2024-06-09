@@ -5,13 +5,16 @@
 import styles from "./productQuery.module.scss"
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { decodedString, slashedPrice } from "@/config/utils";
+import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import ErrorIcon from '@mui/icons-material/Error';
+import TuneIcon from '@mui/icons-material/Tune';
 import Image from "next/image";
 import { useClientInfoStore } from "@/config/store";
 import ProductCard from "@/components/cards/product/ProductCard";
+import ProductGrid from "../productGrid/ProductGrid";
 
 ///Commencing the code 
 
@@ -22,11 +25,29 @@ import ProductCard from "@/components/cards/product/ProductCard";
 const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | undefined, query_: Array<IProduct> }) => {
     const [lastIndex, setLastIndex] = useState(12)
     const [keyword, SetKeyword] = useState(keyword_)
-    const [foundProducts, setFoundProducts] = useState<Array<IProduct>>(query_)
+    const [productList, setProductList] = useState(query_)
+    const [foundProducts, setFoundProducts] = useState<Array<IProduct>>([])
     const router = useRouter()
     const [currentURL, setCurrentURL] = useState(window.location.href)
     const clientInfo = useClientInfoStore(state => state.info)
-    console.log('Query: ', foundProducts)
+    const [sort, setSort] = useState(false)
+    const [sortId, setSortId] = useState(0)
+    const [sortOptions, setSortOptions] = useState(sortOption)
+    //console.log('Query: ', foundProducts)
+
+    useEffect(() => {
+        console.log("Test: ", productList, sortProductByLatest(productList), sortProductByPrice(productList, "ascend"))
+        const products_: Array<IProduct> = sortProductByLatest(productList)
+        //console.log("After: ", products_)
+        setFoundProducts(() => products_)
+    }, [foundProducts])
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+        }, 100);
+
+        return () => clearInterval(intervalId);
+    }, [foundProducts]);
 
     ///This hook constantly checks for the screen's width
     useEffect(() => {
@@ -36,7 +57,7 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
           } else {
             setLastIndex(12)
           }
-        }, 1000);
+        }, 100);
     
         return () => clearInterval(intervalId);
       }, [lastIndex]);
@@ -58,18 +79,44 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
         return () => clearInterval(intervalId);
     }, [currentURL]);
 
+    ///This function filters the products
+    const filterProduct = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, sort: number): Promise<void> => {
+        e.preventDefault()
+        setSort(false)
+        setSortId(sort)
+        let product_: Array<IProduct>
+
+        if (sort === 0) {
+            query_ = sortProductByOrder(productList)
+            //setProductList(() => [...product_])
+            setFoundProducts(() => [...query_])
+        } else if (sort === 1) {
+            product_ = sortProductByLatest(productList)
+            //setProductList(() => [...product_])
+            setFoundProducts(() => [...product_])
+        } else if (sort === 2) {
+            query_ = sortProductByPrice(productList, "descend")
+            //console.log("Query: ", query_)
+            //setProductList(() => [...product_])
+            setFoundProducts(() => [...query_])
+        } else if (sort === 3) {
+            product_ = sortProductByPrice(query_, "ascend")
+            //setProductList(() => [...product_])
+            setFoundProducts(() => [...product_])
+        }
+    }
+
     return (
         <main className={`${styles.main}`}>
             
             {foundProducts && foundProducts.length > 0 ? (
                 <div className={styles.active_state}>
-                    <span className={styles.brief}>{foundProducts?.length} product{foundProducts.length > 1 ? "s": ""} found that matched <strong>&apos;{keyword}&apos;</strong></span>
-                    
-                    <div className={styles.product_grid}>
-                        {foundProducts.map((product, _id) => (
-                            <ProductCard product_={product} key={_id} view={undefined} />
-                        ))}
+                    <div className={styles.heading}>
+                        <span className={styles.brief}>
+                            {foundProducts?.length} product{foundProducts.length > 1 ? "s": ""} found that matched <strong>&apos;{keyword}&apos;</strong>
+                        </span>
                     </div>
+                    <ProductGrid product_={foundProducts} view_="query" />
                     <div className={styles.pagination_section}>
                             <button>
                                 <KeyboardArrowLeftIcon />
@@ -83,14 +130,8 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
             ) : (
                 <>
                     <div className={styles.empty_state}>
-                        <div className={styles.image}>
-                            <Image
-                                className={styles.img} 
-                                src="https://drive.google.com/uc?export=download&id=1u3nIrX-Mg4Zmep4HphaopUL_C2ixuP05"
-                                alt=""
-                                width={103}
-                                height={103}
-                            />
+                        <div className={styles.iconCircle}>
+                            <ErrorIcon className={styles.icon} />
                         </div>
                         <span className={styles.brief}>There are no results for <strong>&apos;{keyword}&apos;</strong></span>
                         <span className={styles.brief}>- Check for spelling errors</span>

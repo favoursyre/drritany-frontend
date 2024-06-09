@@ -1,4 +1,5 @@
 "use client"
+import { companyName } from "@/config/utils";
 ///Terms of use component
 
 ///Libraries -->
@@ -17,7 +18,7 @@ const Terms = () => {
         <h3 className={styles.terms_heading}>Terms of Use</h3>
         <div className={styles.terms_body}>
             <span>
-                Welcome to Dr Ritany, your goto for your health products. These terms of use (&apos;Terms&apos;) govern your access and use of the website, products, 
+                Welcome to {companyName}, your goto for your everyday products. These terms of use (&apos;Terms&apos;) govern your access and use of the website, products, 
                 and services offered by our company (&apos;we&apos;, &apos;us&apos;, or &apos;our&apos;) through this website. By accessing and using our website, 
                 you agree to be bound by these Terms.
             </span>

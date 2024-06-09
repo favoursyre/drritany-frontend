@@ -36,8 +36,17 @@
         .img {
             position: relative;
             object-fit: cover;
+            object-position: -500px 10%;
             //border: 1px solid red;
             @include size(100%, 100%);
+
+            @include tabletPro {
+                object-position: -550px 10%; 
+            }
+
+            @include tablet {
+                object-position: -560px 10%; 
+            }
         }
     }
 
@@ -95,7 +104,7 @@
             @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 5%, $flex_d: column, $flex: none, $bg-color: none);
             
             :focus {
-                outline-color: rgb(108, 140, 199);
+                outline-color: $primary-color;
             }
 
             .div_1,
@@ -103,7 +112,7 @@
             .div_3 {
                 border: 1px solid $text-color-3; 
                 border-radius: 4px;
-                @include size(100%, 14%);  
+                @include size(95%, 14%);  
                 @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: row, $flex: none, $bg-color: none); 
                 
                 @include phonePro {
@@ -116,7 +125,7 @@
                     border: 1px solid $text-color-3;
                     @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: row, $flex: none, $bg-color: none);
                     @include size(100%, 100%); 
-                    padding: 1% 3%;
+                    padding: 1% 2%;
                     
                 }
 
@@ -132,20 +141,25 @@
             .div_1 {
                 justify-content: space-between;
                 border: 1px solid transparent;
+                gap: 0%;
 
                 .div_11,
                 .div_12 {
                     border: 1px solid $text-color-3;
                     border-radius: 4px;
-                    @include size(48%, 100%);  
+                    @include size(47.5%, 100%);  
                     @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: row, $flex: none, $bg-color: none);
 
                     input {
                         //border: 1px solid yellow;
                         @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%, $flex_d: row, $flex: none, $bg-color: none);
                         @include size(100%, 100%);
-                        padding: 1% 6%; 
+                        padding: 1% 4%; 
                     }
+                }
+
+                .div_11 {
+                    //width: 45.5%;
                 }
             }
 

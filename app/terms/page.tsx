@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 }
 
 /**
- * @title Homepage
+ * @title Terms page
  */
 export default function TermsPage() {
   return (

@@ -3,37 +3,18 @@
 
 ///Libraries -->
 import Hero from '@/components/hero/Hero';
-import { domainName } from '@/config/utils';
-import Map from "@/components/map/Map"
-import Products from '@/components/product/productGrid/ProductGrid';
-import dynamic from "next/dynamic"
-const Quote = dynamic(() => import("@/components/quote/Quote"), { ssr: false })
-const Testimony = dynamic(() => import("@/components/testimony/Testimony"), { ssr: false })
-//import Quote from '@/components/quote/Quote';
+import { domainName, shuffleArray } from '@/config/utils';
+import Stats from "@/components/stats/Stats"
+import ProductGrid from '@/components/product/productGrid/ProductGrid';
+//import dynamic from "next/dynamic"
+import ProductSlide from '@/components/product/productSlide/ProductSlide';
+//const Testimony = dynamic(() => import("@/components/testimony/Testimony"), { ssr: false })
+import TimeBar from '@/components/timeBar/TimeBar';
 //import Testimony from '@/components/testimony/Testimony';
 import { IProduct } from '@/config/interfaces';
 
 ///Commencing the code
-///This function gets the quotes
-// async function getQuotes() {
-//   try {
-//       const response = await fetch(
-//           `${backend}/quotes`,
-//           {
-//             next: {
-//               revalidate: 60,
-//             },
-//           }
-//         );
-      
-//         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-//         const quotes = await response.json();
-//         return quotes;
-//   } catch (error) {
-//       console.error(error);
-//   }
-// }
+export const dynamic = "force-dynamic"
 
 ///This function gets all the products
 async function getProducts() {
@@ -97,6 +78,7 @@ async function getProducts() {
  */
 export default async function Home() {
   const products = await getProducts()
+  const productSlide = shuffleArray(products) as unknown as Array<IProduct>
   //console.log("Prod1: ", products)
   // const quotes = shuffleArray(await getQuotes()) 
   // const testimonials = shuffleArray(await getTestimonials())
@@ -104,10 +86,11 @@ export default async function Home() {
   return (
     <main className="home_page">
       <Hero />
-      <Map />
-      <Products product_={products}/>
-      <Quote />
-      <Testimony />  
+      <Stats />
+      <TimeBar />
+      <ProductGrid product_={products} view_={undefined} />
+      <ProductSlide product_={productSlide} />
+      {/* <Testimony />   */}
     </main>
   )
 }

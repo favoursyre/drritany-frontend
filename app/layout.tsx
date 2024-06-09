@@ -16,8 +16,8 @@ export const metadata = {
   icons: {
     icon: 'favicon.ico',
   },
-  description: 'E-Commerce website for all sorts of natural health products',
-  keywords: "drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce, natural"
+  description: 'E-Commerce website for all sorts of products',
+  keywords: "products, commerce, plug, ideal, buy, online, drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce, natural"
 }
 
 

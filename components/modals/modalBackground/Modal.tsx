@@ -5,9 +5,9 @@
 import styles from "./modal.module.scss"
 import { useModalBackgroundStore } from "@/config/store";
 import { MouseEvent } from "react";
-import ContactModal from "@/components/contactModal/ContactModal";
-import DiscountModal from "@/components/discountModal/DiscountModal";
-import OrderModal from "@/components/orderModal/OrderModal";
+import ContactModal from "../contactModal/ContactModal";
+import DiscountModal from "../discountModal/DiscountModal";
+import OrderModal from "../orderModal/OrderModal";
 
 ///Commencing the code 
 

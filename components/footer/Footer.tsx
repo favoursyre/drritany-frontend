@@ -2,15 +2,18 @@
 ///Footer component
 
 ///Libraries -->
-import { notify } from '@/config/clientUtils';
+import { notify, visitSocialLink } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, domainName, GoogleSheetDB, orderSheetId } from '@/config/utils'
+import { routeStyle, domainName, GoogleSheetDB, orderSheetId, companyEmail, companyName } from '@/config/utils'
 import { IContact, INews, IOrderSheet } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, MouseEvent } from "react";
 import validator from "validator";
 import Image from 'next/image';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Loading from '../loadingCircle/Circle';
 
 ///Commencing the code 
@@ -95,14 +98,16 @@ const Footer = () => {
                 <div className={styles.contact_section}>
                     <div className={styles.logo}>
                         <Image
-                            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+                            className={styles.img}
+                            src="https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG"
                             alt=""
-                            width={86}
-                            height={31}
+                            width={2500}
+                            height={2500}
                         />
+                        <span>{companyName}</span>
                     </div>
                     <span className={styles.brief}>
-                        We are committed to providing high-quality, effective products that support your health and well-being.
+                        We are committed to providing high-quality, effective products that support your well-being and everyday routine.
                     </span>
                     <div className={styles.socials}>
                         {/* <div className={styles.whatsapp_social}>
@@ -118,18 +123,20 @@ const Footer = () => {
                             </div>
                         </div> */}
                         <div className={styles.email_social}>
-                            <button>
-                                <Image
-                                    src="https://drive.google.com/uc?export=download&id=1xBD5VMMs720V9OkNwxYaStgXqez975Rj"
-                                    alt=""
-                                    width={48}
-                                    height={49}
-                                />
+                            <button type="button" onClick={() => router.push(`mailto:${companyEmail}`)}>
+                                <MailOutlineIcon className={styles.icon} />
                             </button>
                             <div className={styles.texts}>
                                 <span className={styles.text1}>Contact us at</span>
-                                <span className={styles.text2}>official.drritany@gmail.com</span>
+                                <span className={styles.text2}><a href={`mailto:${companyEmail}`}>{companyEmail}</a></span>
                             </div>
+                        </div>
+                        <div className={styles.social_medias}>
+                            <FacebookIcon className={styles.facebook} onClick={(e) => visitSocialLink(e, "facebook")}/>
+                            <InstagramIcon className={styles.instagram} onClick={(e) => visitSocialLink(e, "instagram")} />
+                            {/* <button className={styles.whatsapp}>
+                                <WhatsAppIcon className={styles.icon} />
+                            </button> */}
                         </div>
                     </div>
                 </div>
@@ -138,7 +145,7 @@ const Footer = () => {
                     <div className={styles.texts}>
                         <span className={styles.text1}>Newsletter</span>
                         <span className={styles.text2}>Be the first to know about discounts, new products and special offers. 
-                        Join our community today and take the first step towards a healthier, happier you!</span>
+                        Join our community today and take the first step towards a happier you!</span>
                     </div>
                     <form className={styles.news_form} onSubmit={(e) => subNewsLetter(e)}>
                         <MailOutlineIcon className={styles.mailIcon}/>
@@ -167,10 +174,10 @@ const Footer = () => {
                 <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
             </div>
             <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
-            <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} Dr Ritany Inc., All rights reserved</span>
+            <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} {companyName} Inc., All rights reserved</span>
            </div>
         </footer>
-        <footer className={`${styles.mobile_footer} ${routeStyle(routerPath, styles)}`} id="contacts">
+        {/* <footer className={`${styles.mobile_footer} ${routeStyle(routerPath, styles)}`} id="contacts">
             <Image 
                 className={styles.background}
                 src={"https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO"}
@@ -200,7 +207,7 @@ const Footer = () => {
                 </form>
             </div>
             <div className={styles.contact_section}>
-                {/* <div className={styles.whatsapp_social}>
+                <div className={styles.whatsapp_social}>
                     <button>
                         <img
                             src="https://drive.google.com/uc?export=download&id=19bUJMJNtW8KywhjRaVRQZVxFtJFPjVQ8"
@@ -211,7 +218,7 @@ const Footer = () => {
                         <span className={styles.text1}>Have a question?</span>
                         <span className={styles.text2}>+234-9090982848</span>
                     </div>
-                </div> */}
+                </div>
                 <div className={styles.email_social}>
                     <button>
                         <Image
@@ -223,7 +230,7 @@ const Footer = () => {
                     </button>
                     <div className={styles.texts}>
                         <span className={styles.text1}>Contact us at</span>
-                        <span className={styles.text2}>official.drritany@gmail.com</span>
+                        <span className={styles.text2}>{companyEmail}</span>
                     </div>
                 </div>
             </div>
@@ -237,7 +244,7 @@ const Footer = () => {
                 <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
             <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} Dr Ritany Inc., All rights reserved</span>
            </div>
-        </footer>
+        </footer> */}
         </>
     );
 };

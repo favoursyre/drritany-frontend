@@ -15,10 +15,14 @@
 
     @include tabletPro {
         gap: 0.5%;
-        top: 145%;
+        top: 140%;
         @include size($height:100%);
         //border: 2px solid red;
     } 
+
+    @include tabletMini {
+        top: 145%;
+    }
 
     @include phonePro {
         //border: 2px solid red;
@@ -186,7 +190,7 @@
         }
 
         .inactiveAccordian {
-            z-index: 100;
+            z-index: 5;
         }
     }
 }

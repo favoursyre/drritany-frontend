@@ -7,9 +7,10 @@
 .footer {
     @include flexBar($position: absolute, $flex_d: column, $gap: 0%);
     @include size(100%, 50%);
-    @include position($left: 0%, $top: 370%);
+    @include position($left: 0%, $top: 385%);
     //border: 2px solid black;
     font-family: "Roboto";
+    //border-top: 1px solid $text-color-3;
 
     button {
         outline: none;
@@ -25,21 +26,19 @@
     @include tablet {
         //border: 2px solid red;
         //position: relative;
-        top: 175%;
+        top: 180%;
         height: 25%;
     }
 
     @include tabletMini {
-        top: 180%;
+        top: 190%;
     }
 
-    // @include breakpoint(900px, 1024px) {
-    //     top: 210%;
-    //     height: 25%;
-    // }
-
     @include phonePro {
-        display: none;
+        height: 60%;
+        padding: 2% 0%;
+        border-top: 2px solid $text-color-3;
+        top: 280%;
     } 
 
     .background {
@@ -47,7 +46,7 @@
         object-position: center 30%;
         position: absolute;
         @include size(100%, 100%);
-        background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+        //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
     }
 
     .upper_footer {
@@ -56,6 +55,11 @@
         //padding: 1%;
         //display: none;
         @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
+
+        @include phonePro {
+            height: 75%;
+            flex-direction: column;
+        }
 
         .contact_section {
             @include flexBar($position: relative, $justify: none, $flex_d: column, $gap: 10%);
@@ -75,16 +79,39 @@
                 gap: 0%;
             }
 
+            @include phonePro {
+                @include size(90%, 45%);
+                left: 0%;
+                border-bottom: 1px solid $text-color-3;
+            }
+
+            @include phone {
+                height: 50%;
+            }
+
             .logo {
                 //border: 2px solid violet;
-                @include flexBar($position: relative, $justify: row, $flex_d: row, $gap: 0%);
+                @include flexBar($position: relative, $justify: flex-start, $flex_d: row, $align: center, $gap: 2%);
                 @include size(100%, 20%);
 
                 img {
                     position: relative;
                     //border: 2px solid violet;
                     object-fit: contain;
+                    @include size(auto, 80%);
                     //@include size(55%, 100%);
+                }
+
+                span {
+                    //border: 1px solid red;
+                    position: relative;
+                    @include text-layout($size: 25px, $color: $primary-color, $l_height: 24px);
+                    font-weight: 600;
+                    font-family: "Inter";
+
+                    @include phonePro {
+                        font-size: 22px;
+                    }
                 }
             }
 
@@ -96,12 +123,32 @@
                 @include tabletMini {
                     top: 2%;
                 }
+
+                @include phone {
+                    line-height: 18px;
+                }
+
+                @include phoneMini {
+                    font-size: 12px;
+                }
             }
 
             .socials {
                 @include flexBar($position: relative, $justify: none, $flex_d: row, $gap: 5%);
                 //border: 2px solid $error-color;
                 @include size(100%, 35%);
+
+                @include tablet {
+                    top: -8%;
+                }
+
+                @include tabletMini {
+                    top: 0%;
+                }
+
+                @include phonePro {
+                    top: -8%;
+                }
 
                 .whatsapp_social {
                     //border: 2px solid violet;
@@ -163,25 +210,34 @@
                 }
 
                 .email_social {
-                    position: relative;
                     //border: 2px solid violet;
                     @include size(45%, 100%);
-                    @include flexBar($position: relative, $justify: none, $flex_d: row, $gap: 5%);
+                    @include flexBar($position: relative, $justify: center, $align: center, $flex_d: row, $gap: 5%);
 
-                    
+                    @include tablet {
+                        width: 55%;
+                        //top: -10%;
+                        //gap: 1%;
+                    }
 
-                    @include tabletPro {
-                        left: -5%;
+                    @include phonePro {
+                        width: 60%;
                     }
                     
 
                     button {
                         position: relative;
                         //border: 2px solid $error-color;
-                        border: none;
-                        background-color: transparent;
-                        @include size(25%, 100%);
+                        border: 2px solid $primary-color;
+                        border-radius: 50%;
+                        @include size(50px, 50px);
                         transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+                        .icon {
+                            color: $primary-color;
+                        }
+
+                        //@include phonePro 
 
                         &:hover {
                             transform: scale(1.05);
@@ -214,6 +270,10 @@
                             //border: 1px solid red;
                             @include size(100%, 50%);
 
+                            a {
+                                color: $primary-color;
+                            }
+
                             @include tabletPro {
                                 font-size: 13px;
                             }
@@ -221,6 +281,40 @@
                             @include tablet {
                                 font-size: 10px;
                             }
+                        }
+                    }
+                }
+
+                .social_medias {
+                    //border: 2px solid violet;
+                    @include size(40%, 100%);
+                    @include flexBar($position: relative, $justify: flex-end, $align: center, $flex_d: row, $gap: 5%);
+
+                    @include phonePro {
+                        width: 30%;
+                    }
+
+                    @include phoneMini {
+                        display: none;
+                    }
+
+                    .facebook, .instagram {
+                        font-size: 2rem;
+                        color: $text-color-1;
+                    }
+
+                    .facebook {
+
+                        &:hover {
+                            color: blue;
+                        }
+                        
+                    }
+
+                    .instagram {
+
+                        &:hover {
+                            color: rgb(240, 49, 97);
                         }
                     }
                 }
@@ -240,6 +334,10 @@
                 width: 50%;
                 //border: 2px solid $error-color;
                 //left: 36%;
+            }
+
+            @include phonePro {
+                display: none;
             }
         }
 
@@ -261,24 +359,53 @@
                 gap: 0%;
             }
 
+            @include phonePro {
+                @include size(90%, 45%);
+                left: 0%;
+                top: 2%;
+                //border: 1px solid red;
+            }
+
+            @include phone {
+                
+                height: 30%;
+                top: 5%;
+            }  
+            
+            @include phoneMini {
+                top: 10%;
+            }
+
             .texts {
                 //border: 1px solid red;
                 @include flexBar($position: relative, $justify: center, $flex_d: column, $gap: 10px);
                 //@include position(0%, 10%);
                 
-                @include tabletMini {
-                    top: 0%;
+                @include phonePro {
+                    top: 5%;
                 }
 
                 .text1 {
                     //border: 1px solid red;
                     @include text-layout($size: 18px, $color: $text-color-2, $l_height: 21px);
-                    text-transform: capitalize;
+                    text-transform: capitalize; 
+
+                    @include phoneMini {
+                        display: none;
+                    }
                 }
 
                 .text2 {
                     //border: 1px solid red;
                     @include text-layout($size: 14px, $l_height: 24px);
+
+                    @include phone {
+                        line-height: 18px;
+                    }   
+
+                    @include phoneMini {
+                        font-size: 12px;
+                    }
                 }
             }
 
@@ -290,9 +417,9 @@
                 border-radius: 30px;
                 background-color: $tertiary-color;
 
-                @include tablet {
-                    //top: 15%;
-                    //height: 30%;
+                @include phonePro {
+                    height: 25%;
+                    top: -5%;
                 }
 
                 @include tabletMini {
@@ -308,17 +435,9 @@
                     padding: 1% 23% 1% 7%;
                     @include text-layout($size: 14px, $color: $text-color-1, $l_height: 12px);
                     position: relative;
-                    //background-color: red;
-                    //left: 3%;
 
-                    @include tablet {
-                        //padding: 1% 25% 1% 12%;
-                        //height: 90%;
-                    } 
-
-                    @include tablet {
-                        //padding: 1% 25% 1% 12%;
-                        //height: 90%;
+                    @include phonePro {
+                        padding: 1% 25% 1% 9%;
                     }
 
                     &::placeholder {
@@ -374,6 +493,10 @@
         @include size($height: 1%, $width: 100%);
         position: relative;
         background: linear-gradient(180deg, rgba(9, 30, 66, 0.13) 0%, rgba(9, 30, 66, 0.13) 25%, rgba(9, 30, 66, 0.08) 25.01%, rgba(9, 30, 66, 0) 100%);
+        
+        @include phonePro {
+            //display: none;
+        }
     }
 
     .lower_footer {
@@ -395,6 +518,10 @@
                 background-color: transparent;
                 border-color: transparent;
 
+                @include phoneMini {
+                    font-size: 12px;
+                }
+
                 &:hover {
                     transform: scale(1.05);
                 }
@@ -405,6 +532,14 @@
             @include flexBar($position: relative, $align: center, $justify: center, $flex_d: row, $gap: 15px);
             @include text-layout($size: 14px, $color: $text-color-3, $l_height: 16px);
             top: 5%;
+
+            @include phonePro {
+                text-align: center;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+            }
         }
 
         .copyright {
@@ -412,6 +547,10 @@
             //border: 2px solid red;
             @include size(100%, 30%);
             @include text-layout($size: 12px, $color: $text-color-3, $l_height: 16px);
+
+            @include phoneMini {
+                font-size: 11px;
+            }
         }
     }
 }
@@ -430,360 +569,8 @@
     // }
 }
 
-.mobile_footer {
-    position: absolute;
-    display: flex;
-    //border: 2px solid blue;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    top: 297%;
-    gap: 5px;
-    //height: 35%;
-    left: 0%;
-    font-family: "Roboto";
-    background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7)), url("https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO");
-
-    @include desktop {
-        display: none;
-    }
-
-    @include tabletPro {
-        display: none;
-    }
-
-    @include phonePro {
-        height: 330px;
-    }
-
-    @include phoneMini {
-        height: 280px;
-    }
-
-    button {
-        outline: none;
-    }
-
-    .background {
-        object-fit: cover;
-        object-position: center 30%;
-        position: absolute;
-        @include size(100%, 100%);
-        background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
-    }
-
-    .newsletter_section {
-        //border: 2px solid green;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        padding: 2%;
-        top: 1%;
-        //height: 50%;
-
-        h3 {
-            //border: 2px solid red;
-            display: flex;
-            justify-content: center;
-            text-transform: capitalize;
-            @include text-layout($size: 18px, $color: $text-color-1, $l_height: 21px);
-
-            @include phoneMini {
-                font-size: 16px;
-            }
-        }
-
-        span {
-            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);
-
-            @include phoneMini {
-                font-size: 12px;
-                line-height: 15px;
-            }
-        }
-
-        form {
-            //border: 2px solid red;
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            //@include size(100%, 30%);
-
-            input {
-                //border: 2px solid rgb(36, 202, 36);
-                border: none;
-                @include size(100%, 100%);
-                border-radius: 30px;
-                padding: 1% 25% 1% 9%;
-                @include text-layout($size: 14px, $color: $text-color-1, $l_height: 12px);
-
-                &::placeholder {
-                    @include text-layout($size: 14px, $color: $text-color-3, $l_height: 12px);
-                }
-
-                &:focus {
-                    //background-color: red;
-                    outline-color: transparent;
-                    border: 1px solid $primary-color;
-                    border-radius: 30px;
-                }
-            }
-
-            .mailIcon {
-                //border: 1px solid red;
-                position: absolute;
-                font-size: 1rem;
-                left: 3%;
-                z-index: 10;
-                color: $text-color-3;
-                
-                //color: $tertiary-color;
-                //background-color: $text-color-3;
-                //top: 30%;
-            }
-
-            button {
-                position: absolute;
-                border-radius: 30px;
-                //@include position(79%, 4%);
-                border: 1px solid $primary-color;
-                @include size(20%, 95%);
-                background-color: $primary-color;
-                @include text-layout($size: 12px, $color: $tertiary-color, $l_height: 12px);
-                text-align: center;
-                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-                left: 78%;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-
-                @include phoneMini {
-                    font-size: 10px;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                }
-            }
-        }
-    }
-
-    .contact_section {
-        //border: 2px solid red;
-        position: relative;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-        align-items: center;
-        width: 100%;
-        height: 15%;
-
-        @include phoneMini {
-            height: 13%;
-        }
-
-        .whatsapp_social {
-            //border: 2px solid red;
-            @include flexBar($position: relative, $justify: center, $gap: 5%);
-            padding: 1%;
-            @include size(45%, 100%);
-
-            button {
-                @include size(30%, 90%);
-                @include flexBar($position: relative, $justify: center, $align: center);
-                border: none;
-                background-color: transparent;
-
-                img {
-                    //border: 1px solid green;
-                    position: relative;
-                    @include size(100%, 100%);
-                    //left: 10%;
-                }
-            }
-
-            .texts {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                //border: 1px solid red;
-                gap: 0px;
-                @include size(70%, 90%);
-
-                .text1 {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    @include size(100%, 50%);
-                    //border: 1px solid red;
-                    @include text-layout($size: 11px, $color: $text-color-2, $l_height: 12px);
-
-                    @include phoneMini {
-
-                        font-size: 8px;
-                    }
-                }
-
-                .text2 {
-                    //border: 1px solid red;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    @include size(100%, 50%);
-                    @include text-layout($size: 11px, $color: $primary-color, $l_height: 12px);
-
-                    @include phoneMini {
-                        font-size: 8px;
-                    }
-                }
-            }
-        }
-
-        .email_social {
-            //border: 2px solid red;
-            @include flexBar($position: relative, $justify: center, $gap: 5%);
-            padding: 1%;
-            @include size(45%, 100%);
-            //left: 10%;
-
-            button {
-                @include size(30%, 90%);
-                @include flexBar($position: relative, $justify: center, $align: center);
-                border: none;
-                background-color: transparent;
-
-                img {
-                    //border: 1px solid green;
-                    position: relative;
-                    @include size(100%, 100%);
-                    //left: 10%;
-                }
-            }
-
-            .texts {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                gap: 0px;
-                @include size(70%, 90%);
-                //border: 1px solid red;
-
-                .text1 {
-                    //border: 1px solid red;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    @include size(100%, 50%);
-                    @include text-layout($size: 11px, $color: $text-color-2, $l_height: 12px);
-
-                    @include phoneMini {
-                        font-size: 8px;
-                    }
-                }
-
-                .text2 {
-                    //border: 1px solid red;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    @include size(100%, 50%);
-                    @include text-layout($size: 11px, $color: $primary-color, $l_height: 12px);
-
-                    @include phoneMini {
-                        font-size: 8px;
-                    }
-                }
-            }
-        }
-    }
-
-    .lower_footer {
-        //border: 1px solid red;
-        width: 95%;
-        height: 23%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        //align-items: center;
-        padding: 1% 2%;
-        @include text-layout($size: 14px, $color: $text-color-2, $l_height: 16px);
-
-        @include phoneMini {
-            font-size: 10px;
-            //height: 25%;
-        }
-
-        .footer_menu {
-            //border: 1px solid green;
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 95%;
-
-            button {
-                background-color: transparent;
-                border-color: transparent;
-
-                span {
-                    @include phoneMini {
-                        font-size: 10px;
-                    }
-                }
-            }
-        }
-
-        .address {
-            display: flex;
-            justify-content: center;
-            position: relative;
-            //border: 1px solid red;
-
-            @include phonePro {
-                font-size: 14px;
-                color: $text-color-2;
-                z-index: 5;
-                text-align: center;
-                top: 5%;
-                //border: 1px solid red;
-            }
-
-            @include phoneMini {
-                font-size: 12px;
-            }
-        }
-
-        .copyright {
-            display: flex;
-            justify-content: center;
-            position: relative;
-
-            @include phonePro {
-                font-size: 12px;
-                color: $text-color-2;
-                z-index: 5;
-                top: -5px;
-                text-align: center;
-                //border: 1px solid red;
-            }
-
-            @include phoneMini {
-                //border: 1px solid red;
-                font-size: 10px;
-                top: -10px;
-            }
-        }
-    }
-}
-
 %footer-layout {
-    background: $tertiary-color;
+    //background: $tertiary-color;
     //border: 2px solid red;
     input {
         background: $input-color-1;
@@ -794,19 +581,15 @@
     top: 210%;
     @extend %footer-layout;
 
-    @include tablet {
+    @include tabletPro {
         //border: 1px solid red;
-        top: 145%;
+        top: 140%;
     } 
 
     @include phonePro {
         //border: 1px solid red;
-        top: 280%;
+        top: 300%;
     } 
-
-    @include phoneMini {
-        top: 290%;
-    }
 }
 
 .cartPage {
@@ -844,7 +627,7 @@
     } 
 
     @include phonePro {
-        top: 320%;
+        top: 250%;
     } 
 
     @include phone {
@@ -879,12 +662,16 @@
 }
 
 .aboutPage {
-    top: 450%;
+    top: 455%;
     @extend %footer-layout;
 
     @include tabletPro {
-        top: 225%;
+        top: 220%;
     } 
+
+    @include tabletMini {
+        top: 230%;
+    }
 
     @include phonePro {
         //border: 1px solid red;
@@ -893,16 +680,16 @@
 }
 
 .searchPage {
-    top: 160%;
+    top: 180%;
     //border: 1px solid red;
     @extend %footer-layout;
 
     @include tabletPro {
-        top: 85%;
+        top: 90%;
     }
 
     @include phonePro {
-        top: 120%;
+        top: 130%;
         //border: 1px solid red;
     }
 }
@@ -910,7 +697,7 @@
 .orderInvoicePage {
     //border: 1px solid red;
     @extend %footer-layout;
-    top: 135%;
+    top: 160%;
 
     @include tabletPro {
         //border: 1px solid red;

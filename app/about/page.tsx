@@ -7,36 +7,16 @@ import Mission from "@/components/about/mission/Mission"
 import Vision from "@/components/about/vision/Vision"
 import FAQ from "@/components/faq/Faq"
 import { Metadata } from "next"
+import { companyName } from "@/config/utils"
 
 ///Commencing the code
 export const metadata: Metadata = {
   title: 'About Us',
-  description: `We are a team of health and wellness enthusiasts who are passionate about helping people achieve optimal health through natural and effective products.`,
+  description: `At ${companyName}, we pride ourselves in offering a diverse range of items, from everyday essentials to unique finds, ensuring that each customer finds something special.`,
   alternates: {
     canonical: `/about`
   }
 }
-///This function fetches all the faqs
-// async function getFaqs() {
-//   try {
-//       const response = await fetch(
-//           `${backend}/faqs`,
-//           {
-//             next: {
-//               revalidate: 60,
-//             },
-//           }
-//         );
-      
-//         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-//         const faqs = await response.json();
-//         return faqs;
-//   } catch (error) {
-//       console.error(error);
-//   }
-// }
-
 
 /**
  * @title Homepage

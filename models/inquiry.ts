@@ -9,17 +9,17 @@ import { IInquiry, IInquiryModel } from "@/config/interfaces";
 //This is the schema for the inquiry database
 const inquirySchema = new Schema<IInquiry, IInquiryModel>(
   {
-    firstName: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    lastName: {
+    fullName: {
       type: String,
       required: true,
       trim: true
     },
     emailAddress: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    subject: {
       type: String,
       required: true,
       trim: true

@@ -40,11 +40,26 @@
         transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); 
         
         @include phonePro {
-            box-shadow: none;
+            top: 5%;
+            //box-shadow: none;
         }
 
-        .cart_image {
+        .cart_icon {
             //border: 1px solid red;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            @include size(100px, 100px);
+            background-color: rgba(217, 217, 217, 1);
+            border-radius: 50%;
+
+            .icon {
+                position: relative;
+                //border: 1px solid red;
+                font-size: 3.5rem;
+                color: $primary-color;
+            }
         }
 
         .brief_1 {
@@ -59,6 +74,7 @@
             @include phonePro {
                 font-size: 14px;
                 text-align: center;
+                width: 80%;
             }
         }
 
@@ -357,7 +373,7 @@
                 top: 2%;
                 @include flexBar($position: relative, $justify: space-between, $gap: 5%, $flex_d: column, $wrap: none, $align: flex-start, $flex: none);
 
-                .subtotal, .discount, .total {
+                .subtotal, .discount, .deliveryFee, .total {
                     //border: 1px solid red;
                     @include flexBar($position: relative, $justify: space-between, $display: flex, $align: flex-start, $flex_d: row);
                     @include size(100%, 35%);
@@ -390,7 +406,7 @@
                 border: 1px solid $primary-color;
                 background: $primary-color;
                 @include size(100%, 10%);
-                top: 10%;
+                top: 15%;
                 color: $tertiary-color;
                 border-radius: 4px;
                 font-size: 14px;
@@ -403,7 +419,7 @@
                 @include phonePro {
                     @include size(100%, 40%);
                     font-weight: 400;
-                    top: 30%;
+                    top: 45%;
                     //border: 2px solid red;
                     //left: 25%;
                 } 

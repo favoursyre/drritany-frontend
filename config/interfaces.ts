@@ -126,8 +126,9 @@ export interface IClientInfoStore {
  */
 export interface IProduct {
     _id: string,
-    category?: Array<string> | string,
-    subCategory?: Array<string> | string,
+    category?: string,
+    subCategory?: string,
+    miniCategory?: string,
     name?: string,
     images: Array<IImage>,
     videos?: Array<string>,
@@ -136,9 +137,10 @@ export interface IProduct {
     discount: number,
     orders?: number,
     freeOption?: boolean,
+    colors?: Array<string>,
     rating?: number,
-    description?: String,
-    specification?: ISpecification
+    description?: string,
+    specification?: ISpecification,
     createdAt: string,
     updatedAt: string,
     __v: number
@@ -151,6 +153,7 @@ export interface ICartItem {
     readonly name?: string,
     readonly unitPrice: number,
     quantity: number,
+    extraDiscount?: boolean,
     freeOption: boolean,
     subTotalPrice: number,
     subTotalDiscount: number
@@ -257,9 +260,9 @@ export interface ICountry {
 ///Declaring the interface for inquiry
 export interface IInquiry {
   _id?: string,
-  firstName: string,
-  lastName: string,
-  emailAddress: string, 
+  fullName: string,
+  emailAddress: string,
+  subject: string, 
   message: string
   createdAt?: string,
   updatedAt?: string,
@@ -302,6 +305,13 @@ export interface IOrder {
   updatedAt?: string,
   __v?: number
 }
+
+//The interface for category
+export interface ICategory {
+  name: string,
+  micros: Array<{ name: string, minis: Array<string> }> | Array<string>
+}
+
 
 /**
  * @notice The interface for product mongoose schema static

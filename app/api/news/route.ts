@@ -4,7 +4,7 @@
 import connectMongoDB from "@/config/mongodb";
 import { News } from "@/models/newsletter";
 import { NextResponse, NextRequest } from "next/server";
-//import { sendSubnewsletterEmail } from "@/config/email";
+import { sendSubnewsletterEmail } from "@/config/email";
 import { INews } from "@/config/interfaces";
 //import { IInquiry } from "@/config/interfaces";
 
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         console.log("Subscriber: ", newsletter)
 
         ///Sending confirmation email to the person
-        //const status = await sendSubnewsletterEmail(newsletter?.subscriber)
+        const status = await sendSubnewsletterEmail(newsletter?.subscriber)
         //console.log('Email: ', await status)
 
         return NextResponse.json({ message: "Newsletter Subscription Successful" }, { status: 200 });

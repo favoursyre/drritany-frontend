@@ -3,10 +3,11 @@
 
 ///Libraries -->
 import Cart from "@/components/cart/Cart"
-import SimilarProduct from "@/components/product/productSlide/ProductSlide"
+import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct } from "@/config/interfaces";
 import { domainName, shuffleArray } from "@/config/utils";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 ///Commencing the code
 export const metadata: Metadata = {
@@ -16,6 +17,8 @@ export const metadata: Metadata = {
     canonical: `/cart`
   }
 }
+
+export const dynamic = "force-dynamic"
 
 ///This fetches a list of all products
 async function getProducts() {
@@ -43,8 +46,8 @@ export default async function CartPage() {
 
   return (
     <main className="cart_page">
-      <Cart />
-      <SimilarProduct product_={products}/>
+        <Cart />
+      <ProductSlide product_={products}/>
     </main>
   )
 }

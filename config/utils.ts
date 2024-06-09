@@ -3,13 +3,15 @@
 
 ///Libraries --> 
 import React from 'react';
-import { IClientInfo, IOrderSheet, IProduct } from './interfaces';
+import { ICategory, IOrderSheet, IProduct } from './interfaces';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 //import credentials from "../drritany-f60889c0b640.json"
 
 ///Commencing the code
-export const companyName: string = "Dr Ritany"
+export const companyName: string = "Idealplug"
+
+export const companyEmail: string = "support@idealplug.com"
 
 export const nairaSymbol: string = "&#8358;"
 
@@ -19,8 +21,8 @@ export const discount: number = 33
 
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
-//export const domainName: string = "http://localhost:3000"
-export const domainName: string = "https://drritany.vercel.app"
+export const domainName: string = "http://localhost:3000"
+//export const domainName: string = "https://idealplug.com"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
@@ -37,10 +39,13 @@ export const groupList = (arr: Array<any>, length: number): Array<any> => {
 }
 
 //Cart name
-export const cartName: string = "DrRitanyCart"
+export const cartName: string = "idealPlugCart"
 
 //Order name
-export const orderName: string = "DrRitanyOrder"
+export const orderName: string = "idealPlugOrder"
+
+export const SUPPORT_EMAIL: string = companyName
+export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
   
 // const routerPath = usePathname();
 // console.log("router: ", routerPath)
@@ -58,13 +63,15 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
             return styles.orderPage
         case "/about":
             return styles.aboutPage
-        case "/products/search":
+        case "/products":
             return styles.searchPage
         default:
             if (router.includes("/products/")) {
                 return styles.productInfoPage
             } else if (router.includes("/order/invoice")) {
                 return styles.orderInvoicePage
+            } else if (router.includes("/products")) {
+                return styles.searchPage 
             } else {
                 return styles.others
             }
@@ -252,6 +259,23 @@ export const sortProductByPrice = (products: Array<IProduct>, action: string): A
     }
 }
 
+///This function sorts the products by category
+export const sortByCategory = (products: Array<IProduct>, category: string): Array<IProduct> => {
+    const categories_ = categories.map((category) => category.name)
+
+    if (category === "All") {
+      return products;
+    } else {
+        
+        for (let i: number = 0; i < categories_.length; i++) {
+            if (category === categories_[i]) {
+                return products.filter(product => product.category === categories_[i]);
+            } 
+        }
+        return products
+  };
+}
+
 ///This function allows us to perform CRUD operation using Google Sheet
 export class GoogleSheetDB {
     private doc: GoogleSpreadsheet
@@ -400,6 +424,59 @@ export const removeProductFromArray = (productToRemove: IProduct, products: Arra
     // If the product doesn't exist, return the original array
     return products;
 };
+
+export const categories: Array<ICategory> = [
+    {
+        name: "Health & Personal Care",
+        micros: [
+            "Medical Supplies & Devices",
+            "Sports & Outdoors",
+            "Medicines & Supplements",
+            "Wearables",
+            "Personal Care & Hygiene"
+        ]
+    },
+    {
+        name: "Beauty & Fashion",
+        micros: [
+            "Cosmetics & Lotions",
+            "Fragances",
+            "Jewelries",
+            "Clothes",
+            "Shoes",
+            "Accessories",
+            "Textiles"
+        ]
+    },
+    {
+        name: "Arts & Crafts",
+        micros: [
+            "Sculptures",
+            "Sketches",
+            "Paintings"
+        ]
+    },
+    {
+        name: "Home, Furnitures & Appliances",
+        micros: [
+            ""
+        ]
+    },
+    {
+        name: "Computer, Gadget & Electronics",
+        micros: [
+            ""
+        ]
+    },
+    {
+        name: "Energy",
+        micros: [
+            "Generator",
+            "Battery",
+            "Solar"
+        ]
+    }
+]
 
 ///Confidential data -- I know, I'm a fool
 export const sheetEmail: string = "dr-ritany@drritany.iam.gserviceaccount.com"

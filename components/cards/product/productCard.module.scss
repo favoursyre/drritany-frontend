@@ -10,40 +10,73 @@
     padding: 1%;
     border-radius: 4px;
     //border: 2px solid $primary-color;
-    @include size(13%, 45%);
+    @include size(13%, 28%);
+
+    @include tabletPro {
+        @include size(13%, 30%); 
+    }
+
+    @include tablet {
+        @include size(16%, 35%); 
+    }
 
     @include phonePro {
         //border: 2px solid $primary-color;
-        @include size(28%, 45%);
+        @include size(28%, 40%);
         padding: 1.5%;
         gap: 0%;
     }
 
-    @include tablet {
-        gap: 0%;
+    @include phone {
+        //@include size(28%, 32%);
     }
 
-    .discount {
-        border:  1px solid $secondary-color;
-        @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: center, $gap: 0%, $flex_d: row);
-        padding: 2%;
-        z-index: 10;
-        background-color: $secondary-color;
-        left: 2%;
-        top: 2%;
+    @include phoneMini {
+        //border: 1px solid black;
+        //@include size(65px, 150px);
+        //width: 20%;
+    }
 
-        span {
-            @include text-layout($size: 13px, $l_height: 20px, $color: $primary-color);
-            font-weight: 600;
+    .discounts {
+        @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: space-between, $gap: 0%, $flex_d: row);
+        //border:  1px solid red;
+        top: 1%;
+        left: 1%;
+        @include size(97%, auto);
+        z-index: 1;
 
-            @include phonePro {
-                font-size: 13px;
-            }
-
+        .percent {
+            border:  1px solid $primary-color;
+            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 0%, $flex_d: row);
+            padding: 2%;
+            background-color: $secondary-color;
+            left: 2%;
+            top: 2%;
+    
             @include phoneMini {
-                //height: 40%;
-                font-size: 11px;
+                padding: 1%;
+                left: 1%;
+                top: 1%;
             }
+    
+            span {
+                @include text-layout($size: 13px, $l_height: 20px, $color: $secondary-color-2);
+                font-weight: 600;
+    
+                @include phonePro {
+                    font-size: 13px;
+                }
+    
+                @include phoneMini {
+                    //height: 40%;
+                    font-size: 10px;
+                }
+            }
+        }
+
+        .offer {
+            //border: 1px solid red;
+            color: $star-color;
         }
     }
 
@@ -77,7 +110,7 @@
         @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 1%);
 
         @include tablet {
-            line-height: 18px;
+            line-height: 15px;
             height: 20%;
         }
 
@@ -86,13 +119,87 @@
         }
 
         @include phonePro {
-            line-height: 10px;
+            line-height: 12px;
         }
 
         @include phoneMini {
             font-size: 8px;
             line-height: 10px;
         }
+    }
+
+    .card_price {
+        //border: 1px solid red;
+        @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 0%, $flex_d: column);
+        @include size(100%, 20%);
+
+        @include tablet {
+            height: 18%;
+        }
+
+        .price_1 {
+            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
+            //border: 2px solid red;
+            @include text-layout($size: 13px, $l_height: 20px);
+            @include size(100%, auto);
+
+            @include phonePro {
+                font-size: 12px;
+                top: 5%;
+            }
+
+            @include phoneMini {
+                height: 40%;
+                font-size: 10px;
+            }
+        }
+
+        .price_2 {
+            //border: 2px solid red;
+            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
+            @include text-layout($size: 11px, $color: $text-color-3, $l_height: 20px);
+            text-decoration: line-through;
+            @include size(100%, auto);
+
+
+            @include phoneMini {
+                font-size: 8px;
+            }
+        }
+    }
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.slideView {
+    @include size(98%, 98%); 
+    //border: 1px solid black;
+    //padding: 1% 2%;
+    //top: 3%;
+
+    @include tabletPro {
+        //@include size(13%, 70%); 
+    }
+
+    @include tabletMini {
+        //width: 15%;
+    }
+
+    @include phonePro {
+        //border: 2px solid $error-color;
+        //@include size(28%, 80%);
+        gap: 1%;
+     } 
+
+     .card_image {
+        width: 94%;
+    }
+
+    .card_name {
+        width: 93%;
     }
 
     // .card_prices {
@@ -110,65 +217,28 @@
     // }
 
     .card_price {
-        //border: 1px solid red;
-        @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 0%, $flex_d: column);
-        @include size(100%, 20%);
-
-        @include tablet {
-            height: 18%;
-        }
-
-        .price_1 {
-            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
-            //border: 2px solid red;
-            @include text-layout($size: 13px, $l_height: 20px);
-            @include size(100%, 50%);
-
-            @include phonePro {
-                font-size: 12px;
-            }
-
-            @include phoneMini {
-                height: 40%;
-                font-size: 10px;
-            }
-        }
-
-        .price_2 {
-            //border: 2px solid red;
-            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
-            @include text-layout($size: 11px, $color: $text-color-3, $l_height: 20px);
-            text-decoration: line-through;
-            @include size(100%, 50%);
-
-            @include phoneMini {
-                height: 40%;
-                font-size: 8px;
-            }
-        }
+        width: 94%;
     }
 
-    &:hover {
-        transform: scale(1.05);
-        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+     &:hover {
+        transform: scale(1);
+        box-shadow: none;
     }
 }
 
-.slideView {
-    height: 80%;
+.queryView {
+    height: 45%;
     //border: 1px solid red;
-    top: 3%;
 
-    @include tabletPro {
-        //border: 2px solid $error-color;
-        //width: 12%;
-        height: 70%;
-    } 
+    @include tablet {
+        height: 55%
+    }
 
     @include phonePro {
-        //border: 2px solid $error-color;
-        width: 29%;
-        height: 90%;
-        gap: 1%;
-     } 
+        height: 55%;
+    }
+
+    @include phoneMini {
+        //@include size(26%, 40%);
+    }
 }

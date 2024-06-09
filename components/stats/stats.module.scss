@@ -1,0 +1,139 @@
+/** This contains the scss for the stat component */
+
+///Libraries -->
+@import "@/styles/base.module";
+
+///Commencing the code
+.main {
+    @include flexBar($align: center, $justify: center, $gap: 2%);
+    @include position($left: 0%, $top: 95%);
+    //border: 2px solid red;
+    @include size(100%, 60%);
+    background-color: $secondary-color-2;
+
+    @include tabletPro {
+        border: 2px solid red;
+        top: 50%;
+        height: 30%;
+    }
+
+    @include tablet {
+        top: 50%;
+        height: 25%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 80%;
+        height: 40%;
+        padding: 1% 0%;
+        gap: 20px;
+        flex-flow: wrap;
+        row-gap: 0px;
+        //column-gap: 0px;
+    }
+
+    .stat1, .stat2, .stat3, .stat4 {
+        background-color: $secondary-color-3;
+        @include size(17%, 60%);
+        border-radius: 20px;
+        padding: 1.5%;
+        padding-top: 5%;
+        @include flexBar($position: relative, $align: flex-start, $justify: flex-start, $gap: 0%, $flex_d: column);
+
+        @include tabletPro {
+            padding-top: 3%;
+            @include size(19%, 63%);
+        }
+
+        @include tablet {
+            @include size(19%, 70%);
+        }
+
+        @include phonePro {
+            //gap: 2%;
+            @include size(35%, 35%);
+            margin: 0px;
+            padding: 3%;
+        }
+
+        .iconCircle {
+            border: 1px solid $primary-color;
+            @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
+            @include size(60px, 60px);
+            border-radius: 50%;
+
+            @include tablet {
+                @include size(40px, 40px);  
+            }
+
+            @include phonePro {
+                @include size(50px, 50px);  
+            }
+
+            @include phoneMini {
+                @include size(40px, 40px);  
+            }
+
+            .icon {
+                color: $text-color-3;
+                position: relative;
+                font-size: 2rem;
+
+                @include tablet {
+                    font-size: 1.5rem; 
+                }
+
+                @include phoneMini {
+                    font-size: 1.5rem; 
+                }
+            }
+        }
+
+        h4 {
+            @include text-layout($size: 17px, $l_height: 26px, $color: $tertiary-color);
+            font-weight: 500;
+            font-family: "Poppins";
+
+            @include tablet {
+                font-size: 15px;
+                line-height: 20px;
+                margin: 20px 0px;
+            }
+
+            @include tabletMini {
+                margin: 10px 0px;
+                font-size: 14px;
+            }
+
+            @include phonePro {
+                margin: 8px 0px;
+                font-size: 14px;
+                line-height: 22px;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 18px;
+            }
+        }
+
+        span {
+            @include text-layout($size: 15px, $l_height: 20px, $color: $tertiary-color);
+            font-family: "Inter";
+
+            @include tablet {
+                font-size: 13px;
+                line-height: 18px;
+            }
+
+            @include tabletMini {
+                font-size: 11px;
+            }
+
+            @include phonePro {
+                display: none;
+            }
+        }
+    }
+}

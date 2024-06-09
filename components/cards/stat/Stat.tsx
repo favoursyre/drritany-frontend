@@ -1,29 +1,25 @@
 "use client"
-///Product Card component
+///Stat Card component
 
 ///Libraries -->
-import styles from "./productCard.module.scss"
+import styles from "./stat.module.scss"
 import Image from "next/image";
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { slashedPrice, routeStyle } from "@/config/utils";
-import { useClientInfoStore, useModalBackgroundStore, useDiscountModalStore } from "@/config/store";
-import { Discount } from '@mui/icons-material';
+import { useClientInfoStore } from "@/config/store";
 
 ///Commencing the code 
 /**
- * @title Product Card Component
- * @returns The Product Card component
+ * @title Stat Card Component
+ * @returns The Stat Card component
  */
-const ProductCard = ({ product_, view }: { product_: IProduct, view: string | undefined }) => {
+const StatCard = ({ product_, view }: { product_: IProduct, view: string | undefined }) => {
     const [product, setProduct] = useState<IProduct>({...product_})
     const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const routerPath = usePathname();
-    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
-    const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
-    const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
 
     useEffect(() => {
         //console.log("Loc: ", clientInfo)
@@ -39,39 +35,10 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
         router.push(`/products/${id}`);
     }
 
-    ///This function opens discount modal
-    const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
-        e.preventDefault()
-        const productName = product.name as unknown as string
-        const productFreeOption = product.freeOption as unknown as boolean
-
-        setDiscountProduct({ name: productName, freeOption: product.freeOption as unknown as boolean, poppedUp: false })
-        setModalBackground(true)
-        setDiscountModal(true)
-    }
-
-    const getViewClass = (view: string | undefined) => {
-        switch (view) {
-            case "slide":
-                return styles.slideView
-            case "query":
-                return styles.queryView
-            default: 
-                undefined
-        }
-    }
-
     return (
-        <main className={`${styles.main} ${getViewClass(view)}`} onClick={(e) => viewProduct(e, product._id)}>
-            <div className={styles.discounts}>
-                <div className={styles.percent}>
-                    <span>-{product.discount}%</span>
-                </div>
-                {/* {product.extraDiscount ? (
-                    <Discount className={styles.offer} onClick={(e) => openDiscountModal(e)} />
-                ) : (
-                    <></>
-                )} */}
+        <main className={`${styles.main} ${view === "slide" ? styles.slideView : ""}`} onClick={(e) => viewProduct(e, product._id)}>
+            <div className={styles.discount}>
+                <span>-{product.discount}%</span>
             </div>
             <div className={styles.card_image}>
                 <Image
@@ -103,4 +70,4 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
     );
 };
   
-export default ProductCard;
+export default StatCard;

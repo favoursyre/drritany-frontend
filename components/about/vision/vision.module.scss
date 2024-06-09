@@ -10,45 +10,25 @@
     @include size($height:70%);
     //padding: 2% 5%;
     font-family: "Roboto";
-    //border: 2px solid blue;
+    //  border: 2px solid blue;
 
     @include tabletPro {
-        top: 115%;
+        top: 110%;
         @include size($height:30%);
         //border: 2px solid red;
     } 
 
-    @include phonePro {
-        //border: 2px solid red;
-        height: 60%;
-        gap: 0%;
-        flex-direction: column;
-        top: 195%;
+    @include tabletMini {
+        top: 115%;
     }
 
-    .mobile_image {
-        display: flex;
-        //border: 2px solid black;
-        border: none;
-        background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1));
-        position: relative;
-        @include size(90%, 50%);
-        left: 5%;
-
-        @include desktop {
-            display: none;
-        }
-
-        @include tabletPro {
-            display: none;
-        }
-
-        .img {
-            object-fit: cover;
-            object-position: center 30%;
-            position: relative;
-            @include size(100%, 100%);
-        }
+    @include phonePro {
+        //border: 2px solid red;
+        height: 70%;
+        gap: 0%;
+        flex-direction: column-reverse;
+        align-items: center;
+        top: 190%;
     }
 
     .brief {
@@ -56,10 +36,13 @@
         //border: 2px solid green;
         @include size(40%, 100%);
         
+        @include tablet {
+            gap: 0%;
+        }
 
         @include phonePro {
             //border: 2px solid red;
-            @include size(90%, 50%);
+            @include size(90%, 35%);
             padding: 0% 3%;
         }
 
@@ -68,6 +51,10 @@
             @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
             font-weight: 600;
             @include flexBar($position: relative, $justify: flex-start, $align: center);
+
+            @include tablet {
+                margin: 0px;
+            }
 
             @include phonePro {
                 height: 20%;
@@ -96,7 +83,7 @@
         }
     }
 
-    .pc_image {
+    .image {
         //border: 2px solid green;
         background-image: linear-gradient(to left, transparent, transparent, rgba(255, 255, 255, 1));
         @include size(50%, 100%);
@@ -113,7 +100,7 @@
         }
 
         @include phonePro {
-            display: none;
+            @include size(90%, 55%);
         }
 
         img {

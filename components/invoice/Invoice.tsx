@@ -105,11 +105,18 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                         <span>{cart && cart.productSpec ? (Math.round(cart.productSpec.totalPrice * nairaRate)).toLocaleString("en-US") : ""}</span>
                     </span>
                 </div>
-                <div className={styles.deliveryFee}>
+                <div className={styles.discount}>
                     <span><strong>Discount</strong></span>
                     <span>
                         <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
                         <span>{cart && cart.productSpec ? (Math.round(cart.productSpec.totalDiscount * nairaRate)).toLocaleString("en-US") : ""}</span>
+                    </span>
+                </div>
+                <div className={styles.deliveryFee}>
+                    <span><strong>Delivery Fee</strong></span>
+                    <span>
+                        <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
+                        <span>0</span>
                     </span>
                 </div>
                 <div className={styles.total}>

@@ -1,8 +1,8 @@
 //This acts as a database for the web app
 
 ///Libraries -->
-import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
-import { deliveryPeriod, formatArrayToString } from "./utils"
+import { IFAQState, IQuoteState, ITestimony, ICountry, ICategory } from "./interfaces";
+import { companyName, deliveryPeriod, formatArrayToString } from "./utils"
 
 ///Commencing the code -->
 
@@ -853,8 +853,8 @@ export const countryList: Array<ICountry> = [
 
 export const faqs: Array<IFAQState> = [
     {
-        question: "Why are natural remedies essential?",
-        answer: "Embracing natural health practices is key to nurturing our bodies from the inside out. By incorporating wholesome, natural-based solutions into our daily routines, we fortify our well-being, enhance vitality and foster a harmonious balance between the mind, soul and body."
+        question: `Why ${companyName}?`,
+        answer: `${companyName} is committed to quality and customer satisfaction. We aspire to create a global community of satisfied customers who trust us for all their shopping needs. By continually evolving and adapting to the latest trends and technologies, we aim to set new standards in the ecommerce industry.`
     },
     {
         question: "How do we source our products?",
