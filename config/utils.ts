@@ -21,8 +21,8 @@ export const discount: number = 33
 
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
-export const domainName: string = "http://localhost:3000"
-//export const domainName: string = "https://idealplug.com"
+//export const domainName: string = "http://localhost:3000"
+export const domainName: string = "https://idealplug.com"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
@@ -44,7 +44,7 @@ export const cartName: string = "idealPlugCart"
 //Order name
 export const orderName: string = "idealPlugOrder"
 
-export const SUPPORT_EMAIL: string = companyName
+export const SUPPORT_EMAIL: string = companyEmail
 export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
   
 // const routerPath = usePathname();

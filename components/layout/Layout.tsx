@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore } from "@/config/store";
 import { IClientInfo } from "@/config/interfaces";
 import { countryList } from "@/config/database";
+import GoogleTagManager from "../gtm/GoogleTagManager";
 
 ///Commencing the code 
 ///This function get client's info
@@ -59,6 +60,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html lang="en" className={styles.html}>
+      <head>
+        <GoogleTagManager containerId='GTM-KHK4D485' />
+      </head>
       <body suppressHydrationWarning={true} className={styles.body}>
         <ToastContainer autoClose={5000} limit={5} newestOnTop={true} />
         <Header />

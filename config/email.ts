@@ -31,10 +31,7 @@ export const sendEmail = async (
           // host: 'smtp.privateemail.com', // Replace with your SMTP host
           port: 465, // Replace with your SMTP port
           secure: true, // Set to true if using a secure connection (e.g., port 465)
-          host: "smtp.titan.email",
-            //service: 'gmail',
-            //providerAuth
-            //authMethod: 'PLAIN',
+          host: "smtp.hostinger.com",
             auth: {
               user: senderEmail,
               pass: senderPassword
@@ -615,6 +612,6 @@ Customer Support Team
 ${companyName}
     `
     
-    const status = sendEmail(`${companyName} Support`, SUPPORT_EMAIL, SUPPORT_PASSWORD, order.customerSpec.email, `Successful Order`, body, undefined, undefined)
+    const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, order.customerSpec.email, `Successful Order`, body, undefined, undefined)
     return status
   }
