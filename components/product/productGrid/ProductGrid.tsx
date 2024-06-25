@@ -24,7 +24,7 @@ import { notify } from '@/config/clientUtils';
 const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: string | undefined }) => {
     const routerPath = usePathname();
     const [productList, setProductList] = useState(product_)
-    const [products, setProducts] = useState<Array<IProduct>>([])
+    const [products, setProducts] = useState<Array<IProduct>>(productList)
     const [pcCurrentIndex, setPcCurrentIndex] = useState(0)
     const [mobileCurrentIndex, setMobileCurrentIndex] = useState(0)
     const [sort, setSort] = useState(false)
@@ -39,13 +39,6 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     const [width, setWidth] = useState<number>(typeof window !== 'undefined' && window.screen ? window.screen.width : 0)
     const [view, setView] = useState<string | undefined>(view_)
 
-    // const res_ = await fetch(`${domainName}/api/product`)
-    // console.log("Res: ", res_.json())
-
-    useEffect(() => {
-        setProducts(() => productList)
-    }, [products, productList])
-
     ///
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -57,6 +50,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     }, [products, productList, product_]);
 
     ///
+
     // useEffect(() => {
         
     //     const intervalId = setInterval(() => {
@@ -185,17 +179,20 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         setCategoryId(() => _id)
         const category: string = categoryOptions[_id]
 
-        const newProduct = [...sortByCategory(productList, category)]
-        console.log('Choose: ', category, newProduct)
-        setProducts(() => newProduct)
-        console.log('Pesuct: ', products)
-        // if (products_  && products_.length !== 0) {
-        //     //product_ = products
-        //     setProducts(() => [...product_])
-        // } else {
-        //     notify("info", "Products doesn't exist in this category yet, check back later")
-        // }
+        const newProduct = sortByCategory(productList, category)
+        console.log('New Product: ', category, newProduct)
+        if (newProduct && newProduct.length !== 0) {
+            setProducts(() => [...newProduct])
+        } else {
+            notify("info", "Products doesn't exist in this category yet, check back later")
+        }
+        
+        //console.log('Products: ', products)
     }
+
+    useEffect(() => {
+        console.log('Products1: ', products)
+    }, [products]);
 
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`} id="products">
@@ -231,7 +228,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                         <ProductCard key={_id} product_={product} view={view} />
                     )) : (<></>)}
                 </div>
-                <div className={styles.pagination_section}>
+                {/* <div className={styles.pagination_section}>
                         <button onClick={e => goPrev(e)}>
                             <KeyboardArrowLeftIcon />
                         </button>
@@ -239,7 +236,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                         <button onClick={e => goNext(e)}>
                             <KeyboardArrowRightIcon />
                         </button>
-                    </div>
+                    </div> */}
             </div>
             
         </main>

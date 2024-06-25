@@ -865,8 +865,8 @@ export const faqs: Array<IFAQState> = [
         answer: `Deliveries are usually within 1 - ${deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
     },
     {
-        question: "Where do we deliver to?",
-        answer: `Currently we only deliver to ${formatArrayToString(countryList.map(country => country.name?.common) as unknown as Array<string>)}`
+        question: "Can I change or cancel my order?",
+        answer: `If you need to change or cancel your order, please contact us as soon as possible. We process orders quickly, but we will do our best to accommodate your request if the order has not yet been shipped.`
     },
     {
         question: "How is my data used?",

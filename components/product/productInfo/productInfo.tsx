@@ -3,11 +3,11 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
-import React, { useState, useEffect, MouseEvent } from "react"
+import React, { useState, useEffect, MouseEvent, Fragment } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, notify } from '@/config/clientUtils';
-import { decodedString, cartName, sleep, slashedPrice, deliveryPeriod } from '@/config/utils'
+import { round, cartName, sleep, slashedPrice, deliveryPeriod, isImage } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -37,10 +37,12 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
     const discountProduct = useDiscountModalStore(state => state.product);
     const [imageIndex, setImageIndex] = useState<number>(0)
+    const [videoIndex, setVideoIndex] = useState<number>(0)
+    const [view, setView] = useState<"image" | "video">("image")
     const spec = product[0].specification
     const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
-    console.log("Product info: ", product)
+    console.log("Product info: ", product[0].videos)
 
     ///This contains the accordian details
     const questions = [
@@ -58,7 +60,9 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             `Item Count: ${spec?.itemCount}`,
             `Gender: ${spec?.gender}`,
             `Age Range: ${spec?.userAgeRange}`,
-            `Ingredients: ${spec?.ingredients?.join(", ")}`,
+            spec?.ingredients && spec.ingredients.length > 0 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
+            //`${spec?.ingredients ? spec.ingredients : ""}`,
+            //`${spec?.ingredients ? Ingredients: ${spec?.ingredients?.join(", ") : ""}}`,
             `Product Origin: ${spec?.productOrigin}`,
             `Weight: ${spec?.weight}kg`
         ],
@@ -72,8 +76,9 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     useEffect(() => {
         // This function will be called every time the component is mounted, and
         // whenever the `count` state variable changes
+        console.log('Index: ', imageIndex)
         //console.log("main: ", mainImage)
-      }, [mainImage, mainImageId]);
+      }, [mainImage, mainImageId, imageIndex, videoIndex, view]);
 
 
       //This counts up to 5secs before popping up the discount modal
@@ -95,9 +100,9 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             //console.log("finished counting")
         }
 
-        if (product[0].extraDiscount) {
-            openDiscountModal(5)
-        }
+        // if (product[0].extraDiscount) {
+        //     openDiscountModal(5)
+        // }
       })
 
     useEffect(() => {
@@ -264,19 +269,35 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             <main className={`${styles.main}`}>
                 {product.map((p, _id) => (
                     <div className={styles.left_section} key={_id}>
-                        <div className={styles.image_section}>
                         <div className={styles.profile_image}>
-                            <Image
-                                className={styles.img}
-                                src={product[0].images[imageIndex].src}
-                                alt=""
-                                width={product[0].images[imageIndex].width}
-                                height={product[0].images[imageIndex].height}
-                            />
+                            {view === "video" && product[0].videos ? (
+                                <iframe 
+                                    className={styles.img}
+                                    src={product[0].videos[videoIndex]?.src}
+                                    width={product[0].videos[videoIndex]?.width}
+                                    height={product[0].videos[videoIndex].height}
+                                    allow="autoplay"
+                                    loading="lazy"
+                                    frameBorder={0}
+                                    sandbox="allow-same-origin allow-scripts"
+                                >
+                                </iframe>
+                            ) : (
+                                <Image
+                                    className={styles.img}
+                                    src={product[0].images[imageIndex].src}
+                                    alt=""
+                                    width={product[0].images[imageIndex].width}
+                                    height={product[0].images[imageIndex].height}
+                                />
+                            )}
                         </div>
                         <div className={styles.image_slide}>
                             {p.images.map((image, imageId) => (
-                                <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => setImageIndex(() => imageId)}>
+                                <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                    setView(() => "image")
+                                    setImageIndex(() => imageId)
+                                }}>
                                     <Image 
                                         className={styles.img}
                                         src={image.src}
@@ -286,30 +307,26 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                     />
                                 </div>
                             ))}
-                        </div>
-                        </div>
-                        {product && product[0].videos && product[0].videos.length === 1 ? 
-                            <div className={styles.video_section}>
-                            <div className={styles.heading}><span>Video</span></div>
-                            <div className={styles.video}>
-                                <video controls>
-                                    <source src={product[0].videos[0]} type="" />
-                                Your browser does not support the video tag.
-                            </video>
+                            {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
+                                <div className={styles.image} key={videoId} onClick={() => {
+                                    setView(() => "video")
+                                    setVideoIndex(() => videoId)
+                                }}>
+                                    <iframe 
+                                        className={styles.iframe}
+                                        src={video.src}
+                                        width={video.width} 
+                                        height={video.height} 
+                                        //allow="autoplay"
+                                        frameBorder={0}
+                                        //sandbox="allow-forms"
+                                    >
+                                </iframe>
                             </div>
-                        </div> 
-                            : 
-                            <div></div>
-                        }
-                        {/* <div className={styles.video_section}>
-                            <div className={styles.heading}><span>Video</span></div>
-                            <div className={styles.video}>
-                                <video controls>
-                                    <source src="https://drive.google.com/uc?export=download&id=1sE5wjZnceYu9lFqacDLeO5tVEnNoppBk" type="" />
-                                Your browser does not support the video tag.
-                            </video>
-                            </div>
-                        </div> */}
+                            )) : (
+                                <></>
+                            )}
+                        </div>
                     </div>
                 ))}
                 {product.map((p, _id) => (
@@ -333,16 +350,19 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             <div className={styles.price}>
                                 {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
                                 {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
-                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(p.price * clientInfo.country.currency.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
+                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (round(p.price * clientInfo.country.currency.exchangeRate, 1)).toLocaleString("en-US") : ""}</span> : <></>}
                             </div>
                             <div className={styles.slashed_price}>
                                 {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}  
-                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (Math.round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount)).toLocaleString("en-US")) : ""}</span> : <></>}
+                                {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{p.price ? (round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount), 1).toLocaleString("en-US")) : ""}</span> : <></>}
                             </div>
                         </div>
                         <div className={styles.product_orders}>
                             <LocalShippingIcon className={styles.icon} />
                             <span>{p.orders?.toLocaleString("en-US")} orders</span>
+                        </div>
+                        <div className={styles.percent}>
+                            <span>-{p.discount}%</span>
                         </div>
                         </div>
                         <div className={styles.rating}>
@@ -398,9 +418,15 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                     }`}
                                 >
                                     <ul >
-                                    {questions[index].answer?.map((a, a_id) => (
-                                    <li key={a_id}>{a}</li>
-                                    ))}
+                                        {questions[index].answer?.map((a, a_id) => (
+                                            <Fragment key={a_id}>
+                                                {a ? (
+                                                    <li>{a}</li>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </Fragment>
+                                        ))}
                                     </ul>
                                     
                                 </div>

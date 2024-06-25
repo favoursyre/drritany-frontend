@@ -50,9 +50,25 @@ const productSchema = new Schema<IProduct, IProductModel>(
       }
     }],
     videos: [{
+      name: {
+        type: String,
+        trim: true,
+      },
+      src: {
         type: String,
         required: true,
         trim: true,
+      },
+      width: {
+        type: Number,
+        required: true,
+        //trim: true,
+      },
+      height: {
+        type: Number,
+        required: true,
+        //trim: true,
+      }
     }],
     price: {
       type: Number,
@@ -126,6 +142,17 @@ const productSchema = new Schema<IProduct, IProductModel>(
             type: String,
             required: true,
             trim: true
+        },
+        size: {
+          length: {
+            type: Number,
+          },
+          breadth: {
+            type: Number
+          },
+          height: {
+            type: Number,
+          }
         },
         weight: {
             type: Number,

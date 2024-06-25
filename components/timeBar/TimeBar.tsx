@@ -54,7 +54,8 @@ const TimeBar = () => {
     return (
         <main className={`${styles.main}`}>
             <div className={styles.time_section}>
-                <span>Time remaining: {formatTime(timeLeft)}</span>
+                {/* <span>Time remaining: {formatTime(timeLeft)}</span> */}
+                <span>Shop Now & Pay on Delivery</span>
             </div>
         </main>
     );

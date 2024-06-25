@@ -96,7 +96,7 @@ export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEv
         } else if (social === "github") {
             window.open("https://github.com/favoursyre", "_blank")
         } else if (social === "whatsapp") {
-            window.open("https://github.com/favoursyre", "_blank")
+            window.open("https://api.whatsapp.com/send?phone=14244282169", "_blank")
         } else {
             undefined
         }

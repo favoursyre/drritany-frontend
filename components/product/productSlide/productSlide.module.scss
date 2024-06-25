@@ -355,7 +355,7 @@
 }
 
 .productInfoPage {
-    top: 152%;
+    top: 160%;
     //border: 2px solid black;
 
     @include tabletPro {
@@ -363,7 +363,7 @@
     }
 
     @include phonePro {
-        top: 250%;
+        top: 225%;
     }
 }
 

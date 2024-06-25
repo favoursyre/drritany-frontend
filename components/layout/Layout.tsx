@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import styles from "./layout.module.scss"
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 const Header = dynamic(() => import("@/components/header/Header"), { ssr: false })
 import Footer from "@/components/footer/Footer";
@@ -13,7 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore } from "@/config/store";
 import { IClientInfo } from "@/config/interfaces";
 import { countryList } from "@/config/database";
-import GoogleTagManager from "../gtm/GoogleTagManager";
+import GoogleTagManager from "@/config/GoogleTagManager";
+import LoadingSkeleton from "@/app/loading_test";
 
 ///Commencing the code 
 ///This function get client's info
@@ -66,8 +67,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <body suppressHydrationWarning={true} className={styles.body}>
         <ToastContainer autoClose={5000} limit={5} newestOnTop={true} />
         <Header />
-        <Modal />
-        <main className='container'>{children}</main>
+          <Modal />
+        {/* <Suspense fallback={ <LoadingSkeleton /> }> */}
+          <main className='container'>{children}</main>
+        {/* </Suspense> */}
         <Footer />
       </body>
     </html>

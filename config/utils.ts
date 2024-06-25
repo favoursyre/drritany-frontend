@@ -93,7 +93,6 @@ export const parsedHtml = (htmlTag: string, tagType: string): React.ReactElement
       );
 }
 
-
 ///This function exports a array shuffler function
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     if (array) {
@@ -106,7 +105,23 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     } else {
         return array
     }
-    
+}
+
+//This function checks if a link is an image
+export const isImage = (url: string | undefined): boolean => {
+    if (url) {
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        const extension = url.split('.').pop()?.toLowerCase();
+        return imageExtensions.includes(extension || '');
+    } else {
+        return false
+    }
+  };
+
+//This function rounds numbers up
+export const round = (value: number, precision: number): number => {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
 }
 
 ///The backend api point
@@ -448,34 +463,34 @@ export const categories: Array<ICategory> = [
             "Textiles"
         ]
     },
-    {
-        name: "Arts & Crafts",
-        micros: [
-            "Sculptures",
-            "Sketches",
-            "Paintings"
-        ]
-    },
-    {
-        name: "Home, Furnitures & Appliances",
-        micros: [
-            ""
-        ]
-    },
-    {
-        name: "Computer, Gadget & Electronics",
-        micros: [
-            ""
-        ]
-    },
-    {
-        name: "Energy",
-        micros: [
-            "Generator",
-            "Battery",
-            "Solar"
-        ]
-    }
+    // {
+    //     name: "Arts & Crafts",
+    //     micros: [
+    //         "Sculptures",
+    //         "Sketches",
+    //         "Paintings"
+    //     ]
+    // },
+    // {
+    //     name: "Home, Furnitures & Appliances",
+    //     micros: [
+    //         ""
+    //     ]
+    // },
+    // {
+    //     name: "Computer, Gadget & Electronics",
+    //     micros: [
+    //         ""
+    //     ]
+    // },
+    // {
+    //     name: "Energy",
+    //     micros: [
+    //         "Generator",
+    //         "Battery",
+    //         "Solar"
+    //     ]
+    // }
 ]
 
 ///Confidential data -- I know, I'm a fool

@@ -74,7 +74,7 @@ const Hero = () => {
                 </form>
                 {clientInfo ? (
                     <div className={styles.text}>
-                        <span><em>We deliver to {clientInfo?.country?.name?.common}</em></span>
+                        <span><em>We deliver anywhere in {clientInfo?.country?.name?.common}</em></span>
                         <Image 
                             className={styles.flag}
                             src={clientInfo?.country?.flag?.src as unknown as string}

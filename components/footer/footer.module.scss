@@ -148,6 +148,7 @@
 
                 @include phonePro {
                     top: -8%;
+                    justify-content: space-between;
                 }
 
                 .whatsapp_social {
@@ -281,6 +282,10 @@
                             @include tablet {
                                 font-size: 10px;
                             }
+
+                            @include phonePro {
+                                font-size: 14px;
+                            }
                         }
                     }
                 }
@@ -298,7 +303,7 @@
                         display: none;
                     }
 
-                    .facebook, .instagram {
+                    .facebook, .instagram, .whatsapp {
                         font-size: 2rem;
                         color: $text-color-1;
                     }
@@ -315,6 +320,13 @@
 
                         &:hover {
                             color: rgb(240, 49, 97);
+                        }
+                    }
+
+                    .whatsapp {
+
+                        &:hover {
+                            color: green;
                         }
                     }
                 }
@@ -578,7 +590,7 @@
 }
 
 .productInfoPage {
-    top: 210%;
+    top: 220%;
     @extend %footer-layout;
 
     @include tabletPro {
@@ -588,7 +600,7 @@
 
     @include phonePro {
         //border: 1px solid red;
-        top: 300%;
+        top: 275%;
     } 
 }
 

@@ -134,8 +134,9 @@ const Footer = () => {
                         <div className={styles.social_medias}>
                             <FacebookIcon className={styles.facebook} onClick={(e) => visitSocialLink(e, "facebook")}/>
                             <InstagramIcon className={styles.instagram} onClick={(e) => visitSocialLink(e, "instagram")} />
+                            <WhatsAppIcon className={styles.whatsapp} onClick={(e) => visitSocialLink(e, "whatsapp")} />
                             {/* <button className={styles.whatsapp}>
-                                <WhatsAppIcon className={styles.icon} />
+                                
                             </button> */}
                         </div>
                     </div>

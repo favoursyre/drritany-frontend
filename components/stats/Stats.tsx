@@ -30,8 +30,8 @@ const Stats = () => {
                 <div className={styles.iconCircle}>
                     <BoltIcon className={styles.icon} />
                 </div>
-                <h4>Fast Delivery</h4>
-                <span>Enjoy fast delivery services, ensuring your orders reach you in no time.</span>
+                <h4>Fast & Free Delivery</h4>
+                <span>Enjoy fast delivery services on your orders, delivery is absolutely free.</span>
             </div>
             <div className={styles.stat3}>
                 <div className={styles.iconCircle}>

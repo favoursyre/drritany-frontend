@@ -8,6 +8,7 @@
     @include position($left: 0%, $top: 158%);
     @include size(100%, 40px);
     //border: 1px solid red;
+    //display: none;
 
     @include tabletPro {
         //border: 2px solid red;
@@ -31,7 +32,8 @@
 
     .time_section {
         //position: relative;
-        background: #E42C2C;
+        //background: #E42C2C;
+        background-color: $primary-color;
         //left: 0%;
         display: flex;
         @include size(95%, 100%);

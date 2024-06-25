@@ -71,16 +71,17 @@
 
     .left_section {
         @include flexBar($position: relative, $justify: flex-start, $gap: 2%, $flex_d: column, $wrap: none, $align: center, $flex: none);
-        @include size(40%, 100%);
+        @include size(40%, 90%);
         //border: 2px solid $primary-color;
+        padding: 3% 0%;
 
         @include tablet {
             height: 80%;
         }
 
         @include phonePro {
-            @include size(90%, 50%);
-            top: 2%;
+            @include size(90%, 30%);
+            //top: 2%;
             justify-content: center;
         }
 
@@ -88,121 +89,91 @@
             height: 40%;
         }
 
-        .image_section {
-            //border: 1px solid red;
-            @include flexBar($position: relative, $justify: none, $gap: 0%, $flex_d: column, $wrap: none, $align: none, $flex: none);
-            @include size(100%, 45%);
-            top: 3%;
+        .profile_image {
+            @include flexBar($position: relative, $justify: center, $gap: 0%, $flex_d: row, $wrap: none, $align: none);
+            //border: 2px solid green;
+            @include size(100%, 40%);
+            //padding: 3% 10%;
 
-            @include tablet {
+            @include phonePro {
                 //border: 2px solid $error-color;
-                //@include size(45%, 50%);
-             } 
-    
-             @include phonePro {
-                //border: 2px solid $error-color;
-                top: 0%;
-                @include size(100%, 50%);
+                height: 75%;
             } 
-
             
-    
-            .profile_image {
-                @include flexBar($position: relative, $justify: center, $gap: 0%, $flex_d: row, $wrap: none, $align: none);
-                //border: 2px solid green;
-                @include size(100%, 75%);
-                //padding: 3% 10%;
-    
-                @include tablet {
-                    //border: 2px solid $error-color;
-                    //height: 40%;
-                } 
-                
-                .img {
-                    position: relative;
-                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-                    //border: 2px solid $primary-color;
-                    object-fit: contain;
-                    @include size(90%, 90%);
-    
-                    &:hover {
-                        //transform: scale(1.1);
-                    }
-                }
-            }
-    
-            .image_slide {
-                @include flexBar($position: relative, $justify: center, $gap: 2%, $flex_d: row, $wrap: none, $align: center);
-                //padding: 2% 2%;
-                overflow-x: hidden;
-                overflow-y: hidden;
+            .img {
+                position: relative;
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
                 //border: 2px solid $primary-color;
-                @include size(100%, 25%);
-    
-                @include tabletPro {
-                    //border: 2px solid $error-color;
-                    height: 20%;
-                } 
-    
-                .image {
-                    position: relative;
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: center;
-                    align-items: center;
-                    border: 1px solid $text-color-3;
-                    overflow: hidden;
-                    border-radius: 4px;
-                    @include size(20%, 95%);
-    
-                    @include tablet {
-                        //border: 2px solid $error-color;
-                        height: 70%;
-                    } 
+                object-fit: contain;
+                @include size(100%, 100%);
 
-                    @include phonePro {
-                        width: 22%;
-                    }
-    
-                    .img {
-                        position: relative;
-                        object-fit: cover;
-                        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-                        @include size(95%, 95%);
-                        //border: 1px solid $error-color;
-                    }
-    
-                    &:hover {
-                        transform: scale(1.05);
-                        //box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
-                        overflow-x: auto;
-                    }
-                }
-    
-                .activeImage {
-                    border: 1px solid $primary-color;
+                &:hover {
+                    //transform: scale(1.1);
                 }
             }
         }
 
-        .video_section {
-            //border: 1px solid red;
-            @include flexBar($position: relative, $justify: none, $gap: 2%, $flex_d: column, $wrap: none, $align: none, $flex: none);
-            @include size(100%, 45%);
-            top: 5%;
+        .image_slide {
+            @include flexBar($position: relative, $justify: center, $gap: 2%, $flex_d: row, $wrap: none, $align: center);
+            //padding: 2% 2%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            //border: 2px solid $primary-color;
+            @include size(100%, 100px);
 
-            .heading {
-                //border: 1px solid red;
-                @include flexBar($position: relative, $justify: flex-start, $gap: 0%, $wrap: none, $align: center, $flex: none);
-                @include size(100%, 10%);
-                @include text-layout($size: 15px, $l_height: 24px);
-                font-weight: 600;
+            @include tabletPro {
+                //border: 2px solid $error-color;
+                //height: 20%;
+            } 
+
+            .image {
+                position: relative;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid $text-color-3;
+                overflow: hidden;
+                border-radius: 4px;
+                @include size(20%, 95%);
+
+                @include tablet {
+                    //border: 2px solid $error-color;
+                    height: 70%;
+                } 
+
+                @include phonePro {
+                    width: 22%;
+                }
+
+                .img {
+                    position: relative;
+                    object-fit: cover;
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    @include size(95%, 95%);
+                    //border: 1px solid $error-color;
+                }
+
+                .iframe {
+                    pointer-events: none;
+                }
+
+                &:hover {
+                    transform: scale(1.01);
+                    //box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+                    //overflow-x: auto;
+                }
+            }
+
+            .activeImage {
+                border: 1px solid $primary-color;
             }
 
             .video {
                 //border: 1px solid red;
                 @include flexBar($position: relative, $justify: center, $gap: 0%, $wrap: none, $align: center, $flex: none);
-                @include size(100%, 85%); 
+                //@include size(100%, 85%); 
+                @include size(20%, 95%);
 
                 @include tabletPro {
                     height: 60%;
@@ -231,7 +202,7 @@
          @include phonePro {
             //border: 2px solid $error-color;
             //top: -5%;
-            @include size(90%, 50%);
+            @include size(90%, 65%);
             gap: 1%;
             //align-items: center;
         } 
@@ -343,6 +314,7 @@
                     //border: 2px solid $primary-color;
                     @include size(45%, 100%);
                     @include text-layout($size: 14px, $l_height: 24px);
+                    display: none;
 
                     @include tablet {
                         width: 55%;
@@ -368,6 +340,36 @@
 
                         @include phoneMini {
                             font-size: 1.3rem;
+                        }
+                    }
+                }
+
+                .percent {
+                    border:  1px solid $primary-color;
+                    @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 0%, $flex_d: row);
+                    padding: 2%;
+                    background-color: $secondary-color;
+                    //left: 2%;
+                    //top: 2%;
+                    height: 30%;
+            
+                    @include phoneMini {
+                        padding: 1%;
+                        left: 1%;
+                        top: 1%;
+                    }
+            
+                    span {
+                        @include text-layout($size: 13px, $l_height: 20px, $color: $secondary-color-2);
+                        font-weight: 600;
+            
+                        @include phonePro {
+                            font-size: 13px;
+                        }
+            
+                        @include phoneMini {
+                            //height: 40%;
+                            font-size: 10px;
                         }
                     }
                 }
@@ -489,7 +491,7 @@
              } 
 
              @include phonePro {
-                height: 7%;
+                height: 6%;
              }
 
              @include phoneMini {

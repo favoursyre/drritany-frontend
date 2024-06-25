@@ -17,6 +17,7 @@ export interface IFAQState {
 
 ///This declares the interface for image
 export interface IImage {
+  _id?: string,
   name?: string,
   src: string,
   alt?: string,
@@ -44,16 +45,21 @@ export interface IOrderModel extends Model<IOrder> {
 
 ///Declaring the interface for specification 
 export interface ISpecification {
-    brand?: String,
-    itemForm?: String,
+    brand?: string,
+    itemForm?: string,
     itemCount?: number,
-    userAgeRange?: String,
-    gender?: String,
-    benefits?: Array<String>,
-    prescription?: Array<String>,
-    ingredients?: Array<String>,
-    productOrigin?: String,
+    userAgeRange?: string,
+    gender?: string,
+    benefits?: Array<string>,
+    prescription?: Array<string>,
+    ingredients?: Array<string>,
+    productOrigin?: string,
     weight?: number
+    size?: {
+      length?: number,
+      breadth?: number,
+      height?: number
+    }
 }
 
 ///Declaring the interface for inquiry mongoose schema static
@@ -131,7 +137,7 @@ export interface IProduct {
     miniCategory?: string,
     name?: string,
     images: Array<IImage>,
-    videos?: Array<string>,
+    videos?: Array<IImage>,
     price?: number,
     extraDiscount?: boolean,
     discount: number,
