@@ -552,6 +552,193 @@ export const countryList: Array<ICountry> = [
             symbol: "₦",
             exchangeRate: 1200
         },
+        states: [
+            {
+                name: "Abuja",
+                abbreviation: "FC",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Abia",
+                abbreviation: "AB",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Adamawa",
+                abbreviation: "AD",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Akwa Ibom",
+                abbreviation: "AK",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Anambra",
+                abbreviation: "AN",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Bauchi",
+                abbreviation: "BA",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Bayelsa",
+                abbreviation: "BY",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Benue",
+                abbreviation: "BE",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Borno",
+                abbreviation: "BO",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Cross River",
+                abbreviation: "CR",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Delta",
+                abbreviation: "DE",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Delta",
+                abbreviation: "DE",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Ebonyi",
+                abbreviation: "EB",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Edo",
+                abbreviation: "ED",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Ekiti",
+                abbreviation: "EK",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Gombe",
+                abbreviation: "GO",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Imo",
+                abbreviation: "IM",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Jigawa",
+                abbreviation: "JI",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Kaduna",
+                abbreviation: "KD",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Kano",
+                abbreviation: "KN",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Katsina",
+                abbreviation: "KT",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Kebbi",
+                abbreviation: "KE",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Kogi",
+                abbreviation: "KO",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Kwara",
+                abbreviation: "KW",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Lagos",
+                abbreviation: "LA",
+                extraDeliveryPercent: 0,
+            },
+            {
+                name: "Nassarawa",
+                abbreviation: "NA",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Niger",
+                abbreviation: "NI",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Ogun",
+                abbreviation: "OG",
+                extraDeliveryPercent: 30,
+            },
+            {
+                name: "Ondo",
+                abbreviation: "ON",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Osun",
+                abbreviation: "OS",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Oyo",
+                abbreviation: "OY",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Plateau",
+                abbreviation: "PL",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Rivers",
+                abbreviation: "RI",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Sokoto",
+                abbreviation: "SO",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Taraba",
+                abbreviation: "TA",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Yobe",
+                abbreviation: "YO",
+                extraDeliveryPercent: 40,
+            },
+            {
+                name: "Zamfara",
+                abbreviation: "ZA",
+                extraDeliveryPercent: 40,
+            }
+        ],
         languages: [
             {
                 name: "English",
@@ -561,7 +748,8 @@ export const countryList: Array<ICountry> = [
             //     name: "Swahili",
             //     code: "swa"
             // }
-        ], 
+        ],
+        deliveryFeePerKg: 1, 
         flag: {
             src: 'https://flagcdn.com/w320/ng.png',
             alt: "The flag of Nigeria is composed of three equal vertical bands of green, white and green.",
@@ -865,8 +1053,32 @@ export const faqs: Array<IFAQState> = [
         answer: `Deliveries are usually within 1 - ${deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
     },
     {
+        question: "How can I track my order?",
+        answer: "You will receive a order id number via email once you place an order, you can always use the id to track your order with our customer support team."
+    },
+    {
+        question: "How do I pay for my order?",
+        answer: "For the mean time, payments are and can only be made when you receive your orders in person"
+    },
+    {
+        question: "What should I do if I receive a damaged item?",
+        answer: "If you receive a damaged item, please contact our customer service team immediately with your order id number and a photo of the damaged item. However, we do our best to vet every product that we ship out to our clients."
+    },
+    {
+        question: "Do you offer discounts or promotions?",
+        answer: "Yes, all of our products comes with price discounts and extra price discounts offer when you order more than a stipulated quantity. Aside that, we also occasionally offer other kinds discounts and promotions, sign up for our newsletter to stay updated on our latest deals."
+    },
+    {
+        question: "Do you offer gift wrapping?",
+        answer: "Yes, we offer gift wrapping for a slight additional fee. Contact our customer support team to get a quote."
+    },
+    {
+        question: "What is your warranty policy?",
+        answer: "We offer 6 months warranty on all of our products, contact our support team for more info."
+    },
+    {
         question: "Can I change or cancel my order?",
-        answer: `If you need to change or cancel your order, please contact us as soon as possible. We process orders quickly, but we will do our best to accommodate your request if the order has not yet been shipped.`
+        answer: `If you need to change or cancel your order, please contact us as soon as possible. We process orders quickly and would appreciate it if you do your very best to let us know on time. Thanks!`
     },
     {
         question: "How is my data used?",

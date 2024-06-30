@@ -45,9 +45,25 @@
   }
 
   .heading {
-    @include text-layout($size: 36px, $color: $text-color-2, $l_height: 44px);
-    font-weight: 600;
+    @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+    font-weight: 700;
     //border: 2px solid red;
+    font-family: "Aclonica";
+    text-align: center;
+    position: relative;
+    @include size(90%, auto);
+
+    @include phonePro {
+      font-size: 30px;
+      line-height: 35px;
+      top: 2%;
+      //text-align: center;
+    }
+
+    @include phoneMini {
+        font-size: 25px;
+        line-height: 30px;
+    }
   }
 
   .brief {
@@ -60,6 +76,7 @@
 
     @include phonePro {
         width: 90%;
+        top: -1%;
     }
   }
 

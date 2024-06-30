@@ -10,10 +10,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";
 import validator from "validator";
 import Image from 'next/image';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import tiktok from "../../public/images/tiktok.svg"
+import { LinkedIn, X, WhatsApp, Instagram, Facebook, MailOutline } from '@mui/icons-material';
 import Loading from '../loadingCircle/Circle';
 
 ///Commencing the code 
@@ -37,6 +35,21 @@ const Footer = () => {
           };
         
       }, [email]);
+
+      //Tiktok icon
+      const TikTokIcon = ({ color = "#78989" }) => {
+        return (
+          <svg
+            fill={color}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 50 50"
+            width="100%"
+            height="100%"
+          >
+            <path d="M41,4H9C6.243,4,4,6.243,4,9v32c0,2.757,2.243,5,5,5h32c2.757,0,5-2.243,5-5V9C46,6.243,43.757,4,41,4z M37.006,22.323 c-0.227,0.021-0.457,0.035-0.69,0.035c-2.623,0-4.928-1.349-6.269-3.388c0,5.349,0,11.435,0,11.537c0,4.709-3.818,8.527-8.527,8.527 s-8.527-3.818-8.527-8.527s3.818-8.527,8.527-8.527c0.178,0,0.352,0.016,0.527,0.027v4.202c-0.175-0.021-0.347-0.053-0.527-0.053 c-2.404,0-4.352,1.948-4.352,4.352s1.948,4.352,4.352,4.352s4.527-1.894,4.527-4.298c0-0.095,0.042-19.594,0.042-19.594h4.016 c0.378,3.591,3.277,6.425,6.901,6.685V22.323z" />
+          </svg>
+        );
+      };
 
       ///This function adds a new subscriber
       const subNewsLetter = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -110,31 +123,22 @@ const Footer = () => {
                         We are committed to providing high-quality, effective products that support your well-being and everyday routine.
                     </span>
                     <div className={styles.socials}>
-                        {/* <div className={styles.whatsapp_social}>
-                            <button>
-                                <img
-                                    src="https://drive.google.com/uc?export=download&id=19bUJMJNtW8KywhjRaVRQZVxFtJFPjVQ8"
-                                    alt=""
-                                />
-                            </button>
-                            <div className={styles.texts}>
-                                <span className={styles.text1}>Have a question?</span>
-                                <span className={styles.text2}>+234-9090982848</span>
-                            </div>
-                        </div> */}
-                        <div className={styles.email_social}>
-                            <button type="button" onClick={() => router.push(`mailto:${companyEmail}`)}>
-                                <MailOutlineIcon className={styles.icon} />
-                            </button>
-                            <div className={styles.texts}>
-                                <span className={styles.text1}>Contact us at</span>
-                                <span className={styles.text2}><a href={`mailto:${companyEmail}`}>{companyEmail}</a></span>
-                            </div>
-                        </div>
+                        <span className={styles.text}>Connect with us at</span>
                         <div className={styles.social_medias}>
-                            <FacebookIcon className={styles.facebook} onClick={(e) => visitSocialLink(e, "facebook")}/>
-                            <InstagramIcon className={styles.instagram} onClick={(e) => visitSocialLink(e, "instagram")} />
-                            <WhatsAppIcon className={styles.whatsapp} onClick={(e) => visitSocialLink(e, "whatsapp")} />
+                            <MailOutline className={styles.mail} onClick={(e) => visitSocialLink(e, "mail")} />
+                            <Facebook className={styles.facebook} onClick={(e) => visitSocialLink(e, "facebook")} />
+                            <Instagram className={styles.instagram} onClick={(e) => visitSocialLink(e, "instagram")} />
+                            <WhatsApp className={styles.whatsapp} onClick={(e) => visitSocialLink(e, "whatsapp")} />
+                            <X className={styles.x} onClick={(e) => visitSocialLink(e, "x")} />
+                            {/* <Image 
+                                className={styles.tiktok}
+                                src={tiktok}
+                                alt=''
+                                width={32}
+                                height={32}
+                            /> */}
+                            {/* <TikTokIcon className={styles.tiktok} onClick={(e) => visitSocialLink(e, "x")} /> */}
+                            {/* <LinkedIn className={styles.linkedin} onClick={(e) => visitSocialLink(e, "linkedin")} /> */}
                             {/* <button className={styles.whatsapp}>
                                 
                             </button> */}
@@ -149,7 +153,7 @@ const Footer = () => {
                         Join our community today and take the first step towards a happier you!</span>
                     </div>
                     <form className={styles.news_form} onSubmit={(e) => subNewsLetter(e)}>
-                        <MailOutlineIcon className={styles.mailIcon}/>
+                        <MailOutline className={styles.mailIcon}/>
                         <input 
                             type="email" 
                             placeholder="example@mail.com" 
@@ -171,10 +175,10 @@ const Footer = () => {
             <div className={styles.footer_menu}>
                 <button onClick={() => router.push('/about')}><span>About Us</span></button>
                 <button onClick={() => router.push('/#products')}><span>Products</span></button>
-                <button onClick={() => router.push('/about/#faqs')}><span>FAQ</span></button>
+                <button onClick={() => router.push('/faqs')}><span>FAQs</span></button>
                 <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
             </div>
-            <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
+            {/* <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span> */}
             <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} {companyName} Inc., All rights reserved</span>
            </div>
         </footer>

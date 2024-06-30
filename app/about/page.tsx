@@ -5,7 +5,7 @@ import About from "@/components/about/about/About"
 import Story from "@/components/about/story/Story"
 import Mission from "@/components/about/mission/Mission"
 import Vision from "@/components/about/vision/Vision"
-import FAQ from "@/components/faq/Faq"
+//import FAQ from "@/components/faq/Faq"
 import { Metadata } from "next"
 import { companyName } from "@/config/utils"
 
@@ -30,7 +30,6 @@ export default async function AboutPage() {
       <Story />
       <Mission />
       <Vision />
-      <FAQ />
     </main>
   )
 }

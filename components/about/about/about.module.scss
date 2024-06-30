@@ -55,15 +55,17 @@
     h2 {
         //border: 2px solid red;
         @include flexBar($position: relative, $justify: center, $align: center, $gap: 0%);
-        @include text-layout($size: 30px, $color: $tertiary-color, $l_height: 72px);
-        font-weight: 600;
+        @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+        font-weight: 700;
         z-index: 3;
+        font-family: "Aclonica";
 
         @include phonePro {
             //border: 2px solid red;
             @include size(90%, 10%);
             margin: 10px;
             top: 10%;
+            font-size: 30px;
         } 
 
         @include phoneMini {

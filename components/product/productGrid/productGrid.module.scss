@@ -6,7 +6,7 @@
 ///Commencing the code
 .main {
     @include flexBar($flex_d: column, $align: center, $justify: center);
-    @include position($left: 0%, $top: 165%);
+    @include position($left: 0%, $top: 155%);
     @include size(90%, 150%);
     //border: 2px solid green;
     padding: 0% 5%;
@@ -15,12 +15,12 @@
 
     @include tabletPro {
         //border: 2px solid red;
-        top: 88%;
+        top: 80%;
         height: 65%;
     }
 
     @include tablet {
-        top: 82%;
+        top: 75%;
     }
 
     @include tabletMini {
@@ -29,17 +29,62 @@
 
     @include phonePro {
         //border: 2px solid red;
-        top: 130%;
+        top: 125%;
         height: 90%;
     }
 
     button {
         outline: none;
     }
+
+    .header_section {
+        //position: relative;
+        //background: #E42C2C;
+        background-color: $primary-color;
+        //left: 0%;
+        display: flex;
+        @include size(105%, 40px);
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 10px 10px 0px 0px;
+        //border: 2px solid red;
+
+        @include tabletPro {
+            //border: 2px solid red;
+            //@include size(100%, 1%);
+        }
+
+        @include phonePro {
+            position: relative;
+            //height: 7%;
+            //border: 2px solid yellow;
+            //top: -3%;
+            //justify-content: center;
+        }
+
+        span {
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 20px);
+            position: relative;
+            top: 1%;
+            font-family: "Inter";
+
+            @include phonePro {
+                position: relative;
+                top: 3%;
+                left: 0%;
+                font-size: 14px;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+            }
+        }
+    }
     
     .product_list {
         position: relative;
-        @include size(105%, 100%);
+        @include size(105%, 90%);
         //border: 2px solid red;
 
         .filters {
@@ -183,8 +228,7 @@
                     border-radius: 4px;
                     top: 120%;
                     z-index: 2;
-                    width: 220%;
-                    //height: 450%;
+                    @include size(220%, auto);
                     left: -130%;
                     //border: 2px solid red;
                     font-size: 12px;
@@ -196,7 +240,7 @@
                     @include phonePro {
                         //border: 2px solid black;
                         top: 130%;
-                        height: 650%;
+                        //height: 650%;
                         left: -150%;
                     }
     

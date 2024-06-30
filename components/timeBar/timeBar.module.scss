@@ -8,7 +8,7 @@
     @include position($left: 0%, $top: 158%);
     @include size(100%, 40px);
     //border: 1px solid red;
-    //display: none;
+    display: none;
 
     @include tabletPro {
         //border: 2px solid red;

@@ -8,6 +8,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import BoltIcon from '@mui/icons-material/Bolt';
 import GppGoodIcon from '@mui/icons-material/GppGood';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import PriceCheckIcon from '@mui/icons-material/LocalAtm';
 
 ///Commencing the code 
   
@@ -21,17 +22,20 @@ const Stats = () => {
         <main className={styles.main}>
             <div className={styles.stat1}>
                 <div className={styles.iconCircle}>
-                    <PublicIcon className={styles.icon} />
+                    {/* <PublicIcon className={styles.icon} /> */}
+                    <PriceCheckIcon className={styles.icon} />
                 </div>
-                <h4>Delivery to 170+ Countries</h4>
-                <span>We deliver to over 170 countries worldwide, ensuring global accessibility.</span>
+                {/* <h4>Delivery to 170+ Countries</h4>
+                <span>We deliver to over 170 countries worldwide, ensuring global accessibility.</span> */}
+                <h4>Unbeatable Prices</h4>
+                <span>Trusted by our customers to get the best affordable prices and offers.</span>
             </div>
             <div className={styles.stat2}>
                 <div className={styles.iconCircle}>
                     <BoltIcon className={styles.icon} />
                 </div>
-                <h4>Fast & Free Delivery</h4>
-                <span>Enjoy fast delivery services on your orders, delivery is absolutely free.</span>
+                <h4>Fast Delivery</h4>
+                <span>Enjoy fast delivery services on your orders at affordable rate.</span>
             </div>
             <div className={styles.stat3}>
                 <div className={styles.iconCircle}>

@@ -12,7 +12,7 @@
     background-color: $secondary-color-2;
 
     @include tabletPro {
-        border: 2px solid red;
+        //border: 2px solid red;
         top: 50%;
         height: 30%;
     }
@@ -94,6 +94,8 @@
             @include text-layout($size: 17px, $l_height: 26px, $color: $tertiary-color);
             font-weight: 500;
             font-family: "Poppins";
+            //border: 1px solid red;
+            position: relative;
 
             @include tablet {
                 font-size: 15px;
@@ -110,11 +112,13 @@
                 margin: 8px 0px;
                 font-size: 14px;
                 line-height: 22px;
+                width: 70%;
             }
 
             @include phoneMini {
                 font-size: 12px;
                 line-height: 18px;
+                width: 80%;
             }
         }
 

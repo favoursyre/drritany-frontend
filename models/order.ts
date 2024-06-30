@@ -57,6 +57,14 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
           type: Number,
           required: true
         },
+        totalWeight: {
+          type: Number,
+          required: true
+        },
+        deliveryFee: {
+          type: Number,
+          required: true
+        },
         cart: {
           type: Array<ICartItem>,
           required: true,

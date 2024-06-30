@@ -6,7 +6,7 @@
 ///Commencing the code
 .main {
     @include flexBar($position: absolute, $justify: flex-start, $flex_d: column, $wrap: none, $align: center, $flex: none);
-    @include position($left: 0%, $top: 325%);
+    @include position($left: 0%, $top: 315%);
     @include size(100%, 55%);
     //border: 2px solid $error-color;
     font-family: "Roboto";
@@ -15,16 +15,16 @@
 
     @include tabletPro {
         //border: 2px solid $error-color;
-        @include position($left: 0%, $top: 160%);
+        @include position($left: 0%, $top: 150%);
         height: 30%;
     } 
 
     @include tablet {
-        top: 147%;
+        top: 140%;
     }
 
     @include tabletMini {
-        top: 155%;
+        top: 145%;
         height: 32%;
     }
 
@@ -32,7 +32,7 @@
         //border: 2px solid $error-color;
         @include position($left: 0%, $top: 195%);
         height: 40%;
-        top: 230%;
+        top: 220%;
         justify-content: space-between;
     } 
 
@@ -87,19 +87,24 @@
             }
 
             &:hover {
-                transform: scale(1.05);
+                //transform: scale(1.05);
+                color: $primary-color;
             }
         }
     }
     
     .swipeContainer {
-        //border: 1px solid red;
+        //border: 1px solid blue;
         @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 0%);
         @include size(90%, 78%);
         padding: 0.5%;
 
         @include tabletPro {
             height: 75%;
+        }
+
+        @include phonePro {
+            width: 95%;
         }
 
         .slider {
@@ -339,7 +344,7 @@
             }
 
             &:hover {
-                transform: scale(1.05);
+                //transform: scale(1.05);
                 box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
             }
         }

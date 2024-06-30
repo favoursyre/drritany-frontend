@@ -25,6 +25,10 @@
         height: 65%;
     }
 
+    @include phoneMini {
+        top: 60%;
+    }
+
     .brief {
         @include flexBar($position: relative, $flex_d: column, $justify: center, $align: none, $gap: 5%);
         //border: 2px solid green;
@@ -58,6 +62,7 @@
             @include phoneMini {
                 font-size: 25px;
                 height: 15%;
+                margin-top: 40px;
             }
         }
 

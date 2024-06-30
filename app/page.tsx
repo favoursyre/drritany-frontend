@@ -9,7 +9,7 @@ import ProductGrid from '@/components/product/productGrid/ProductGrid';
 //import dynamic from "next/dynamic"
 import ProductSlide from '@/components/product/productSlide/ProductSlide';
 //const Testimony = dynamic(() => import("@/components/testimony/Testimony"), { ssr: false })
-import TimeBar from '@/components/timeBar/TimeBar';
+//import TimeBar from '@/components/timeBar/TimeBar';
 //import Testimony from '@/components/testimony/Testimony';
 import { IProduct } from '@/config/interfaces';
 
@@ -87,7 +87,7 @@ export default async function Home() {
     <main className="home_page">
       <Hero />
       <Stats />
-      <TimeBar />
+      {/* <TimeBar /> */}
       <ProductGrid product_={products} view_={undefined} />
       <ProductSlide product_={productSlide} />
       {/* <Testimony />   */}

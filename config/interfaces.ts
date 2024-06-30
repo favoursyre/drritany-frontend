@@ -139,7 +139,7 @@ export interface IProduct {
     images: Array<IImage>,
     videos?: Array<IImage>,
     price?: number,
-    extraDiscount?: boolean,
+    extraDiscount: boolean,
     discount: number,
     orders?: number,
     freeOption?: boolean,
@@ -158,9 +158,11 @@ export interface ICartItem {
     readonly image: IImage,
     readonly name?: string,
     readonly unitPrice: number,
+    readonly unitWeight: number,
     quantity: number,
-    extraDiscount?: boolean,
+    extraDiscount: boolean,
     freeOption: boolean,
+    subTotalWeight: number,
     subTotalPrice: number,
     subTotalDiscount: number
 } 
@@ -169,6 +171,8 @@ export interface ICartItem {
 export interface ICart {
   totalPrice: number,
   totalDiscount: number,
+  totalWeight: number,
+  deliveryFee: number,
   cart: Array<ICartItem>
 }
 
@@ -220,7 +224,8 @@ export interface ICountry {
       counties?: Array<{
         name?: string,
         abbreviation?: string
-      }>
+      }>,
+      extraDeliveryPercent: number
     }>,
     location?: ICountryLocation,
     dial_code?: string,
@@ -238,6 +243,7 @@ export interface ICountry {
       total?: number,
       perCapital?: number
     },
+    deliveryFeePerKg?: number, //USD per Kg
     flag?: IImage
 }
 
@@ -364,6 +370,7 @@ export interface IOrderSheet {
   Quantity?: string,
   UnitPrice?: string,
   TotalPrice?: string,
+  DeliveryFee?: string,
   DateOrdered?: string,
   TimeOrdered?: string,
   TestGroup?: string,

@@ -5,13 +5,14 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { decodedString, cartName, nairaSymbol, nairaRate } from '@/config/utils';
+import { cartName, round, getDeliveryFee } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
+import { useClientInfoStore } from "@/config/store";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { DeleteOutline, ShoppingCartCheckout, ProductionQuantityLimits } from '@mui/icons-material';
 //import Icon from '@mui/icons-material/ProductionQuantityLimits';
@@ -28,7 +29,7 @@ const Cart = () => {
   const [deleteModal, setDeleteModal] = useState(false)
     const router = useRouter()
   const routerPath = usePathname();
-  const clientInfo: IClientInfo = getItem("clientInfo")
+  const clientInfo = useClientInfoStore(state => state.info)
   //const [clientInfo, setClientInfo] = useState<IClientInfo | null>(clientInfo_ ? JSON.parse(clientInfo_) : null)
 //   console.log('Current page:', cart.length);
 
@@ -37,6 +38,7 @@ const Cart = () => {
 //   }
 
 useEffect(() => {
+    console.log("Client: ", clientInfo)
     const interval = setInterval(() => {
         //setModalState(() => getModalState())
         //console.log("cart has changed")
@@ -54,9 +56,12 @@ useEffect(() => {
         if (cart !== null) {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
-            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+            cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
+            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
             setCart(() => ({ ...cart }))
             setItem(cartName, cart)
         }
@@ -64,7 +69,7 @@ useEffect(() => {
     }
 
     ///This function is triggered when the user wants to reduce the amount
-    const reduceQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
+    const decreaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
         e.preventDefault()
 
         if (cart !== null) {
@@ -75,9 +80,12 @@ useEffect(() => {
                 console.log("before: ", cart)
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
-                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 3 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
+                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+                cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
                 console.log("after: ", cart)
@@ -145,7 +153,7 @@ useEffect(() => {
                                 </div>
                                 <span className={styles.list_title}>{c.name}</span>
                                 <div className={styles.list_quantity}>
-                                    <button className={styles.minus_button} onClick={e => reduceQuantity(e, cid)}>
+                                    <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
                                         <RemoveIcon style={{ fontSize: "1rem" }} />
                                     </button>
                                     <span>{c.quantity}</span>
@@ -155,7 +163,6 @@ useEffect(() => {
                                 </div>
                                 <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
                                     <DeleteOutline className={styles.icon} />
-                                    <span>Remove</span>
                                 </button>
                             </div>
                             )) : (<></>)}
@@ -167,31 +174,64 @@ useEffect(() => {
                             <div className={styles.subtotal}>
                                 <span className={styles.title}>Subtotal</span>
                                 <div className={styles.amount}>
-                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                    <span>{cart ? (Math.round(cart.totalPrice * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                    {clientInfo?.country?.currency?.symbol ? (
+                                        <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round(cart.totalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    
                                 </div>
                             </div>
                             <div className={styles.discount}>
                                 <span className={styles.title}>Discount</span>
                                 <div className={styles.amount}>
                                     <RemoveIcon className={styles.minus} style={{ fontSize: "1rem" }} />
-                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                    <span>{cart ? (Math.round(cart.totalDiscount * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                    {clientInfo?.country?.currency?.symbol ? (
+                                        <span>{clientInfo.country?.currency?.symbol}</span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round(cart.totalDiscount * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             </div>
                             <div className={styles.deliveryFee}>
                                 <span className={styles.title}>Delivery Fee</span>
                                 <div className={styles.amount}>
                                     <AddIcon className={styles.minus} style={{ fontSize: "1rem" }} />
-                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                    <span>0</span>
+                                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round(cart.deliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             </div>
                             <div className={styles.total}>
                                 <span className={styles.title}>Total</span>
                                 <div className={styles.amount}>
-                                    <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} />
-                                    <span>{cart ? (Math.round((cart.totalPrice - cart.totalDiscount) * nairaRate)).toLocaleString("en-US") : ""}</span>
+                                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             </div>
                         </div>

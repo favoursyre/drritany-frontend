@@ -3,7 +3,7 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategory, IOrderSheet, IProduct } from './interfaces';
+import { ICategory, IOrderSheet, IProduct, ICountry } from './interfaces';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 //import credentials from "../drritany-f60889c0b640.json"
@@ -21,7 +21,12 @@ export const discount: number = 33
 
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
+export const minKg: number = 4
+
+export const deliveryFeePerKg: number = 1 //Unit is in USD
+
 //export const domainName: string = "http://localhost:3000"
+//export const domainName: string = "http://192.168.43.133:3000"
 export const domainName: string = "https://idealplug.com"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
@@ -63,6 +68,8 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
             return styles.orderPage
         case "/about":
             return styles.aboutPage
+        case "/faqs":
+            return styles.faqsPage
         case "/products":
             return styles.searchPage
         default:
@@ -123,6 +130,37 @@ export const round = (value: number, precision: number): number => {
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
 }
+
+//This function calculates the delivery fee for a cart in USD
+export const getDeliveryFee = (weight: number) => {
+    let deliveryFee: number
+
+    if (weight <= minKg) {
+        deliveryFee = minKg * deliveryFeePerKg
+    } else {
+        const newWeight = round(weight, 0)
+        deliveryFee = newWeight * deliveryFeePerKg
+    }
+
+    return deliveryFee
+}
+
+//This function checks if for a state that has 0 extraDeliveryPercent
+export const findStateWithZeroExtraDeliveryPercent = (country: ICountry | undefined) => {
+    if (country) {
+        if (!country.states) {
+            return undefined;
+        }
+    
+        for (let state of country.states) {
+            if (state.extraDeliveryPercent === 0) {
+                return state;
+            }
+        }
+    
+        return undefined;
+    } 
+};
 
 ///The backend api point
 export const backend = "https://drritany-web-backend-2b4e96f65eb5.herokuapp.com"

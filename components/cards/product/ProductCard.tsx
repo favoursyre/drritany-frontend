@@ -89,14 +89,38 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
                     <div className={styles.price_1}>
                         <strong>
                             {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
-                            {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
-                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.price ? (round(product.price * clientInfo.country?.currency?.exchangeRate, 1)).toLocaleString("en-US") : ""}</span> : <></>}
+                            {clientInfo ? (
+                                <span>{clientInfo?.country?.currency?.symbol}</span>
+                            ) : (
+                                <></>
+                            )}
+                            {clientInfo?.country?.currency?.exchangeRate ? (
+                                <span>
+                                    {product.price ? (round(product.price * clientInfo.country?.currency?.exchangeRate, 1)).toLocaleString("en-US") : ""}
+                                </span>
+                            ) : (
+                                <></>
+                            )}
                         </strong>
                     </div>
                     <div className={styles.price_2}>
                         {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
-                        {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
-                        {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.price ? (round(slashedPrice(product.price * clientInfo.country?.currency?.exchangeRate, product.discount), 1)).toLocaleString("en-US") : (<></>)}</span> : <></>}
+                        {clientInfo ? (
+                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                        ) : (
+                            <></>
+                        )}
+                        {clientInfo?.country?.currency?.exchangeRate ? (
+                            <span>
+                                {product.price ? (
+                                    round(slashedPrice(product.price * clientInfo.country?.currency?.exchangeRate, product.discount), 1)).toLocaleString("en-US") 
+                                : (
+                                    <></>
+                                )}
+                            </span>
+                        ) : (
+                            <></>
+                        )}
                     </div>
                 </div>
         </main>

@@ -3,10 +3,10 @@
 
 ///Libraries -->
 import styles from "./order.module.scss"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, ChangeEvent } from "react"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { domainName, cartName, orderName, capitalizeFirstLetter } from "@/config/utils"
-import { ICart, ICountry, ICustomerSpec } from "@/config/interfaces";
+import { domainName, cartName, orderName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round } from "@/config/utils"
+import { ICart, IClientInfo, ICountry, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
 import { useOrderModalStore, useModalBackgroundStore } from "@/config/store";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,7 @@ const Order = () => {
     const [phoneNumber2, setPhoneNumber2] = useState<string>("")
     const [emailAddress, setEmailAddress] = useState<string>("")
     const [country, setCountry] = useState<string>("")
+    const [countryInfo, setCountryInfo] = useState<ICountry | undefined>()
     const [state, setState] = useState<string | undefined>("")
     const [postalCode, setPostalCode] = useState<string>("")
     const [deliveryAddress, setDeliveryAddress] = useState<string>("")
@@ -38,16 +39,19 @@ const Order = () => {
     const [countryCode2, setCountryCode2] = useState<ICountry>()
     const [dropList1, setDropList1] = useState(false)
     const [dropList2, setDropList2] = useState(false)
+    const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(0) //Unit is in USD
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setOrderModal = useOrderModalStore(state => state.setOrderModal);
-    //console.log("Testing: ", getItemByKey(countryList, 'code', "SQ"))
+    console.log("Testing: ", countryInfo)
+
+    //const country_ = countryList.find(country => country.name?.common === country)
     
     useEffect(() => {
         //getClientInfo()
         
-        if (clientInfo && clientInfo.country) {
+        if (clientInfo && clientInfo?.country) {
             //setCountryCode1(() => clientInfo.country)
             console.log("Loc: ", clientInfo)
             if (!countryCode1 && !countryCode2 && !country) {
@@ -56,9 +60,16 @@ const Order = () => {
 
                 const country = clientInfo.country.name?.common as unknown as string
                 setCountry(() => country)
+                const info = countryList.find(country => country.name?.common === clientInfo?.country?.name?.common)
+                console.log("Country: ", info)
+                setCountryInfo(() => info)
+
+                const state_ = findStateWithZeroExtraDeliveryPercent(info)
+                setState(() => state_?.name)
+                //setExtraDeliveryFee(() => state_?.extraDeliveryPercent as unknown as number)
             }
         }
-    }, [clientInfo]);
+    }, [clientInfo, countryInfo]);
     
     ///This function is triggered when the form is submitted
     const processOrder = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,12 +113,17 @@ const Order = () => {
             try {
                     //console.log('Clicked')
                     const customerSpec: ICustomerSpec = {fullName, email: emailAddress, phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], country, state, deliveryAddress, postalCode}
+                    const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
+                    cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
+                    setCart(() => ({ ...cart }))
                     const productSpec: ICart = cart
-                    const order = {customerSpec, productSpec, clientInfo}
-                    console.log("Order: ", order)
+                    const clientInfo_ = clientInfo as unknown as IClientInfo
+                    const order = {customerSpec, productSpec, clientInfo_}
+                    console.log("Order_: ", order)
                     const res = await fetch(`${domainName}/api/order`, {
                         method: 'POST',
-                        body: JSON.stringify({ customerSpec, productSpec }),
+                        //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
+                        body: JSON.stringify(order),
                         headers: {
                         'Content-Type': 'application/json',
                         },
@@ -129,6 +145,8 @@ const Order = () => {
                     const _cart_: ICart = {
                         totalPrice: 0,
                         totalDiscount: 0,
+                        totalWeight: 0,
+                        deliveryFee: 0,
                         cart: []
                     }
 
@@ -163,9 +181,39 @@ const Order = () => {
       }, []);
 
     //This handles the handle change effect
-  const onChange = (e: any) => {
-    setCountry(e.target.value);
-  };
+  const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
+    e.preventDefault()
+
+    if (label === "country") {
+        setCountry(e.target.value);
+
+        const countryInfo_ = countryList.find(country => country.name?.common === country) as unknown as ICountry
+        setCountryInfo(() => countryInfo_)
+    } else if (label === "state") {
+        if (cart && clientInfo?.country?.currency?.exchangeRate) {
+            setState(e.target.value)
+            const symbol = clientInfo.country.currency.symbol
+        
+            //Checking if the state has extraDeliveryPercent and notifying the client
+            const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
+            
+            if (state_?.extraDeliveryPercent === 0) {
+                    const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+                    notify("info", `Your total order amount is ${symbol}${total}`)
+                
+                
+            } else {
+                if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
+                    const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
+                    setExtraDeliveryFee(() => extraDeliveryFee)
+                    const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+                    const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+                    notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
+                }
+            }
+        }
+    }
+};
 
   ///This function is triggered when the choose code is clicked
   const chooseCode = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, position: string | number, country: ICountry) => {
@@ -314,7 +362,7 @@ const Order = () => {
                     <label>Country</label>
                     <br />
                     {countryCode1 ? (
-                        <select value={country} onChange={onChange}>
+                        <select value={country} onChange={(e) => onChange(e, "country")}>
                         {countryList.map((country, cid) => (
                             <option value={country.name?.common} key={cid}>{country.name?.common}</option>
                         ))}
@@ -326,12 +374,20 @@ const Order = () => {
                     <br />
                     <label>State</label>
                     <br />
-                    <input
-                        placeholder="State of residence"
-                        type="text"
-                        onChange={(e) => setState(capitalizeFirstLetter(e.target.value))}
-                        value={state}
-                    />
+                    {countryInfo && countryInfo.states ? (
+                        <select value={state} onChange={(e) => onChange(e, "state")}>
+                            {countryInfo.states.map((state, sid) => (
+                                <option value={state.name} key={sid}>{state.name}</option>
+                            ))}
+                        </select>
+                    ) : (
+                        <input
+                            placeholder="State of residence"
+                            type="text"
+                            onChange={(e) => setState(capitalizeFirstLetter(e.target.value))}
+                            value={state}
+                        />
+                    )}
                     <br />
                     <label>Postal Code</label>
                     <br />

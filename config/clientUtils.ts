@@ -4,6 +4,7 @@
 ///Libraries -->
 import { toast } from 'react-toastify';
 import { MouseEvent } from 'react';
+import { companyEmail } from './utils';
 
 ///Commencing the code
 //console.log("Domain: ", domainName)
@@ -93,10 +94,12 @@ export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEv
             window.open("https://twitter.com/favoursyre", "_blank")
         } else if (social === "linkedin") {
             window.open("https://www.linkedin.com/in/favour-ndubuisi-7b019786/", "_blank")
-        } else if (social === "github") {
-            window.open("https://github.com/favoursyre", "_blank")
+        } else if (social === "mail") {
+            window.open(`mailto:${companyEmail}`, "_blank")
         } else if (social === "whatsapp") {
             window.open("https://api.whatsapp.com/send?phone=14244282169", "_blank")
+        } else if (social === "x") {
+            window.open("https://x.com/Idealplug", "_blank")
         } else {
             undefined
         }

@@ -49,7 +49,7 @@ const OrderModal = () => {
                 height={216}
             />
         </div>
-        <span className={styles.span1}>Order sucessfully processed! 🎉 Thanks for choosing us. Any questions? Just ask! Happy shopping!</span>
+        <span className={styles.span1}>Order sucessfully processed! 🎉 Thanks for choosing us. Any questions? Just contact us</span>
     </div>
   );
 };

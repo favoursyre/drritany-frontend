@@ -21,15 +21,16 @@
     }
 
     @include phonePro {
-        top: 10%;  
+        top: 15%;  
         height: 100%;
     }
 
     h2 {
         position: relative;
-        @include text-layout($size: 30px, $l_height: 25px, $color: $primary-color);
-        font-weight: 500;
+        @include text-layout($size: 40px, $l_height: 52px, $color: $primary-color);
+        font-weight: 700;
         margin-bottom: 0px;
+        font-family: "Aclonica";
 
         @include tabletPro {
             font-size: 25px;
@@ -37,11 +38,11 @@
 
         @include phonePro {
             margin-top: -10px;
-            font-size: 25px;
+            font-size: 30px;
         }
 
         @include phoneMini {
-            
+            font-size: 25px;
             top: 1%;
         }
     }
@@ -65,14 +66,15 @@
         @include flexBar($position: relative, $align: center, $justify: center, $gap: 1%, $flex_d: column);
         @include size(80%, 80%);
         @include text-layout($size: 14px, $l_height: 25px, $color: $text-color-2);
-        top: 10%;
+        top: 5%;
 
         @include tablet {
             width: 90%;
         }
 
         @include phonePro {
-            width: 90%;
+            @include size(90%, 90%);
+            top: 10%;
         }
 
         @include phoneMini {
@@ -87,6 +89,7 @@
 
             @include phonePro {
                 line-height: 20px;
+                width: 100%;
             }
 
             .orderId {
@@ -149,17 +152,21 @@
 
             @include phonePro {
                 flex-direction: column;
+                @include size(100%, 25%);
+                padding: 5% 0%;
             }
 
             .deliveryAddress {
-                //border: 1px solid red;
+                //border: 1px solid yellow;
                 @include size(45%, 90%);
                 @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
 
                 @include phonePro {
-                    @include size(100%, 60%);
+                    @include size(100%, 70%);
                     align-items: flex-start;
                     line-height: 17px;
+                    padding: 3% 0%;
+                    top: -2%;
                 }
 
                 @include phoneMini {
@@ -177,7 +184,7 @@
 
 
                 @include phonePro {
-                    @include size(100%, 40%);
+                    @include size(100%, 30%);
                     line-height: 17px;
                     border-bottom: 1px dashed $primary-color;
                 }
@@ -190,11 +197,16 @@
         }
 
         .cartList {
-            //border: 1px solid red;
+            //border: 1px solid blue;
             border-bottom: 1px solid $primary-color;
             @include size(90%, 50%);
             @include flexBar($position: relative, $align: center, $justify: flex-start, $flex_d: column, $gap: 0%);
             overflow: auto;
+
+            @include phonePro {
+                width: 100%;
+                top: 1%;
+            }
 
             .cartItem {
                 //border: 1px solid red;
@@ -223,6 +235,10 @@
                     @include size(50%, 90%);
                     @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
                     left: 5%;
+
+                    @include phonePro {
+                        line-height: 20px;
+                    }
                 }
 
                 .cartPriceQuantity {
@@ -246,6 +262,11 @@
             border-bottom: 1px solid $primary-color;
             @include size(90%, 23%);
             @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 1%);
+
+            @include phonePro {
+                width: 100%;
+                top: 1%;
+            }
 
             .subTotal,
             .discount,

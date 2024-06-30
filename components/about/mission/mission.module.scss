@@ -32,6 +32,10 @@
         align-items: center;
     }
 
+    @include phoneMini {
+        top: 125%;
+    }
+
     .image {
         //border: 2px solid black;
         @include size(50%, 100%);

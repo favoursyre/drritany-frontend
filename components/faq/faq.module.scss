@@ -6,9 +6,9 @@
 //Commencing the code -->
 .main {
     @include flexBar($flex_d: column, $justify: none, $align: center, $gap: 0%);
-    @include position($left: 0%, $top: 310%);
+    @include position($left: 0%, $top: 10%);
     @include size($width: 100%, $height: 145%, $max-width: 100%, $max-height: 300%);
-    //border: 2px solid red;
+    border: 2px solid red;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
     font-family: "Roboto";
     //padding: 1% 3%;
@@ -36,12 +36,17 @@
     }
 
     h2 {
-        @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
-        font-weight: 600;
-        //border: 2px solid red;
+        @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+        font-weight: 700;
+
+        @include phonePro {
+            margin-top: 0px;
+            position: relative;
+            //top: -5%;
+        }
 
         @include phoneMini {
-            font-size: 25px;
+            font-size: 30px;
         }
     }
 
@@ -189,6 +194,282 @@
             // border: none;
         }
 
+        .inactiveAccordian {
+            z-index: 5;
+        }
+    }
+}
+
+.faqsHero {
+    //border: 1px solid red;
+    @include flexBar($align: center, $justify: center, $gap: 2%);
+    @include size($height: 500px);
+    margin: 0px;
+    left: 0px;
+    top: 0px;
+    
+    .gradientOverlay {
+        //border: 1px solid green;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+        z-index: 1;
+        position: absolute;
+        @include size(100%, 100%);
+    }
+
+    .image {
+        position: absolute;
+        @include size(100%, 100%);
+        object-fit: cover;
+        object-position: center 60%;
+    }
+
+    .brief {
+        //border: 1px solid red;
+        z-index: 3;
+        @include flexBar($position: relative, $align: center, $flex_d: column, $justify: center, $gap: 4%);
+        @include size(70%, 70%);
+        //top: 10%;
+
+        @include tabletPro {
+            top: 5%;
+        }
+
+        @include tablet {
+            width: 80%;
+        }
+
+        @include phonePro {
+            width: 80%;
+            top: 0%;
+            gap: 10%;
+        }
+
+        .brief1 {
+            @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+            font-weight: 700;
+            @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+            font-family: "Aclonica";
+            @include size(100%, auto);
+            //border: 1px solid red;
+            //margin: 0px;
+            //margin-bottom: -20px;
+
+            @include phonePro {
+                font-size: 30px;
+                line-height: 35px;
+                top: 5%;
+                //text-align: center;
+            }
+
+            @include phoneMini {
+                font-size: 25px;
+                line-height: 30px;
+            }
+        }
+
+        .brief2 {
+            @include size(70%, 15%);
+            //border: 2px solid red;
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
+            text-align: center;
+            font-family: "Roboto";
+
+            @include tabletPro {
+                @include size(70%, 10%);
+            }
+
+            @include phonePro {
+                //border: 2px solid red;
+                line-height: 20px;
+                font-size: 13px;
+                @include size(95%, 20%);
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 20px;
+            }
+
+            // @include text-layout($size: 15px, $l_height: 25px, $color: $text-color-4);
+            // font-weight: 600;
+            // @include flexBar($position: relative, $align: flex-start, $flex_d: row, $justify: center, $gap: 3%);
+            // font-family: "Poppins";
+            // @include size(90%, 50%);
+            // left: 0%;
+            // top: 0%;
+            // //border: 1px solid red;
+
+            // @include tabletPro {
+            //     top: 0%;
+            // }
+
+            // @include tablet {
+            //     width: 80%;
+            //     top: -5%;
+            // }
+
+            // @include phonePro {
+            //     font-size: 13px;
+            //     line-height: 17px;
+            //     width: 100%;
+            //     top: -5%;
+            //     text-align: center;
+            // }
+
+            // @include phoneMini {
+            //     font-size: 12px;
+            //     line-height: 15px;
+            //     top: -10%;
+            // }
+        }
+    }
+}
+
+.faqMain {
+    @include flexBar($align: center, $justify: center, $gap: 2%);
+    @include size($height: 1200px);
+    margin: 0px;
+    left: 0px;
+    top: 520px;
+    padding: 2% 0%;
+    max-height: 10000px;
+    font-family: "Roboto";
+    //border: 1px solid green;
+    //background-image: linear-gradient(to bottom, transparent, transparent, $primary-color);
+
+    @include phonePro {
+        //height: 1550px;
+        //border: 1px solid green;
+    }
+
+    // @include phonePro {
+    //     height: 1050px;
+    // }
+
+    .accordian {
+        @include flexBar($position: relative, $justify: flex-start, $gap: 10px, $flex_d: column, $wrap: wrap, $align: none, $flex: none);
+        //border: 2px solid $primary-color;
+        @include size(70%, 100%);
+        transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        padding: 0% 0%;
+        font-family: "Roboto";
+
+        @include tabletPro {
+            width: 90%;
+        }
+    
+        @include phonePro {
+            top: 0%;
+            //border: 2px solid red;
+            width: 95%;
+        }
+    
+        .accordianItem {
+            border: 3px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            @include flexBar($position: relative, $justify: flex-start, $gap: 0%, $flex_d: column);
+            //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 1% 2%;
+            //@include size(100%, 10%);
+            font-family: "Poppins";
+            background-color: white;
+    
+            .question {
+                @include flexBar($position: sticky, $justify: space-between, $gap: 5px, $flex_d: row, $wrap: none, $align: center, $flex: none);
+                //border: 1px solid $primary-color;
+                padding: 1% 2%;
+                text-align: center;
+                border: none;
+                background-color: transparent;
+                @include size(100%, 60px);
+                //text-align: center;
+                @include text-layout($size: 20px, $l_height: 28px);
+                font-weight: 500;
+                //border-radius: 5px;
+                //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+                @include phonePro {
+                    @include text-layout($size: 18px, $l_height: 24px);
+                    //height: 50px;
+                    //border: 1px solid red;
+                }
+    
+               @include phoneMini {
+                font-size: 14px;
+                height: 40px;
+               }
+
+                %symbol {
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+                    @include phoneMini {
+                        font-size: 1rem;
+                    }
+                }
+
+                .activeSymbol {
+                    // position: relative;
+                    //border: 1px solid $primary-color;
+                    top: -10%;
+                    @extend %symbol;
+                    transform: rotate(45deg);
+                    
+                }
+    
+                .inactiveSymbol {
+                    //border: 1px solid $primary-color;
+                    @extend %symbol;
+                    transform: rotate(0deg);
+                }
+            }
+    
+            .answer {
+                //border: 1px solid $primary-color;
+                display: none;
+                @include size(96%, 45%);
+                @include text-layout($size: 14px, $l_height: 17px);
+                padding: 1% 2%;
+                
+                top: -2%;
+                //padding: 1% 1%;
+    
+                @include phonePro {
+                    line-height: 16px;
+                    font-size: 12px;
+                }
+    
+                @include phoneMini {
+                    font-size: 10px;
+                    line-height: 13px;
+                }
+    
+                span {
+                    color: $primary-color;
+                    text-decoration: underline;
+                }
+            }
+    
+            .answerActive {
+                display: block;
+                align-items: center;
+                justify-content: center;
+                
+                //height: 45%;
+                
+                //padding: 0% 2%;
+                //border: 2px solid $error-color;
+                //transform: rotate(90deg);
+            }
+        }
+    
+        .activeAccordian {
+            box-shadow: 0 0 10px rgba(238, 80, 36, 0.2);
+            border: 3px solid rgba(238, 80, 36, 0.2);
+            // box-shadow: 0px 106px 82px -10px rgba(0, 0, 0, 0.08);  
+            // border: none;
+        }
+    
         .inactiveAccordian {
             z-index: 5;
         }

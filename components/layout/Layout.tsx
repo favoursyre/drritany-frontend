@@ -65,7 +65,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <GoogleTagManager containerId='GTM-KHK4D485' />
       </head>
       <body suppressHydrationWarning={true} className={styles.body}>
-        <ToastContainer autoClose={5000} limit={5} newestOnTop={true} />
+        <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />
         <Header />
           <Modal />
         {/* <Suspense fallback={ <LoadingSkeleton /> }> */}
