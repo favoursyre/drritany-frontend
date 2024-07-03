@@ -318,7 +318,7 @@ export const countryList: Array<ICountry> = [
             name: "Ghanaian Cedi",
             abbreviation: "GHS",
             symbol: "₵",
-            exchangeRate: 13.7
+            exchangeRate: 15.5
         }, 
         languages: [
             {
