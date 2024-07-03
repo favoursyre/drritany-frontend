@@ -330,6 +330,90 @@ export const countryList: Array<ICountry> = [
             //     code: "amh"
             // }
         ],
+        states: [
+            {
+                name: "Ahafo",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Ashanti",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Bono",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Bono East",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Central",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Eastern",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Greater Accra",
+                abbreviation: "",
+                extraDeliveryPercent: 0
+            },
+            {
+                name: "North East",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Northern",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Oti",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Savannah",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Upper East",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Upper West",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Volta",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Western",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Western North",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            }
+
+        ],
+        deliveryFeePerKg: 1,
         flag: {
             src: 'https://flagcdn.com/w320/gh.png',
             alt: "The flag of Ghana is composed of three equal horizontal bands of red, gold and green, with a five-pointed black star centered in the gold band.",
@@ -840,6 +924,54 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Zulu",
                 code: "zul"
+            }
+        ],
+        deliveryFeePerKg: 1.1, 
+        states: [
+            {
+                name: "Eastern Cape",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Free State",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Gauteng",
+                abbreviation: "",
+                extraDeliveryPercent: 0
+            },
+            {
+                name: "KwaZulu-Natal",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Limpopo",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Mpumalanga",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Northern Cape",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "North West",
+                abbreviation: "",
+                extraDeliveryPercent: 70
+            },
+            {
+                name: "Western Cape",
+                abbreviation: "",
+                extraDeliveryPercent: 70
             }
         ],
         flag: {

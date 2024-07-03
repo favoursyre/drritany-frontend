@@ -27,7 +27,7 @@ const Stats = () => {
                 </div>
                 {/* <h4>Delivery to 170+ Countries</h4>
                 <span>We deliver to over 170 countries worldwide, ensuring global accessibility.</span> */}
-                <h4>Unbeatable Prices</h4>
+                <h4>Best Prices</h4>
                 <span>Trusted by our customers to get the best affordable prices and offers.</span>
             </div>
             <div className={styles.stat2}>
