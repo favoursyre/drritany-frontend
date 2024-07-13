@@ -1,0 +1,542 @@
+/* This contains the scss for the order form modal component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+%form_tag {
+    margin-bottom: 0.9rem;
+    width: 100%;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 4px;
+}
+
+%main {
+    @include flexBar ($position: absolute, $align: center, $justify: center, $gap: 0%, $flex_d: column);
+    //justify-content: center;
+    //border: 1px solid green;
+    @include size(25%, 99%);
+    background-color: white;
+    padding: 0% 2% 0% 2%;
+    border-radius: 8px;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+    font-family: "Inter";
+    top: 0%;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    //left: -36%;
+    //z-index: 50;
+
+    @include tabletPro {
+        @include size(35%, 65%);
+        //top: -10%;
+    }
+
+    @include tablet {
+      width: 45%;
+      //top: -7%;
+    }
+
+    @include phonePro {
+        @include size(90%, 95%);
+        top: 0%;
+    }
+
+    .modal_head {
+        //border: 1px solid green;
+        @include flexBar ($position: relative, $display: flex, $wrap: none, $align: flex-start, $justify: flex-end, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
+        @include size(100%, auto);
+  
+        button {
+          position: relative;
+          display: flex;
+          width: 7%;
+          flex-direction: row;
+          justify-content: center;
+          border: none;
+          background-color: transparent;
+          //border: 2px solid red;
+  
+          .icon {
+            color: $text-color-3;
+  
+            @include phonePro {
+              font-size: 1.5rem;
+            }
+
+            &:hover {
+                color: $primary-color;
+            }
+          }
+  
+          @include phonePro {
+            width: 15%;
+          }
+    
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+
+      .form {
+        //position: absolute;
+        // display: flex;
+        // position: relative;
+        // flex-direction: column;
+        position: relative;
+        @include size(100%, 90%);
+        //gap: 5%;
+        //border: 2px solid red;
+        @include text-layout($size: 14px, $color: $text-color-2, $l_height: 20px);
+    
+        @include phonePro {
+          width: 90%;
+          height: 90%;
+          //border: 2px solid green;
+        }
+    
+        &:focus {
+          //background-color: red;
+          outline: none;
+          border: 1px solid $primary-color;
+        }
+    
+        ::placeholder {
+          //@include formTag;
+          padding: 1%;
+        }
+    
+        label {
+          //display: block;
+          //margin-bottom: 1rem;
+          font-weight: 500;
+        }
+    
+        input {
+          margin-bottom: 0.7rem;
+          @include size(98%, 6%);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+          //padding: 1%;
+    
+    
+          @include phonePro {
+            height: 35px;
+            //border: 2px solid red;
+          }
+        }
+
+        .numberLabel {
+          //border: 1px solid red;
+        }
+    
+        select {
+          margin-bottom: 0.7rem;
+          @include size(100%, 6%);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+    
+          @include phonePro {
+            height: 35px;
+          }
+        }
+    
+        .number_form {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+          @include size(98%, 6%);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+          //padding: 1%;
+          //border: 0.5px solid red;
+    
+          @include phonePro {
+            height: 35px;
+          }
+    
+          .dial_code_container {
+            //border: 1px solid blue;
+            @include flexBar($position: absolute, $display: flex, $flex_d: column, $align: flex-start, $gap: 0%);
+            @include size(18%, auto);
+            z-index: 5;
+    
+            @include tabletPro {
+              //width: 7%;
+            }
+    
+            @include phonePro {
+              width: 20%;
+            }
+    
+            @include phoneMini {
+              width: 25%;
+            }
+    
+            .dial_code {
+              display: flex;
+              position: relative;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              left: 2%;
+              gap: 2%;
+              top: 2%;
+              border: none;
+              //border: 0.5px solid red;
+              @include size(100%, 30px);
+              padding: 2% 0% 2% 0%;
+              background-color: $tertiary-color;
+              //font-weight: 600;
+              transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+              @include tabletPro {
+                height: 40px;
+                top: 4%;
+              }
+      
+              @include phonePro {
+                //border: 0.5px solid red;
+                //gap: 2.5%;
+                height: 32px;
+              }
+      
+              .img {
+                //border: 1px solid red;
+                position: relative;
+                margin: 0px;
+                height: 15px;
+                width: 20px;
+              }
+      
+              .arrow {
+                position: relative;
+                left: 5%;
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                //transform: rotate(90deg);
+              }
+      
+              .active_arrow {
+                transform: rotate(90deg);
+              }
+      
+              &:hover {
+                transform: scale(1.02);
+              }
+            }
+    
+            .dial_code_option {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              //align-items: center;
+              //justify-content: center;
+              z-index: 10;
+              overflow-y: scroll;
+              overflow-x: hidden;
+              border: 1px solid $text-color-3;
+              //box-shadow: 3px 3px 2px 2px rgba(52, 70, 100, 0.767);
+              //width: 300px;
+              @include size(300px, 300px);
+              //@include position($left: 35.5%, $top: 32%);
+    
+              @include tabletPro {
+                width: 250px;
+              }
+      
+              button {
+                position: relative;
+                background-color: $tertiary-color;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 4%;
+                //border: none;
+                border: 1px solid rgba(0, 0, 0, 0.09);
+                //padding: 1% 1% 1% 1%;
+                padding: 3% 5%;
+                @include size(100%, 33px);
+      
+                @include phonePro {
+                  width: 100%;
+                  height: 32px;
+                }
+      
+                .img {
+                  position: relative;
+                  margin: 0px;
+                  height: 16px;
+                  width: 21px;
+                }
+      
+                &:hover {
+                  border: 1px solid $primary-color;
+                }
+              }
+            }
+          }
+    
+          .number_input {
+            //border: 0.5px solid red;
+            @include size(80%, 100%);
+            position: relative;
+            left: 20%;
+            //@include position($left: 1px, $top: 28%);
+    
+            @include tabletPro {
+              //border: 0.5px solid red;
+              //width: 73%;
+              //left: 26%;
+            }
+    
+            @include phonePro {
+              //border: 0.5px solid red;
+              width: 75%;
+              left: 24%;
+            }
+    
+            @include phoneMini {
+              width: 69%;
+              left: 30%;
+            }
+    
+            input {
+              position: relative;
+              z-index: 1;
+              //@include size(100%, 100%);
+              height: 85%;
+              border-color: $tertiary-color;
+              //padding: 1%;
+            }
+          }
+    
+          .inactive {
+            display: none;
+          }
+        }
+    
+        .other_number_form {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-bottom: 0.7rem;
+          @include size(98%, 6%);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+          //padding: 1%;
+          //border: 0.5px solid red;
+    
+          @include phonePro {
+            height: 35px;
+          }
+    
+          .dial_code_container {
+            //border: 1px solid blue;
+            @include flexBar($position: absolute, $display: flex, $flex_d: column, $align: flex-start, $gap: 0%);
+            @include size(18%, auto);
+            //z-index: 10;
+    
+            @include tabletPro {
+                //top: 2%;
+              //width: 7%;
+              //width: 20%;
+            }
+    
+            @include phonePro {
+              width: 20%;
+            }
+    
+            @include phoneMini {
+              width: 25%;
+            }
+    
+            .dial_code {
+              display: flex;
+              position: relative;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              left: 2%;
+              top: 4%;
+              gap: 2%;
+              //z-index: -5;
+              border: none;
+              //border: 0.5px solid red;
+              @include size(100%, 31px);
+              padding: 2% 0% 2% 0%;
+              background-color: $tertiary-color;
+              //font-weight: 600;
+              transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+              @include tabletPro {
+                height: 40px;
+              }
+      
+              @include phonePro {
+                //border: 0.5px solid red;
+                //gap: 2.5%;
+                height: 32px;
+              }
+      
+              .img {
+                position: relative;
+                margin: 0px;
+                height: 15px;
+                width: 20px;
+              }
+      
+              .arrow {
+                position: relative;
+                left: 5%;
+                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                //transform: rotate(90deg);
+              }
+      
+              .active_arrow {
+                transform: rotate(90deg);
+              }
+      
+              &:hover {
+                transform: scale(1.02);
+              }
+            }
+    
+            .dial_code_option {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              //align-items: center;
+              //justify-content: center;
+              z-index: 10;
+              overflow-y: scroll;
+              overflow-x: hidden;
+              border: 1px solid $text-color-3;
+              //box-shadow: 3px 3px 2px 2px rgba(52, 70, 100, 0.767);
+              //width: 300px;
+              @include size(300px, 300px);
+              //@include position($left: 35.5%, $top: 32%);
+    
+              @include tabletPro {
+                width: 250px;
+              }
+      
+              button {
+                position: relative;
+                background-color: $tertiary-color;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 4%;
+                //border: none;
+                border: 1px solid rgba(0, 0, 0, 0.09);
+                //padding: 1% 1% 1% 1%;
+                padding: 3% 5%;
+                @include size(100%, 33px);
+      
+                @include phonePro {
+                  width: 100%;
+                  height: 32px;
+                }
+      
+                .img {
+                  position: relative;
+                  margin: 0px;
+                  height: 16px;
+                  width: 21px;
+                }
+      
+                &:hover {
+                  border: 1px solid $primary-color;
+                }
+              }
+            }
+          }
+    
+          .number_input {
+            //border: 0.5px solid red;
+            @include size(80%, 100%);
+            position: relative;
+            left: 20%;
+            //@include position($left: 1px, $top: 28%);
+    
+            @include tabletPro {
+              //border: 0.5px solid red;
+              //width: 73%;
+              //left: 26%;
+            }
+    
+            @include phonePro {
+              //border: 0.5px solid red;
+              width: 75%;
+              left: 24%;
+            }
+    
+            @include phoneMini {
+              width: 69%;
+              left: 30%;
+            }
+    
+            input {
+              position: relative;
+              z-index: 1;
+              //@include size(100%, 100%);
+              height: 85%;
+              border-color: $tertiary-color;
+              //padding: 1%;
+            }
+          }
+    
+          .inactive {
+            display: none;
+          }
+        }
+    
+        .order_button {
+          @include flexBar(
+            $position: relative,
+            $display: flex,
+            $wrap: none,
+            $align: center,
+            $justify: center,
+            $gap: 5%,
+            $flex_d: row,
+            $flex: none,
+            $bg-color: $primary-color
+          );
+          @include size(100%, 40px);
+          border: 1px solid $primary-color;
+          color: $tertiary-color;
+          border-radius: 4px;
+          transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      } 
+}
+
+.activeState {
+    @extend %main;
+    transform: translateX(-120%);
+    //position: fixed;
+
+    @include tabletPro {
+        transform: translateX(-77%);
+    }
+
+    @include tablet {
+      transform: translateX(-53%);
+  }
+
+    @include phonePro {
+        transform: translate(-5%)
+    }
+}
+
+.inactiveState {
+    @extend %main;
+    transform: translateX(-240%);
+    //display: none;
+}

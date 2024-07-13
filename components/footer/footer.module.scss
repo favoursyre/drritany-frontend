@@ -658,18 +658,26 @@
 }
 
 .productInfoPage {
-    top: 220%;
+    top: 225%;
     @extend %footer-layout;
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 140%;
+        top: 130%;
     } 
+
+    @include tabletMini {
+        top: 140%;
+    }
 
     @include phonePro {
         //border: 1px solid red;
-        top: 275%;
+        top: 295%;
     } 
+
+    @include phone {
+        top: 310%;
+    }
 }
 
 .cartPage {
@@ -685,9 +693,13 @@
         //height: 30%;
     } 
 
+    @include tablet {
+        top: 83%;
+    }
+
     @include phonePro {
         //border: 2px solid $error-color;
-        top: 140%;
+        top: 150%;
     } 
 
 }

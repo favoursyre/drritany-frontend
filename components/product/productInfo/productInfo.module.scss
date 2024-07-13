@@ -8,7 +8,7 @@
 .header {
     //border: 1px solid red;
     @include flexBar($justify: flex-start, $gap: 0%, $flex_d: row,  $align: flex-end);
-    @include position($left: 0%, $top: 10%);
+    @include position($left: 0%, $top: 15%);
     @include size(95%, 7%, $max-height: 200%);
     //border: 2px solid $primary-color;
     font-family: "Roboto";
@@ -16,13 +16,18 @@
     left: 3%;
 
     @include tabletPro {
-        height: 5%;
-        top: 7%;
+        height: 3%;
+        top: 10%;
+    }
+
+    @include tabletMini {
+        top: 12%;
     }
 
     @include phonePro {
-        height: 6%;
-        top: 10%;
+        height: 5%;
+        top: 19%;
+        align-items: center;
     }
     
     span {
@@ -37,7 +42,7 @@
 
 .main {
     @include flexBar($justify: center, $gap: 2%, $flex_d: row, $wrap: none, $align: flex-start);
-    @include position($left: 0%, $top: 17%);
+    @include position($left: 0%, $top: 21%);
     @include size(100%, 140%, $max-height: 200%);
     //border: 2px solid $primary-color;
     font-family: "Roboto";
@@ -52,17 +57,22 @@
         height: 90%;
     }
 
+    @include tabletMini {
+        top: 15%;
+    }
+
     @include phonePro {
         //border: 2px solid $error-color;
         flex-direction: column;
         max-height: 400%;
         height: 200%;
-        top: 17%;
+        top: 25%;
         align-items: center;
     } 
 
     @include phone {
-        height: 160%;
+        //height: 200%;
+        //top: 27%;
     }
 
     button {

@@ -132,7 +132,7 @@
             }
 
             &:hover {
-                transform: scale(1.05);
+                //transform: scale(1.05);
                 box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
             }
         }
@@ -360,15 +360,23 @@
 }
 
 .productInfoPage {
-    top: 160%;
+    top: 165%;
     //border: 2px solid black;
 
     @include tabletPro {
+        top: 95%;
+    }
+
+    @include tabletMini {
         top: 105%;
     }
 
     @include phonePro {
-        top: 225%;
+        top: 245%;
+    } 
+
+    @include phone {
+        top: 260%;
     }
 }
 
@@ -383,7 +391,7 @@
     } 
 
     @include phonePro {
-        top: 90%;
+        top: 100%;
         //border: 2px solid $error-color;
         //height: 30%;
     } 

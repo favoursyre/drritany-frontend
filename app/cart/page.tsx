@@ -2,11 +2,13 @@
 ///This handles the cart page
 
 ///Libraries -->
-import Cart from "@/components/cart/Cart"
+//import Cart from "@/components/cart/Cart"
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct } from "@/config/interfaces";
 import { domainName, shuffleArray } from "@/config/utils";
 import { Metadata } from "next";
+import dynamicImport from "next/dynamic";
+const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
 import { Suspense } from "react";
 
 ///Commencing the code
@@ -46,7 +48,7 @@ export default async function CartPage() {
 
   return (
     <main className="cart_page">
-        <Cart />
+      <Cart />
       <ProductSlide product_={products}/>
     </main>
   )

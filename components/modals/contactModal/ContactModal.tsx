@@ -39,7 +39,7 @@ const ContactModal = () => {
     }
 
     ///This sends the message from contact-us
-  const sendInquiry = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const sendInquiry = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
     e.preventDefault()
 
     //Validating args
@@ -117,7 +117,7 @@ const ContactModal = () => {
               </span>
               <span id={styles.brief_2}>Reach out and we&apos;ll get in touch within 24 hours</span>
             </div>
-            <form onSubmit={(e) => sendInquiry(e)}>
+            <form>
               <div className={styles.div_1}>
                 <div className={styles.div_11}>
                   <input
@@ -151,7 +151,7 @@ const ContactModal = () => {
                   value={message}
                 ></textarea>
               </div>
-              <button>
+              <button onClick={(e) => sendInquiry(e)}>
                 {isLoading ? (
                   <Loading width="20px" height="20px" />
                 ) : (

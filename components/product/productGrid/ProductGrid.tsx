@@ -15,6 +15,7 @@ import { useClientInfoStore } from "@/config/store";
 import ProductCard from '@/components/cards/product/ProductCard';
 import CategoryIcon from '@mui/icons-material/Category';
 import { notify } from '@/config/clientUtils';
+import DisplayBar from '@/components/displayBar/DisplayBar';
 
 ///Commencing the code 
 /**
@@ -196,10 +197,11 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`} id="products">
-            <div className={styles.header_section}>
-                {/* <span>Time remaining: {formatTime(timeLeft)}</span> */}
+            {/* <div className={styles.header_section}>
+                 <span>Time remaining: {formatTime(timeLeft)}</span> 
                 <span>Shop Now & Pay on Delivery</span>
-            </div>
+            </div> */}
+            <DisplayBar text_={undefined}/>
             <div className={styles.product_list}>
                 <div className={styles.filters}>
                     <div className={`${styles.sort_section}`}>

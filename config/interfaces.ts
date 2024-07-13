@@ -91,6 +91,12 @@ export interface IContactModalStore {
   setContactModal: (status: boolean) => void
 }
 
+//Interface for order form modal store
+export interface IOrderFormModalStore {
+  modal: boolean;
+  setOrderFormModal: (status: boolean) => void
+}
+
 //Interface for order modal store
 export interface IOrderModalStore {
   modal: boolean;

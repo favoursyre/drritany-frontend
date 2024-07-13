@@ -21,9 +21,9 @@ export const discount: number = 33
 
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
-export const minKg: number = 3
+export const minKg: number = 1
 
-export const deliveryFeePerKg: number = 1 //Unit is in USD
+export const deliveryFeePerKg: number = 0.9 //Unit is in USD
 
 //export const domainName: string = "http://localhost:3000"
 //export const domainName: string = "http://192.168.43.133:3000"
@@ -45,6 +45,10 @@ export const groupList = (arr: Array<any>, length: number): Array<any> => {
 
 //Cart name
 export const cartName: string = "idealPlugCart"
+
+export const deliveryName: string = "idealPlugDeliveryInfo"
+
+export const extraDeliveryFeeName: string = "idealPlugExtraDeliveryFee"
 
 //Order name
 export const orderName: string = "idealPlugOrder"
@@ -136,13 +140,27 @@ export const getDeliveryFee = (weight: number) => {
     let deliveryFee: number
 
     if (weight <= minKg) {
-        deliveryFee = minKg * deliveryFeePerKg
+        //deliveryFee = minKg * deliveryFeePerKg
+        deliveryFee = 3 * deliveryFeePerKg
     } else {
         const newWeight = round(weight, 0)
-        deliveryFee = newWeight * deliveryFeePerKg
+        const xtraWeight = newWeight - minKg
+        const baseDeliveryFee = 3 * deliveryFeePerKg
+        const extraDeliveryFee = xtraWeight * deliveryFeePerKg
+        deliveryFee = baseDeliveryFee + extraDeliveryFee
     }
 
     return deliveryFee
+}
+
+//This function returns only a digit after a dash i.e. `+1-292019` => `292019`
+export const extractDigitsAfterDash = (phoneNumber: string): string => {
+    
+    // Use a regular expression to match and extract the digits after the dash
+    const match = phoneNumber.match(/-(\d+)/);
+  
+    // If a match is found, return the captured digits; otherwise, return an empty string
+    return match ? match[1] : '';
 }
 
 //This function checks if for a state that has 0 extraDeliveryPercent
@@ -180,9 +198,11 @@ export const decodedString = (unicodeString: string) => {
 }
 
 ///This function capitalizes the first letter of every word
-export const capitalizeFirstLetter = (str: string | undefined): string | undefined => {
+export const capitalizeFirstLetter = (str: string): string => {
     if (str) {
         return str.replace(/\b\w/g, (match) => match.toUpperCase());
+    } else {
+        return str
     }
   }
 
@@ -485,8 +505,8 @@ export const categories: Array<ICategory> = [
             "Medical Supplies & Devices",
             "Sports & Outdoors",
             "Medicines & Supplements",
-            "Wearables",
-            "Personal Care & Hygiene"
+            "Wearables & Accessories",
+            "Personal Care & Hygiene",
         ]
     },
     {

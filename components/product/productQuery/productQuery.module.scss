@@ -140,7 +140,12 @@
         .heading {
             @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%, $flex_d: row);
             @include size(100%, 10%);
+            top: -3%;
             //border: 1px solid red;
+
+            @include phonePro {
+                top: -2%;
+            }
 
             .brief {
                 @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);

@@ -5,19 +5,20 @@
 
 .main {
     @include flexBar($align: center, $justify: center, $flex_d: column);
-    @include position($left: 0%, $top: 158%);
+    @include position($left: 0%, $top: 1%);
     @include size(100%, 40px);
+    //z-index: 10;
     //border: 1px solid red;
-    display: none;
+    //display: none;
 
     @include tabletPro {
         //border: 2px solid red;
-        top: 83%;
+        top: 0.5%;
         //height: 65%;
     }
 
     @include tablet {
-        top: 78%;
+        top: 0%;
     }
 
     @include tabletMini {
@@ -26,11 +27,11 @@
 
     @include phonePro {
         //border: 2px solid red;
-        top: 123%;
+        top: -2%;
         //height: 90%;
     }
 
-    .time_section {
+    .container {
         //position: relative;
         //background: #E42C2C;
         background-color: $primary-color;
@@ -69,5 +70,25 @@
                 font-size: 14px;
             }
         }
+    }
+}
+
+.searchPage {
+    top: -3%;
+
+    @include phonePro {
+        top: -4%;
+    }
+}
+
+.productInfoPage {
+    top: 12%;
+
+    @include tabletPro {
+        top: 8%;
+    }
+
+    @include phonePro {
+        top: 12%;
     }
 }

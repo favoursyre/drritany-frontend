@@ -5,17 +5,12 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee } from '@/config/utils';
-import { ICart, ICartItem, IClientInfo } from '@/config/interfaces';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName } from '@/config/utils';
+import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
-import { useClientInfoStore } from "@/config/store";
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import { DeleteOutline, ShoppingCartCheckout, ProductionQuantityLimits } from '@mui/icons-material';
-//import Icon from '@mui/icons-material/ProductionQuantityLimits';
+import { useClientInfoStore, useOrderFormModalStore, useModalBackgroundStore, useOrderModalStore } from "@/config/store";
+import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote } from '@mui/icons-material';
 
 ///Commencing the code 
 /**
@@ -24,12 +19,21 @@ import { DeleteOutline, ShoppingCartCheckout, ProductionQuantityLimits } from '@
  */
 const Cart = () => {
     const cart__ = getItem(cartName)
-  const [cart, setCart] = useState<ICart | null>(cart__)
-  const [deleteIndex, setDeleteIndex] = useState(Number)
-  const [deleteModal, setDeleteModal] = useState(false)
+    const [cart, setCart] = useState<ICart | null>(cart__)
+    const extraDeliveryFee__ = getItem(extraDeliveryFeeName)
+    const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(extraDeliveryFee__ ? extraDeliveryFee__ : 0)
+    const deliveryInfo__ = getItem(deliveryName)
+    const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(deliveryInfo__)
+    const [deleteIndex, setDeleteIndex] = useState(Number)
+    const [deleteModal, setDeleteModal] = useState(false)
     const router = useRouter()
-  const routerPath = usePathname();
-  const clientInfo = useClientInfoStore(state => state.info)
+    const routerPath = usePathname();
+    const clientInfo = useClientInfoStore(state => state.info)
+    const orderForm = useOrderFormModalStore(state => state.modal)
+    const setOrderForm = useOrderFormModalStore(state => state.setOrderFormModal)
+    const setOrderModal = useOrderModalStore(state => state.setOrderModal)
+    const modalBackground = useModalBackgroundStore(state => state.modal);
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
   //const [clientInfo, setClientInfo] = useState<IClientInfo | null>(clientInfo_ ? JSON.parse(clientInfo_) : null)
 //   console.log('Current page:', cart.length);
 
@@ -41,14 +45,14 @@ useEffect(() => {
     console.log("Client: ", clientInfo)
     const interval = setInterval(() => {
         //setModalState(() => getModalState())
-        //console.log("cart has changed")
+        //console.log("deliveryInfo has changed: ", {name: "syre", age: 2} === {name: "syre", age: 1})
       }, 100);
   
       return () => {
         clearInterval(interval);
       };
     
-  }, [deleteIndex, cart]);
+  }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
 
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
@@ -95,10 +99,28 @@ useEffect(() => {
     }
 
     ///This function is triggered when the checkout button is clicked
-    const checkoutOrder = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
+    const checkoutOrder = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
         e.preventDefault()
 
-        router.push("/order")
+        setModalBackground(true)
+        if (deliveryInfo) {
+            setOrderModal(true)
+        } else {
+            notify("error", "Delivery Info is required")
+            await sleep(0.3)
+            setOrderForm(true)
+        }
+        
+    }
+
+    ///This function is triggered when the user wants to input a delivery info
+    const editDeliveryInfo = async (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+
+        setModalBackground(!modalBackground)
+        await sleep(0.2)
+        setOrderForm(!orderForm)
+        console.log("Order form: ", orderForm)
     }
 
     ///This function triggers with the first remove button
@@ -130,7 +152,7 @@ useEffect(() => {
                     <span className={styles.brief_1}>Your cart is empty!</span>
                     <span className={styles.brief_2}>Explore our wide range of products and uncover our unbeatable offers</span>
                     <button onClick={() => router.push("/#products")}>
-                        <AddShoppingCartIcon className={styles.icon} />
+                        <AddShoppingCart className={styles.icon} />
                         <span>Start Shopping</span>
                     </button>
                 </div>
@@ -138,7 +160,7 @@ useEffect(() => {
                 <div className={styles.active_cart}>
                     
                     <div className={styles.cart_list}>
-                        <span className={styles.cart_list_title}>Cart Summary</span>
+                        <span className={styles.cart_list_title}>Checkout Summary</span>
                         <div className={styles.cart_lists}>
                             {cart ? cart.cart.map((c, cid) => (
                                 <div className={styles.cart_item} key={cid}>
@@ -154,11 +176,11 @@ useEffect(() => {
                                 <span className={styles.list_title}>{c.name}</span>
                                 <div className={styles.list_quantity}>
                                     <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
-                                        <RemoveIcon style={{ fontSize: "1rem" }} />
+                                        <Remove style={{ fontSize: "1rem" }} />
                                     </button>
                                     <span>{c.quantity}</span>
                                     <button className={styles.plus_button} onClick={e => increaseQuantity(e, cid)}>
-                                        <AddIcon style={{ fontSize: "1rem" }} />
+                                        <Add style={{ fontSize: "1rem" }} />
                                     </button>
                                 </div>
                                 <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
@@ -168,8 +190,25 @@ useEffect(() => {
                             )) : (<></>)}
                         </div>
                     </div>
-                    <div className={styles.cart_price}>
-                        <span className={styles.price_heading}>Cart Price</span>
+                    <div className={styles.order_price}>
+                        <span className={styles.heading}>Delivery Info</span>
+                        <div className={styles.delivery_info} onClick={(e) => editDeliveryInfo(e)}>
+                            {deliveryInfo ? (
+                                <div className={styles.info}>
+                                    <span className={styles.name}>{deliveryInfo.fullName}</span>
+                                    <div className={styles.address}>
+                                        <span>{deliveryInfo.deliveryAddress}<br/>{deliveryInfo.state}, {deliveryInfo.country} </span>
+                                    </div>
+                                    <span className={styles.mobile}>{deliveryInfo.phoneNumbers[0]}</span>
+                                    <EditNote className={styles.editIcon} />
+                                </div> 
+                            ) : (
+                                <div className={styles.addInfo}>
+                                    <Add className={styles.addIcon} />
+                                    <span className={styles.text}>Add Delivery Info</span>
+                                </div>
+                            )}
+                        </div>
                         <div className={styles.price_items}>
                             <div className={styles.subtotal}>
                                 <span className={styles.title}>Subtotal</span>
@@ -192,7 +231,7 @@ useEffect(() => {
                             <div className={styles.discount}>
                                 <span className={styles.title}>Discount</span>
                                 <div className={styles.amount}>
-                                    <RemoveIcon className={styles.minus} style={{ fontSize: "1rem" }} />
+                                    <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
                                     {clientInfo?.country?.currency?.symbol ? (
                                         <span>{clientInfo.country?.currency?.symbol}</span>
                                     ) : (
@@ -210,11 +249,11 @@ useEffect(() => {
                             <div className={styles.deliveryFee}>
                                 <span className={styles.title}>Delivery Fee</span>
                                 <div className={styles.amount}>
-                                    <AddIcon className={styles.minus} style={{ fontSize: "1rem" }} />
+                                    <Add className={styles.minus} style={{ fontSize: "1rem" }} />
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.deliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round((cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -227,7 +266,7 @@ useEffect(() => {
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -236,8 +275,8 @@ useEffect(() => {
                             </div>
                         </div>
                         <button onClick={(e) => checkoutOrder(e)}>
-                            <ShoppingCartCheckout className={styles.icon} />
-                            <span>Checkout</span>
+                            <LocalShipping className={styles.icon} />
+                            <span>Order Now</span>
                         </button>
                     </div>
                     
@@ -249,7 +288,7 @@ useEffect(() => {
                 <div className={styles.modal_heading}>
                     <span>Remove from cart</span>
                     <button onClick={() => setDeleteModal(() => false)}>
-                        <CloseIcon className={styles.icon} />
+                        <Close className={styles.icon} />
                     </button>
                 </div>
                 <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>

@@ -5,7 +5,7 @@
 
 //Commencing the code -->
 .main {
-    @include flexBar ($position: sticky, $align: center, $justify: center, $gap: 0%, $flex_d: column);
+    @include flexBar ($position: relative, $align: center, $justify: center, $gap: 0%, $flex_d: column);
     //justify-content: center;
     //border: 1px solid green;
     @include size(40%, 60%);
@@ -21,12 +21,14 @@
 
     @include phonePro {
       @include size(80%, 40%);
+      //left: 10%;
     }
 
     .modal_head {
       //border: 1px solid green;
-      @include flexBar ($position: relative, $display: flex, $wrap: none, $align: flex-start, $justify: flex-end, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
-      @include size(100%, 10%);
+      @include flexBar ($position: absolute, $display: flex, $wrap: none, $align: flex-start, $justify: flex-end, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
+      @include size(90%, 7%);
+      top: 10%;
 
       button {
         position: relative;
@@ -55,49 +57,149 @@
       }
     }
 
-    .image {
-      //border: 1px solid black;
-      display: flex;
-      justify-content: center;
-      position: relative;
-      @include size(55%, 60%);
+    .successContainer {
+      //border: 1px solid red;
+      @include flexBar ($position: relative, $align: center, $justify: center, $gap: 0%, $flex_d: column);
+      top: 6%;
+      @include size(90%, 80%);
 
-      @include phonePro {
-        @include size(55%, 60%);
-      }
-
-      @include phone {
-        @include size(45%, 50%);
-      }
-
-      .img {
-        object-fit: contain;
+      .image {
+        //border: 1px solid black;
+        display: flex;
+        justify-content: center;
         position: relative;
-        @include size(100%, 100%);
+        @include size(65%, 60%);
+  
+        @include phonePro {
+          @include size(55%, 60%);
+        }
+  
+        @include phone {
+          @include size(45%, 50%);
+        }
+  
+        .img {
+          object-fit: contain;
+          position: relative;
+          @include size(100%, 100%);
+        }
+      }
+
+      .loading {
+        position: relative;
+        height: 30%;
+      }
+  
+      span {
+        //border: 1px solid black;
+        position: relative;
+        display: flex;
+        width: 80%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 16px;
+        line-height: 25px;
+        //top: -5%;
+  
+        @include phonePro {
+          font-size: 14px;
+          line-height: 18px;
+          width: 90%;
+        }
+  
+        @include phoneMini {
+          font-size: 12px;
+          line-height: 15px;
+        }
       }
     }
 
-    .span1 {
-      //border: 1px solid black;
-      position: relative;
-      display: flex;
-      width: 80%;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-size: 16px;
-      line-height: 25px;
-      //top: -5%;
+    .checkContainer {
+      //border: 1px solid red;
+      @include flexBar ($position: relative, $align: center, $justify: center, $gap: 15%, $flex_d: column);
+      top: 6%;
+      @include size(90%, 80%);
 
       @include phonePro {
-        font-size: 14px;
-        line-height: 18px;
-        width: 90%;
+        //border: 1px solid red;
+        gap: 10%;
       }
 
-      @include phoneMini {
-        font-size: 12px;
-        line-height: 15px;
+      .span1 {
+        //border: 1px solid green;
+        position: relative;
+        @include text-layout($size: 30px, $color: $primary-color, $l_height: 40px);
+        font-weight: 600;
+        font-family: "Aclonica";
+        
+        @include phonePro {
+          font-size: 25px;
+          line-height: 30px;
+        }
+
+        @include phone {
+          font-size: 20px;
+          line-height: 25px;
+        }
+      }
+
+      .span2 {
+        //border: 1px solid green;
+        position: relative;
+        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        text-align: center;
+
+        @include phone {
+          font-size: 14px;
+        }
+
+        @include phoneMini {
+          font-size: 12px;
+          line-height: 18px;
+        }
+      }
+
+      .buttons {
+        //border: 1px solid pink;
+        @include flexBar ($position: relative, $align: center, $justify: space-between, $gap: 5%);
+        @include size(100%, 50px);
+
+        @include phoneMini {
+          height: 40px;
+        }
+
+        .button1, .button2 {
+          //border: 1px solid red;
+          border: none;
+          @include size(45%, 100%);
+          border-radius: 4px;
+
+          span {
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
+            font-weight: 600;
+
+            @include phone {
+              font-size: 14px;
+            }
+
+            @include phoneMini {
+              font-size: 12px;
+            }
+          }
+
+          &:hover {
+            transform: scale(1.01);
+          }
+        }
+
+        .button1 {
+          background-color: red;
+        }
+
+        .button2 {
+          background-color: rgb(54, 207, 54);
+        }
       }
     }
   }

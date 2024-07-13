@@ -5,16 +5,15 @@
 import styles from "./order.module.scss"
 import React, { useState, useEffect, ChangeEvent } from "react"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { domainName, cartName, orderName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round } from "@/config/utils"
+import { domainName, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round } from "@/config/utils"
 import { ICart, IClientInfo, ICountry, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
-import { useOrderModalStore, useModalBackgroundStore } from "@/config/store";
+import { useOrderModalStore, useModalBackgroundStore, useClientInfoStore } from "@/config/store";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { countryList } from "@/config/database";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import Loading from "../loadingCircle/Circle";
-import { useClientInfoStore } from "@/config/store";
 
 ///Commencing the code 
   

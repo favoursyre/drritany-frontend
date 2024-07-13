@@ -8,6 +8,7 @@ import { MouseEvent } from "react";
 import ContactModal from "../contactModal/ContactModal";
 import DiscountModal from "../discountModal/DiscountModal";
 import OrderModal from "../orderModal/OrderModal";
+import OrderFormModal from "../orderFormModal/OrderFormModal";
 
 ///Commencing the code 
 
@@ -23,13 +24,14 @@ const Modal = () => {
     const closeModal = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
         e.preventDefault()
 
-        setModal(false)
+        //setModal(false)
     }
 
   return (
-    <div className={styles.main} style={{ display: modalBackground ? "flex" : "none" }}>
+    <div className={styles.main} style={{ display: modalBackground ? "flex" : "none" }} onClick={(e) => closeModal(e)}>
         <DiscountModal />
         <ContactModal />
+        <OrderFormModal />
         <OrderModal />
     </div>
   );

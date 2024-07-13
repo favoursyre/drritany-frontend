@@ -227,18 +227,18 @@
 }
 
 .queryView {
-    height: 45%;
+    height: 55%;
     //border: 1px solid red;
 
-    @include tablet {
-        height: 55%
-    }
+    // @include tablet {
+    //     height: 55%
+    // }
 
-    @include phonePro {
-        height: 55%;
-    }
+    // @include phonePro {
+    //     height: 55%;
+    // }
 
-    @include phoneMini {
-        //@include size(26%, 40%);
-    }
+    // @include phoneMini {
+    //     //@include size(26%, 40%);
+    // }
 }

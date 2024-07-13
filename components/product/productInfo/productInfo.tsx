@@ -13,11 +13,12 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Star, AddShoppingCart, StarHalf, Discount } from '@mui/icons-material';
+import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout } from '@mui/icons-material';
 import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
 import { useClientInfoStore } from "@/config/store";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { IconButton } from '@mui/material';
+import DisplayBar from '@/components/displayBar/DisplayBar';
 
 ///Commencing the code
 /**
@@ -268,6 +269,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
     return (
         <>
+            <DisplayBar text_={undefined} />
             <div className={styles.header}>
                 <span>{product[0].category}</span>
                 {product[0].subCategory ? (
@@ -426,15 +428,15 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
                     <div className={styles.product_cart_order}>
                         <button className={styles.order_button} onClick={(e) => orderNow(e)}>
-                            <LocalShippingIcon className={styles.icon} />
-                            <span>Order Now</span>
+                            <ShoppingCartCheckout className={styles.icon} />
+                            <span>Checkout</span>
                         </button>
                         <button className={styles.cart_button} onClick={e => {
                             addToCart(e, false)
                             window.location.reload()
                         }}>
                             <AddShoppingCart className={styles.icon} />
-                            <span>Add to cart</span>
+                            <span>Add to Cart</span>
                         </button>
                     </div>
                     <div className={styles.product_accordian}>
