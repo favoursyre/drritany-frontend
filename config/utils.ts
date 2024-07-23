@@ -19,6 +19,8 @@ export const nairaRate: number = 1200
 
 export const discount: number = 33
 
+export const extraDiscount: number = 5
+
 export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
 
 export const minKg: number = 1

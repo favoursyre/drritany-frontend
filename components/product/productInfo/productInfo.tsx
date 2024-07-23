@@ -7,7 +7,7 @@ import React, { useState, useEffect, MouseEvent, Fragment } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, sleep, slashedPrice, deliveryPeriod, getDeliveryFee, capitalizeFirstLetter, areObjectsEqual, formatObjectValues, removeUndefinedKeys } from '@/config/utils'
+import { round, cartName, sleep, slashedPrice, deliveryPeriod, getDeliveryFee, capitalizeFirstLetter, areObjectsEqual, formatObjectValues, removeUndefinedKeys, extraDiscount } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -189,7 +189,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
             let discount
             if (cartItem.quantity >= 5) {
-                cartItem.subTotalDiscount = Number(((10 / 100) * totalPrice).toFixed(2))
+                cartItem.subTotalDiscount = Number(((extraDiscount / 100) * totalPrice).toFixed(2))
                 //discount = (10 / 100) * totalPrice
             } else {
                 cartItem.subTotalDiscount = 0
@@ -234,7 +234,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         cart.cart[index].quantity = quantity
                         cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
                         cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
-                        cart.cart[index].subTotalDiscount = quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                        cart.cart[index].subTotalDiscount = quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                         cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))

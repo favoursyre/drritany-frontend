@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, extraDiscount } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -32,32 +32,40 @@ const Cart = () => {
     const setOrderModal = useOrderModalStore(state => state.setOrderModal)
     const modalBackground = useModalBackgroundStore(state => state.modal);
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
-  //const [clientInfo, setClientInfo] = useState<IClientInfo | null>(clientInfo_ ? JSON.parse(clientInfo_) : null)
-//   console.log('Current page:', cart.length);
 
-//   if (cart.length === undefined) {
-//     console.log("Length: ", cart.length)
+    useEffect(() => {
+        //console.log("Client: ", clientInfo)
+        const interval = setInterval(() => {
+            //setModalState(() => getModalState())
+            if (cart) {
+                cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+                cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                setItem(cartName, cart)
+                setCart(() => ({ ...cart }))
+            }
 
+            if (deliveryInfo) {
+                //Checking if the state has extraDeliveryPercent and notifying the client
+                const state_ = clientInfo?.country?.states?.find(states => states.name === deliveryInfo.state)
 
-useEffect(() => {
-    console.log("Client: ", clientInfo)
-    const interval = setInterval(() => {
-        //setModalState(() => getModalState())
-        if (cart) {
-            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
-            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
-            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
-            setItem(cartName, cart)
-            setCart(() => ({ ...cart }))
-        }
-      }, 100);
-  
-      return () => {
-        clearInterval(interval);
-      };
+                if (state_?.extraDeliveryPercent === 0) {
+                    setItem(extraDeliveryFeeName, 0)
+                    setExtraDeliveryFee(() => 0)
+                } else if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
+                        const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
+                        setExtraDeliveryFee(() => extraDeliveryFee)
+                        setItem(extraDeliveryFeeName, extraDeliveryFee)
+                }
+            }
+        }, 100);
     
-  }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
+        return () => {
+            clearInterval(interval);
+        };
+        
+    }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
 
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
@@ -66,7 +74,7 @@ useEffect(() => {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
             cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
-            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
@@ -90,7 +98,7 @@ useEffect(() => {
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
                 cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
-                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
