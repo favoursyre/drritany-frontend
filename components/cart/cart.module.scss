@@ -229,6 +229,10 @@
                             width: 37%;
                             @include text-layout($size: 10px, $color: $text-color-2, $l_height: 15px);
                         } 
+
+                        @include phoneMini {
+                            line-height: 11px;
+                        }
                     } 
 
                     .list_quantity {

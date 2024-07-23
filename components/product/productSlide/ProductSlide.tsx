@@ -55,32 +55,22 @@ const ProductSlide = ({ product_, titleId_ }: { product_: Array<IProduct>, title
       return () => clearInterval(intervalId);
     }, [lastIndex, title]);
 
-    // useEffect(() => {
+    useEffect(() => {
+      //console.log("Router Path: ", routerPath)
+      switch(routerPath) {
+        case "/cart":
+          const cart: ICart | null = getItem(cartName)
+          //console.log("Cart Info: ", cart)
+          if (!cart || cart.cart.length === 0) {
+            //console.log("here now")
+            setTitle(() => "Recommended for you")
+          }
+          break
+        default:
+          break
+      }
 
-    //   switch(titleId_) {
-    //     case 2:
-    //       (() => "Recommended for you")
-    //       break
-    //     case "/cart":
-    //       const cart: ICart | null = getItem(cartName)
-    //       if (cart) {
-    //         setTitle(() => "Customers also ordered")
-    //       } else {
-    //         setTitle(() => "Recommended for you")
-    //       }
-    //       break
-    //     default:
-    //       // if (routerPath.includes("/products/")) {
-    //       //   setTitle(() => "Customers also viewed")
-    //       //   break
-    //       // } else
-    //       //   setTitle(() => "Customers also viewed")
-    //       //   break
-    //       setTitle(() => "Customers also viewed")
-    //       break
-    //   }
-
-    // }, [title])
+    }, [title])
     ///This function 
 
     return (

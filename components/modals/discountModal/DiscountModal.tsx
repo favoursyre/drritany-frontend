@@ -7,6 +7,7 @@ import { useModalBackgroundStore, useDiscountModalStore } from "@/config/store";
 import { MouseEvent, useState, FormEvent } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
+import { extraDiscount } from "@/config/utils";
 
 ///Commencing the code 
 
@@ -50,7 +51,7 @@ const DiscountModal = () => {
             <div className={styles.brief}>
             <span className={styles.brief_1}>Don&apos;t miss out! The more you shop, the more you save!</span>
                 <ul>
-                    <li>Order 5 or more {discountProduct.name} products and enjoy an extra 10% discount off each item.</li>
+                    <li>Order 5 or more {discountProduct.name} products and enjoy an extra {extraDiscount}% discount off each item.</li>
                     {/* {discountProduct.freeOption === true ? (
                       <>
                         <li>Order 5 or more {discountProduct.name} products and get 1 extra free product.</li>
