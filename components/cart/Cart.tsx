@@ -43,7 +43,14 @@ useEffect(() => {
     console.log("Client: ", clientInfo)
     const interval = setInterval(() => {
         //setModalState(() => getModalState())
-        //console.log("deliveryInfo has changed: ", {name: "syre", age: 2} === {name: "syre", age: 1})
+        if (cart) {
+            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+            setItem(cartName, cart)
+            setCart(() => ({ ...cart }))
+        }
       }, 100);
   
       return () => {
@@ -132,8 +139,12 @@ useEffect(() => {
             console.log("Cart Index: ", deleteIndex)
             cart?.cart.splice(deleteIndex, 1)
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
             console.log("Updated Cart: ", cart)
             setItem(cartName, cart)
+            setCart(() => ({ ...cart }))
             setDeleteModal(() => false)
         }
         

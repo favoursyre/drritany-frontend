@@ -297,6 +297,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             addToCart(e, true)
 
             //Routing the user to cart page
+            //window.location.reload()
             router.push("/cart")
         }
     }
