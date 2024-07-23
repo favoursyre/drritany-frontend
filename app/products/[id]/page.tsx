@@ -4,7 +4,8 @@
 ///Libraries -->
 import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, domainName, removeProductFromArray } from '@/config/utils';
+import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
+import { shuffleArray, domainName, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
 import { Metadata } from 'next';
 import { IProduct, Props } from '@/config/interfaces';
 
@@ -80,7 +81,8 @@ export default async function ProductByIdPage({ params: { id } }: { params: { id
   return (
     <main className="product_info_page">
       <ProductInfo product_={product} />
-      <SimilarProduct product_={products}/>
+      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} titleId_={0}/>
+      {/* <RecommendedProduct product_={products} titleId_={2} /> */}
     </main>
   )
 }

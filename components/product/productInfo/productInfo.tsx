@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 import React, { useState, useEffect, MouseEvent, Fragment } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
-import { setItem, notify } from '@/config/clientUtils';
-import { round, cartName, sleep, slashedPrice, deliveryPeriod, getDeliveryFee } from '@/config/utils'
+import { setItem, notify, getItem } from '@/config/clientUtils';
+import { round, cartName, sleep, slashedPrice, deliveryPeriod, getDeliveryFee, capitalizeFirstLetter, areObjectsEqual, formatObjectValues, removeUndefinedKeys } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -26,13 +26,18 @@ import DisplayBar from '@/components/displayBar/DisplayBar';
  * @returns The Product Info component
  */
 const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
+    const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
     const [activeHeading, setActiveHeading] = useState(0);
     const [mainImage, setMainImage] = useState(product[0].images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [deliveryDate, setDeliveryDate] = useState(String)
+    const [deliveryDate, setDeliveryDate] = useState<string>("")
     const router = useRouter()
+    const [colorId, setColorId] = useState<number>(0)
+    const [selectColor, setSelectColor] = useState<boolean>(false)
+    const [sizeId, setSizeId] = useState<number>(0)
+    const [selectSize, setSelectSize] = useState<boolean>(false)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
@@ -43,7 +48,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const spec = product[0].specification
     const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
-    console.log("Product info: ", product[0].videos)
+    console.log("In Stock: ", product[0].inStock)
 
     ///This contains the accordian details
     const questions = [
@@ -80,7 +85,6 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         console.log('Index: ', imageIndex)
         //console.log("main: ", mainImage)
       }, [mainImage, mainImageId, imageIndex, videoIndex, view]);
-
 
     //   //This counts up to 5secs before popping up the discount modal
     //   useEffect(() => {
@@ -119,6 +123,22 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         setDeliveryDate(formattedDate)
     }, [deliveryDate])
 
+    //This function helps choose color
+    const chooseColor = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number) => {
+        e.preventDefault()
+
+        setSelectColor(!selectColor)
+        setColorId(id)
+    }
+
+    //This function helps choose size
+    const chooseSize = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number) => {
+        e.preventDefault()
+
+        setSelectSize(!selectSize)
+        setSizeId(id)
+    }
+
     ///This function is triggered when the user wants to reduce the amount
     const reduceQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
@@ -133,102 +153,124 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         }
     }
 
-    ///This function handles the button if for the add to cart
+    ///This function handles the button for `Add to Cart`
     const addToCart = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): void => {
         e.preventDefault()
         const p = product[0]
-        const pWeight: number = p.specification?.weight as unknown as number
 
-        //Arranging the cart details
-        const cartItem: ICartItem = {
-            _id: p._id,
-            image: p.images[0],
-            name: p.name,
-            unitPrice: p.price || 0,
-            unitWeight: pWeight,
-            quantity: quantity,
-            subTotalWeight: quantity * pWeight, 
-            extraDiscount: p.extraDiscount,
-            freeOption: p.freeOption ? p.freeOption : false,
-            subTotalPrice: p.price || 0 * quantity,
-            subTotalDiscount: 0
-        }
-        //console.log("Quantity: ", quantity)
-        cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
-        const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
-
-        let discount
-        if (cartItem.quantity >= 5) {
-            cartItem.subTotalDiscount = Number(((10 / 100) * totalPrice).toFixed(2))
-            //discount = (10 / 100) * totalPrice
+        if (p.inStock === false) {
+            notify("info", "This product is currently out of stock, check back later!")
         } else {
-            cartItem.subTotalDiscount = 0
-        }
-        const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
-        const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
-        const deliveryFee = getDeliveryFee(totalWeight)
-        const cart_ = localStorage.getItem(cartName)
-        const cart = JSON.parse(cart_ || "{}") as unknown as ICart
+            const pWeight: number = p.specification?.weight as unknown as number
+            const cartSpecs = removeUndefinedKeys({
+                color: p.colors ? p.colors[colorId] : undefined,
+                size: p.sizes ? p.sizes[sizeId] : undefined
+            })
+            const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
 
-        if (cart_) {
-            //console.log(true)
-            const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
-            if (!result) {
-                cart.totalPrice = Number((cart.totalPrice + totalPrice).toFixed(2))
-                cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
-                cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
-                cart.deliveryFee = Number(deliveryFee.toFixed(2))
-                cart.cart.push(cartItem)
+            //Arranging the cart details
+            const cartItem: ICartItem = {
+                _id: p._id,
+                image: p.images[0],
+                name: productName.trim(),
+                unitPrice: p.price || 0,
+                unitWeight: pWeight,
+                quantity: quantity,
+                subTotalWeight: quantity * pWeight, 
+                specs: cartSpecs,
+                extraDiscount: p.extraDiscount,
+                freeOption: p.freeOption ? p.freeOption : false,
+                subTotalPrice: p.price || 0 * quantity,
+                subTotalDiscount: 0
+            }
+            //console.log("Quantity: ", quantity)
+            cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
+            const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
+
+            let discount
+            if (cartItem.quantity >= 5) {
+                cartItem.subTotalDiscount = Number(((10 / 100) * totalPrice).toFixed(2))
+                //discount = (10 / 100) * totalPrice
+            } else {
+                cartItem.subTotalDiscount = 0
+            }
+            const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
+            const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
+            const deliveryFee = getDeliveryFee(totalWeight)
+
+            //Checking if cart already exist for the client
+            if (cart) {
+                //console.log(true)
+                //Getting all the cart items with the same cart ID and specs
+                let index!: number
+                
+                for (let i = 0; i < cart.cart.length; i++) {
+                    console.log("Testing 2: ", cart.cart[i].specs, cartSpecs)
+                    if (cart.cart[i]._id === p._id && areObjectsEqual(cart.cart[i].specs, cartSpecs)) {
+                        index = i
+                        console.log("Testing: ", areObjectsEqual(cart.cart[i].specs, cartSpecs))
+                        break;
+                    }
+                }
+
+                //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
+                if (index === undefined) {
+                    cart.totalPrice = Number((cart.totalPrice + totalPrice).toFixed(2))
+                    cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
+                    cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
+                    cart.deliveryFee = Number(deliveryFee.toFixed(2))
+                    cart.cart.push(cartItem)
+                    setCart(() => cart)
+                    setItem(cartName, cart)
+                    if (!order) {
+                        notify('success', "Product has been added to cart")
+                    }
+                } else {
+                    if (quantity === cart.cart[index].quantity) {
+                        if (!order) {
+                            notify('warn', "Item has already been added to cart")
+                        }
+                    } else {
+                        cart.cart[index].quantity = quantity
+                        cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
+                        cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
+                        cart.cart[index].subTotalDiscount = quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                        cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                        cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+                        cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
+                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                        setCart(() => cart)
+                        setItem(cartName, cart)
+                        if (!order) {
+                            notify('success', "Product has been updated to cart")
+                        }
+                    }
+                }
+
+                const car_ = localStorage.getItem(cartName)
+                const _car_= JSON.parse(car_ || "{}")
+                console.log("cart_: ", _car_)
+            } else {
+                console.log("No cart: ", false)
+
+                const cart: ICart = {
+                    totalPrice: totalPrice,
+                    totalDiscount: totalDiscount,
+                    totalWeight: totalWeight,
+                    deliveryFee: deliveryFee,
+                    cart: [cartItem]
+                }
+
                 setItem(cartName, cart)
+                //const cart_ = getItem(cartName)
+                //console.log("cart: ", JSON.parse(cart_ || "{}"))
                 if (!order) {
                     notify('success', "Product has been added to cart")
                 }
-            } else {
-                const index = cart.cart.findIndex((cart: ICartItem) => cart._id === p._id);
 
-                if (quantity === cart.cart[index].quantity) {
-                    if (!order) {
-                        notify('warn', "Item has already been added to cart")
-                    }
-                } else {
-                    cart.cart[index].quantity = quantity
-                    cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
-                    cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
-                    cart.cart[index].subTotalDiscount = quantity >= 5 ? Number(((10/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
-                    cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
-                    cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
-                    cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
-                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
-                    setItem(cartName, cart)
-                    if (!order) {
-                        notify('success', "Product has been updated to cart")
-                    }
-                }
             }
 
-            const car_ = localStorage.getItem(cartName)
-            const _car_= JSON.parse(car_ || "{}")
-            console.log("cart_: ", _car_)
-        } else {
-            console.log(false)
-
-            const cart: ICart = {
-                totalPrice: totalPrice,
-                totalDiscount: totalDiscount,
-                totalWeight: totalWeight,
-                deliveryFee: deliveryFee,
-                cart: [cartItem]
-            }
-
-            setItem(cartName, cart)
-            const cart_ = localStorage.getItem(cartName)
-            //console.log("cart: ", JSON.parse(cart_ || "{}"))
-            if (!order) {
-                notify('success', "Product has been added to cart")
-            }
-
-        }
-
+        } 
     }
 
     ///This function opens discount modal
@@ -248,11 +290,15 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const orderNow = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
 
-        //Add the product to cart
-        addToCart(e, true)
+        if (product[0].inStock === false) {
+            notify("info", "This product is currently out of stock, check back later!")
+        } else {
+            //Add the product to cart
+            addToCart(e, true)
 
-        //Routing the user to order form
-        router.push("/cart")
+            //Routing the user to cart page
+            router.push("/cart")
+        }
     }
 
     ///This function triggers when someone opens an accordian
@@ -411,19 +457,54 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 ))}
                                 <StarHalf className={styles.star} />
                             </div>
-                            <span>4.7</span>
+                            <span>{p.rating}</span>
                         </div>
                     </div>
-                    <span className={styles.product_deliveryDate}><em>Delivery to <strong>{clientInfo?.country?.name?.common}</strong> before {deliveryDate}.</em></span>
-                    <div className={styles.product_quantity}>
-                        <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
-                            <RemoveIcon style={{ fontSize: "1rem" }} />
-                        </button>
-                        <span>{quantity}</span>
-                        <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
-                            <AddIcon style={{ fontSize: "1rem" }} />
-                        </button>
-
+                    <span className={styles.product_deliveryDate}><em>Delivered to you on/before {deliveryDate}.</em></span>
+                    <div className={styles.product_quantity_specs}>
+                        <div className={styles.product_quantity}>
+                            <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
+                                <RemoveIcon style={{ fontSize: "1rem" }} />
+                            </button>
+                            <span>{quantity}</span>
+                            <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
+                                <AddIcon style={{ fontSize: "1rem" }} />
+                            </button>
+                        </div>
+                        <div className={styles.product_specs}>
+                            {p.colors ? (
+                                <div className={styles.colors}>
+                                    <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
+                                        <div className={styles.circle} style={{ backgroundColor: `${p.colors[colorId]}`, borderColor: `${p.colors[colorId]}` }}></div>
+                                        <span>{capitalizeFirstLetter(p.colors[colorId])}</span>
+                                        <span className={`${selectColor ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
+                                    </button>
+                                    <div className={`${styles.color_option}`} style={{ display: selectColor ? "flex" : "none"}}>
+                                        {p.colors.map((color, _id) => (
+                                            <button key={_id} className={colorId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseColor(e, _id)}>
+                                                <div className={styles.circle} style={{ backgroundColor: `${color}`, borderColor: `${color}` }}></div>
+                                                <span>{capitalizeFirstLetter(color)}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (<></>)}
+                            {p.sizes ? (
+                                <div className={styles.sizes}>
+                                    <button className={styles.selectedSize} onClick={() => setSelectSize(!selectSize)}>
+                                        <span>{p.sizes[sizeId]}</span>
+                                        <span className={`${selectSize ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
+                                    </button>
+                                    <div className={`${styles.size_option}`} style={{ display: selectSize ? "flex" : "none"}}>
+                                        {p.sizes.map((size, _id) => (
+                                            <button key={_id} className={sizeId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseSize(e, _id)}>
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (<></>)}
+                        </div>
                     </div>
 
                     <div className={styles.product_cart_order}>
@@ -433,7 +514,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         </button>
                         <button className={styles.cart_button} onClick={e => {
                             addToCart(e, false)
-                            window.location.reload()
+                            //window.location.reload()
                         }}>
                             <AddShoppingCart className={styles.icon} />
                             <span>Add to Cart</span>

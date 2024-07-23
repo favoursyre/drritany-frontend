@@ -445,49 +445,203 @@
             }
         }
 
-        .product_quantity {
+        .product_quantity_specs {
             //border: 2px solid $primary-color;
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 2.5%;
+            @include size(100%, 4%);
+            @include flexBar($position: relative, $justify: flex-start, $gap: 3%, $flex_d: row, $align: center);
 
-            button {
-                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-                @include size(6%, 100%);
-                position: relative;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                //border: 2px solid $primary-color;
+            .product_quantity {
+                //border: 1px solid black;
+                @include flexBar($position: relative, $justify: flex-start, $gap: 6%, $flex_d: row, $align: center);
+                @include size(15%, 100%);
 
                 @include phonePro {
-                    width: 9%;
+                    width: 30%;
                 }
-            
-                &:hover {
-                    transform: scale(1.05);
+
+                button {
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    @include size(30px, 100%);
+                    position: relative;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    //border: 2px solid $primary-color;
+    
+                    @include phonePro {
+                        width: 35px;
+                    }
+                
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+    
+                .minus_button {
+                    box-sizing: border-box;
+                    background: $tertiary-color;
+                    border: 1px solid $primary-color;
+                    padding: 1%;
+                    border-radius: 2px;
+                    color: $primary-color;
+                    //@include size(5%, 100%);
+                }
+    
+                .plus_button {
+                    padding: 1%;
+                    background: $primary-color;
+                    border-radius: 2px;
+                    border: 1px solid $primary-color;
+                    color: $tertiary-color;
                 }
             }
 
-            .minus_button {
-                box-sizing: border-box;
-                background: $tertiary-color;
-                border: 1px solid $primary-color;
-                padding: 1%;
-                border-radius: 2px;
-                color: $primary-color;
-                //@include size(5%, 100%);
-            }
+            .product_specs {
+                //border: 1px solid red;
+                @include size(60%, 100%);
+                @include flexBar($position: relative, $justify: flex-start, $gap: 3%, $flex_d: row, $align: center);
 
-            .plus_button {
-                padding: 1%;
-                background: $primary-color;
-                border-radius: 2px;
-                border: 1px solid $primary-color;
-                color: $tertiary-color;
+                @include phonePro {
+                    gap: 5%;
+                }
+
+                .colors {
+                    border: 1px dotted $primary-color;
+                    @include size(auto, 100%);
+                    border-radius: 5px;
+                    @include flexBar($position: relative, $justify: flex-start, $gap: 4%, $flex_d: column, $align: center);
+                    padding: 0% 2%;
+
+                    .selectedColor {
+                        @include flexBar($position: relative, $justify: space-between, $gap: 4px, $flex_d: row, $align: center);
+                        padding: 0% 1%;
+                        @include size(100%, 100%);
+                        background-color: transparent;
+                        border: none;
+
+                        .circle {
+                            position: relative;
+                            @include size(10px, 10px);
+                            border: 1px solid red;
+                            border-radius: 10px;
+                        }
+                    }
+
+                    .color_option {
+                        //border: 1px solid red;
+                        @include size(auto, auto);
+                        @include flexBar($position: absolute, $justify: flex-start, $gap: 3px, $flex_d: column, $align: center);
+                        padding: 10%;
+                        background: $tertiary-color;
+                        box-shadow: 0px 2px 4px rgba(52, 69, 99, 0.3);
+                        border-radius: 4px;
+                        top: 100%;
+                        z-index: 3;
+
+                        button {
+                            @include flexBar($position: relative, $justify: flex-start, $gap: 4px, $flex_d: row, $align: center);
+                            padding: 0% 1%;
+                            border-radius: 4px;
+                            @include size(100%, 30px);
+                            padding: 2% 1%;
+                            background-color: transparent;
+                            border: none;
+    
+                            .circle {
+                                position: relative;
+                                @include size(10px, 10px);
+                                border: 1px solid red;
+                                border-radius: 10px;
+                            }
+                            
+                        }
+
+                        .activeButton {
+                            border: 1px solid $primary-color;
+                           // color: $tertiary-color;
+                        }
+        
+                        .inActiveButton {
+                            //border: 1px solid red;
+                            
+                            &:hover {
+                                //border-bottom: 1px solid $primary-color;
+                                color: $primary-color;
+                            }
+                        }
+                    }
+                }
+
+                .sizes {
+                    border: 1px dotted $primary-color;
+                    @include size(auto, 100%);
+                    border-radius: 5px;
+                    @include flexBar($position: relative, $justify: flex-start, $gap: 4%, $flex_d: column, $align: center);
+                    padding: 0% 2%;
+
+                    .selectedSize {
+                        @include flexBar($position: relative, $justify: space-between, $gap: 4px, $flex_d: row, $align: center);
+                        padding: 0% 1%;
+                        @include size(100%, 100%);
+                        background-color: transparent;
+                        border: none;
+                    }
+
+                    .size_option {
+                        //border: 1px solid red;
+                        @include size(auto, auto);
+                        @include flexBar($position: absolute, $justify: flex-start, $gap: 3px, $flex_d: column, $align: center);
+                        padding: 15%;
+                        background: $tertiary-color;
+                        box-shadow: 0px 2px 4px rgba(52, 69, 99, 0.3);
+                        border-radius: 4px;
+                        top: 100%;
+                        z-index: 3;
+
+                        button {
+                            @include flexBar($position: relative, $justify: center, $gap: 4px, $flex_d: row, $align: center);
+                            padding: 0% 1%;
+                            border-radius: 4px;
+                            @include size(100%, 30px);
+                            padding: 2% 2%;
+                            background-color: transparent;
+                            border: none;
+                            text-align: center;
+                        }
+
+                        .activeButton {
+                            border: 1px solid $primary-color;
+                           // color: $tertiary-color;
+                        }
+        
+                        .inActiveButton {
+                            //border: 1px solid red;
+                            
+                            &:hover {
+                                //border-bottom: 1px solid $primary-color;
+                                color: $primary-color;
+                            }
+                        }
+                    }
+                }
+
+                %arrow {
+                    //border: 1px solid red;
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    @include size(auto, auto);
+                    position: relative;
+                }
+
+                .activeArrow {
+                    @extend %arrow;
+                    transform: rotate(90deg);
+                }
+
+                .inactiveArrow {
+                    @extend %arrow;
+                    transform: rotate(0deg);
+                }
             }
         } 
 
@@ -594,12 +748,13 @@
                 }
 
                 &:hover {
-                    transform: scale(1.02);
+                    transform: scale(1.01);
                 }
             }
 
             .activeQuestion {
                 //border: 1px solid $primary-color;
+                box-shadow: 0 0 10px $secondary-color;
 
                 .active_sign {
                     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);

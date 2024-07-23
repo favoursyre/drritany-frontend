@@ -49,7 +49,7 @@ export default async function CartPage() {
   return (
     <main className="cart_page">
       <Cart />
-      <ProductSlide product_={products}/>
+      <ProductSlide product_={products} titleId_={1} />
     </main>
   )
 }

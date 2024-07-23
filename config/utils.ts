@@ -31,6 +31,8 @@ export const domainName: string = "https://idealplug.com"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
+export const querySheetId: string = "1sxI_f2u4Pyxfp-8lwZr6O42YWpIJSEvVfAPrAjkB-oQ"
+
 ///This function gets an array and sends the regrouped array of specified length
 export const groupList = (arr: Array<any>, length: number): Array<any> => {
     let result = []
@@ -93,8 +95,45 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
 
 ///This function gets the countryList info of a particular client
 // export const getClientCountryInfo = (countryCode: string): ICountry => {
+    
+//This function checks if 2 objects are equal
+export const areObjectsEqual = <T extends { [key: string]: any }>(obj1: T | undefined, obj2: T | undefined): boolean => {
 
-// }
+    if (obj1 && obj2) {
+        // Check if both objects have the same set of keys
+        const obj1Keys = Object.keys(obj1);
+        const obj2Keys = Object.keys(obj2);
+    
+        if (obj1Keys.length !== obj2Keys.length) {
+            return false;
+        }
+    
+        // Check if all values are equal
+        for (const key of obj1Keys) {
+            const val1 = obj1[key];
+            const val2 = obj2[key];
+        
+            // Check if both values are objects
+            const areBothObjects = isObject(val1) && isObject(val2);
+        
+            if (
+                (areBothObjects && !areObjectsEqual(val1, val2)) || // Deep check for objects
+                (!areBothObjects && val1 !== val2) // Direct check for other types
+            ) {
+                return false;
+            }
+        }
+
+        return true
+    } else {
+        return false;
+    }
+  }
+  
+  // Helper function to check if a value is an object
+  export const isObject = (obj: any): boolean => {
+    return obj != null && typeof obj === 'object';
+  }
 
 ///This function returns a parsed html tag
 export const parsedHtml = (htmlTag: string, tagType: string): React.ReactElement => {
@@ -349,6 +388,37 @@ export const sortByCategory = (products: Array<IProduct>, category: string): Arr
   };
 }
 
+///This removes undefined keys from an object e.g. {age: 30, color: undefined} => {age: 30}
+export const removeUndefinedKeys = (obj: { [key: string]: any }): { [key: string]: any } => {
+    //Create a new object to store the filtered key-value pairs
+    const newObj: { [key: string]: any } = {};
+
+    //Iterate over each key-value pair in the original object
+    for (const key in obj) {
+        if (obj[key] !== undefined) {
+            //Only add the key-value pair to the new object if the value is not undefined
+            newObj[key] = obj[key];
+        }
+    }
+
+    //Return the new object
+    return newObj;
+}
+
+//This function converts values !== undefined in an object to `(val1, val2, val3)`
+export const formatObjectValues = (obj: { [key: string]: any }): string => {
+    // Extract all the values from the object that are not undefined
+    const values = Object.values(obj).filter(value => value !== undefined);
+    
+    // If no values are present, return an empty string
+    if (values.length === 0) {
+        return '';
+    }
+
+    // Join the values with a comma and space, and enclose in parentheses
+    return `(${values.join(', ')})`;
+}
+
 ///This function allows us to perform CRUD operation using Google Sheet
 export class GoogleSheetDB {
     private doc: GoogleSpreadsheet
@@ -406,7 +476,7 @@ export class GoogleSheetDB {
     }
 
     ///This function adds new row to the sheet
-    public async addRow(sheetIndex: number, rows: Array<IOrderSheet>) {
+    public async addRow(sheetIndex: number, rows: Array<{ [key: string]: any }>) {
         await this.doc.loadInfo();
 
         // Index of the sheet
@@ -496,6 +566,62 @@ export const removeProductFromArray = (productToRemove: IProduct, products: Arra
     
     // If the product doesn't exist, return the original array
     return products;
+};
+
+// Sample function to determine similarity between two products
+const isSimilarProduct = (productA: IProduct, productB: IProduct, level: number | void): boolean => {
+    if (level === 0) {
+        return (
+            productA.category === productB.category &&
+            productA.subCategory === productB.subCategory &&
+            productA.miniCategory === productB.miniCategory
+            //productA.inStock !== false
+        )
+    } else if (level === 1) {
+        return (
+            productA.category === productB.category &&
+            productA.subCategory === productB.subCategory
+        )
+    } else {
+        return (
+            productA.category === productB.category
+        )
+    }
+};
+
+//Function to sort products based on similarity to a target product
+export const sortProductsBySimilarity = (products: Array<IProduct>, targetProduct: IProduct): Array<IProduct> => {
+    let similarProducts: Array<IProduct> = [];
+    let otherProducts: Array<IProduct> = [];
+
+    //Using the first level of similarity sorting
+    products.forEach((product) => {
+        if (isSimilarProduct(product, targetProduct, 0)) {
+            similarProducts.push(product);
+        } else {
+            otherProducts.push(product);
+        }
+    });
+
+    //Using the second level of similarity sorting
+    if (similarProducts.length === 0) {
+        products.forEach((product) => {
+            if (isSimilarProduct(product, targetProduct, 1)) {
+                similarProducts.push(product);
+            }
+        });
+    }
+
+    //Using the third level of similarity sorting
+    if (similarProducts.length === 0) {
+        products.forEach((product) => {
+            if (isSimilarProduct(product, targetProduct, 2)) {
+                similarProducts.push(product);
+            }
+        });
+    }
+
+    return [...shuffleArray(similarProducts), ...shuffleArray(otherProducts)];
 };
 
 export const categories: Array<ICategory> = [

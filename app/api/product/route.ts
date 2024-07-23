@@ -46,6 +46,44 @@ export async function GET(request: NextRequest) {
         } else if (action === "search") {
             if (query) {
                 products = await Product.getProductBySearch(query)
+
+                //Logging the queries to excel sheet to serve customers better
+                // const queryData: IQuerySheet = {
+                //     Country: 
+                // }
+                // if (client.country?.currency?.exchangeRate && client.country?.currency?.symbol) {
+                //     for (let i = 0; i < cart.cart.length; i++) {
+                //         const cart_: ICartItem = cart.cart[i]
+                //         const unitPrice = Number((cart_.unitPrice * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                //         const totalPrice = Number(((cart_.subTotalPrice - cart_.subTotalDiscount) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                //         const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                //         orderData.push({
+                //             OrderId: order._id,
+                //             CartId: cart_._id,
+                //             FullName: customer.fullName,
+                //             EmailAddress: customer.email,
+                //             PhoneNo1: customer.phoneNumbers[0],
+                //             PhoneNo2: customer.phoneNumbers[1],
+                //             Country: customer.country,
+                //             State: customer.state,
+                //             DeliveryAddress: customer.deliveryAddress,
+                //             PostalCode: customer.postalCode,
+                //             ProductName: cart_.name,
+                //             Quantity: getValidQuantity(cart_),
+                //             UnitPrice: `${currencySymbol}${unitPrice}`,
+                //             TotalPrice: `${currencySymbol}${totalPrice}`,
+                //             DeliveryFee: `${currencySymbol}${deliveryFee}`, 
+                //             DateOrdered: getCurrentDate(), ///Convert the mongodb to date and time format and assign it respectively
+                //             TimeOrdered: getCurrentTime()
+                //         })
+                //     }
+                // }
+            
+                // const orderSheet = new GoogleSheetDB(orderSheetId)
+
+                // //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
+                // const addOrder = await orderSheet.addRow(0, orderData)
+                // console.log("Successfully logged to database")
             }
         } else {
             return NextResponse.json({ message: "Wrong action" }, { status: 400 });

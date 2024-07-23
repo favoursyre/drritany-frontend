@@ -329,7 +329,7 @@
     }
 }
 
-.scrolled, .cartPage, .termsPage, .orderPage, .searchPage, .productInfoPage, .orderInvoicePage, .others {
+.scrolled, .cartPage, .orderPage, .searchPage, .productInfoPage, .orderInvoicePage, .others {
     background-color: $tertiary-color;
 
     .menu_button {
@@ -780,7 +780,7 @@
 }
 
 .termsPage {
-    @extend %header-layout;
+    //@extend %header-layout;
 }
 
 .orderPage {

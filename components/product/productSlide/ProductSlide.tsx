@@ -20,16 +20,23 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 ///Commencing the code 
+//These are the various titles for product slide
+const slideTitles: Array<string> = [
+  "Customers also viewed",
+  "Customers also ordered",
+  "Recommended for you"
+]
+
 /**
  * @title Product Slide Component
  * @returns The Product Slide component
  */
-const ProductSlide = ({ product_ }: { product_: Array<IProduct> }) => {
+const ProductSlide = ({ product_, titleId_ }: { product_: Array<IProduct>, titleId_: number }) => {
     const routerPath = usePathname();
     const router = useRouter();
     const [similarProducts, setSimilarProducts] = useState(product_)
     const [lastIndex, setLastIndex] = useState(6)
-    const [title, setTitle] = useState<string>("")
+    const [title, setTitle] = useState<string>(slideTitles[titleId_])
     const swiperRef = useRef<SwiperCore>();
 
     //console.log("Path: ", routerPath)
@@ -46,34 +53,34 @@ const ProductSlide = ({ product_ }: { product_: Array<IProduct> }) => {
       }, 1000);
   
       return () => clearInterval(intervalId);
-    }, [lastIndex]);
+    }, [lastIndex, title]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-      switch(routerPath) {
-        case "/":
-          setTitle(() => "Recommended for you")
-          break
-        case "/cart":
-          const cart: ICart | null = getItem(cartName)
-          if (cart) {
-            setTitle(() => "Customers also ordered")
-          } else {
-            setTitle(() => "Recommended for you")
-          }
-          break
-        default:
-          // if (routerPath.includes("/products/")) {
-          //   setTitle(() => "Customers also viewed")
-          //   break
-          // } else
-          //   setTitle(() => "Customers also viewed")
-          //   break
-          setTitle(() => "Customers also viewed")
-          break
-      }
+    //   switch(titleId_) {
+    //     case 2:
+    //       (() => "Recommended for you")
+    //       break
+    //     case "/cart":
+    //       const cart: ICart | null = getItem(cartName)
+    //       if (cart) {
+    //         setTitle(() => "Customers also ordered")
+    //       } else {
+    //         setTitle(() => "Recommended for you")
+    //       }
+    //       break
+    //     default:
+    //       // if (routerPath.includes("/products/")) {
+    //       //   setTitle(() => "Customers also viewed")
+    //       //   break
+    //       // } else
+    //       //   setTitle(() => "Customers also viewed")
+    //       //   break
+    //       setTitle(() => "Customers also viewed")
+    //       break
+    //   }
 
-    }, [title])
+    // }, [title])
     ///This function 
 
     return (

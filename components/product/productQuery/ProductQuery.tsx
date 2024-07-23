@@ -5,7 +5,7 @@
 import styles from "./productQuery.module.scss"
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest } from "@/config/utils";
+import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, querySheetId, GoogleSheetDB } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -40,14 +40,34 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
         const products_: Array<IProduct> = sortProductByLatest(productList)
         //console.log("After: ", products_)
         setFoundProducts(() => products_)
-    }, [foundProducts])
+
+        //Storing the keyword in an excel sheet for research purposes
+        if (clientInfo) {
+            const storeQuery = async () => {
+                const queryData = [{
+                    Country: clientInfo?.country?.name?.common,
+                    Keyword: keyword,
+                    Date: getCurrentDate(),
+                    Time: getCurrentTime()
+                }]
+    
+                const orderSheet = new GoogleSheetDB(querySheetId)
+    
+                //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
+                const addQuery = await orderSheet.addRow(0, queryData)
+                console.log("Query Status: ", addQuery)
+            }
+    
+            storeQuery()
+        }
+    }, [foundProducts, clientInfo])
 
     useEffect(() => {
         const intervalId = setInterval(() => {
         }, 100);
 
         return () => clearInterval(intervalId);
-    }, [foundProducts]);
+    }, [foundProducts, clientInfo]);
 
     ///This hook constantly checks for the screen's width
     useEffect(() => {

@@ -4,87 +4,218 @@
 @import "@/styles/base.module";
 
 //Commencing the code -->
+.termsHero {
+    //border: 1px solid red;
+    @include flexBar($align: center, $justify: center, $gap: 2%);
+    @include size($height: 90%);
+    margin: 0px;
+    left: 0px;
+    top: 0px;
+
+    @include tabletPro {
+        //top: 6%;
+        @include size($height:50%);
+    }
+
+    @include phonePro {
+        //top: 6%;
+        @include size($height:55%);
+    }
+
+
+    .gradientOverlay {
+        //border: 1px solid green;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+        z-index: 1;
+        position: absolute;
+        @include size(100%, 100%);
+    }
+
+    .image {
+        position: absolute;
+        @include size(100%, 100%);
+        object-fit: cover;
+        object-position: center 60%;
+    }
+
+    .brief {
+        //border: 1px solid red;
+        z-index: 3;
+        @include flexBar($position: relative, $align: center, $flex_d: column, $justify: center, $gap: 10%);
+        @include size(70%, 70%);
+        //top: 10%;
+
+        @include tabletPro {
+            top: 5%;
+        }
+
+        @include tablet {
+            width: 80%;
+        }
+
+        @include phonePro {
+            width: 80%;
+            top: 0%;
+            gap: 10%;
+        }
+
+        .brief1 {
+            @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
+            font-weight: 700;
+            @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+            font-family: "Aclonica";
+            @include size(100%, auto);
+            //border: 1px solid red;
+            //margin: 0px;
+            //margin-bottom: -20px;
+
+            @include phonePro {
+                font-size: 30px;
+                line-height: 35px;
+                top: 5%;
+                //text-align: center;
+            }
+
+            @include phoneMini {
+                font-size: 25px;
+                line-height: 30px;
+            }
+        }
+
+        .brief2 {
+            @include size(70%, 15%);
+            //border: 2px solid red;
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
+            text-align: center;
+            font-family: "Roboto";
+
+            @include tabletPro {
+                @include size(70%, 10%);
+            }
+
+            @include phonePro {
+                //border: 2px solid red;
+                line-height: 20px;
+                font-size: 13px;
+                @include size(95%, 20%);
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 20px;
+            }
+
+            // @include text-layout($size: 15px, $l_height: 25px, $color: $text-color-4);
+            // font-weight: 600;
+            // @include flexBar($position: relative, $align: flex-start, $flex_d: row, $justify: center, $gap: 3%);
+            // font-family: "Poppins";
+            // @include size(90%, 50%);
+            // left: 0%;
+            // top: 0%;
+            // //border: 1px solid red;
+
+            // @include tabletPro {
+            //     top: 0%;
+            // }
+
+            // @include tablet {
+            //     width: 80%;
+            //     top: -5%;
+            // }
+
+            // @include phonePro {
+            //     font-size: 13px;
+            //     line-height: 17px;
+            //     width: 100%;
+            //     top: -5%;
+            //     text-align: center;
+            // }
+
+            // @include phoneMini {
+            //     font-size: 12px;
+            //     line-height: 15px;
+            //     top: -10%;
+            // }
+        }
+    }
+}
+
 .main {
     @include flexBar($position: absolute, $justify: center, $gap: 0%, $flex_d: column, $align: center);
-    @include size(100%, 200%, 100%, 400%);
-    @include position($left: 0%, $top: 8%);
+    @include size(100%, 160%, 100%, 400%);
+    @include position($left: 0%, $top: 90%);
     //border: 2px solid $primary-color;
+    @include text-layout($size: 16px, $color: text-color-1, $l_height: 35px);
     //padding: 2% 10%;
     font-family: "Inter";
     //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7)), url("../../../public/images/down_back.png");
 
     @include tabletPro {
         //border: 2px solid $primary-color;
-        height: 120%;
+        top: 50%;
+        height: 100%;
     } 
 
     @include tablet {
-        height: 170%;
+        height: 130%;
     }
 
     @include phonePro {
+        @include text-layout($size: 14px, $color: text-color-1, $l_height: 23px);
         height: 230%;
         align-items: center;
+        top: 55%;
         //padding: 3% 10%;
+        //border: 2px solid green;
     } 
 
     @include phone {
-        height: 290%;
+        //border: 2px solid $primary-color;
+        height: 210%;
     }
 
     @include phoneMini {
-        height: 330%;
+        height: 260%;
+        @include text-layout($size: 12px, $color: text-color-1, $l_height: 20px);
     }
 
-    .terms_heading {
-        //border: 2px solid $primary-color;
-        @include text-layout($size: 40px, $color: $primary-color, $l_height: 52px);
-        font-weight: 700;
-        font-family: "Aclonica";
-
-        @include phonePro {
-            margin-top: 0px;
-            position: relative;
-            //top: -5%;
-            font-size: 30px;
-        }
-
-        @include phoneMini {
-            font-size: 30px;
-        }
-    }
-
-    .terms_body {
-        @include text-layout($size: 16px, $color: text-color-1, $l_height: 35px);
-        //font-weight: 600;
-       // border: 1px solid red;
-        @include size(90%, 80%);
+    span {
+        //border: 1px solid red;
         position: relative;
+        width: 90%;
+    }
 
-        @include tabletMini {
-            line-height: 30px;
-        }
-
-        @include phonePro {
-            //top: -5%;
-            height: 90%;
-            @include text-layout($size: 14px, $color: text-color-1, $l_height: 20px);
-        } 
+    ol {
+        //border: 1px solid red;
+        list-style-type: decimal;
+        position: relative;
+        width: 85%;
 
         @include phoneMini {
-            font-size: 12px;
-            width: 95%;
-            line-height: 20px;
+            left: -5%;
+            //border: 1px solid red;
         }
 
-        ol {
-            list-style-type: decimal;
-
-            @include phoneMini {
-                left: -5%;
-                position: relative;
-                //border: 1px solid red;
-            }
+        strong {
+            color: $primary-color;
         }
     }
+
+        // @include tabletMini {
+        //     line-height: 30px;
+        // }
+
+        // @include phonePro {
+        //     //top: -5%;
+        //     height: 90%;
+        //     @include text-layout($size: 14px, $color: text-color-1, $l_height: 20px);
+        // } 
+
+        // @include phoneMini {
+        //     font-size: 12px;
+        //     width: 95%;
+        //     line-height: 20px;
+        // }
+
+        
  }

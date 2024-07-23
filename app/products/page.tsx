@@ -70,7 +70,7 @@ async function getProducts() {
     return (
       <main className="search_page">
         <ProductQuery keyword_={query} query_={queryProducts} />
-        <ProductSlide product_={products} />
+        <ProductSlide product_={products} titleId_={2} />
       </main>
     )
   }

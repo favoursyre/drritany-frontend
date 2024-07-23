@@ -16,7 +16,7 @@ export const metadata = {
   icons: {
     icon: 'favicon.ico',
   },
-  description: 'E-Commerce website for all sorts of products',
+  description: 'We pride ourselves in offering a diverse range of items at the best prices, from everyday essentials to unique finds, ensuring that each customer finds something special. Our commitment to quality and customer satisfaction drives everything we do.',
   keywords: "products, commerce, plug, ideal, buy, online, drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce, natural"
 }
 

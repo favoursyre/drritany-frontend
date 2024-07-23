@@ -81,19 +81,17 @@
             @include phonePro {
                 @include text-layout($size: 45px, $color: $tertiary-color, $l_height: 40px);
                 //font-weight: 400;
-                justify-content: flex-start;
-                //text-align: center;
-                overflow: hidden;
-                gap: 4%;
-                top: 5%;
+                justify-content: space-between;
+                gap: 15px;
+                align-items: flex-start;
                 margin-bottom: 0px;
-                display: flex;
-                @include size(80%, 65%);
-                flex-flow: wrap;
+                @include size(80%, 67%);
+                flex-direction: column;
             }
 
             @include phone {
-                font-size: 40px;
+                //font-size: 45px;
+                height: 60%;
             }
 
             @include phoneMini {

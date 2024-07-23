@@ -6,7 +6,7 @@ import { Order } from "@/models/order";
 import { NextResponse, NextRequest } from "next/server";
 import { sendOrderEmail } from "@/config/email";
 import { ICartItem, IClientInfo, IOrder, IOrderSheet } from "@/config/interfaces";
-import { GoogleSheetDB, orderSheetId, getCurrentTime, getCurrentDate, nairaRate } from "@/config/utils";
+import { GoogleSheetDB, orderSheetId, getCurrentTime, getCurrentDate } from "@/config/utils";
 
 ///Commencing the code
 //This function returns the correct number of quantities

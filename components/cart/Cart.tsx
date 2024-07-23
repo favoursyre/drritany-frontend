@@ -18,12 +18,10 @@ import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping
  * @returns The Cart component
  */
 const Cart = () => {
-    const cart__ = getItem(cartName)
-    const [cart, setCart] = useState<ICart | null>(cart__)
+    const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const extraDeliveryFee__ = getItem(extraDeliveryFeeName)
     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(extraDeliveryFee__ ? extraDeliveryFee__ : 0)
-    const deliveryInfo__ = getItem(deliveryName)
-    const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(deliveryInfo__)
+    const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(getItem(deliveryName))
     const [deleteIndex, setDeleteIndex] = useState(Number)
     const [deleteModal, setDeleteModal] = useState(false)
     const router = useRouter()
@@ -39,7 +37,7 @@ const Cart = () => {
 
 //   if (cart.length === undefined) {
 //     console.log("Length: ", cart.length)
-//   }
+
 
 useEffect(() => {
     console.log("Client: ", clientInfo)

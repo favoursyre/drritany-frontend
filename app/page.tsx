@@ -89,7 +89,7 @@ export default async function Home() {
       <Stats />
       {/* <TimeBar /> */}
       <ProductGrid product_={products} view_={undefined} />
-      <ProductSlide product_={productSlide} />
+      <ProductSlide product_={productSlide} titleId_={2}/>
       {/* <Testimony />   */}
     </main>
   )

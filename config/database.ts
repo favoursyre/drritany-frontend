@@ -1205,8 +1205,8 @@ export const faqs: Array<IFAQState> = [
         answer: "Yes, we offer gift wrapping for a slight additional fee. Contact our customer support team to get a quote."
     },
     {
-        question: "What is your warranty policy?",
-        answer: "We offer 6 months warranty on all of our products, contact our support team for more info."
+        question: "What is your return policy?",
+        answer: "Damaged or wrong products should be returned within 1 week of purchase, contact our support team for more info."
     },
     {
         question: "Can I change or cancel my order?",

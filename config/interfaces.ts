@@ -55,9 +55,9 @@ export interface ISpecification {
     ingredients?: Array<string>,
     productOrigin?: string,
     weight?: number
-    size?: {
+    dimension?: {
       length?: number,
-      breadth?: number,
+      width?: number,
       height?: number
     }
 }
@@ -148,8 +148,10 @@ export interface IProduct {
     extraDiscount: boolean,
     discount: number,
     orders?: number,
+    inStock?: boolean,
     freeOption?: boolean,
     colors?: Array<string>,
+    sizes?: Array<string>,
     rating?: number,
     description?: string,
     specification?: ISpecification,
@@ -166,6 +168,10 @@ export interface ICartItem {
     readonly unitPrice: number,
     readonly unitWeight: number,
     quantity: number,
+    specs?: { 
+      color?: string,
+      size?: string
+    },
     extraDiscount: boolean,
     freeOption: boolean,
     subTotalWeight: number,

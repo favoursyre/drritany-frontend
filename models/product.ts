@@ -82,6 +82,14 @@ const productSchema = new Schema<IProduct, IProductModel>(
       type: Number,
       required: true,
     },
+    colors: {
+      type: Array<String>,
+      trim: true
+    },
+    sizes: {
+      type: Array<String>,
+      trim: true
+    },
     rating: {
       type: Number,
       required: true,
@@ -89,6 +97,10 @@ const productSchema = new Schema<IProduct, IProductModel>(
     freeOption: {
       type: Boolean,
       required: true,
+    },
+    inStock: {
+      type: Boolean,
+      required: true
     },
     orders: {
         type: Number,
@@ -143,11 +155,11 @@ const productSchema = new Schema<IProduct, IProductModel>(
             required: true,
             trim: true
         },
-        size: {
+        dimension: {
           length: {
             type: Number,
           },
-          breadth: {
+          width: {
             type: Number
           },
           height: {

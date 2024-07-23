@@ -706,11 +706,11 @@
 
 .termsPage {
     @extend %footer-layout;
-    top: 210%;
+    top: 250%;
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 130%;
+        top: 150%;
     } 
 
     @include tablet {
@@ -719,16 +719,16 @@
     } 
 
     @include phonePro {
-        top: 250%;
+        top: 290%;
     } 
 
     @include phone {
-        //top: 340%;
+        top: 270%;
     }
 
-    // @include phoneMini {
-    //     top: 340%;
-    // }
+    @include phoneMini {
+        top: 320%;
+    }
 }
 
 .orderPage {
@@ -784,7 +784,7 @@
     top: 265%;
 
     @include tabletPro {
-        top: 130%;
+        top: 140%;
     } 
 
     @include tablet {
@@ -792,12 +792,12 @@
     } 
 
     @include tabletMini {
-        top: 170%;
+       top: 160%;
     }
 
     @include phonePro {
         //border: 1px solid red;
-        top: 235%;
+        top: 210%;
     }
     
     @include phoneMini {
