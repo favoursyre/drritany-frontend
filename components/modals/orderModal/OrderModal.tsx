@@ -26,8 +26,7 @@ const OrderModal = () => {
     const [submit, setSubmit] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const router = useRouter()
-    const cart__ = getItem(cartName)
-    const [cart, setCart] = useState<ICart | null>(cart__)
+    const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const extraDeliveryFee__ = getItem(extraDeliveryFeeName)
     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(extraDeliveryFee__ ? extraDeliveryFee__ : 0)
     const deliveryInfo__ = getItem(deliveryName)
@@ -57,23 +56,23 @@ const OrderModal = () => {
 
             //Send the order to the backend
             try {
-                    //console.log('Clicked')
-                    const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
-                    cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
-                    setCart(() => ({ ...cart }))
-                    const productSpec: ICart = cart
-                    const clientInfo_ = clientInfo as unknown as IClientInfo
-                    const customerSpec: ICustomerSpec = deliveryInfo as unknown as ICustomerSpec
-                    const order = {customerSpec, productSpec, clientInfo_}
-                    console.log("Order_: ", order)
-                    const res = await fetch(`${domainName}/api/order`, {
-                        method: 'POST',
-                        //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
-                        body: JSON.stringify(order),
-                        headers: {
-                        'Content-Type': 'application/json',
-                        },
-                    });
+                //console.log('Clicked')
+                const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
+                cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
+                setCart(() => ({ ...cart }))
+                const productSpec: ICart = cart
+                const clientInfo_ = clientInfo as unknown as IClientInfo
+                const customerSpec: ICustomerSpec = deliveryInfo as unknown as ICustomerSpec
+                const order = {customerSpec, productSpec, clientInfo_}
+                console.log("Order_: ", order)
+                const res = await fetch(`${domainName}/api/order`, {
+                    method: 'POST',
+                    //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
+                    body: JSON.stringify(order),
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                });
                     
                 const data = await res.json();
             
@@ -81,22 +80,23 @@ const OrderModal = () => {
 
                 if (res.ok) {
                     notify("success", `Your order was logged successfully`)
-
+                    setItem(cartName, undefined)
+                    setItem(cartName, undefined)
                     //setModalBackground(true)
                     //setOrderModal(true)
 
                     setIsLoading(() => false)
 
                     //Clear the cart
-                    const _cart_: ICart = {
-                        totalPrice: 0,
-                        totalDiscount: 0,
-                        totalWeight: 0,
-                        deliveryFee: 0,
-                        cart: []
-                    }
+                    // const _cart_: ICart = {
+                    //     totalPrice: 0,
+                    //     totalDiscount: 0,
+                    //     totalWeight: 0,
+                    //     deliveryFee: 0,
+                    //     cart: []
+                    // }
 
-                    setItem(cartName, _cart_)
+                    
                 } else {
                     //setModalState(() => false)
                     //notify("error", `Something went wrong`)
