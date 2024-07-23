@@ -198,6 +198,7 @@ const Order = () => {
             
             if (state_?.extraDeliveryPercent === 0) {
                     const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+                    setExtraDeliveryFee(() => 0)
                     notify("info", `Your total order amount is ${symbol}${total}`)
                 
                 

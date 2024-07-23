@@ -472,7 +472,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             </button>
                         </div>
                         <div className={styles.product_specs}>
-                            {p.colors ? (
+                            {p.colors && p.colors.length > 1 ? (
                                 <div className={styles.colors}>
                                     <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
                                         <div className={styles.circle} style={{ backgroundColor: `${p.colors[colorId]}`, borderColor: `${p.colors[colorId]}` }}></div>
@@ -489,7 +489,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                     </div>
                                 </div>
                             ) : (<></>)}
-                            {p.sizes ? (
+                            {p.sizes && p.sizes.length > 1 ? (
                                 <div className={styles.sizes}>
                                     <button className={styles.selectedSize} onClick={() => setSelectSize(!selectSize)}>
                                         <span>{p.sizes[sizeId]}</span>
