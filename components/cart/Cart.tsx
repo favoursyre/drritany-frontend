@@ -4,7 +4,7 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
-import { setItem, getItem, notify } from '@/config/clientUtils';
+import { setItem, getItem, notify, removeItem as removeItem_ } from '@/config/clientUtils';
 import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, extraDiscount } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
@@ -34,17 +34,18 @@ const Cart = () => {
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
 
     useEffect(() => {
+        if (cart) {
+            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+            setItem(cartName, cart)
+            //setCart(() => ({ ...cart }))
+        }
+
         //console.log("Client: ", clientInfo)
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
-            if (cart) {
-                cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
-                cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
-                cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
-                setItem(cartName, cart)
-                setCart(() => ({ ...cart }))
-            }
 
             if (deliveryInfo) {
                 //Checking if the state has extraDeliveryPercent and notifying the client
@@ -66,6 +67,10 @@ const Cart = () => {
         };
         
     }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
+
+    // useEffect(() => {
+        
+    // }, [cart])
 
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
@@ -118,6 +123,9 @@ const Cart = () => {
         setModalBackground(true)
         if (deliveryInfo) {
             setOrderModal(true)
+            //removeItem_(cartName)
+            // console.log("deleted")
+            // console.log("Cart: ", getItem(cartName))
         } else {
             notify("error", "Delivery Info is required")
             await sleep(0.3)

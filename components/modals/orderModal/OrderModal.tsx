@@ -11,7 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { extraDeliveryFeeName, cartName, domainName, deliveryName } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo } from "@/config/interfaces";
-import { getItem, notify, setItem } from "@/config/clientUtils";
+import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 
 ///Commencing the code 
 
@@ -80,8 +80,10 @@ const OrderModal = () => {
 
                 if (res.ok) {
                     notify("success", `Your order was logged successfully`)
-                    setItem(cartName, undefined)
-                    setItem(cartName, undefined)
+                    //setItem(cartName, undefined)
+                    //setItem(cartName, undefined)
+                    removeItem(cartName)
+                    //console.log("cleared cart")
                     //setModalBackground(true)
                     //setOrderModal(true)
 
