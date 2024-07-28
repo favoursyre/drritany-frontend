@@ -68,9 +68,9 @@ const Cart = () => {
         
     }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
 
-    // useEffect(() => {
-        
-    // }, [cart])
+    useEffect(() => {
+        window.location.reload()
+    })
 
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {

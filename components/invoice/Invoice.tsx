@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { IOrder } from '@/config/interfaces';
 import { formatDateMongo, companyName, deliveryPeriod, round } from '@/config/utils';
 import { useClientInfoStore } from "@/config/store";
+import { Remove, Add } from '@mui/icons-material';
 
 ///Commencing the code 
 /**
@@ -137,7 +138,8 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                 </div>
                 <div className={styles.discount}>
                     <span><strong>Discount</strong></span>
-                    <span>
+                    <div className={styles.amount}>
+                        <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
                         {clientInfo ? (
                             <span>{clientInfo?.country?.currency?.symbol}</span>
                         ) : (
@@ -150,11 +152,12 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                         ) : (
                             <></>
                         )}
-                    </span>
+                    </div>
                 </div>
                 <div className={styles.deliveryFee}>
                     <span><strong>Delivery Fee</strong></span>
-                    <span>
+                    <div className={styles.amount}>
+                        <Add className={styles.add} style={{ fontSize: "1rem" }} />
                         {clientInfo ? (
                             <span>{clientInfo?.country?.currency?.symbol}</span>
                         ) : (
@@ -167,7 +170,7 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                         ) : (
                             <></>
                         )}
-                    </span>
+                    </div>
                 </div>
                 <div className={styles.total}>
                     <span><strong>Total</strong></span>

@@ -15,6 +15,7 @@ import { IClientInfo } from "@/config/interfaces";
 import { countryList } from "@/config/database";
 import GoogleTagManager from "@/config/GoogleTagManager";
 import LoadingSkeleton from "@/app/loading_test";
+import { InfoRounded } from "@mui/icons-material";
 
 ///Commencing the code 
 ///This function get client's info
@@ -28,11 +29,13 @@ async function getClientInfo(clientInfo: IClientInfo | undefined, setClientInfo:
         
             if (res.ok) {
                 const info_ = await res.json()
-                console.log('Info: ', info_)
+                //console.log('Info: ', info_)
                 const country_ = countryList.find(country => country.name?.abbreviation === info_.country_code)
                 const info : IClientInfo = {
-                    country: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "US")
+                  ip: info_.ip,
+                  country: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "US")
                 }
+                //console.log("Client info: ", info)
                 setClientInfo(info)
             } else {
                 getClientInfo(clientInfo, setClientInfo)

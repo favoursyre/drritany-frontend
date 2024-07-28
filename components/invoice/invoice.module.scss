@@ -278,6 +278,16 @@
                 border-bottom: 1px solid $text-color-3;
                 @include size(100%, 23%);
                 @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
+
+                .amount {
+                    @include flexBar($position: relative, $display: flex, $justify: flex-end, $align: center, $flex_d: row);
+                    //font-weight: 600;
+
+                    .minus, .add {
+                        position: relative;
+                        left: -10%;
+                    }
+                }
             }
 
             .total {

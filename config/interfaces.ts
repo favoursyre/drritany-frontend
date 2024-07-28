@@ -123,6 +123,7 @@ export interface IDiscountModalStore {
  * @notice The interface for client info
  */
 export interface IClientInfo {
+  ip?: string,
   groupTest?: string,
   country?: ICountry
 }

@@ -45,6 +45,7 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
         if (clientInfo) {
             const storeQuery = async () => {
                 const queryData = [{
+                    IP: clientInfo?.ip,
                     Country: clientInfo?.country?.name?.common,
                     Keyword: keyword,
                     Date: getCurrentDate(),

@@ -594,13 +594,16 @@ export const sendOrderEmail = (order: IOrder): any => {
     </body>
   </html>
     `
-  
+  //const total = round((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+
     const body = `
 Dear ${order.customerSpec.fullName},
 
 We are pleased to inform you that your order was sent successfully. Our team is currently reviewing your order so that it can be processed properly.
 
 You can view your order invoice slip at ${domainName}/order/invoice/${order._id}
+
+Payment would be made on delivery to the third party logistics company that would deliver your orders to you.
 
 If you ever have any questions or would like to edit/cancel your order, feel free to reply to this email. We value your feedback immensely.
 

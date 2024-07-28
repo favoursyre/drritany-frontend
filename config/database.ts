@@ -645,7 +645,7 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Abia",
                 abbreviation: "AB",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 55,
             },
             {
                 name: "Adamawa",
@@ -665,7 +665,7 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Bauchi",
                 abbreviation: "BA",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Bayelsa",
@@ -680,7 +680,7 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Borno",
                 abbreviation: "BO",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Cross River",
@@ -715,7 +715,7 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Gombe",
                 abbreviation: "GO",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Imo",
@@ -725,37 +725,37 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Jigawa",
                 abbreviation: "JI",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Kaduna",
                 abbreviation: "KD",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Kano",
                 abbreviation: "KN",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Katsina",
                 abbreviation: "KT",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Kebbi",
                 abbreviation: "KE",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Kogi",
                 abbreviation: "KO",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 70,
             },
             {
                 name: "Kwara",
                 abbreviation: "KW",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 70,
             },
             {
                 name: "Lagos",
@@ -765,17 +765,17 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Nassarawa",
                 abbreviation: "NA",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 80,
             },
             {
                 name: "Niger",
                 abbreviation: "NI",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 80,
             },
             {
                 name: "Ogun",
                 abbreviation: "OG",
-                extraDeliveryPercent: 40,
+                extraDeliveryPercent: 60,
             },
             {
                 name: "Ondo",
@@ -795,32 +795,32 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Plateau",
                 abbreviation: "PL",
-                extraDeliveryPercent: 60,
+                extraDeliveryPercent: 70,
             },
             {
                 name: "Rivers",
                 abbreviation: "RI",
-                extraDeliveryPercent: 55,
+                extraDeliveryPercent: 60,
             },
             {
                 name: "Sokoto",
                 abbreviation: "SO",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Taraba",
                 abbreviation: "TA",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Yobe",
                 abbreviation: "YO",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             },
             {
                 name: "Zamfara",
                 abbreviation: "ZA",
-                extraDeliveryPercent: 75,
+                extraDeliveryPercent: 90,
             }
         ],
         languages: [
