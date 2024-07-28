@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
                 const unitPrice = Number((cart_.unitPrice * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 const totalPrice = Number(((cart_.subTotalPrice - cart_.subTotalDiscount) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                const overallTotal = Number(((cart_.subTotalPrice - cart_.subTotalDiscount + cart.deliveryFee) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 orderData.push({
                     OrderId: order._id,
                     CartId: cart_._id,
@@ -67,6 +68,7 @@ export async function POST(request: NextRequest) {
                     UnitPrice: `${currencySymbol}${unitPrice}`,
                     TotalPrice: `${currencySymbol}${totalPrice}`,
                     DeliveryFee: `${currencySymbol}${deliveryFee}`, 
+                    OverallTotalPrice: `${currencySymbol}${overallTotal}`,
                     DateOrdered: getCurrentDate(), ///Convert the mongodb to date and time format and assign it respectively
                     TimeOrdered: getCurrentTime()
                 })

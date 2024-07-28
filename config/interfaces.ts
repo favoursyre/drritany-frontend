@@ -384,6 +384,7 @@ export interface IOrderSheet {
   UnitPrice?: string,
   TotalPrice?: string,
   DeliveryFee?: string,
+  OverallTotalPrice?: string,
   DateOrdered?: string,
   TimeOrdered?: string,
   TestGroup?: string,
