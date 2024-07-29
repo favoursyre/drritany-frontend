@@ -59,6 +59,24 @@ const OrderFormModal = () => {
     }
 
     useEffect(() => {
+        const interval = setInterval(() => {
+            //setModalState(() => getModalState())
+
+            console.log("test c: ", country)
+            // if (country) {
+            //     //Checking if the state has extraDeliveryPercent and notifying the client
+            //     const countryInfo_ = countryList.find(country => country.name?.common === country) as unknown as ICountry
+            //     setCountryInfo(() => countryInfo_)
+            // }
+        }, 100);
+    
+        return () => {
+            clearInterval(interval);
+        };
+        
+    }, [countryInfo]);
+
+    useEffect(() => {
         //getClientInfo()
         
         if (clientInfo && clientInfo?.country) {
@@ -246,10 +264,12 @@ const OrderFormModal = () => {
   const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
     e.preventDefault()
 
+    console.log("Select Val: ", e.target.value)
+
     if (label === "country") {
         setCountry(e.target.value);
 
-        const countryInfo_ = countryList.find(country => country.name?.common === country) as unknown as ICountry
+        const countryInfo_ = countryList.find(country => country.name?.common === e.target.value) as unknown as ICountry
         setCountryInfo(() => countryInfo_)
     } else if (label === "state") {
         if (cart && clientInfo?.country?.currency?.exchangeRate) {

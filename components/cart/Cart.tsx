@@ -69,7 +69,7 @@ const Cart = () => {
     }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
 
     useEffect(() => {
-        window.location.reload()
+        //window.location.reload()
     })
 
     ///This function increases the amount of quantity
@@ -130,6 +130,7 @@ const Cart = () => {
             notify("error", "Delivery Info is required")
             await sleep(0.3)
             setOrderForm(true)
+            //window.location.reload()
         }
         
     }
@@ -142,6 +143,12 @@ const Cart = () => {
         await sleep(0.2)
         setOrderForm(!orderForm)
         console.log("Order form: ", orderForm)
+        //window.location.reload()
+
+        // if (orderForm) {
+            
+        //     console.log("testing")
+        // }
     }
 
     ///This function triggers with the first remove button
