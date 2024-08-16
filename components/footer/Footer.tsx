@@ -4,7 +4,7 @@
 ///Libraries -->
 import { notify, visitSocialLink } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend, GoogleSheetDB, orderSheetId, companyEmail, companyName, logo } from '@/config/utils'
+import { routeStyle, backend, companyName, logo } from '@/config/utils'
 import { IContact, INews, IOrderSheet } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";

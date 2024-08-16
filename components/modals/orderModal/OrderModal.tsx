@@ -38,6 +38,7 @@ const OrderModal = () => {
         e.preventDefault()
 
         if (submit) {
+            notify("info", "Redirecting you to homepage")
             router.push("/")
         }
         
@@ -87,6 +88,7 @@ const OrderModal = () => {
                 console.log("Data: ", data);
 
                 if (res.ok) {
+                    
                     notify("success", `Your order was logged successfully`)
                     //setItem(cartName, undefined)
                     //setItem(cartName, undefined)
@@ -121,6 +123,8 @@ const OrderModal = () => {
                 //setModalState(true)
             } catch (error) {
                 console.log("error: ", error)
+                setModalBackground(false)
+                setOrderModal(false)
                 notify("error", `${error}`)
             }
 

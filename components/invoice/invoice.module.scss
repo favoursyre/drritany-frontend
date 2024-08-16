@@ -208,12 +208,14 @@
                 .deliveryDate, .deliveryStatus, .paymentStatus {
                     //border: 1px solid red;
                     @include size(100%, auto);
-                    @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 0%);
-                    top: -10%;
+                    @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 0%);
+                    //top: -10%;
 
                     @include phonePro {
                         flex-direction: row;
                         justify-content: space-between;
+                        top: -10%;
+                        align-items: center;
                     }
 
                     .text {

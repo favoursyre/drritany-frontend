@@ -48,12 +48,13 @@ export async function POST(request: NextRequest) {
 
         const orderData: Array<IOrderSheet> = []
         if (client.country?.currency?.exchangeRate && client.country?.currency?.symbol) {
+            const overallTotal = Number(((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * order.paymentSpec.exchangeRate).toFixed(2)).toLocaleString("en-US")
             for (let i = 0; i < cart.cart.length; i++) {
                 const cart_: ICartItem = cart.cart[i]
                 const unitPrice = Number((cart_.unitPrice * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 const totalPrice = Number(((cart_.subTotalPrice - cart_.subTotalDiscount) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
-                const overallTotal = Number(((cart_.subTotalPrice - cart_.subTotalDiscount + cart.deliveryFee) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                
                 orderData.push({
                     OrderId: order_._id,
                     CartId: cart_._id,
@@ -77,15 +78,14 @@ export async function POST(request: NextRequest) {
             }
         }
        
-        // const orderSheet = new GoogleSheetDB(orderSheetId)
-
-        // //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
-        // const addOrder = await orderSheet.addRow(0, orderData)
-        // console.log("Successfully logged to database")
-        const google = await GoogleSheetStore(orderSheetId)
-        const sheetRange = `Order_Sheet_NG!A:R`
-        const sheet = await google.addSheet(sheetRange, orderData)
-        console.log("Sheet status: ", sheet)
+        //Adding the orders to the sheet
+        for (let order of orderData) {
+            const google = await GoogleSheetStore(orderSheetId)
+            const sheetRange = `Order_Sheet_NG!A:R`
+            const sheet = await google.addSheet(sheetRange, order)
+            console.log("Sheet status: ", sheet)
+        }
+        
 
         ///Sending confirmation email to the person
         const status = await sendOrderEmail(order_)
