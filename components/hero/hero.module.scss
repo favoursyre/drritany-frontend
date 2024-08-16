@@ -22,7 +22,7 @@
 
     @include phonePro {
         flex-direction: column;
-        //border: 2px solid yellow;
+        //border: 2px solid ;
         @include size($height: 80%);
     }
 

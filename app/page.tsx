@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Hero from '@/components/hero/Hero';
-import { domainName, shuffleArray } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus } from '@/config/utils';
 import Stats from "@/components/stats/Stats"
 import ProductGrid from '@/components/product/productGrid/ProductGrid';
 //import dynamic from "next/dynamic"
@@ -35,7 +35,7 @@ async function getProducts() {
   //     console.log(error);
   // }
   try {
-      const res = await fetch(`${domainName}/api/product?action=order`, {
+      const res = await fetch(`${backend}/product?action=order`, {
       method: "GET",
       cache: "no-store",
     })
@@ -77,8 +77,8 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function Home() {
-  const products = await getProducts()
-  const productSlide = shuffleArray(products) as unknown as Array<IProduct>
+  const products = sortProductByActiveStatus(await getProducts(), "Active")
+  const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
   //console.log("Prod1: ", products)
   // const quotes = shuffleArray(await getQuotes()) 
   // const testimonials = shuffleArray(await getTestimonials())
@@ -88,7 +88,7 @@ export default async function Home() {
       <Hero />
       <Stats />
       {/* <TimeBar /> */}
-      <ProductGrid product_={products} view_={undefined} />
+      <ProductGrid product_={products!} view_={undefined} />
       <ProductSlide product_={productSlide} titleId_={2}/>
       {/* <Testimony />   */}
     </main>

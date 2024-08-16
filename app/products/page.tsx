@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
-import { domainName, shuffleArray } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus } from '@/config/utils';
 import ProductQuery from '@/components/product/productQuery/ProductQuery';
 import ProductSlide from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
@@ -20,9 +20,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 ///This function searches for passed in query
-async function getQueriedProducts(query: string | string[] | undefined) {
+async function getQueriedProducts(query: string | undefined) {
     try {
-      const res = await fetch(`${domainName}/api/product?action=search&query=${query}`, {
+      const res = await fetch(`${backend}/product?action=search&query=${query}`, {
         method: "GET",
         cache: "no-store",
       });
@@ -36,26 +36,26 @@ async function getQueriedProducts(query: string | string[] | undefined) {
   } catch (error) {
       console.error(error);
   }
-  }
+}
 
 
 ///This fetches the products
 async function getProducts() {
-    try {
-      const res = await fetch(`${domainName}/api/product?action=order`, {
-        method: "GET",
-        cache: "no-store",
-      })
-  
-      if (res.ok) {
-        return res.json()
-      } else {
-        getProducts()
-      }
-    } catch (error) {
-        console.error(error);
+  try {
+    const res = await fetch(`${backend}/product?action=order`, {
+      method: "GET",
+      cache: "no-store",
+    })
+
+    if (res.ok) {
+      return res.json()
+    } else {
+      getProducts()
     }
+  } catch (error) {
+      console.error(error);
   }
+}
 
 /**
  * @title Product query page
@@ -64,12 +64,13 @@ async function getProducts() {
     const { query } = req.searchParams
     //const { query: query_ } = req
     //console.log("Query: ", query )
-    const queryProducts = await getQueriedProducts(query)
-    const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
+    
+    const queryProducts = sortProductByActiveStatus(await getQueriedProducts(query), "Active")
+    const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
   
     return (
       <main className="search_page">
-        <ProductQuery keyword_={query} query_={queryProducts} />
+        <ProductQuery keyword_={query} query_={queryProducts!} />
         <ProductSlide product_={products} titleId_={2} />
       </main>
     )

@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const path = require("path")
 
 const nextConfig = {
     images: {
@@ -29,6 +30,11 @@ const nextConfig = {
     
         return config
       },
+      // resolve: {
+      //   alias: {
+      //     style: path.resolve(__dirname, '.', 'style')
+      //   }
+      // },
       // experimental: {
       //   workerThreads: false,
       //   cpus: 1,

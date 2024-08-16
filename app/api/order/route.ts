@@ -6,25 +6,27 @@ import { Order } from "@/models/order";
 import { NextResponse, NextRequest } from "next/server";
 import { sendOrderEmail } from "@/config/email";
 import { ICartItem, IClientInfo, IOrder, IOrderSheet } from "@/config/interfaces";
-import { GoogleSheetDB, orderSheetId, getCurrentTime, getCurrentDate } from "@/config/utils";
+import { orderSheetId, getCurrentTime, getCurrentDate } from "@/config/utils";
+import { GoogleSheetStore } from "@/config/serverUtils";
 
 ///Commencing the code
 //This function returns the correct number of quantities
 function getValidQuantity(product: ICartItem): string {
-    if (product.freeOption) {
-        let quantity
-        if (product.quantity >= 10) {
-            quantity = product.quantity + 2
-            return quantity.toString()
-        } else if (product.quantity >= 5) {
-            quantity = product.quantity + 1
-            return quantity.toString()
-        } else {
-            return product.quantity.toString()
-        }
-    } else {
-        return product.quantity.toString()
-    }
+    // if (product.freeOption) {
+    //     let quantity
+    //     if (product.quantity >= 10) {
+    //         quantity = product.quantity + 2
+    //         return quantity.toString()
+    //     } else if (product.quantity >= 5) {
+    //         quantity = product.quantity + 1
+    //         return quantity.toString()
+    //     } else {
+    //         return product.quantity.toString()
+    //     }
+    // } else {
+    //     return product.quantity.toString()
+    // }
+    return product.quantity.toString()
 }
 
 ///Creating a product
@@ -33,13 +35,13 @@ export async function POST(request: NextRequest) {
         const data = await request.json();
 
         ///Adding the order to the database
-        const { customerSpec, productSpec, clientInfo_ } = data
+        const { order, clientInfo_ } = data
         await connectMongoDB();
         console.log("Subscriber_: ", data)
-        const order: IOrder = await Order.processOrder(customerSpec, productSpec)
+        const order_: IOrder = await Order.processOrder(order)
 
         //Adding the order to Google sheet
-        const { customerSpec: customer, productSpec: cart } = order
+        const { customerSpec: customer, productSpec: cart } = order_
         const client: IClientInfo = clientInfo_ as unknown as IClientInfo
         const currencySymbol = client.country?.currency?.symbol
         console.log('Clientinfo: ', clientInfo_)
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
                 const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 const overallTotal = Number(((cart_.subTotalPrice - cart_.subTotalDiscount + cart.deliveryFee) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 orderData.push({
-                    OrderId: order._id,
+                    OrderId: order_._id,
                     CartId: cart_._id,
                     FullName: customer.fullName,
                     EmailAddress: customer.email,
@@ -75,14 +77,18 @@ export async function POST(request: NextRequest) {
             }
         }
        
-        const orderSheet = new GoogleSheetDB(orderSheetId)
+        // const orderSheet = new GoogleSheetDB(orderSheetId)
 
-        //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
-        const addOrder = await orderSheet.addRow(0, orderData)
-        console.log("Successfully logged to database")
+        // //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
+        // const addOrder = await orderSheet.addRow(0, orderData)
+        // console.log("Successfully logged to database")
+        const google = await GoogleSheetStore(orderSheetId)
+        const sheetRange = `Order_Sheet_NG!A:R`
+        const sheet = await google.addSheet(sheetRange, orderData)
+        console.log("Sheet status: ", sheet)
 
         ///Sending confirmation email to the person
-        const status = await sendOrderEmail(order)
+        const status = await sendOrderEmail(order_)
         console.log('Email: ', await status)
 
         return NextResponse.json({ message: "Order Sent Successfully" }, { status: 200 });

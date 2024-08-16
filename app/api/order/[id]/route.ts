@@ -48,18 +48,18 @@ export async function GET(request: NextRequest, response: IResponse) {
 }
 
 ///Delete an acocunt
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
-    //console.log("ID: ", id)
+// export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+//     const { id } = params;
+//     //console.log("ID: ", id)
 
-    try {
-        await connectMongoDB();
-        //await Order.deleteOrder(id)
-        return NextResponse.json({ message: "Product deleted" }, { status: 200 });
-    } catch (error: any) {
-        console.log("Error: ", error)
-        return NextResponse.json({ message: error.message }, { status: 400 });
-    }
-}
+//     try {
+//         await connectMongoDB();
+//         //await Order.deleteOrder(id)
+//         return NextResponse.json({ message: "Product deleted" }, { status: 200 });
+//     } catch (error: any) {
+//         console.log("Error: ", error)
+//         return NextResponse.json({ message: error.message }, { status: 400 });
+//     }
+// }
 
 //export default GET

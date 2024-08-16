@@ -16,6 +16,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import Loading from "../loadingCircle/Circle";
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
+import { logo } from "@/config/utils";
 
 ///Commencing the code 
 /**
@@ -91,10 +92,10 @@ const Header = () => {
         <div className={styles.logo} onClick={() => router.push('/')}>
           <Image
             className={styles.img}
-            src="https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG"
-            alt=""
-            width={2500}
-            height={2500}
+            src={logo.src}
+            alt={logo.alt!}
+            width={logo.width}
+            height={logo.height}
           />
         </div>
         <div className={`${styles.links}`}>

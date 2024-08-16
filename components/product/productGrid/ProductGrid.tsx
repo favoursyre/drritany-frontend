@@ -33,7 +33,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     const [sortOptions, setSortOptions] = useState(sortOption)
     const [category, setCategory] = useState<boolean>(false)
     const [categoryId, setCategoryId] = useState<number>(0)
-    const [categoryOptions, setCategoryOptions] = useState<Array<string>>(["All", ...categories.map((category) => category.name)]) 
+    const [categoryOptions, setCategoryOptions] = useState<Array<string>>(["All", ...categories.map((category) => category.macro)]) 
     const [pcTotalPage, setPcTotalPage] = useState<Array<any>>([])
     const [mobileTotalPage, setMobileTotalPage] = useState<Array<any>>([])
     const [timeLeft, setTimeLeft] = useState<number>(54400);
@@ -153,23 +153,24 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         setSort(false)
         setSortId(sort)
 
+        //let newProducts
         if (sort === 0) {
-            product_ = sortProductByOrder(productList)
+            const newProducts = sortProductByOrder(productList)
             //setProductList(() => [...product_])
-            setProducts(() => [...product_])
+            setProducts(() => [...newProducts])
         } else if (sort === 1) {
-            product_ = sortProductByLatest(productList)
+            const newProducts = sortProductByLatest(productList)
             //product_ = sortByCategory(productList, "Health & Personal Care")
             //setProductList(() => [...product_])
-            setProducts(() => [...product_])
+            setProducts(() => [...newProducts])
         } else if (sort === 2) {
-            product_ = sortProductByPrice(productList, "descend")
+            const newProducts = sortProductByPrice(productList, "descend")
             //setProductList(() => [...product_])
-            setProducts(() => [...product_])
+            setProducts(() => [...newProducts])
         } else if (sort === 3) {
-            product_ = sortProductByPrice(productList, "ascend")
+            const newProducts = sortProductByPrice(productList, "ascend")
             //setProductList(() => [...product_])
-            setProducts(() => [...product_])
+            setProducts(() => [...newProducts])
         }
     }
 

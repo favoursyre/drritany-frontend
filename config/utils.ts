@@ -3,10 +3,8 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategory, IOrderSheet, IProduct, ICountry } from './interfaces';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { JWT } from 'google-auth-library';
-//import credentials from "../drritany-f60889c0b640.json"
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage } from './interfaces';
+import styles from "@/styles/_base.module.scss"
 
 ///Commencing the code
 export const companyName: string = "Idealplug"
@@ -25,15 +23,23 @@ export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery 
 
 export const minKg: number = 1
 
+//export const mediaFolderId: string = "https://developers.google.com/oauthplayground"
+
 export const deliveryFeePerKg: number = 0.9 //Unit is in USD
 
 //export const domainName: string = "http://localhost:3000"
 //export const domainName: string = "http://192.168.43.133:3000"
 export const domainName: string = "https://idealplug.com"
 
+///The backend api point
+export const backend = "https://idealplug.com/api"
+//export const backend = "http://localhost:3000/api"
+
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
 export const querySheetId: string = "1sxI_f2u4Pyxfp-8lwZr6O42YWpIJSEvVfAPrAjkB-oQ"
+
+export const mediaFolderId: string = "1c_PAN5IenoKGNtRJJ7MG6zfa5jZC9bwH"
 
 ///This function gets an array and sends the regrouped array of specified length
 export const groupList = (arr: Array<any>, length: number): Array<any> => {
@@ -52,6 +58,10 @@ export const cartName: string = "idealPlugCart"
 
 export const deliveryName: string = "idealPlugDeliveryInfo"
 
+export const adminName: string = "idealPlugAdmin"
+
+export const productInfoName: string = "idealPlugProduct"
+
 export const extraDeliveryFeeName: string = "idealPlugExtraDeliveryFee"
 
 //Order name
@@ -59,6 +69,13 @@ export const orderName: string = "idealPlugOrder"
 
 export const SUPPORT_EMAIL: string = companyEmail
 export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
+
+export const logo: IImage = {
+    src: "https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG",
+    alt: "logo",
+    width: 2500,
+    height: 2500
+}
   
 // const routerPath = usePathname();
 // console.log("router: ", routerPath)
@@ -80,8 +97,14 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
             return styles.faqsPage
         case "/products":
             return styles.searchPage
+        // case "/admin/login":
+        //     return styles.adminLoginPage
         default:
-            if (router.includes("/products/")) {
+            if (router.includes("/admin/login")) {
+                return styles.adminLoginPage
+            } else if (router.includes("/admin")) {
+                return styles.adminPage
+            } else if (router.includes("/products/")) {
                 return styles.productInfoPage
             } else if (router.includes("/order/invoice")) {
                 return styles.orderInvoicePage
@@ -93,10 +116,6 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
     }
 }
 
-
-
-///This function gets the countryList info of a particular client
-// export const getClientCountryInfo = (countryCode: string): ICountry => {
     
 //This function checks if 2 objects are equal
 export const areObjectsEqual = <T extends { [key: string]: any }>(obj1: T | undefined, obj2: T | undefined): boolean => {
@@ -162,13 +181,54 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
 //This function checks if a link is an image
 export const isImage = (url: string | undefined): boolean => {
     if (url) {
-        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'avif'];
         const extension = url.split('.').pop()?.toLowerCase();
         return imageExtensions.includes(extension || '');
     } else {
         return false
     }
-  };
+};
+
+//This function checks if a link is a video
+export const isVideo = (url: string | undefined): boolean => {
+    if (url) {
+        // List of common video file extensions
+        const videoExtensions = ['mp4', 'avi', 'mov', 'mkv', 'webm', 'flv', 'wmv', 'm4v', 'mpeg'];
+        // Extract the file extension from the URL
+        const extension = url.split('.').pop()?.toLowerCase();
+        // Check if the file extension matches one of the video extensions
+        return videoExtensions.includes(extension || '');
+    } else {
+        // If the URL is undefined or doesn't have an extension, return false
+        return false;
+    }
+};
+
+//This function generates direct links for google drive files
+export const getGDriveDirectLink = (driveId: string): string  => {
+    return `https://drive.google.com/uc?export=download&id=${driveId}`
+}
+
+//This function gets the preview links for google drive videos
+export const getGDrivePreviewLink = (driveId: string): string => {
+    return `https://drive.google.com/file/d/${driveId}/preview`
+}
+
+//This function extracts the id from google direct links
+export const getGDriveDirectLinkId = (url: string): string | null  => {
+    try {
+        // Parse the URL
+        const parsedUrl = new URL(url);
+        
+        // Get the value of the 'id' query parameter
+        const id = parsedUrl.searchParams.get('id');
+        
+        return id;
+    } catch (error) {
+        console.error('Invalid URL:', error);
+        return null;
+    }
+}
 
 //This function rounds numbers up
 export const round = (value: number, precision: number): number => {
@@ -221,10 +281,6 @@ export const findStateWithZeroExtraDeliveryPercent = (country: ICountry | undefi
     } 
 };
 
-///The backend api point
-export const backend = "https://drritany-web-backend-2b4e96f65eb5.herokuapp.com"
-//export const backend = "https://localhost:4050"
-
 ///This contains the sort orders
 export const sortOptions = [
     {id: 0, name: "Most Ordered"},
@@ -272,6 +328,18 @@ export const formatArrayToString = (arr: Array<string>): string => {
       return `${joinedItems}, and ${lastItem}`;
     }
 };
+
+//This function is extracts the main title of a page i.e. `Home | Idealplug` => `Home`
+export const extractMainPageTitle = (title: string): string => {
+    // Split the string by the '|' character
+    const parts = title.split('|');
+    
+    // Extract the first part and trim any whitespace
+    const firstWord = parts[0].trim();
+    
+    // Return the first word
+    return firstWord;
+}
 
   ///This function types check the currency symbol
 //   export const getCurrencySymbol = (clientInfo: IClientInfo | null): string => {
@@ -345,7 +413,7 @@ export const sortProductByOrder = (products: Array<IProduct>): Array<IProduct> =
 export const sortProductByLatest = (products: Array<IProduct>): Array<IProduct> => {
     // Sort the array based on the createdAt property in descending order
     const sortedProducts = products.sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime();
     }); 
     return sortedProducts
 }
@@ -355,16 +423,16 @@ export const sortProductByPrice = (products: Array<IProduct>, action: string): A
     ///This function sorts the price property from highest price to lowest price
     if (action === "descend") {
         const sortedProducts = products.sort((a, b) => {
-            const priceA = a.price ?? 0; // Default to 0 if price is undefined
-            const priceB = b.price ?? 0; // Default to 0 if price is undefined
+            const priceA = a.pricing?.basePrice ?? 0; // Default to 0 if price is undefined
+            const priceB = b.pricing?.basePrice ?? 0; // Default to 0 if price is undefined
             return priceB - priceA;
         });
         return sortedProducts
     } else if (action === "ascend") {
         ///This function sorts the price property from lowest price to highest price
         const sortedProducts = products.sort((a, b) => {
-            const priceA = a.price ?? 0; // Default to 0 if price is undefined
-            const priceB = b.price ?? 0; // Default to 0 if price is undefined
+            const priceA = a.pricing?.basePrice ?? 0; // Default to 0 if price is undefined
+            const priceB = b.pricing?.basePrice ?? 0; // Default to 0 if price is undefined
             return priceA - priceB;
         });
         return sortedProducts
@@ -375,7 +443,7 @@ export const sortProductByPrice = (products: Array<IProduct>, action: string): A
 
 ///This function sorts the products by category
 export const sortByCategory = (products: Array<IProduct>, category: string): Array<IProduct> => {
-    const categories_ = categories.map((category) => category.name)
+    const categories_ = categories.map((category) => category.macro)
 
     if (category === "All") {
       return products;
@@ -419,102 +487,6 @@ export const formatObjectValues = (obj: { [key: string]: any }): string => {
 
     // Join the values with a comma and space, and enclose in parentheses
     return `(${values.join(', ')})`;
-}
-
-///This function allows us to perform CRUD operation using Google Sheet
-export class GoogleSheetDB {
-    private doc: GoogleSpreadsheet
-    private auth: JWT
-
-    constructor(sheetId: string) {
-        this.auth = new JWT({
-            // env var values here are copied from service account credentials generated by google
-            // see "Authentication" section in docs for more info
-            email: sheetEmail,
-            key: sheetKey,
-            scopes: [
-              'https://www.googleapis.com/auth/spreadsheets',
-            ],
-          });
-        this.doc = new GoogleSpreadsheet(sheetId, this.auth)
-    }
-
-    ///This function gets a row using the ID property
-    public async getRow(cartId: string, sheetIndex: number) {
-        // load the documents info
-        await this.doc.loadInfo();
-
-        // Index of the sheet
-        let sheet = this.doc.sheetsByIndex[sheetIndex];
-
-        // Get all the rows
-        let rows = await sheet.getRows();
-
-        for (let index = 0; index < rows.length; index++) {
-            const row = rows[index];
-            if (row.get("CartId") === cartId) {
-                console.log(row);
-                return row
-            }
-        };
-    }
-
-    ///This function deletes a row using the ID property
-    public async deleteRow(sheetIndex: number, cartId: string) {
-        await this.doc.loadInfo();
-
-        // Index of the sheet
-        let sheet = this.doc.sheetsByIndex[sheetIndex];
-    
-        let rows = await sheet.getRows();
-    
-        for (let index = 0; index < rows.length; index++) {
-            const row = rows[index];
-            if (row.get("CartId") === cartId) {
-                await row.delete();
-                break; 
-            }
-        };
-    }
-
-    ///This function adds new row to the sheet
-    public async addRow(sheetIndex: number, rows: Array<{ [key: string]: any }>) {
-        await this.doc.loadInfo();
-
-        // Index of the sheet
-        let sheet = this.doc.sheetsByIndex[sheetIndex];
-        console.log("Sheet: ", sheet)
-
-        for (let index = 0; index < rows.length; index++) {
-            const row = rows[index] as unknown as any;
-            console.log("Add: ", row)
-
-            await sheet.addRow(row);
-        }
-    }
-
-    ///This function updates a row in the sheet using the ID property
-    public async updateRow(sheetIndex: number, cartId: string, data: IOrderSheet) {
-        await this.doc.loadInfo();
-
-        // Index of the sheet
-        let sheet = this.doc.sheetsByIndex[sheetIndex];
-
-        let rows = await sheet.getRows();
-
-        for (let index = 0; index < rows.length; index++) {
-            const row = rows[index]
-            //console.log("Row: ", row.get("CartId"))
-            if (row.get("CartId") === cartId) {
-                const data_ = Object.entries(data)
-                for (let i = 0; i < data_.length; i++) {
-                    row.set(data_[i][0], data_[i][1])
-                    await row.save();
-                }
-                break; 
-            }
-        };
-    }
 }
 
 /**
@@ -575,14 +547,14 @@ const isSimilarProduct = (productA: IProduct, productB: IProduct, level: number 
     if (level === 0) {
         return (
             productA.category === productB.category &&
-            productA.subCategory === productB.subCategory &&
-            productA.miniCategory === productB.miniCategory
+            productA.category?.mini === productB.category?.mini &&
+            productA.category?.micro === productB.category?.micro
             //productA.inStock !== false
         )
     } else if (level === 1) {
         return (
             productA.category === productB.category &&
-            productA.subCategory === productB.subCategory
+            productA.category?.mini === productB.category?.mini
         )
     } else {
         return (
@@ -626,60 +598,1157 @@ export const sortProductsBySimilarity = (products: Array<IProduct>, targetProduc
     return [...shuffleArray(similarProducts), ...shuffleArray(otherProducts)];
 };
 
-export const categories: Array<ICategory> = [
+//This function is used to sort products based on active or inactive
+export const sortProductByActiveStatus = (products: Array<IProduct>, label: "All" | "Active" | "Inactive"): Array<IProduct> | undefined => {
+    if (products) {
+        if (label === "All") {
+            return products
+        } else if (label === "Active") {
+            let products_ = products.filter((product) => product.active === true)
+            return products_ 
+        } else if (label === "Inactive") {
+            let products_ = products.filter((product) => product.active === undefined || product.active === false)
+            return products_
+        }
+    } else {
+        return
+    }
+}
+
+/**
+ * Converts an array of strings to a single comma-separated string.
+ * @param arr - The array of strings to convert.
+ * @returns A comma-separated string.
+ */
+export const arrayToString = (arr: string[]): string => {
+    if (arr) {
+        return arr.join('. ');
+    } else {
+        return arr
+    }
+    
+}
+
+/**
+ * Converts a comma-separated string to an array of strings.
+ * @param str - The string to convert.
+ * @returns An array of strings.
+ */
+export const stringToArray = (str: string): string[] => {
+    return str.split('. ').map(item => item.trim());
+}
+
+export const categories: Array<ICategoryInfo> = [
     {
-        name: "Health & Personal Care",
-        micros: [
-            "Medical Supplies & Devices",
-            "Sports & Outdoors",
-            "Medicines & Supplements",
-            "Wearables & Accessories",
-            "Personal Care & Hygiene",
+        macro: "Health & Personal Care",
+        minis: [
+            {
+                mini: "Medical Supplies & Accessories",
+                micros: [
+                    {
+                        micro: "Healthcare Devices & Equipments",
+                        nanos: [
+                            "Monitoring Devices",
+                            "Laboratory Equipments",
+                            "Imaging Devices",
+                            "First Aid Kits",
+                            "Surgical Instruments",
+                            "Point of Care Devices",
+                            "Respiratory & Cardiovascular Devices",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Mobility Aids",
+                        nanos: [
+                            "Canes & Walking Sticks",
+                            "Walkers & Rollators",
+                            "Wheelchairs",
+                            "Mobility Scooters",
+                            "Crutches",
+                            "Others",
+                        ]
+                    },
+                    {
+                        micro: "Accessories & Others",
+                        nanos: [
+                            "Braces & Supports",
+                            "Massagers",
+                            "Personal Protective Equipment",
+                            "Hygiene and Sanitization",
+                            "Others"
+                        ]
+                    },
+                ]
+            },
+            {
+                mini: "Sports & Outdoor",
+                micros: [
+                    {
+                        micro: "Gym Equipments & Accessories",
+                        nanos: [
+                            "Strength Training Equipments",
+                            "Cardio Equipments",
+                            "Boxing & Martial Arts",
+                            "Wearables & Accessories"
+                        ]
+                    },
+                    {
+                        micro: "Sports Nutrition",
+                        nanos: [
+                            "Protein Supplements",
+                            "Hydration",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Outdoor Recreation",
+                        nanos: [
+                            "Camping & Hiking",
+                            "Fishing",
+                            "Hunting",
+                            "Climbing",
+                            "Others & Accessories"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Medicines & Supplements",
+                micros: [
+                    {
+                        micro: "Medicines",
+                        nanos: [
+                            "Prescription Medicines",
+                            "Over The Counter Medicines",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Supplements",
+                        nanos: [
+                            "Dietary Supplements",
+                            "Herbal Supplements",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Personal Care & Hygiene",
+                micros: [
+                    {
+                        micro: "Body Hygiene",
+                        nanos: [
+                            "Oral Care",
+                            "Body Care",
+                            'Others'
+                        ]
+                    },
+                    {
+                        micro: "Sexual Health",
+                        nanos: [
+                            "Condoms & Contraceptives",
+                            "Sex Toys",
+                            "Sanitary Pads & Tampons",
+                            "Others"
+                        ]
+                    }
+                ]
+            }
         ]
     },
     {
-        name: "Beauty & Fashion",
-        micros: [
-            "Cosmetics & Lotions",
-            "Fragances",
-            "Jewelries",
-            "Clothes",
-            "Shoes",
-            "Accessories",
-            "Textiles"
+        macro: "Beauty & Fashion",
+        minis: [
+            {
+                mini: "Cosmetics & Lotions",
+                micros: [
+                    {
+                        micro: "Bath & Body",
+                        nanos: [
+                            "Body Wash, Shower Gels & Soaps",
+                            "Moisturizer & Lotions",
+                            "Scrubs & Exfoliants",
+                            "Hair Creams & Accessories",
+                            "Accessories & Others"
+                        ]
+                    },
+                    {
+                        micro: "Face Care",
+                        nanos: [
+                            "Face Scrubs & Wash",
+                            "Face Mask & Peels",
+                            "Facial Mosturizers & Serums",
+                            "Eye Creams",
+                            "Lip Balms & Treatments",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Makeup",
+                        nanos: [
+                            "Face Makeup",
+                            "Eye Makeup",
+                            "Lip Makeup",
+                            "Nail Makeup",
+                            "Costume Makeup",
+                            "Makeup Accessories"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Fragances",
+                micros: [
+                    {
+                        micro: "Perfumes",
+                        nanos: [
+                            "Parfum",
+                            "Eau de Parfum",
+                            "Eau de Toilette",
+                            "Eau de Cologne",
+                            "Eau Fraiche"
+                        ]
+                    },
+                    {
+                        micro: "Body Sprays & Mists",
+                        nanos: [
+                            "Fragrance Mists",
+                            "Aromatherapy Sprays",
+                            "Shimmer & Glitter Mists"
+                        ]
+                    },
+                    {
+                        micro: "Scented Oils & Roll-Ons",
+                        nanos: [
+                            "Perfume Oils",
+                            "Roll-On Fragrances",
+                            "Aromatherapy Oils"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Clothes",
+                micros: [
+                    {
+                        micro: "Men's Clothing",
+                        nanos: [
+                            "Tops",
+                            "Bottoms",
+                            "Suits",
+                            "Outerwears",
+                            "Traditional Wears",
+                            "Underwears",
+                            "Sleepwears",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Women's Clothing",
+                        nanos: [
+                            "Tops",
+                            "Bottoms",
+                            "Dresses",
+                            "Traditional Wears",
+                            "Outerwears",
+                            "Underwears",
+                            "Sleepwears",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Unisex Clothing",
+                        nanos: [
+                            "Tops",
+                            "Bottoms",
+                            "Sleepwears",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Footwears",
+                micros: [
+                    {
+                        micro: "Men's Footwears",
+                        nanos: [
+                            "Sneakers",
+                            "Dress Shoes",
+                            "Boots",
+                            "Loafers",
+                            "Sandals",
+                            "Slippers",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Women's Footwears",
+                        nanos: [
+                            "Flats",
+                            "Heels",
+                            "Sandals",
+                            "Sneakers",
+                            "Boots",
+                            "Slippers",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Accessories & Others",
+                        nanos: [
+                            "Shoe Care",
+                            "Insoles & Inserts",
+                            'Laces',
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Jewelries & Accessories",
+                micros: [
+                    {
+                        micro: "Jewelries",
+                        nanos: [
+                            "Necklaces",
+                            'Watches',
+                            'Earrings',
+                            "Bracelets",
+                            "Rings",
+                            "Anklets",
+                            "Brooches & Pins",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Eyewears & Frames",
+                        nanos: [
+                            "Eyeglasses",
+                            "Frames",
+                            "Lens",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Accessories & Others",
+                        nanos: [
+                            "Hats",
+                            "Belts",
+                            "Scarves",
+                            "Gloves",
+                            "Bath",
+                            "Handbags",
+                            "Ties & Bow Ties",
+                            "Socks & Hoisery",
+                            "Wallets",
+                            "Others"
+                        ]
+                    },
+                ]
+            },
+            // {
+            //     mini: "Textiles",
+            //     micros: [
+                    
+            //     ]
+            // },
         ]
     },
-    // {
-    //     name: "Arts & Crafts",
-    //     micros: [
-    //         "Sculptures",
-    //         "Sketches",
-    //         "Paintings"
-    //     ]
-    // },
-    // {
-    //     name: "Home, Furnitures & Appliances",
-    //     micros: [
-    //         ""
-    //     ]
-    // },
-    // {
-    //     name: "Computer, Gadget & Electronics",
-    //     micros: [
-    //         ""
-    //     ]
-    // },
-    // {
-    //     name: "Energy",
-    //     micros: [
-    //         "Generator",
-    //         "Battery",
-    //         "Solar"
-    //     ]
-    // }
+    {
+        macro: "Home, Office & Construction",
+        minis: [
+            {
+                mini: "Home, Office & Appliances",
+                micros: [
+                    {
+                        micro: "Home Appliances",
+                        nanos: [
+                            "Generic Room Appliances",
+                            "Smart Home Devices",
+                            "Vacuum Cleaners & Floor Care",
+                            "Spare Parts & Accessories",
+                            "Household Essentials",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Furnitures & Accessories",
+                        nanos: [
+                            "Living Room Furnitures",
+                            "Bedroom Furnitures",
+                            "Dining Room Furnitures",
+                            "Bathroom Furnitures",
+                            "Office Furnitures",
+                            "Lighting",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Kitchen Wares & Appliances",
+                        nanos: [
+                            "Kitchen Appliances",
+                            "Cook & Bake Wares",
+                            "Dining Wares",
+                            "Spare Parts & Accessories",
+                            "Kitchen Tools & Gadgets",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Garden & Outdoors",
+                        nanos: [
+                            "Garden Furnitures",
+                            "Grills & Outdoor Cooking",
+                            "Lawn & Garden Care",
+                            "Pools & Tubs",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Construction, Decors & Tools",
+                micros: [
+                    {
+                        micro: "Building Materials",
+                        nanos: [
+                            "Roofing Materials",
+                            "Flooring Materials",
+                            "Handrails",
+                            "Ceilings",
+                            "Cements & Sand",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Hardware",
+                        nanos: [
+                            "Doors & Windows",
+                            "Door Knobs & Handles",
+                            "Cabinet Hardware",
+                            "Locks & Latches",
+                            "Nails, Screws & Fasteners",
+                            "Adhesives & Sealants",
+                            "Hinges & Brackets",
+                            "Tools & Equipments",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Wallarts & Wallpapers",
+                        nanos: [
+                            "Wall Paints",
+                            "Paint Brushes & Rollers",
+                            "Wallpaper & Borders",
+                            "Paint Sprayers",
+                            "Paint Strippers & Removers",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Plumbing",
+                        nanos: [
+                            "Faucets & Fixtures",
+                            "Pipes & Fittings",
+                            "Shower Heads",
+                            "Water Heaters",
+                            "Sinks & Basins",
+                            "Toilets & Bidets",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Electricals & Wiring",
+                        nanos: [
+                            "Light Switches & Dimmers",
+                            "Outlets & Adapters",
+                            "Extension Cords",
+                            "Circuit Breakers",
+                            "Wiring & Cable Management",
+                            "Others"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        macro: "Phones, Computers & Electonics",
+        minis: [
+            {
+                mini: "Phones, Tablets & Accessories",
+                micros: [
+                    {
+                        micro: "Phones",
+                        nanos: [
+                            "Basic",
+                            "Smartphones",
+                            "Landlines",
+                            "Spare Parts",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Tablets",
+                        nanos: [
+                            "Androids",
+                            "iPads",
+                            "Windows",
+                            "E-Readers",
+                            "Spare Parts",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Wearables & Accessories",
+                        nanos: [
+                            "Wearables",
+                            "Accessories"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Computer & Accessories",
+                micros: [
+                    {
+                        micro: "Laptops",
+                        nanos: [
+                            "Chromebooks",
+                            "Macbooks",
+                            "Generic Purpose Laptops",
+                            "Ultrabooks",
+                            "Gaming Laptops",
+                            "Spare Parts",
+                            "Convertible (2-in-1) Laptops",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Desktops",
+                        nanos: [
+                            "Gaming Desktops",
+                            "Generic Purpose PC",
+                            "Workstations",
+                            "Desktop Servers",
+                            "Spare Parts",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Supercomputers & Others",
+                        nanos: [
+                            "Supercomputers",
+                            "Mainframes",
+                            "Quantum Computers",
+                            "Spare Parts",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Accessories & Others",
+                        nanos: [
+                            "Softwares",
+                            "Peripheral Devices",
+                            "Routers & Switches",
+                            "Processors & Storages",
+                            "Cables & Adapters",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Electronics & Gadgets",
+                micros: [
+                    {
+                        micro: "Gaming",
+                        nanos: [
+                            "Gaming Consoles",
+                            "Accessories & Others"
+                        ]
+                    },
+                    {
+                        micro: "Audio & Musical Instruments",
+                        nanos: [
+                            "Speakers",
+                            "Recording Instruments",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Photo & Video Instruments",
+                        nanos: [
+                            "Photo Cameras",
+                            "Video Cameras",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Gadgets & Others",
+                        nanos: [
+                            "Drones",
+                            "Robots & Smart Devices",
+                            "Others"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        macro: "Education, Entertainment & Arts",
+        minis: [
+            {
+                mini: "Arts & Board Games",
+                micros: [
+                    {
+                        micro: "Arts & Crafts",
+                        nanos: [
+                            "Paintings",
+                            "Sketches",
+                            "Scultpures",
+                            "Art Supplies & Accessories"
+                        ]
+                    },
+                    {
+                        micro: "Board Games & Puzzles",
+                        nanos: [
+                            "Board Games",
+                            "Puzzles",
+                            "Role Playing Games",
+                            "Others"
+                        ]
+                    },
+                ]
+            },
+            {
+                mini: "Books & School Supplies",
+                micros: [
+                    {
+                        micro: "Books & Educational Materials",
+                        nanos: [
+                            "Textbooks & Workbooks",
+                            "Fiction Books",
+                            "Non-Fiction Books",
+                            "Graphic Novels & Comics",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "School Supplies",
+                        nanos: [
+                            "Stationeries",
+                            "School Furnitures",
+                            "Accessories & Others"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        macro: "Baby, Kids & Toys",
+        minis: [
+            {
+                mini: "Baby Essentials & Gears",
+                micros: [
+                    {
+                        micro: "Baby Essentials",
+                        nanos: [
+                            "Diapers",
+                            "Wipers",
+                            'Nutrition & Feeding',
+                            "Accessories & Others"
+                        ]
+                    },
+                    {
+                        micro: "Baby Gears",
+                        nanos: [
+                            "Strollers",
+                            "Carriers",
+                            "Travel Accesories",
+                            'Others'
+                        ]
+                    },
+                    {
+                        micro: "Baby Health & Safety",
+                        nanos: [
+                            "Baby Proofing",
+                            "Bathing & Skin Care",
+                            "Monitors",
+                            'Others'
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Baby & Kids Clothings",
+                micros: [
+                    {
+                        micro: "Baby Clothings & Accessories",
+                        nanos: [
+                            "Sleepwears",
+                            "Outerwears",
+                            "Onesies & Bodysuits",
+                            "Shoes",
+                            'Others'
+                        ]
+                    },
+                    {
+                        micro: "Kids Clothings & Accessories",
+                        nanos: [
+                            "Tops & T-Shirts",
+                            "Dresses & Skirts",
+                            "Pants & Trousers",
+                            "Shoes",
+                            'Others'
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Baby Toys & Recreation",
+                micros: [
+                    {
+                        micro: "Toys & Games",
+                        nanos: [
+                            "Building & Educational Toys",
+                            "Dolls & Action Figures",
+                            "Board Games & Puzzles",
+                            "Outdoor Toys",
+                            "Electronic Toys",
+                            'Others'
+                        ]
+                    },
+                    {
+                        micro: "Recreation & Furnitures",
+                        nanos: [
+                            "Baby Furnitures",
+                            "Outdoor play equipments",
+                            "Sports Equipments",
+                            'Baby Rides',
+                            'Others'
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        macro: "Vehicles",
+        minis: [
+            {
+                mini: "Bicycles & Motorcycles",
+                micros: [
+                   {
+                        micro: "Bicycles",
+                        nanos: [
+                            "Mountain Bicycles",
+                            "BMX Bicycles",
+                            "Road Bicyles",
+                            "Electric Bicycles",
+                            "Specialty Bicycles",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                   },
+                   {
+                        micro: "Motorcycles & Scooters",
+                        nanos: [
+                            "Motorcycles",
+                            "Scooters",
+                            "All-Terain Vehicles",
+                            "Utility-Tasks Vehicles",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                   }
+                ]
+            },
+            {
+                mini: "Automobiles",
+                micros: [
+                    {
+                        micro: "Cars",
+                        nanos: [
+                            "Sedans",
+                            "Hatchbacks",
+                            "SUVs",
+                            "Coupes",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                   },
+                   {
+                        micro: "Trucks",
+                        nanos: [
+                            "Pickup Trucks",
+                            "Commercial Trucks",
+                            "Box Trucks",
+                            "Tow Trucks",
+                            "Dump Trucks",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Buses",
+                        nanos: [
+                            "Mini Buses",
+                            "City Buses",
+                            "Tour Buses",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Vans",
+                        nanos: [
+                            "Mini Vans",
+                            "Cargo Vans",
+                            "Passenger Vans",
+                            "Camper Vans",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Specialty Vehicles & Others",
+                        nanos: [
+                            "Emergency Vehicles",
+                            "Agricultural Vehicles",
+                            "Construction Vehicles",
+                            "Golf Carts",
+                            // "Militar",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                ]
+            },
+            {
+                mini: "Watercrafts",
+                micros: [
+                    {
+                        micro: "Jet Skis, Canoes & Boats",
+                        nanos: [
+                            "Jet Skis",
+                            "Kayaks",
+                            'Canoes',
+                            "Boats",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Yatchs & Catamarans",
+                        nanos: [
+                            "Yatchs",
+                            "Catamarans",
+                            "Trimarans",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Ferries, Ships & Commercial",
+                        nanos: [
+                            "Ferries",
+                            "Ships",
+                            "Workboats",
+                            "Fishing Vessels",
+                            "Spare Parts & Accessories",
+                            'Others'
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Aircrafts",
+                micros: [
+                    {
+                        micro: "Light Aircrafts & Helicopters",
+                        nanos: [
+                            "Powered Parachutes",
+                            "Gliders",
+                            "Light Aircrafts",
+                            "Helicopters",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Jets & Planes",
+                        nanos: [
+                            "Jets",
+                            "Planes",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+        ]
+    },
+    {
+        macro: "Groceries & Food",
+        minis: [
+            {
+                mini: "Fresh Produce & Dairy",
+                micros: [
+                    {
+                        micro: "Fresh Produce & Spices",
+                        nanos: [
+                            "Fruits",
+                            "Vegetables",
+                            "Herbs & Spices",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Dairies & Drinks",
+                        nanos: [
+                            "Cheese",
+                            "Yoghurt",
+                            "Butter & Margarine",
+                            "Drinks",
+                            "Others"
+                        ]
+                    }
+                ]
+            },
+            {
+                mini: "Pantry Staples",
+                micros: [
+                    {
+                        micro: "Sauces, Oils, & Canned Goods",
+                        nanos: [
+                            "Canned Goods",
+                            "Oils",
+                            "Sauces",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Cereals & Grains",
+                        nanos: [
+                            "Cereals",
+                            "Pasta & Noodles",
+                            "Grains",
+                            "Others"
+                        ]
+                    },
+                ]
+            }
+        ]
+    },
+    {
+        macro: "Industrial, Commercial & Energy",
+        minis: [
+            {
+                mini: "Energy",
+                micros: [
+                    {
+                        micro: "Non-Renewable Energy",
+                        nanos: [
+                            "Generators",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Renewable Energy",
+                        nanos: [
+                            "Solar Panels",
+                            "Inverters",
+                            "Batteries",
+                            "Spare Parts & Accessories",
+                            "Others"
+                        ]
+                    },
+                ]
+            },
+            {
+                mini: "Raw Materials",
+                micros: [
+                    {
+                        micro: "Fabric & Textiles",
+                        nanos: [
+                            "Wool",
+                            "Cotten",
+                            "Linen",
+                            "Silk",
+                            "Denim",
+                            "Leather",
+                            "Synthetics",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Agriculture",
+                        nanos: [
+                            "Seads",
+                            "Oil",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Metals & Alloys",
+                        nanos: [
+                            "Pure Metals",
+                            "Alloys",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Chemicals, Rubbers & Plastics",
+                        nanos: [
+                            "Chemicals",
+                            "Rubbers",
+                            "Plastics"
+                        ]
+                    },
+                ]
+            },
+            {
+                mini: "Commercial & Tools",
+                micros: [
+                    {
+                        micro: "Commercial Machines & Materials",
+                        nanos: [
+                            "Catering & Kitchen",
+                            "Packaging & Printing",
+                            "Manufacturing",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Tools & Hardwares",
+                        nanos: [
+                            "Safety & Security",
+                            "Testing & Measuring",
+                            "Material Handling",
+                            "Others"
+                        ]
+                    },
+                ]
+            }
+        ]
+    }
 ]
 
-///Confidential data -- I know, I'm a fool
-export const sheetEmail: string = "dr-ritany@drritany.iam.gserviceaccount.com"
+///This contains a list of colors for delivery status text
+// export const deliveryStatuses: Array<IEventStatus> = [
+//     {
+//         status: "Pending",
+//         color: "orange"
+//     },
+//     {
+//         status: "In Transit",
+//         color: "yellow"
+//     },
+//     {
+//         status: "Exception",
+//         color: "red"
+//     },
+//     {
+//         status: "Delivered",
+//         color: "green"
+//     },
+//     {
+//         status: "Returned",
+//         color: "red"
+//     },
+//     {
+//         status: "Cancelled",
+//         color: "red"
+//     }
+// ]
 
-export const sheetKey: string = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDmYVJBqnYFV5bK\nHJRVM79EZhPtJXItZ2AGH3LOeV73KDn/OCNSdl1jrDFj0+lTv0dB1DJDkdCcVQDO\n8Csi4dWl+uQn6FKjJldTrJS9R0dXRpluRR92mQ1cvy94HY8hCaCqE1WNu22w16or\nga4dbVI4Ip6b3TJa9hAZyTNETrZrAVADUsPM9BZ/ZDs6TjpQBrBUPWlFYVdnK6Mg\n2NZ8HpcYwSWRLfmjJnuCx2fh6LGb2KcAIeWttrYF6pxz/tkthftt2mZQkVSHaCIA\ntujx7mEFnV4DUv+TIiSC2UmaV3yZLtqtSTybx1cpJmjTWnoU5nIoeOaCt1MEOd11\ns7xa60tvAgMBAAECggEAJ66exQnQD2aBZinbEPv7V5Q/nWsESjbSrutO0qrMRUVM\nDB6G0wbpWihIT5oqSA8b/oZG7CWbKbpoi7yJqZX9v3vCPe+CAHEzvIlvC1VSQAG8\nnuZQH5UIXK/fxNBOnZGzd2giJeohYEMdoCXTsGTqsxmfeVh1+n4E0vQ5nOvz9uUs\n0ckcXNuxCy1IT9PvVtz7BX77GxiZOLhaBa25jmIZ+XGUHkpGdGOP/8THoIzwhcOv\ns4gzCA5sEkbSAPp3dOgRuhYnwztk8FhOn2CUaFYbHYUkBYhw3dlqdytgDw/cSen7\n5UEWK51jMq9ubvHzKE4aUFjrMpTJyOCB8Hy+/xX8hQKBgQD0EaNnQzfjkI48aT77\nQ2I/kgV131gVm+YREf2HqHhUmlwkb6hXRvcl1XMRdLpA6NiPnbIjLl4rbm9NVczO\nj40cmLf/7BFw15ezmH/k5RnAZRz5rcSG77qHjJnMw6N78POrUcy9BLzsaG8MkWt9\n5fM+oNAUs2v4++N3xHq2jHor4wKBgQDxpGChsfQIxxL3HW7rtmb2kgciWf1SOnLg\nJht4R5NWldqK9YphM9/cwxgM9xK54z4yGByh3pJVTi17uuOwzc+Jb2pFEeQ/LO8m\nOBCmTSgBBy50n9bIOzdBsUyf1QnDOkstYQUoTEr5WZ6PMezxFo3RG9fdK+CcEScP\nqeHZWaDQBQKBgCTswjbuMXdpOEuldJTY9fU+JztVBeOHCYCNozix4TqTe9s7VVGW\n9+8uYtFCQqdtUs4vgnLWIgMaGxatI2Ygy62G4VeDpIPY6ieOq9K6YnH8Gi0f//qW\nLDczq1USSBqJMqQ5pOr324k8p4hUO9n5Pxq7g5+OIYiyuxA0loglqpoXAoGBALYP\n5Yaur3FVnKJ3mLUcLyOkDqABMW4c/6SG0bekJgzcx1Zffi2Sih6pF5vdJEzOPHQ9\n2oTTT2nah0ZsH1V9G9svCOCVhGVdE6q2H0VNaNCteoEAVTFz/EQQs+zQ9JQVfcLp\nEJu2L98DeQXm1eEn3x4oXlIT1x1/hvC0TKgYcaOJAoGANlLZ2xCJL2n2bxHsPZ71\noXHe+zCT3+/8qFDygRYhFR4DLvNwBFJkasaPrRQ0n2qMXVMqJM+tWDvSk4t6lIt3\nMg/BJDsURiHiIDqAT4WhnCnlGNXjyeXhd7rgWiQU8QRkY/Pm/ToUvOBaEpPc0Nhr\nnk4AiOMDyhWAbHVjJca7smU=\n-----END PRIVATE KEY-----\n"
+///This contains a list of colors for delivery status text
+export const deliveryStatuses: Array<IEventStatus> = [
+    {
+        status: DeliveryStatus.PENDING,
+        color: {
+            text: styles.pendingColor1,
+            background: styles.pendingColor2
+        }
+    },
+    {
+        status: DeliveryStatus.IN_TRANSIT,
+        color: {
+            text: styles.pendingColor1,
+            background: styles.pendingColor2
+        }
+    },
+    {
+        status: DeliveryStatus.DELIVERED,
+        color: {
+            text: styles.successColor1,
+            background: styles.successColor2
+        }
+    },
+    {
+        status: DeliveryStatus.CANCELLED,
+        color: {
+            text: styles.cancelColor1,
+            background: styles.cancelColor2
+        }
+    },
+    {
+        status: DeliveryStatus.RETURNED,
+        color: {
+            text: styles.cancelColor1,
+            background: styles.cancelColor2
+        }
+    },
+    {
+        status: DeliveryStatus.EXCEPTION,
+        color: {
+            text: styles.cancelColor1,
+            background: styles.cancelColor2
+        }
+    }
+]
+
+///This contains a list of colors for delivery status text
+export const paymentStatuses: Array<IEventStatus> = [
+    {
+        status: PaymentStatus.PENDING,
+        color: {
+            text: styles.pendingColor1,
+            background: styles.pendingColor2
+        }
+    },
+    {
+        status: PaymentStatus.SUCCESS,
+        color: {
+            text: styles.successColor1,
+            background: styles.successColor2
+        }
+    },
+    {
+        status: PaymentStatus.FAILED,
+        color: {
+            text: styles.cancelColor1,
+            background: styles.cancelColor2
+        }
+    },
+    {
+        status: PaymentStatus.REFUND,
+        color: {
+            text: styles.cancelColor1,
+            background: styles.cancelColor2
+        }
+    }
+]
+
+//This function converts data for sheets
+export const convertDataToSheet = (data: { [key: string]: any }) => {
+    const convertedData: [string, string][] = Object.entries(data).map(([key, value]) => [key, value]);
+    return convertedData
+}

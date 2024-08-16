@@ -5,7 +5,7 @@
 import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, domainName, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
+import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
 import { Metadata } from 'next';
 import { IProduct, Props } from '@/config/interfaces';
 
@@ -14,7 +14,7 @@ import { IProduct, Props } from '@/config/interfaces';
 ///This fetches the product info page
 async function getProduct(id: string) {
   try {
-    const res = await fetch(`${domainName}/api/product/${id}`, {
+    const res = await fetch(`${backend}/product/${id}`, {
       method: "GET",
       cache: "no-store",
     })
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 //This function sets the products
 async function getProducts() {
   try {
-    const res = await fetch(`${domainName}/api/product?action=order`, {
+    const res = await fetch(`${backend}/product?action=order`, {
       method: "GET",
       cache: "no-store",
     })

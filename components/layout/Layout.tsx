@@ -14,8 +14,13 @@ import { useClientInfoStore } from "@/config/store";
 import { IClientInfo } from "@/config/interfaces";
 import { countryList } from "@/config/database";
 import GoogleTagManager from "@/config/GoogleTagManager";
+import GoogleAnalytics from '@/config/GoogleAnalytics';
+import AdminSideBar from "@/components/admin/sidebar/SideBar"
+import AdminHeader from "../admin/header/Header";
+import bcrypt from "bcrypt"
 import LoadingSkeleton from "@/app/loading_test";
 import { InfoRounded } from "@mui/icons-material";
+import styles_ from "@/styles/_base.module.scss"
 
 ///Commencing the code 
 ///This function get client's info
@@ -58,6 +63,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         getClientInfo(clientInfo, setClientInfo)
+        console.log('OS: ', styles_.successColor1)
         //console.log("Test: ", test)
     });
     
@@ -66,11 +72,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en" className={styles.html}>
       <head>
         <GoogleTagManager containerId='GTM-KHK4D485' />
+        <GoogleAnalytics />
       </head>
       <body suppressHydrationWarning={true} className={styles.body}>
         <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />
         <Header />
-          <Modal />
+        {/* <AdminHeader />
+        <AdminSideBar /> */}
+        <Modal />
         {/* <Suspense fallback={ <LoadingSkeleton /> }> */}
           <main className='container'>{children}</main>
         {/* </Suspense> */}

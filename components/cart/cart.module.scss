@@ -208,6 +208,10 @@
                                 top: 0%;
                             }
                         } 
+
+                        &:hover {
+                            border: 1px solid $primary-color;
+                        }
                     }
 
                     .list_title {
@@ -232,6 +236,10 @@
 
                         @include phoneMini {
                             line-height: 11px;
+                        }
+
+                        &:hover {
+                            color: $primary-color;
                         }
                     } 
 

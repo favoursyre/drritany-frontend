@@ -6,29 +6,34 @@ import Image from 'next/image';
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./invoice.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
-import { IOrder } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round } from '@/config/utils';
+import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus } from '@/config/interfaces';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses } from '@/config/utils';
 import { useClientInfoStore } from "@/config/store";
 import { Remove, Add } from '@mui/icons-material';
+import { countryList } from '@/config/database';
+//import { deliveryStatuses } from '@/config/clientUtils';
 
 ///Commencing the code 
 /**
  * @title Order Invoice Component
  * @returns The Order Invoice component
  */
-const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
+const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
     const router = useRouter()
-    const [cart, setCart] = useState<IOrder | undefined>(cart_)
+    const [order, setOrder] = useState<IOrder>(order_)
     const [deliveryDate, setDeliveryDate] = useState<string>("")
     const routerPath = usePathname()
+    const [deliveryStatus, setDeliveryStatus] = useState<IEventStatus>()
+    const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
+    const [country, setCountry] = useState<ICountry | undefined>(countryList.find((country) => country?.name?.common === order.customerSpec.country))
     const clientInfo = useClientInfoStore(state => state.info)
 
-    //console.log("cart: ", cart)
+    //console.log("cart hh: ", paymentStatus)
 
     useEffect(() => {
-        console.log("cart: ", cart)
+        console.log("cart: ", order)
 
-        const createdAt = cart?.createdAt as unknown as string
+        const createdAt = order?.createdAt as unknown as string
         // Convert the string to a Date object
         const date = new Date(createdAt);
 
@@ -41,39 +46,65 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
         // Print the formatted date
         console.log(formattedDate);
         setDeliveryDate(() => formattedDate)
-    }, [cart?.createdAt])
 
-    //console.log("cart: ", cart ? formatDateMongo(cart?.createdAt) : "")
+        if (order.deliverySpec && order.paymentSpec) {
+            const deliveryStatus_ = deliveryStatuses.find((status) => status.status === order.deliverySpec.status)
+            setDeliveryStatus(() => deliveryStatus_)
+
+            const paymentStatus_ = paymentStatuses.find((status) => status.status === order.paymentSpec.status)
+            setPaymentStatus(() => paymentStatus_)
+        }
+    }, [order?.createdAt, deliveryStatus, paymentStatus])
+
+    //console.log("order: ", order ? formatDateMongo(order?.createdAt) : "")
 
   return (
     <div className={styles.main}>
         <h2><strong>Order Invoice</strong></h2>
-        <span className={styles.mainBrief}>Thank&apos;s for patronizing {companyName}</span>
+        <span className={styles.mainBrief}>Thanks for patronizing {companyName}</span>
         <div className={styles.container}>
             <div className={styles.orderSection}>
                 <div className={styles.orderId}>
                     <span><strong>ID:</strong></span>
-                    <span className={styles.span2}>{cart ? cart._id : ""}</span>
+                    <span className={styles.span2}>{order ? order._id : ""}</span>
                 </div>
                 <div className={styles.orderDate}>
                     <span><strong>Date:</strong></span>
-                    <span>{cart && cart.createdAt ? formatDateMongo(cart.createdAt) : ""}</span>
+                    <span>{order && order.createdAt ? formatDateMongo(order.createdAt) : ""}</span>
                 </div>
             </div>
             <div className={styles.deliverySection}>
-                <div className={styles.deliveryDate}>
-                    <span><strong>Estimated Delivery Date</strong></span>
-                    <span>{deliveryDate}</span>
+                <div className={styles.deliveryInfo}>
+                    <div className={styles.deliveryDate}>
+                        <span><strong>Delivered On/Before</strong></span>
+                        <span>{deliveryDate}</span>
+                    </div>
+                    {deliveryStatus ? (
+                        <div className={styles.deliveryStatus}>
+                            <span><strong>Delivery Status</strong></span>
+                            <span className={styles.text} style={{ color: deliveryStatus.color?.text, backgroundColor: deliveryStatus.color?.background, fontWeight: "600px" }}>{deliveryStatus.status}</span>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+                    {paymentStatus ? (
+                        <div className={styles.paymentStatus}>
+                            <span><strong>Payment Status</strong></span>
+                            <span className={styles.text} style={{ color: paymentStatus.color?.text, backgroundColor: paymentStatus.color?.background, fontWeight: "600px" }}>{paymentStatus.status}</span>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <div className={styles.deliveryAddress}>
-                    <span><strong>Delivery Info</strong></span>
-                    {cart && cart.customerSpec ? (
+                    <span className={styles.title}><strong>Delivery Info</strong></span>
+                    {order && order.customerSpec ? (
                         <>
-                            <span>{cart.customerSpec.fullName}</span>
-                            <span>{cart?.customerSpec.email}</span>
-                            <span>{cart?.customerSpec.phoneNumbers[0]}</span>
-                            <span>{cart?.customerSpec.deliveryAddress}</span>
-                            <span>{cart?.customerSpec.state}, {cart?.customerSpec.country}</span>
+                            <span>{order.customerSpec.fullName}</span>
+                            <span>{order?.customerSpec.email}</span>
+                            <span>{order?.customerSpec.phoneNumbers[0]}</span>
+                            <span>{order?.customerSpec.deliveryAddress}</span>
+                            <span>{order?.customerSpec.state}, {order?.customerSpec.country}</span>
                         </>
                     ) : (
                         <></>
@@ -81,36 +112,36 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                 </div>
             </div>
             <div className={styles.cartList}>
-                {cart && cart.productSpec ? cart.productSpec.cart.map((c, id) => (
+                {order && order.productSpec ? order.productSpec.cart.map((p, id) => (
                     <div className={styles.cartItem} key={id}>
                         <div className={styles.cartImage}>
                             <Image
                                 className={styles.img}
-                                src={c.image.src}
+                                src={p.image.src}
                                 alt=''
-                                width={c.image.width}
-                                height={c.image.height}
+                                width={p.image.width}
+                                height={p.image.height}
                             />
                         </div>
                         <div className={styles.cartName}>
-                            <span>{c.name}</span>
+                            <span>{p.name}</span>
                         </div>
                         <div className={styles.cartPriceQuantity}>
                             <span>
-                                {clientInfo ? (
-                                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                                {country ? (
+                                    <span>{country?.currency?.symbol}</span>
                                 ) : (
                                     <></>
                                 )}
-                                {clientInfo?.country?.currency?.exchangeRate ? (
+                                {order.paymentSpec ? (
                                     <span>
-                                        {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        {round(p.subTotalPrice * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                                     </span> 
                                 ) : (
                                     <></>
                                 )}
                             </span>
-                            <span>Qty: {c.quantity}</span>
+                            <span>Qty: {p.quantity}</span>
                         </div>
                     </div>
                 )) : (
@@ -122,14 +153,14 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                 <div className={styles.subTotal}>
                     <span><strong>Subtotal</strong></span>
                     <span>
-                        {clientInfo ? (
-                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                        {country ? (
+                            <span>{country?.currency?.symbol}</span>
                         ) : (
                             <></>
                         )}
-                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                        {order && order.paymentSpec ? (
                             <span>
-                                {round(cart.productSpec.totalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                {round(order.productSpec.totalPrice * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -140,14 +171,14 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                     <span><strong>Discount</strong></span>
                     <div className={styles.amount}>
                         <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
-                        {clientInfo ? (
-                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                        {country ? (
+                            <span>{country?.currency?.symbol}</span>
                         ) : (
                             <></>
                         )}
-                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                        {order && order.paymentSpec ? (
                             <span>
-                                {round(cart.productSpec.totalDiscount * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                {round(order.productSpec.totalDiscount * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -158,14 +189,14 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                     <span><strong>Delivery Fee</strong></span>
                     <div className={styles.amount}>
                         <Add className={styles.add} style={{ fontSize: "1rem" }} />
-                        {clientInfo ? (
-                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                        {country ? (
+                            <span>{country?.currency?.symbol}</span>
                         ) : (
                             <></>
                         )}
-                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                        {order && order.paymentSpec ? (
                             <span>
-                                {round(cart.productSpec.deliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                {round(order.productSpec.deliveryFee * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -175,14 +206,14 @@ const OrderInvoice = ({ cart_ }: { cart_: IOrder }) => {
                 <div className={styles.total}>
                     <span><strong>Total</strong></span>
                     <span>
-                        {clientInfo ? (
-                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                        {country ? (
+                            <span>{country?.currency?.symbol}</span>
                         ) : (
                             <></>
                         )}
-                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                        {order && order.paymentSpec ? (
                             <span>
-                                {round((cart.productSpec.totalPrice - cart.productSpec.totalDiscount + cart.productSpec.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                {round((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>

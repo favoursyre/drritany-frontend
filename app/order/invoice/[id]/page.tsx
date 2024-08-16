@@ -2,10 +2,10 @@
 ///This handles the cart receipt page
 
 ///Libraries -->
-import CartInvoice from '@/components/invoice/Invoice';
+import OrderInvoice from '@/components/invoice/Invoice';
 import { IOrder, Props } from '@/config/interfaces';
 import { Metadata } from 'next';
-import { domainName } from '@/config/utils';
+import { backend } from '@/config/utils';
 
 ///Commencing the code
 ///Declaring the metadata
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 ///This fetches the product info page
 async function getCart(id: string) {
   try {
-    const res = await fetch(`${domainName}/api/order/${id}`, {
+    const res = await fetch(`${backend}/order/${id}`, {
       method: "GET",
       cache: "no-store",
     })
@@ -60,7 +60,7 @@ export default async function CartOrderByIdPage({ params: { id } }: { params: { 
 
   return (
     <main className="cart">
-      <CartInvoice cart_={cart[0]} />
+      <OrderInvoice order_={cart[0]} />
     </main>
   )
 }

@@ -7,26 +7,27 @@ import { NextResponse, NextRequest } from "next/server";
 //import { sendSubnewsletterEmail } from "@/config/email";
 import { IProduct } from "@/config/interfaces";
 //import { IInquiry } from "@/config/interfaces";
+import { orderSheetId, querySheetId } from "@/config/utils";
+import { GoogleSheetStore } from "@/config/serverUtils";
 
 ///Commencing the code
 ///Creating a product
 export async function POST(request: NextRequest) {
     try {
-        const product: IProduct = await request.json();
+        const product_: IProduct = await request.json();
         await connectMongoDB();
-        await Product.createProduct(product)
-        console.log("Subscriber: ", product)
+        const product = await Product.createProduct(product_)
+        console.log("Product: ", product)
 
         ///Sending confirmation email to the person
         //const status = await sendSubnewsletterEmail(newsletter?.subscriber)
         //console.log('Email: ', await status)
 
-        return NextResponse.json({ message: "Product Added Successful" }, { status: 200 });
+        return NextResponse.json({ product, message: "Product Added Successful" }, { status: 200 });
     } catch (error: any) {
         console.log("Error news: ", error.message)
         return NextResponse.json({ message: error?.message }, { status: 400 });
-    }
-    
+    } 
 }
 
 ///Getting all products
@@ -46,6 +47,7 @@ export async function GET(request: NextRequest) {
         } else if (action === "search") {
             if (query) {
                 products = await Product.getProductBySearch(query)
+            
 
                 //Logging the queries to excel sheet to serve customers better
                 // const queryData: IQuerySheet = {
@@ -92,7 +94,7 @@ export async function GET(request: NextRequest) {
         //console.log("Sub: ", products)
         return NextResponse.json( products , { status: 200 });
     } catch (error: any) {
-        console.log("Error: ", error)
+        console.log("Error test: ", error)
         return NextResponse.json({ message: error?.message }, { status: 400 });
     }    
 }

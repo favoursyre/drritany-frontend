@@ -26,6 +26,7 @@ import DisplayBar from '@/components/displayBar/DisplayBar';
  * @returns The Product Info component
  */
 const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
+    console.log('Products_: ', product_)
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
     const [activeHeading, setActiveHeading] = useState(0);
@@ -48,7 +49,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const spec = product[0].specification
     const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
-    console.log("In Stock: ", product[0].inStock)
+    console.log("In Stock: ", product[0].pricing?.inStock)
 
     ///This contains the accordian details
     const questions = [
@@ -158,29 +159,28 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         e.preventDefault()
         const p = product[0]
 
-        if (p.inStock === false) {
+        if (p.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
         } else {
             const pWeight: number = p.specification?.weight as unknown as number
             const cartSpecs = removeUndefinedKeys({
-                color: p.colors ? p.colors[colorId] : undefined,
-                size: p.sizes ? p.sizes[sizeId] : undefined
+                color: p.specification?.colors ? p.specification?.colors[colorId] : undefined,
+                size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
             })
             const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
 
             //Arranging the cart details
             const cartItem: ICartItem = {
-                _id: p._id,
+                _id: p._id!,
                 image: p.images[0],
                 name: productName.trim(),
-                unitPrice: p.price || 0,
+                unitPrice: p.pricing?.basePrice || 0,
                 unitWeight: pWeight,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
                 specs: cartSpecs,
-                extraDiscount: p.extraDiscount,
-                freeOption: p.freeOption ? p.freeOption : false,
-                subTotalPrice: p.price || 0 * quantity,
+                extraDiscount: p.pricing?.extraDiscount!,
+                subTotalPrice: p.pricing?.basePrice || 0 * quantity,
                 subTotalDiscount: 0
             }
             //console.log("Quantity: ", quantity)
@@ -279,7 +279,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
         setDiscountProduct({ 
             name: product[0].name as unknown as string, 
-            freeOption: product[0].freeOption as unknown as boolean, 
+            freeOption: false, 
             poppedUp: false 
         })
         setModalBackground(true)
@@ -290,7 +290,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const orderNow = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
 
-        if (product[0].inStock === false) {
+        if (product[0].pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
         } else {
             //Add the product to cart
@@ -318,15 +318,15 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         <>
             <DisplayBar text_={undefined} />
             <div className={styles.header}>
-                <span>{product[0].category}</span>
-                {product[0].subCategory ? (
+                <span>{product[0].category?.macro}</span>
+                {product[0]?.category?.mini ? (
                     <>
                         <KeyboardArrowRightIcon className={styles.icon} />
-                        <span>{product[0].subCategory}</span>
-                        {product[0].miniCategory ? (
+                        <span>{product[0].category?.mini}</span>
+                        {product[0].category?.micro ? (
                             <>
                                 <KeyboardArrowRightIcon className={styles.icon} />
-                                <span>{product[0].miniCategory}</span>
+                                <span>{product[0].category?.micro}</span>
                             </>
                         ) : (
                             <></>
@@ -340,12 +340,12 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                 {product.map((p, _id) => (
                     <div className={styles.left_section} key={_id}>
                         <div className={styles.profile_image}>
-                            {view === "video" && product[0].videos ? (
+                            {view === "video" && product[0].images ? (
                                 <iframe
                                     className={styles.img}
-                                    src={product[0].videos[videoIndex]?.src}
-                                    width={product[0].videos[videoIndex]?.width}
-                                    height={product[0].videos[videoIndex].height}
+                                    src={product[0].images[videoIndex]?.src}
+                                    width={product[0].images[videoIndex]?.width}
+                                    height={product[0].images[videoIndex].height}
                                     allow="autoplay"
                                     loading="lazy"
                                     frameBorder={0}
@@ -365,19 +365,33 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         <div className={styles.image_slide}>
                             {p.images.map((image, imageId) => (
                                 <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
-                                    setView(() => "image")
+                                    setView(() => image.type === "image" ? "image" : "video")
                                     setImageIndex(() => imageId)
                                 }}>
-                                    <Image
-                                        className={styles.img}
-                                        src={image.src}
-                                        alt=""
-                                        width={image.width}
-                                        height={image.height}
-                                    />
+                                    {image.type === "video" ? (
+                                        <iframe
+                                            className={styles.iframe}
+                                            src={image.src}
+                                            width={image.width}
+                                            height={image.height}
+                                            //allow="autoplay"
+                                            frameBorder={0}
+                                            //sandbox="allow-forms"
+                                        >
+                                        </iframe>
+                                    ) : (
+                                        <Image
+                                            className={styles.img}
+                                            src={image.src}
+                                            alt=""
+                                            width={image.width}
+                                            height={image.height}
+                                        /> 
+                                    )}
+                                    
                                 </div>
                             ))}
-                            {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
+                            {/* {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
                                 <div className={styles.image} key={videoId} onClick={() => {
                                     setView(() => "video")
                                     setVideoIndex(() => videoId)
@@ -395,7 +409,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             </div>
                             )) : (
                                 <></>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 ))}
@@ -403,7 +417,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                     <div className={styles.right_section} key={_id}>
                     <h3>
                         <strong>{p.name}</strong>
-                        {p.extraDiscount ? (
+                        {p.pricing?.extraDiscount ? (
                             // <Tooltip title="Discount Offer" placement='top'>
                             //     <IconButton>
                                 <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
@@ -426,7 +440,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 )}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {p.price ? (round(p.price * clientInfo.country.currency.exchangeRate, 1)).toLocaleString("en-US") : ""}
+                                        {p.pricing?.basePrice ? (round(p.pricing?.basePrice * clientInfo.country.currency.exchangeRate, 1)).toLocaleString("en-US") : ""}
                                     </span> 
                                 ) : (
                                     <></>
@@ -436,7 +450,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {p.price ? (round(slashedPrice(p.price * clientInfo.country.currency.exchangeRate, p.discount), 1).toLocaleString("en-US")) : ""}
+                                        {p.pricing?.basePrice ? (round(slashedPrice(p.pricing?.basePrice * clientInfo.country.currency.exchangeRate, p.pricing?.discount!), 1).toLocaleString("en-US")) : ""}
                                     </span>
                                 ) : (
                                     <></>
@@ -448,7 +462,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             <span>{p.orders?.toLocaleString("en-US")} orders</span>
                         </div>
                         <div className={styles.percent}>
-                            <span>-{p.discount}%</span>
+                            <span>-{p.pricing?.discount}%</span>
                         </div>
                         </div>
                         <div className={styles.rating}>
@@ -473,31 +487,31 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             </button>
                         </div>
                         <div className={styles.product_specs}>
-                            {p.colors && p.colors.length > 1 ? (
+                            {p.specification?.colors && p.specification?.colors.length > 1 ? (
                                 <div className={styles.colors}>
                                     <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
-                                        <div className={styles.circle} style={{ backgroundColor: `${p.colors[colorId]}`, borderColor: `${p.colors[colorId]}` }}></div>
-                                        <span>{capitalizeFirstLetter(p.colors[colorId])}</span>
+                                        <div className={styles.circle} style={{ backgroundColor: `${p.specification?.colors[colorId]}`, borderColor: p.specification?.colors[colorId] === "white" ? "black": `${p.specification?.colors[colorId]}`}}></div>
+                                        <span>{capitalizeFirstLetter(p.specification?.colors[colorId])}</span>
                                         <span className={`${selectColor ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
                                     </button>
                                     <div className={`${styles.color_option}`} style={{ display: selectColor ? "flex" : "none"}}>
-                                        {p.colors.map((color, _id) => (
+                                        {p.specification.colors.map((color, _id) => (
                                             <button key={_id} className={colorId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseColor(e, _id)}>
-                                                <div className={styles.circle} style={{ backgroundColor: `${color}`, borderColor: `${color}` }}></div>
+                                                <div className={styles.circle} style={{ backgroundColor: `${color}`, borderColor: color === "white" ? "black": `${color}` }}></div>
                                                 <span>{capitalizeFirstLetter(color)}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
                             ) : (<></>)}
-                            {p.sizes && p.sizes.length > 1 ? (
+                            {p.specification?.sizes && p.specification?.sizes.length > 1 ? (
                                 <div className={styles.sizes}>
                                     <button className={styles.selectedSize} onClick={() => setSelectSize(!selectSize)}>
-                                        <span>{p.sizes[sizeId]}</span>
+                                        <span>{p.specification?.sizes[sizeId]}</span>
                                         <span className={`${selectSize ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
                                     </button>
                                     <div className={`${styles.size_option}`} style={{ display: selectSize ? "flex" : "none"}}>
-                                        {p.sizes.map((size, _id) => (
+                                        {p.specification?.sizes.map((size, _id) => (
                                             <button key={_id} className={sizeId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseSize(e, _id)}>
                                                 {size}
                                             </button>

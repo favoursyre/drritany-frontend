@@ -5,6 +5,7 @@
 import { toast } from 'react-toastify';
 import { MouseEvent } from 'react';
 import { companyEmail } from './utils';
+import { ClientDevice, ClientOS, DeliveryStatus, IEventStatus, PaymentStatus } from './interfaces';
 
 ///Commencing the code
 //console.log("Domain: ", domainName)
@@ -106,4 +107,46 @@ export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEv
     } else {
         undefined
     }
+}
+
+///This function is used to get the OS version of a client's device
+export const getOS = () => {
+    var userAgent = navigator.userAgent,
+        platform = navigator.platform,
+        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        os = null;
+  
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        os = ClientOS.MAC_OS;
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+        os = ClientOS.IOS;
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        os = ClientOS.WINDOW;
+    } else if (/Android/.test(userAgent)) {
+        os = ClientOS.ANDROID;
+    } else if (!os && /Linux/.test(platform)) {
+        os = ClientOS.LINUX;
+    } else {
+        os = ClientOS.UNKNOWN
+    }
+  
+    return os;
+}
+
+///This function is used to get the client's device type
+export const getDevice = () => {
+    const width = screen.width
+    let device
+
+    if (width <= 600) {
+        device = ClientDevice.MOBILE
+    } else if (width > 600 && width <= 1200) {
+        device = ClientDevice.TABLET
+    } else if (width > 1200) {
+        device = ClientDevice.DESKTOP
+    }
+
+    return device
 }

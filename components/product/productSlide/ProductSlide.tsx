@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./productSlide.module.scss"
 import { IProduct, ICart } from '@/config/interfaces';
-import { routeStyle, cartName } from '@/config/utils'
+import { routeStyle, cartName, sortProductByActiveStatus } from '@/config/utils'
 import ProductCard from '@/components/cards/product/ProductCard';
 import { getItem } from '@/config/clientUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -34,7 +34,7 @@ const slideTitles: Array<string> = [
 const ProductSlide = ({ product_, titleId_ }: { product_: Array<IProduct>, titleId_: number }) => {
     const routerPath = usePathname();
     const router = useRouter();
-    const [similarProducts, setSimilarProducts] = useState(product_)
+    const [similarProducts, setSimilarProducts] = useState(sortProductByActiveStatus(product_, "Active"))
     const [lastIndex, setLastIndex] = useState(6)
     const [title, setTitle] = useState<string>(slideTitles[titleId_])
     const swiperRef = useRef<SwiperCore>();
@@ -103,7 +103,7 @@ const ProductSlide = ({ product_, titleId_ }: { product_: Array<IProduct>, title
               modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
               className={styles.swipeContainer}
           >
-            {similarProducts.map((product, id) => (
+            {similarProducts?.map((product, id) => (
                 <SwiperSlide className={styles.slider} key={id}>
                     <ProductCard product_={product} view={"slide"} />
                 </SwiperSlide>

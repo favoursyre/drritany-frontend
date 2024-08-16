@@ -2,7 +2,7 @@
 
 ///Libraries -->
 import { create } from "zustand";
-import { IModalBackgroundStore, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore } from "@/config/interfaces";
+import { IModalBackgroundStore, IAdminSideBarStore, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore } from "@/config/interfaces";
 
 //Commencing code -->
 
@@ -16,6 +16,14 @@ export const useModalBackgroundStore = create<IModalBackgroundStore>((set) => ({
 export const useContactModalStore = create<IContactModalStore>((set) => ({
     modal: false,
     setContactModal: (status) => set(() => ({ modal: status }))
+}))
+
+//Contact Modal state store
+export const useConfirmationModalStore = create<IConfirmationModalStore>((set) => ({
+    modal: false,
+    choice: false,
+    setConfirmationModal: (status) => set(() => ({ modal: status })),
+    setConfirmationChoice: (status) => set(() => ({ choice: status }))
 }))
 
 //Order state store
@@ -42,4 +50,10 @@ export const useDiscountModalStore = create<IDiscountModalStore>((set) => ({
 export const useClientInfoStore = create<IClientInfoStore>((set) => ({
     info: undefined,
     setClientInfo: (info) => set(() => ({ info: info }))
+})) 
+
+//Admin Menu Bar State Store
+export const useAdminSideBarStore = create<IAdminSideBarStore>((set) => ({
+    status: false,
+    setAdminSideBar: (status) => set(() => ({ status: status }))
 })) 

@@ -1,0 +1,45 @@
+/* This contains the scss for the admin header component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    //background-color: $primary-color-2;
+    position: absolute;
+    @include size(100%, 100%);
+    left: 0%;
+    top: 0%;
+    overflow: hidden;
+    //z-index: -5;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    .background {
+        object-fit: cover;
+        object-position: center 30%;
+        position: absolute;
+        @include size(100%, 100%);
+        z-index: -5;
+        //background-image: linear-gradient(to bottom, rgba(182, 226, 253, 0.5), rgba(182, 226, 253, 0.7))
+    }
+
+    .body {
+        //border: 1px solid red;
+        @include size(93%, 93%);
+        position: absolute;
+        //z-index: 10;
+        left: 7%;
+        top: 7%;
+        //background-color: black;
+
+        @include tabletPro {
+            left: 10%;
+            width: 90%;
+        }
+
+        @include phonePro {
+            left: 0%;
+            width: 100%;
+        }
+    }
+}

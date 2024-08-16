@@ -38,7 +38,7 @@ export default async function CartOrderByIdPage({ params: { id } }: { params: { 
 
   return (
     <main className="cart">
-      <CartReceipt cart_={cart} />
+      <CartReceipt order_={cart} />
     </main>
   )
 }

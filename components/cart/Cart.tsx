@@ -26,6 +26,7 @@ const Cart = () => {
     const [deleteModal, setDeleteModal] = useState(false)
     const router = useRouter()
     const routerPath = usePathname();
+    const [cartInitialRender, setCartInitialRender] = useState(false);
     const clientInfo = useClientInfoStore(state => state.info)
     const orderForm = useOrderFormModalStore(state => state.modal)
     const setOrderForm = useOrderFormModalStore(state => state.setOrderFormModal)
@@ -34,31 +35,52 @@ const Cart = () => {
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
 
     useEffect(() => {
-        if (cart) {
-            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
-            cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
-            cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
-            setItem(cartName, cart)
-            //setCart(() => ({ ...cart }))
-        }
-
         //console.log("Client: ", clientInfo)
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
+            const refreshCart = () => {
+                console.log("the cart is running")
+                if (cart) {
+                    cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                    cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+                    cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                    setItem(cartName, cart)
+                    const updatedCart = cart
+                    setCart(() => ({ ...updatedCart }))
+                }
+            }
+    
+            if (!cartInitialRender) {
+                setCartInitialRender(true);
+                console.log("Initial: ", cartInitialRender)
+    
+                refreshCart()
+              }
 
+            
             if (deliveryInfo) {
+                
                 //Checking if the state has extraDeliveryPercent and notifying the client
+                //console.log("Test: ", deliveryInfo.state)
+                
                 const state_ = clientInfo?.country?.states?.find(states => states.name === deliveryInfo.state)
+                //console.log("Test 2: ", clientInfo)
 
                 if (state_?.extraDeliveryPercent === 0) {
+                    //console.log("Delivery info new 2")
                     setItem(extraDeliveryFeeName, 0)
                     setExtraDeliveryFee(() => 0)
                 } else if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
+                    //console.log("Delivery info new")
                         const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
                         setExtraDeliveryFee(() => extraDeliveryFee)
                         setItem(extraDeliveryFeeName, extraDeliveryFee)
+
+                        //console.log("Delivery Fee: ", extraDeliveryFee)
                 }
+
+                
             }
         }, 100);
     
@@ -66,11 +88,7 @@ const Cart = () => {
             clearInterval(interval);
         };
         
-    }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo]);
-
-    useEffect(() => {
-        //window.location.reload()
-    })
+    }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo, cartInitialRender, clientInfo]);
 
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
@@ -173,6 +191,13 @@ const Cart = () => {
         
     }
 
+    ///This function helps to view a product
+    const viewProduct = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent> | MouseEvent<HTMLSpanElement, globalThis.MouseEvent>, id: string) => {
+        e.preventDefault()
+
+        router.push(`/products/${id}`);
+    }
+
   return (
     <>
         <main className={`${styles.main}`}>
@@ -196,29 +221,29 @@ const Cart = () => {
                         <div className={styles.cart_lists}>
                             {cart ? cart.cart.map((c, cid) => (
                                 <div className={styles.cart_item} key={cid}>
-                                <div className={styles.list_image}>
-                                    <Image
-                                        className={styles.img} 
-                                        src={c.image.src}
-                                        alt=""
-                                        width={c.image.width}
-                                        height={c.image.height}
-                                    />
-                                </div>
-                                <span className={styles.list_title}>{c.name}</span>
-                                <div className={styles.list_quantity}>
-                                    <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
-                                        <Remove style={{ fontSize: "1rem" }} />
+                                    <div className={styles.list_image} onClick={(e) => viewProduct(e, c._id)}>
+                                        <Image
+                                            className={styles.img} 
+                                            src={c.image.src}
+                                            alt=""
+                                            width={c.image.width}
+                                            height={c.image.height}
+                                        />
+                                    </div>
+                                    <span className={styles.list_title} onClick={(e) => viewProduct(e, c._id)}>{c.name}</span>
+                                    <div className={styles.list_quantity}>
+                                        <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
+                                            <Remove style={{ fontSize: "1rem" }} />
+                                        </button>
+                                        <span>{c.quantity}</span>
+                                        <button className={styles.plus_button} onClick={e => increaseQuantity(e, cid)}>
+                                            <Add style={{ fontSize: "1rem" }} />
+                                        </button>
+                                    </div>
+                                    <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
+                                        <DeleteOutline className={styles.icon} />
                                     </button>
-                                    <span>{c.quantity}</span>
-                                    <button className={styles.plus_button} onClick={e => increaseQuantity(e, cid)}>
-                                        <Add style={{ fontSize: "1rem" }} />
-                                    </button>
                                 </div>
-                                <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
-                                    <DeleteOutline className={styles.icon} />
-                                </button>
-                            </div>
                             )) : (<></>)}
                         </div>
                     </div>

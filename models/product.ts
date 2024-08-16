@@ -2,7 +2,7 @@
 
 ///Libraries -->
 import {Schema, model, Types, models } from "mongoose";
-import { ISpecification, IProduct, IProductModel, IImage } from "@/config/interfaces";
+import { ISpecification, IProduct, IProductModel, IImage, IPricing } from "@/config/interfaces";
 
 ///Commencing the app
 
@@ -10,18 +10,24 @@ import { ISpecification, IProduct, IProductModel, IImage } from "@/config/interf
 const productSchema = new Schema<IProduct, IProductModel>(
   {
     category: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    subCategory: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    miniCategory: {
-      type: String,
-      trim: true,
+      macro: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      mini: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      micro: {
+        type: String,
+        trim: true
+      },
+      nano: {
+        type: String,
+        trim: true
+      }
     },
     name: {
       type: String,
@@ -33,24 +39,7 @@ const productSchema = new Schema<IProduct, IProductModel>(
         type: String,
         trim: true,
       },
-      src: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      width: {
-        type: Number,
-        required: true,
-        //trim: true,
-      },
-      height: {
-        type: Number,
-        required: true,
-        //trim: true,
-      }
-    }],
-    videos: [{
-      name: {
+      driveId: {
         type: String,
         trim: true,
       },
@@ -68,39 +57,51 @@ const productSchema = new Schema<IProduct, IProductModel>(
         type: Number,
         required: true,
         //trim: true,
+      },
+      type: {
+        type: String,
+        trim: true,
+        required: true
       }
     }],
-    price: {
-      type: Number,
-      required: true,
+    pricing: {
+      basePrice: {
+        type: Number,
+        trim: true
+      },
+      discount: {
+        type: Number,
+        trim: true
+      },
+      variantPrices: [{
+        country: {
+          type: String,
+          trim: true
+        },
+        percent: {
+          type: Number,
+        }
+      }],
+      extraDiscount: {
+        limit: {
+          type: Number
+        },
+        percent: {
+          type: Number
+        }
+      },
+      inStock: {
+        type: Boolean,
+        required: true
+      }
     },
-    extraDiscount: {
+    active: {
       type: Boolean,
-      required: true,
-    },
-    discount: {
-      type: Number,
-      required: true,
-    },
-    colors: {
-      type: Array<String>,
-      trim: true
-    },
-    sizes: {
-      type: Array<String>,
-      trim: true
+      required: true
     },
     rating: {
       type: Number,
       required: true,
-    },
-    freeOption: {
-      type: Boolean,
-      required: true,
-    },
-    inStock: {
-      type: Boolean,
-      required: true
     },
     orders: {
         type: Number,
@@ -150,6 +151,14 @@ const productSchema = new Schema<IProduct, IProductModel>(
             type: String,
             trim: true
         }],
+        colors: {
+          type: Array<String>,
+          trim: true
+        },
+        sizes: {
+          type: Array<String>,
+          trim: true
+        },
         productOrigin: {
             type: String,
             required: true,
@@ -242,13 +251,15 @@ productSchema.statics.deleteProduct = async function (id: string) {
 productSchema.statics.getProductByLatest = async function () {
     const products = await this.find({}).sort({ createdAt: -1 });
     return products;
-  };
+};
 
 /**
  * @notice Static get product by id
  * @returns The product with the given id
  */
 productSchema.statics.getProductById = async function (id: string) {
+  console.log("Id: ", id)
+
     //Validation of args
   if (!Types.ObjectId.isValid(id)) {
     throw Error("Id is invalid");
@@ -302,7 +313,7 @@ productSchema.statics.getProductBySearch = async function (query: string) {
       { subCategory: regex },
       { name: regex },
       { description: regex },
-      { "specification.brand": regex}
+      { specification: regex}
     ]
   })
   return products

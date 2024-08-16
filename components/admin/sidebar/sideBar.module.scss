@@ -1,0 +1,128 @@
+/* This contains the scss for the admin side bar component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($position: fixed, $flex_d: column, $justify: flex-start, $align: center, $gap: 10%, $display: flex);
+    @include position($left: 0%, $top: 0%);
+    @include size(7%, 96%);
+    //border: 1px solid red;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    padding: 2% 0%;
+    z-index: 5;
+    border-right: 1px solid $primary-color;
+    background-color: white;
+
+    @include tabletPro {
+        width: 10%;
+    }
+
+    @include phonePro {
+        width: 15%;
+        justify-content: flex-start;
+        display: none;
+    }
+
+    @include phoneMini {
+        width: 20%;
+        //display: none;
+        //justify-content: flex-start;
+    }
+
+    .logo {
+        @include flexBar($position: relative, $justify: center, $align: center);
+        @include size($height: 10%, $width: 70%);
+        //border: 1px solid red;
+        //left: 5%;
+        top: 0%;
+        transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+        @include phonePro {
+            width: 30%;
+            top: 5%;
+        }
+
+        .img {
+            //border: 1px solid red;
+            object-fit: contain;
+            position: relative;
+            @include size(auto, 70%);
+            //top: 15%;
+
+            @include tabletPro {
+                height: 50%;
+            }
+
+            @include phonePro {
+                height: 50%;
+            }
+        }
+
+        &:hover {
+          transform: scale(1.01);
+        }
+    }
+
+    .container {
+        //border: 1px solid red;
+        @include flexBar($position: relative, $flex_d: column, $justify: flex-start, $align: center, $gap: 3%);
+        @include size(70%, 70%);
+        padding: 10% 0%;
+
+        @include tabletPro {
+            height: 60%;
+        }
+
+        @include phonePro {
+            height: 50%;
+            top: 7%;
+        }
+
+        @include phoneMini {
+            height: 60%;
+            //top: 10%;
+        }
+
+        button {
+            position: relative;
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            //box-shadow: 0 0 10px $secondary-color;
+
+            .icon {
+                color: $text-color-1;
+                //box-shadow: 0 0 10px $secondary-color;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+        }
+
+        .activeBtn {
+            background-color: $primary-color-2;
+
+            .icon {
+
+                &:hover {
+                    color: $text-color-1;
+                }
+            }
+        }
+    }
+}
+
+.activeBar {
+    
+    @include phonePro {
+        display: flex;
+    }
+}
+
+.adminLoginPage {
+    display: none;
+}

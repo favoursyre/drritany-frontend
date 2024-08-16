@@ -36,7 +36,7 @@ const Hero = () => {
           router.push(`/products?query=${query}`)
         } 
 
-      }
+    }
       
     return (
         <main className={styles.main}>

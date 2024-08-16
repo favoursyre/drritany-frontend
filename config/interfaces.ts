@@ -18,11 +18,13 @@ export interface IFAQState {
 ///This declares the interface for image
 export interface IImage {
   _id?: string,
+  driveId?: string,
   name?: string,
   src: string,
   alt?: string,
   width?: number,
   height?: number,
+  type?: string //"image" | "video"
 }
 
 ///IQuote
@@ -38,7 +40,7 @@ export interface IQuoteState {
  * @notice The interface for Order mongoose schema static
  */
 export interface IOrderModel extends Model<IOrder> {
-  processOrder(customerSpec: ICustomerSpec, productSpec: ICart): IOrder,
+  processOrder(order: IOrder): IOrder,
   getOrders(): Array<IOrder>,
   getOrderById(id: string): Array<IOrder>
 }  
@@ -53,8 +55,12 @@ export interface ISpecification {
     benefits?: Array<string>,
     prescription?: Array<string>,
     ingredients?: Array<string>,
+    colors?: Array<string>,
+    sizes?: Array<string>,
     productOrigin?: string,
-    weight?: number
+    modelNumber?: string,
+    weight?: number,
+    power?: number,
     dimension?: {
       length?: number,
       width?: number,
@@ -68,6 +74,15 @@ export interface IInquiryModel extends Model<IInquiry> {
   getAllInquiries(): Array<IInquiry>,
   getInquiryById(id: string): Array<IInquiry>
   deleteInquiry(id: string): IInquiry//
+}
+
+///Declaring the interface for admin mongoose schema static
+export interface IAdminModel extends Model<IAdmin> {
+  createAdmin(admin: IAdmin): IAdmin,
+  getAllAdmins(): Array<IAdmin>,
+  getAdminById(id: string): Array<IAdmin>,
+  loginAdmin(emailAddress: string, password: string): Array<IAdmin>,
+  deleteAdmin(id: string): IInquiry//
 }
 
 /**
@@ -85,10 +100,24 @@ export interface IModalBackgroundStore {
   setModalBackground: (status: boolean) => void
 }
 
+//Interface for admin side bar store
+export interface IAdminSideBarStore {
+  status: boolean;
+  setAdminSideBar: (status: boolean) => void
+}
+
 //Interface for contact modal store
 export interface IContactModalStore {
   modal: boolean;
   setContactModal: (status: boolean) => void
+}
+
+//Interface for confirmation modal store
+export interface IConfirmationModalStore {
+  modal: boolean;
+  choice: boolean,
+  setConfirmationModal: (status: boolean) => void,
+  setConfirmationChoice: (status: boolean) => void
 }
 
 //Interface for order form modal store
@@ -138,27 +167,19 @@ export interface IClientInfoStore {
  * @notice The interface for product mongoose schema api
  */
 export interface IProduct {
-    _id: string,
-    category?: string,
-    subCategory?: string,
-    miniCategory?: string,
+    _id?: string,
+    pricing?: IPricing,
+    category?: ICategory,
     name?: string,
     images: Array<IImage>,
-    videos?: Array<IImage>,
-    price?: number,
-    extraDiscount: boolean,
-    discount: number,
+    active?: boolean,
     orders?: number,
-    inStock?: boolean,
-    freeOption?: boolean,
-    colors?: Array<string>,
-    sizes?: Array<string>,
     rating?: number,
     description?: string,
     specification?: ISpecification,
-    createdAt: string,
-    updatedAt: string,
-    __v: number
+    createdAt?: string,
+    updatedAt?: string,
+    __v?: number
 }
 
 ///Declaring the interface for cart term
@@ -173,8 +194,10 @@ export interface ICartItem {
       color?: string,
       size?: string
     },
-    extraDiscount: boolean,
-    freeOption: boolean,
+    extraDiscount: {
+      limit?: number,
+      percent?: number
+    },
     subTotalWeight: number,
     subTotalPrice: number,
     subTotalDiscount: number
@@ -294,6 +317,19 @@ export interface IInquiry {
   __v?: number
 }
 
+///Declaring the interface for admin
+export interface IAdmin {
+  _id?: string,
+  fullName?: string,
+  emailAddress?: string,
+  password?: string, 
+  superUser?: boolean,
+  image: IImage,
+  createdAt?: string,
+  updatedAt?: string,
+  __v?: number
+}
+
 /**
  * @notice The interface for newsletter subscribers mongoose schema
  * @param subscriber The email address of the subscriber
@@ -317,6 +353,26 @@ export interface ICustomerSpec {
   readonly postalCode: string
 }
 
+//This is the interface for IDelivery
+export interface IDelivery {
+  status: DeliveryStatus,
+  timeline?: Array<{ 
+    description?: string,
+    date?: string,
+    time?: string
+  }> 
+}
+
+/**
+ * @notice The interface for IPayment
+ * @param status The status of payment 
+ * @param exchangeRate The exchange rate as at the time of order
+ */
+export interface IPayment {
+  status: PaymentStatus,
+  readonly exchangeRate: number
+}
+
 /**
  * @notice The interface for order mongoose schema
  * @param question The question 
@@ -326,17 +382,55 @@ export interface IOrder {
   _id?: string,
   customerSpec: ICustomerSpec,
   productSpec: ICart,
+  deliverySpec: IDelivery,
+  paymentSpec: IPayment,
   createdAt?: string,
   updatedAt?: string,
   __v?: number
 }
 
-//The interface for category
-export interface ICategory {
-  name: string,
-  micros: Array<{ name: string, minis: Array<string> }> | Array<string>
+//The interface for category infos
+export interface ICategoryInfo {
+  macro: string,
+  minis: Array<{ 
+    mini: string, 
+    micros: Array<{ 
+      micro: string, 
+      nanos: Array<string> 
+    }>
+  }>
 }
 
+//The interface for category of a product
+export interface ICategory {
+  macro?: string,
+  mini?: string,
+  micro?: string,
+  nano?: string
+}
+
+///The interface for IPricing
+export interface IPricing {
+  basePrice?: number,
+  discount?: number,
+  variantPrices?: Array<{
+    country?: string,
+    percent?: number ///This refer to the percent of inflation
+  }>,
+  extraDiscount?: {
+    limit?: number,
+    percent?: number
+  },
+  inStock?: boolean
+}
+
+//The interface for generic info of a product
+export interface IProductGeneric {
+  name?: string,
+  description?: string,
+  rating?: number,
+  orders?: number
+}
 
 /**
  * @notice The interface for product mongoose schema static
@@ -358,6 +452,22 @@ export interface IError {
   message?: string,
   cause?: string,
   solution?: string
+}
+
+//This is the interface for sheet
+export interface ISheetInfo {
+  sheetId: string,
+  sheetRange: string,
+  data: { [key: string]: any }
+}
+
+//This is the interface for query research
+export interface IQueryResearch {
+  IP: string,
+  Country: string,
+  Keyword: string,
+  Date: string,
+  Time: string
 }
 
 ///This is the interface for params
@@ -398,4 +508,54 @@ export interface IOrderSheet {
 export type Props = {
   params: { id: string }
   searchParams: { [key: string]: string | string[] | undefined }
+}
+
+//The enum for OS of client's device
+export enum ClientOS {
+  MAC_OS = "Mac OS",
+  IOS = "iOS",
+  ANDROID = "Android",
+  WINDOW = "Windows",
+  LINUX = "Linux",
+  UNKNOWN = "Unknown"
+}
+
+//The enum for OS of client's device type
+export enum ClientDevice {
+  DESKTOP = "Desktop",
+  TABLET = "Tablet",
+  MOBILE = "Mobile"
+}
+
+//The enum for delivery status
+export enum DeliveryStatus {
+  PENDING = "Pending",
+  IN_TRANSIT = "In Transit",
+  DELIVERED = "Delivered",
+  RETURNED = "Returned",
+  EXCEPTION = "Exception",
+  CANCELLED = "Cancelled"
+}
+
+//The enum for payment status
+export enum PaymentStatus {
+  PENDING = "Pending",
+  SUCCESS = "Successful",
+  REFUND = "Refunded",
+  FAILED = "Failed"
+}
+
+///The interface for a payment status and corresponding text color
+export interface IPaymentStatus {
+  status: PaymentStatus,
+  color: string
+}
+
+//The interface for event status
+export interface IEventStatus {
+  status?: string,
+  color?: {
+    text?: string,
+    background?: string
+  }
 }

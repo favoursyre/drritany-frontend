@@ -831,9 +831,13 @@
         top: 80%;
     }
 
+    @include tablet {
+        top: 90%;
+    }
+
     @include phonePro {
         //border: 1px solid red;
-        top: 145%;
+        top: 165%;
     }
 }
 
@@ -841,6 +845,10 @@
     top: 200%;
     @extend %footer-layout;
     //border: 2px solid red;
+}
+
+.adminPage, .adminLoginPage {
+    display: none;
 }
 
 .modalState {

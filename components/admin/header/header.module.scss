@@ -1,0 +1,147 @@
+/* This contains the scss for the admin header component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.header {
+    @include flexBar($position: fixed, $flex_d: row, $justify: space-between, $align: center, $gap: 0%);
+    @include position($left: 0%, $top: 0%);
+    @include size(89%, 7%);
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    //border: 1px solid red;
+    left: 7%;
+    padding: 0% 2%;
+    background-color: white;
+    z-index: 3;
+    border-bottom: 1px solid $primary-color;
+
+    @include tabletPro {
+        left: 10%;
+        width: 86%;
+    }
+
+    @include phonePro {
+        //left: 15%;
+        //width: 80%;
+        width: 96%;
+        left: 0%;
+        //justify-content: flex-start;
+    }
+
+    @include phoneMini {
+        //width: 20%;
+        //justify-content: flex-start;
+    }
+
+    .menu_title {
+        //border: 1px solid red;
+        @include flexBar($position: relative, $flex_d: row, $justify: flex-start, $align: center, $gap: 10%);
+
+        @include phoneMini {
+            gap: 5%;
+        }
+
+        .menu {
+            @include flexBar($position: relative, $justify: center, $align: center, $display: none);
+            background-color: transparent;
+            border: none;
+            //@include size($height: 10%, $width: 70%);
+            border: none;
+            
+            @include phonePro {
+                display: flex;
+            }
+    
+            .icon {
+                //border: 1px solid red;
+                color: $text-color-1;
+                //box-shadow: 0 0 10px $secondary-color;
+    
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+    
+            &:hover {
+              transform: scale(1.01);
+            }
+        }
+
+        .activeMenu {
+            background-color: $primary-color-2;
+
+            .icon {
+
+                &:hover {
+                    color: $text-color-1;
+                }
+            }
+        }
+    
+        .title {
+            position: relative;
+            @include text-layout($size: 20px, $l_height: 52px, $color: $primary-color);
+            font-weight: 500;
+            //margin-bottom: 0px;
+            font-family: "Poppins";
+    
+            @include tabletPro {
+                font-size: 20px;
+            }
+    
+            @include phonePro {
+                //margin-top: -10px;
+                font-size: 20px;
+            }
+    
+            @include phoneMini {
+                font-size: 15px;
+                top: 1%;
+            }
+        }
+    }
+
+    .profileSection {
+        //border: 1px solid red;
+        @include flexBar($position: relative, $flex_d: column, $justify: flex-start, $align: center, $gap: 0%);
+        @include size(auto, 80%);
+
+        .profile {
+            @include flexBar($position: relative, $flex_d: row, $justify: center, $align: center, $gap: 10%);
+            background-color: transparent;
+            border: none;
+            @include size(100%, 100%);
+
+            .icon {
+                color: $text-color-1;
+                font-size: 2rem;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+
+
+        }
+    }
+}
+
+.activeBar {
+    //border: 1px solid green;
+    
+    @include phonePro {
+        left: 15%;
+        width: 81%;
+    }
+
+    @include phoneMini {
+        width: 76%;
+        left: 20%;
+        //justify-content: flex-start;
+    }
+}
+
+.adminLoginPage {
+    display: none;
+}

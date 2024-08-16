@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
-import { domainName, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
+import { backend, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
 import ProductQuery from '@/components/product/productQuery/ProductQuery';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
@@ -12,7 +12,7 @@ import { IProduct, Props } from '@/config/interfaces';
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   return {
     title: `${searchParams.query}`,
-    description: `Search our range of natural health products.`,
+    description: `Search our range of top quality products.`,
     alternates: {
       canonical: `/products/search`
     }
@@ -22,7 +22,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 ///This function searches for passed in query
 async function getQueriedProducts(query: string | string[] | undefined) {
     try {
-      const res = await fetch(`${domainName}/api/product?action=search&query=${query}`, {
+      const res = await fetch(`${backend}/product?action=search&query=${query}`, {
         method: "GET",
         cache: "no-store",
       });
@@ -36,13 +36,13 @@ async function getQueriedProducts(query: string | string[] | undefined) {
   } catch (error) {
       console.error(error);
   }
-  }
+}
 
 
 ///This fetches the products
 async function getProducts() {
     try {
-      const res = await fetch(`${domainName}/api/product?action=order`, {
+      const res = await fetch(`${backend}/product?action=order`, {
         method: "GET",
         cache: "no-store",
       })

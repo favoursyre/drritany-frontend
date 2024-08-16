@@ -8,7 +8,7 @@ import { MouseEvent, useState, FormEvent } from "react";
 import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
-import { capitalizeFirstLetter, domainName } from "@/config/utils";
+import { capitalizeFirstLetter, backend } from "@/config/utils";
 import { notify } from "@/config/clientUtils";
 import validator from "validator";
 import { IInquiry } from "@/config/interfaces";
@@ -67,7 +67,7 @@ const ContactModal = () => {
       //console.log('Clicked')
       const inquiry: IInquiry = { fullName, emailAddress, subject, message }
       console.log("Order: ", inquiry)
-      const res = await fetch(`${domainName}/api/inquiry/`, {
+      const res = await fetch(`${backend}/inquiry/`, {
           method: 'POST',
           body: JSON.stringify(inquiry),
           headers: {

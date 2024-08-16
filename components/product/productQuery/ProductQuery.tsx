@@ -3,9 +3,9 @@
 
 ///Libraries -->
 import styles from "./productQuery.module.scss"
-import { IProduct, IClientInfo } from "@/config/interfaces";
+import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react"
-import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, querySheetId, GoogleSheetDB } from "@/config/utils";
+import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, querySheetId, backend } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -22,7 +22,7 @@ import ProductGrid from "../productGrid/ProductGrid";
  * @title Product Query Component
  * @returns The Product Query component
  */
-const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | undefined, query_: Array<IProduct> }) => {
+const ProductQuery = ({ keyword_, query_ }: { keyword_: string | undefined, query_: Array<IProduct> }) => {
     const [lastIndex, setLastIndex] = useState(12)
     const [keyword, SetKeyword] = useState(keyword_)
     const [productList, setProductList] = useState(query_)
@@ -44,21 +44,32 @@ const ProductQuery = ({ keyword_, query_ }: { keyword_: string | string[] | unde
         //Storing the keyword in an excel sheet for research purposes
         if (clientInfo) {
             const storeQuery = async () => {
-                const queryData = [{
-                    IP: clientInfo?.ip,
-                    Country: clientInfo?.country?.name?.common,
-                    Keyword: keyword,
-                    Date: getCurrentDate(),
-                    Time: getCurrentTime()
-                }]
-    
-                const orderSheet = new GoogleSheetDB(querySheetId)
-    
-                //Remember to effect and input the correct sheet index based on the nationality of the client e.g. NG = 0
-                const addQuery = await orderSheet.addRow(0, queryData)
-                console.log("Query Status: ", addQuery)
+                try {
+                    //Arranging the query research info
+                    const queryInfo: IQueryResearch = {
+                        IP: clientInfo?.ip!,
+                        Country: clientInfo?.country?.name?.common!,
+                        Keyword: keyword!,
+                        Date: getCurrentDate(),
+                        Time: getCurrentTime()
+                    }
+
+                    const sheetInfo: ISheetInfo = {
+                        sheetId: querySheetId,
+                        sheetRange: "ProductQuery!A:E",
+                        data: queryInfo
+                    }
+            
+                    const res = await fetch(`${backend}/sheet`, {
+                        method: "POST",
+                        body: JSON.stringify(sheetInfo),
+                    });
+                    console.log("Google Stream: ", res)
+                } catch (error) {
+                    console.log("Store Error: ", error)
+                }
             }
-    
+            
             storeQuery()
         }
     }, [foundProducts, clientInfo])

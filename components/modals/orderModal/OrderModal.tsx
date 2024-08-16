@@ -9,8 +9,8 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, domainName, deliveryName } from "@/config/utils";
-import { ICart, ICustomerSpec, IClientInfo } from "@/config/interfaces";
+import { extraDeliveryFeeName, cartName, deliveryName, backend } from "@/config/utils";
+import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 
 ///Commencing the code 
@@ -63,12 +63,20 @@ const OrderModal = () => {
                 const productSpec: ICart = cart
                 const clientInfo_ = clientInfo as unknown as IClientInfo
                 const customerSpec: ICustomerSpec = deliveryInfo as unknown as ICustomerSpec
-                const order = {customerSpec, productSpec, clientInfo_}
-                console.log("Order_: ", order)
-                const res = await fetch(`${domainName}/api/order`, {
+                const deliverySpec: IDelivery = {
+                    status: DeliveryStatus.PENDING
+                }
+                const paymentSpec: IPayment = {
+                    status: PaymentStatus.PENDING,
+                    exchangeRate: clientInfo_.country?.currency?.exchangeRate!
+                }
+                const order: IOrder = { customerSpec, productSpec, deliverySpec, paymentSpec }
+                const orderSpec = { order, clientInfo_}
+                console.log("Order_: ", orderSpec)
+                const res = await fetch(`${backend}/order`, {
                     method: 'POST',
                     //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
-                    body: JSON.stringify(order),
+                    body: JSON.stringify(orderSpec),
                     headers: {
                     'Content-Type': 'application/json',
                     },

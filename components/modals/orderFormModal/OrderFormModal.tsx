@@ -13,7 +13,7 @@ import { ICart, IClientInfo, ICountry, ICustomerSpec  } from "@/config/interface
 import { countryList } from "@/config/database";
 import { notify, setItem, getItem } from "@/config/clientUtils";
 import validator from "validator";
-import { domainName, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash } from "@/config/utils"
+import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash } from "@/config/utils"
 
 ///Commencing the code 
 
@@ -44,8 +44,8 @@ const OrderFormModal = () => {
     const [dropList1, setDropList1] = useState(false)
     const [dropList2, setDropList2] = useState(false)
     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(0) //Unit is in USD
-    const cart_ = getItem(cartName)
-    const [cart, setCart] = useState<ICart | null>(cart_)
+    //const cart_ = 
+    const [cart, setCart] = useState<ICart | null>(getItem(cartName))
 
     ///This function is triggered when the background of the modal is clicked
     const closeModal = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
@@ -62,7 +62,7 @@ const OrderFormModal = () => {
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
 
-            console.log("test c: ", country)
+            //console.log("test c: ", country)
             // if (country) {
             //     //Checking if the state has extraDeliveryPercent and notifying the client
             //     const countryInfo_ = countryList.find(country => country.name?.common === country) as unknown as ICountry
@@ -74,7 +74,7 @@ const OrderFormModal = () => {
             clearInterval(interval);
         };
         
-    }, [countryInfo]);
+    }, [countryInfo, state, cart]);
 
     useEffect(() => {
         //getClientInfo()
@@ -264,7 +264,8 @@ const OrderFormModal = () => {
   const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
     e.preventDefault()
 
-    console.log("Select Val: ", e.target.value)
+    //console.log("Select Val: ", e.target.value)
+    //console.log("Label: ", label)
 
     if (label === "country") {
         setCountry(e.target.value);
@@ -272,8 +273,12 @@ const OrderFormModal = () => {
         const countryInfo_ = countryList.find(country => country.name?.common === e.target.value) as unknown as ICountry
         setCountryInfo(() => countryInfo_)
     } else if (label === "state") {
+        //console.log("I'm here")
+        //console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
         if (cart && clientInfo?.country?.currency?.exchangeRate) {
-            setState(e.target.value)
+            setState(() => e.target.value)
+            //console.log("State: ", state)
+
             const symbol = clientInfo.country.currency.symbol
         
             //Checking if the state has extraDeliveryPercent and notifying the client
@@ -505,8 +510,7 @@ const OrderFormModal = () => {
                             </>
                         )}
                     </button>
-                </form>
-                
+        </form>        
     </div>
   );
 };

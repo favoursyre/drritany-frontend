@@ -804,6 +804,10 @@
     //border: 2px solid red;
 }
 
+.adminPage, .adminLoginPage {
+    display: none;
+}
+
 .modalState {
     pointer-events: none;
     filter: opacity($modal-opacity);

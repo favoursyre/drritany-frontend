@@ -1,0 +1,147 @@
+/* This contains the scss for the order modal component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar ($position: relative, $align: center, $justify: center, $gap: 0%, $flex_d: column);
+    //justify-content: center;
+    //border: 1px solid green;
+    @include size(40%, 60%);
+    background-color: white;
+    padding: 0% 2% 0% 2%;
+    border-radius: 8px;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+    font-family: "Inter";
+
+    @include tabletPro {
+      @include size(60%, 40%);
+    }
+
+    @include phonePro {
+      @include size(80%, 40%);
+      //left: 10%;
+    }
+
+    .modal_head {
+      //border: 1px solid green;
+      @include flexBar ($position: absolute, $display: flex, $wrap: none, $align: flex-start, $justify: flex-end, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
+      @include size(90%, 7%);
+      top: 10%;
+
+      button {
+        position: relative;
+        display: flex;
+        width: 7%;
+        flex-direction: row;
+        justify-content: center;
+        border: none;
+        background-color: transparent;
+        //border: 2px solid red;
+
+        .icon {
+
+          @include phonePro {
+            font-size: 1rem;
+          }
+        }
+
+        @include phonePro {
+          width: 15%;
+        }
+  
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .container {
+      //border: 1px solid red;
+      @include flexBar ($position: relative, $align: center, $justify: center, $gap: 15%, $flex_d: column);
+      top: 6%;
+      @include size(90%, 80%);
+
+      @include phonePro {
+        //border: 1px solid red;
+        gap: 10%;
+      }
+
+      .span1 {
+        //border: 1px solid green;
+        position: relative;
+        @include text-layout($size: 30px, $color: $primary-color, $l_height: 40px);
+        font-weight: 600;
+        font-family: "Aclonica";
+        
+        @include phonePro {
+          font-size: 25px;
+          line-height: 30px;
+        }
+
+        @include phone {
+          font-size: 20px;
+          line-height: 25px;
+        }
+      }
+
+      .span2 {
+        //border: 1px solid green;
+        position: relative;
+        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        text-align: center;
+
+        @include phone {
+          font-size: 14px;
+        }
+
+        @include phoneMini {
+          font-size: 12px;
+          line-height: 18px;
+        }
+      }
+
+      .buttons {
+        //border: 1px solid pink;
+        @include flexBar ($position: relative, $align: center, $justify: space-between, $gap: 5%);
+        @include size(100%, 50px);
+
+        @include phoneMini {
+          height: 40px;
+        }
+
+        .button1, .button2 {
+          //border: 1px solid red;
+          border: none;
+          @include size(45%, 100%);
+          border-radius: 4px;
+
+          span {
+            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
+            font-weight: 600;
+
+            @include phone {
+              font-size: 14px;
+            }
+
+            @include phoneMini {
+              font-size: 12px;
+            }
+          }
+
+          &:hover {
+            transform: scale(1.01);
+          }
+        }
+
+        .button1 {
+          background-color: red;
+        }
+
+        .button2 {
+          background-color: rgb(54, 207, 54);
+        }
+      }
+    }
+  }

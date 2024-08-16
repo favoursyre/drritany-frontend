@@ -5,7 +5,7 @@
 import styles from "./order.module.scss"
 import React, { useState, useEffect, ChangeEvent } from "react"
 import { setItem, getItem, notify } from '@/config/clientUtils';
-import { domainName, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round } from "@/config/utils"
+import { cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, backend } from "@/config/utils"
 import { ICart, IClientInfo, ICountry, ICustomerSpec } from "@/config/interfaces";
 import validator from "validator";
 import { useOrderModalStore, useModalBackgroundStore, useClientInfoStore } from "@/config/store";
@@ -119,7 +119,7 @@ const Order = () => {
                     const clientInfo_ = clientInfo as unknown as IClientInfo
                     const order = {customerSpec, productSpec, clientInfo_}
                     console.log("Order_: ", order)
-                    const res = await fetch(`${domainName}/api/order`, {
+                    const res = await fetch(`${backend}/order`, {
                         method: 'POST',
                         //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
                         body: JSON.stringify(order),

@@ -20,9 +20,13 @@
         height: 60%;
     }
 
+    @include tablet {
+        height: 70%;
+    }
+
     @include phonePro {
         top: 15%;  
-        height: 100%;
+        height: 120%;
     }
 
     h2 {
@@ -154,6 +158,7 @@
                 flex-direction: column;
                 @include size(100%, 25%);
                 padding: 5% 0%;
+                //gap: 1%;
             }
 
             .deliveryAddress {
@@ -162,7 +167,7 @@
                 @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
 
                 @include phonePro {
-                    @include size(100%, 70%);
+                    @include size(100%, 50%);
                     align-items: flex-start;
                     line-height: 17px;
                     padding: 3% 0%;
@@ -172,27 +177,52 @@
                 @include phoneMini {
                     line-height: 13px
                 }
+
+                .title {
+
+                    @include phonePro {
+                        margin-bottom: 5px
+                    }
+                }
                 
             }
 
-            .deliveryDate {
+            .deliveryInfo {
                 //border: 1px solid red;
                 @include size(45%, 90%);
-                @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 0%);
-                //display: block;
-                
-
+                //box-shadow: 10px 10px black;
+                @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 5%);
 
                 @include phonePro {
-                    @include size(100%, 30%);
+                    @include size(100%, 50%);
                     line-height: 17px;
                     border-bottom: 1px dashed $primary-color;
+                    gap: 15%;
+                    //padding-bottom: 10px;
                 }
 
                 @include phoneMini {
                     line-height: 13px
                 }
-                
+
+                .deliveryDate, .deliveryStatus, .paymentStatus {
+                    //border: 1px solid red;
+                    @include size(100%, auto);
+                    @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 0%);
+                    top: -10%;
+
+                    @include phonePro {
+                        flex-direction: row;
+                        justify-content: space-between;
+                    }
+
+                    .text {
+                        //border: 1px solid red;
+                        position: relative;
+                        padding: 1% 2%;
+                        border-radius: 5px;
+                    }
+                }
             }
         }
 
@@ -206,6 +236,7 @@
             @include phonePro {
                 width: 100%;
                 top: 1%;
+                height: 45%;
             }
 
             .cartItem {

@@ -1,7 +1,7 @@
 //This acts as a database for the web app
 
 ///Libraries -->
-import { IFAQState, IQuoteState, ITestimony, ICountry, ICategory } from "./interfaces";
+import { IFAQState, IQuoteState, ITestimony, ICountry, ICategoryInfo } from "./interfaces";
 import { companyName, deliveryPeriod, formatArrayToString } from "./utils"
 
 ///Commencing the code -->
@@ -634,7 +634,7 @@ export const countryList: Array<ICountry> = [
             name: "Nigerian Naira",
             abbreviation: "NGN",
             symbol: "₦",
-            exchangeRate: 1200
+            exchangeRate: 1300
         },
         states: [
             {

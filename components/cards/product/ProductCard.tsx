@@ -40,15 +40,15 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
     }
 
     ///This function opens discount modal
-    const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
-        e.preventDefault()
-        const productName = product.name as unknown as string
-        const productFreeOption = product.freeOption as unknown as boolean
+    // const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
+    //     e.preventDefault()
+    //     const productName = product.name as unknown as string
+    //     const productFreeOption = product.freeOption as unknown as boolean
 
-        setDiscountProduct({ name: productName, freeOption: product.freeOption as unknown as boolean, poppedUp: false })
-        setModalBackground(true)
-        setDiscountModal(true)
-    }
+    //     setDiscountProduct({ name: productName, freeOption: product.freeOption as unknown as boolean, poppedUp: false })
+    //     setModalBackground(true)
+    //     setDiscountModal(true)
+    // }
 
     const getViewClass = (view: string | undefined) => {
         switch (view) {
@@ -62,10 +62,10 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
     }
 
     return (
-        <main className={`${styles.main} ${getViewClass(view)}`} onClick={(e) => viewProduct(e, product._id)}>
+        <main className={`${styles.main} ${getViewClass(view)}`} onClick={(e) => viewProduct(e, product._id!)}>
             <div className={styles.discounts}>
                 <div className={styles.percent}>
-                    <span>-{product.discount}%</span>
+                    <span>-{product.pricing?.discount}%</span>
                 </div>
                 {/* {product.extraDiscount ? (
                     <Discount className={styles.offer} onClick={(e) => openDiscountModal(e)} />
@@ -96,7 +96,7 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
                             )}
                             {clientInfo?.country?.currency?.exchangeRate ? (
                                 <span>
-                                    {product.price ? (round(product.price * clientInfo.country?.currency?.exchangeRate, 1)).toLocaleString("en-US") : ""}
+                                    {product.pricing?.basePrice ? (round(product.pricing?.basePrice * clientInfo.country?.currency?.exchangeRate, 1)).toLocaleString("en-US") : ""}
                                 </span>
                             ) : (
                                 <></>
@@ -112,8 +112,8 @@ const ProductCard = ({ product_, view }: { product_: IProduct, view: string | un
                         )}
                         {clientInfo?.country?.currency?.exchangeRate ? (
                             <span>
-                                {product.price ? (
-                                    round(slashedPrice(product.price * clientInfo.country?.currency?.exchangeRate, product.discount), 1)).toLocaleString("en-US") 
+                                {product.pricing?.basePrice ? (
+                                    round(slashedPrice(product.pricing?.basePrice * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
                                 : (
                                     <></>
                                 )}

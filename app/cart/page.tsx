@@ -5,7 +5,7 @@
 //import Cart from "@/components/cart/Cart"
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct } from "@/config/interfaces";
-import { domainName, shuffleArray } from "@/config/utils";
+import { backend, shuffleArray, sortProductByActiveStatus } from "@/config/utils";
 import { Metadata } from "next";
 import dynamicImport from "next/dynamic";
 const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
@@ -25,7 +25,7 @@ export const dynamic = "force-dynamic"
 ///This fetches a list of all products
 async function getProducts() {
   try {
-    const res = await fetch(`${domainName}/api/product?action=order`, {
+    const res = await fetch(`${backend}/product?action=order`, {
       method: "GET",
       cache: "no-store",
     })
@@ -44,7 +44,7 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function CartPage() {
-  const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
+  const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
 
   return (
     <main className="cart_page">

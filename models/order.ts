@@ -3,7 +3,7 @@
 ///Libraries -->
 //import "dotenv/config";
 import { Schema, model, Types, models } from "mongoose";
-import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem } from "@/config/interfaces";
+import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem, DeliveryStatus, PaymentStatus } from "@/config/interfaces";
 import { Product } from "./product";
 //import { sendEmail } from "../utils/utils";
 
@@ -70,6 +70,37 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
           required: true,
         }
     },
+    deliverySpec: {
+      status: {
+        type: String,
+        enum: DeliveryStatus,
+        required: true
+      },
+      timeline: [{ 
+        description: {
+          type: String,
+          trim: true
+        },
+        date: {
+          type: String,
+          trim: true
+        },
+        time: {
+          type: String,
+          trim: true
+        }
+      }] 
+    },
+    paymentSpec: {
+      status: {
+        type: String,
+        enum: PaymentStatus,
+        required: true
+      },
+      exchangeRate: {
+        type: Number
+      },
+    },
   },
   { timestamps: true }
 );
@@ -80,17 +111,12 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
  * @param productSpec The infos of the product been ordered
  * @returns All FAQs
  */
-orderSchema.statics.processOrder = async function (
-  customerSpec: ICustomerSpec,
-  productSpec: ICart
-) {
+orderSchema.statics.processOrder = async function ( order: IOrder ) {
 
   //Create a new order
-  const order = await this.create({
-    customerSpec, productSpec
-  });
+  const order_ = await this.create(order);
 
-  return order;
+  return order_;
 };
 
 /**

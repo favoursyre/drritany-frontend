@@ -4,7 +4,7 @@
 ///Libraries -->
 import { notify, visitSocialLink } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, domainName, GoogleSheetDB, orderSheetId, companyEmail, companyName } from '@/config/utils'
+import { routeStyle, backend, GoogleSheetDB, orderSheetId, companyEmail, companyName, logo } from '@/config/utils'
 import { IContact, INews, IOrderSheet } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";
@@ -72,7 +72,7 @@ const Footer = () => {
             const subscriber = email
             const newsletter: INews = { subscriber }
             //console.log("Email: ", subscriber)
-            const res = await fetch(`${domainName}/api/news/`, {
+            const res = await fetch(`${backend}/news/`, {
                 method: 'POST',
                 body: JSON.stringify(newsletter),
                 headers: {
@@ -112,10 +112,10 @@ const Footer = () => {
                     <div className={styles.logo}>
                         <Image
                             className={styles.img}
-                            src="https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG"
-                            alt=""
-                            width={2500}
-                            height={2500}
+                            src={logo.src}
+                            alt={logo.alt!}
+                            width={logo.width}
+                            height={logo.height}
                         />
                         <span>{companyName}</span>
                     </div>

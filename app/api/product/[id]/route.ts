@@ -9,13 +9,12 @@ import { IProduct } from "@/config/interfaces";
 ///Commecing code
 //Patching details in a product
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-
     try {
         const { id } = params;
-        const product: IProduct = await request.json();
+        const product_: IProduct = await request.json();
         await connectMongoDB();
-        const product_ = await Product.updateProduct(id, product)
-        return NextResponse.json({ message: "Product Edited Successful", product_ }, { status: 200 });
+        const product = await Product.updateProduct(id, product_)
+        return NextResponse.json({ message: "Product Edited Successful", product }, { status: 200 });
 
     } catch (error: any) {
         console.log("Error: ", error)

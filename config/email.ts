@@ -2,7 +2,7 @@
 
 ///Libraries -->
 import nodemailer from "nodemailer"
-import { IOrder, IInquiry } from "./interfaces"
+import { IOrder, IInquiry, IAdmin } from "./interfaces"
 import { companyName, SUPPORT_EMAIL, SUPPORT_PASSWORD, domainName } from "./utils"
 
 ///Commencing the code
@@ -618,3 +618,186 @@ ${companyName}
     const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, order.customerSpec.email, `Successful Order`, body, undefined, undefined)
     return status
   }
+
+/**
+ * @notice This sends an email for successful admin creation
+ * @param admin The details of the admin
+ * @param body The body message of the email to be sent
+ * @returns The status of the sent email, whether successful or not
+ */
+export const sendAdminCreationEmail = (admin: IAdmin, password: string): any => {
+  const template: string = `
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style type="text/css">
+    @import url('https://fonts.googleapis.com/css?family=Inter');
+      html {
+        padding: 0px;
+        overflow-x: hidden;
+        /* border: 2px solid yellow; */
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        font-family: 'Inter';
+      }
+
+      body {
+        /* align-items: center; */
+        position: absolute;
+        /* border: 2px solid blue; */
+        width: 95%;
+        height: 95%;
+      }
+
+      main {
+        /* align-items: center; */
+        position: relative;
+        border: 2px solid blue;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 95%;
+        height: 100%;
+        padding: 1% 2.5%;
+      }
+
+      .logo {
+        position: relative;
+        border: 2px solid blue;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 95%;
+        height: 7%;
+        margin-bottom: 20px;
+        top: 5%;
+      }
+
+      .logo img {
+        position: relative;
+        object-fit: contain;
+        /* border: 2px solid blue; */
+        width: 7%;
+        height: 60%;
+      }
+
+      .message {
+        border: 2px solid blue;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 5%;
+        top: 10%;
+        font-size: 16px;
+        line-height: 22px;
+      }
+
+      #salute {
+
+      }
+
+      #body {
+        border: 2px solid blue;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        top: 15%;
+      }
+
+    /* This is for mobile */
+    @media (min-width: 550px) and (max-width: 1024px) {
+      .logo img {
+        width: 15%;
+      }
+    }
+
+      /* This is for mobile */
+      @media (min-width: 0px) and (max-width: 550px) {
+
+        .logo {
+          margin-bottom: 0px;
+        }
+
+        .logo img {
+            /* border: 1px solid red; */
+            width: 25%;
+        }
+
+        .brief {
+          font-size: 18px;
+          flex-direction: column;
+        }
+
+        .message {
+          font-size: 16px;
+        }
+
+        #body {
+          top: 5%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header class="logo">
+        <img 
+            src="https://drive.google.com/uc?export=download&id=1RbUo9BSAyxfNmzVV_dzjC7E4nT9ZtbnV"
+            alt="test"
+        />
+      </header>
+      <div class="message">
+        <span id="salute">Dear,</span>
+        <span id="body">
+            Thank you for reaching out to us. We have received your message and our team will respond to you promptly. 
+        <br />
+        <br />
+        Best regards, <br />
+        Dr Ritany Customer Care
+        </span>
+      </div>
+    </main>
+    <script>
+      
+    </script>
+  </body>
+</html>
+  `
+//const total = round((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+
+  const body = `
+Dear ${admin.fullName},
+
+We are pleased to inform you that your admin account has been created successfully.
+
+Visit ${domainName}/admin/login to log in to your account
+Your login details are;
+Email: ${admin.emailAddress}
+Password: ${password}
+
+Keep your credentials a secret and don't share it with anyone, welcome on board.
+
+If you ever have any questions, feel free to reply to this email.
+
+If you don't recognise this activity, feel free to reply this email.
+
+Warmest regards, 
+
+Customer Support Team
+${companyName}
+  `
+  
+  const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, admin.emailAddress!, `Admin Successfully Created`, body, undefined, undefined)
+  return status
+}
+
+

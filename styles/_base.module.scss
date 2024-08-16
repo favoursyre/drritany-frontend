@@ -12,6 +12,7 @@
 // }
 
 $primary-color: rgb(250, 107, 24); // rgb(250, 115, 24)
+$primary-color-2: rgb(250, 107, 24, 0.05);
 $secondary-color: rgba(216, 157, 108, 0.842); //rgba(255, 192, 150, 0.8);
 $secondary-color-2: rgb(63, 25, 8);
 $secondary-color-3: rgba(77, 41, 25, 0.89);
@@ -24,6 +25,12 @@ $text-color-3: rgb(154, 158, 166);
 $text-color-4: rgb(18, 183, 106);
 $input-color-1: #F0F1F2;
 $modal-opacity: 0.3;
+$success-color-1: rgb(0, 128, 0);
+$success-color-2: rgb(0, 128, 0, 0.2);
+$pending-color-1: rgb(255, 215, 0);
+$pending-color-2: rgb(255, 215, 0, 0.15);
+$cancel-color-1: rgb(255, 0, 0);
+$cancel-color-2: rgb(255, 0, 0, 0.1);
 
 $breakpoints: (
   "phoneMini": 0px,
@@ -151,4 +158,13 @@ $breakpoints: (
   100% {
     transform: rotate(360deg);
   }
+}
+
+:export {
+  successColor1: $success-color-1;
+  successColor2: $success-color-2;
+  pendingColor1: $pending-color-1;
+  pendingColor2: $pending-color-2;
+  cancelColor1: $cancel-color-1;
+  cancelColor2: $cancel-color-2;
 }
