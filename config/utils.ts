@@ -5,6 +5,7 @@
 import React from 'react';
 import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage } from './interfaces';
 import styles from "@/styles/_base.module.scss"
+import { Readable } from 'stream';
 
 ///Commencing the code
 export const companyName: string = "Idealplug"
@@ -614,6 +615,34 @@ export const sortProductByActiveStatus = (products: Array<IProduct>, label: "All
         return
     }
 }
+
+//This function converts web stream to node stream
+export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array>): Readable => {
+    const reader = webStream.getReader();
+    const stream = new Readable({
+        async read() {
+            const { done, value } = await reader.read();
+            if (done) {
+                this.push(null); // No more data
+            } else {
+                this.push(Buffer.from(value)); // Push data into the Node.js stream
+            }
+        },
+    });
+    return stream;
+}
+
+//Convert the file to a buffer and then to a stream
+// export const convertFileToBuffer = async (file: File): Promise<Buffer> => {
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onload = () => {
+//             resolve(Buffer.from(reader.result as ArrayBuffer));
+//         };
+//         reader.onerror = reject;
+//         reader.readAsArrayBuffer(file);
+//     });
+// }
 
 /**
  * Converts an array of strings to a single comma-separated string.

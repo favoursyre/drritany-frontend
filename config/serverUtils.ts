@@ -4,6 +4,8 @@
 ///Libraries -->
 import { google } from "googleapis";
 import { Readable } from "stream";
+import fs from "fs"
+import { convertToNodeReadableStream } from "./utils";
 
 ///Commencing the code
 //Declaring the neccesary variables
@@ -22,6 +24,33 @@ const data = {
     universe_domain: process.env.NEXT_PUBLIC_UNIVERSE_DOMAIN!,
 }
 //console.log("Google Credentials: ", GoogleCredentials)
+
+// export const convertFileToBuffer = async (file: File): Promise<Buffer> => {
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onload = () => {
+//             resolve(Buffer.from(reader.result as ArrayBuffer));
+//         };
+//         reader.onerror = reject;
+//         reader.readAsArrayBuffer(file);
+//     });
+// }
+
+//This function converts web stream to node stream
+// export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array>): Readable => {
+//     const reader = webStream.getReader();
+//     const stream = new Readable({
+//         async read() {
+//             const { done, value } = await reader.read();
+//             if (done) {
+//                 this.push(null); // No more data
+//             } else {
+//                 this.push(Buffer.from(value)); // Push data into the Node.js stream
+//             }
+//         },
+//     });
+//     return stream;
+// }
 
 ///This function allows one to perform CRUD operation using Google Drive
 class GoogleDriveCRUD {
@@ -56,6 +85,10 @@ class GoogleDriveCRUD {
     public async addFile(file: File, folderId: string | void) {
         try {
             const fileBuffer = file.stream();
+            const nodeFileStream = convertToNodeReadableStream(fileBuffer)
+            //const fileBuffer_ = await convertFileToBuffer(file)
+            //const fileBuffer = fs.createReadStream(file.name)
+            //console.log("hvv: ", fs.createWriteStream(file.name))
             //const mimeType = mime.getType(file.name);
 
 
@@ -67,8 +100,8 @@ class GoogleDriveCRUD {
         
             const media = {
                 mimeType: file.type,//'application/octet-stream',
-                body: Readable.from(fileBuffer),
-               //body: fileBuffer
+                //body: Readable.from([fileBuffer_]),
+               body: nodeFileStream
             };
 
             const response = await this.drive.files.create({
