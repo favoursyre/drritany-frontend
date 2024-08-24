@@ -35,7 +35,7 @@ const Cart = () => {
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
 
     useEffect(() => {
-        console.log("Cart Size: ", cart?.cart[0].specs?.size)
+        //console.log("Cart Size: ", cart?.cart[0].specs?.size)
 
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
