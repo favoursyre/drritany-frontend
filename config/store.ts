@@ -2,7 +2,7 @@
 
 ///Libraries -->
 import { create } from "zustand";
-import { IModalBackgroundStore, IAdminSideBarStore, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore } from "@/config/interfaces";
+import { IModalBackgroundStore, IAdminSideBarStore, IProduct, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore } from "@/config/interfaces";
 
 //Commencing code -->
 
@@ -41,7 +41,7 @@ export const useOrderFormModalStore = create<IOrderFormModalStore>((set) => ({
 //Discount Modal state store
 export const useDiscountModalStore = create<IDiscountModalStore>((set) => ({
     modal: false,
-    product: { name: "", freeOption: false, poppedUp: false },
+    product: { data: undefined!, poppedUp: false },
     setDiscountModal: (status) => set(() => ({ modal: status })),
     setDiscountProduct: (product) => set(() => ({ product: product }))
 }))

@@ -19,7 +19,8 @@ const DisplayBar = ({ text_ }: { text_: string | undefined }) => {
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`}>
             <div className={styles.container}>
-                <span>{text ? text : "Shop Now & Pay on Delivery"}</span>
+                <div className={styles.bar}></div>
+                <span className={styles.barTitle}>{text ? text : "Shop Now & Pay on Delivery"}</span>
             </div>
         </main>
     );

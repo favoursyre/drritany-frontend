@@ -4,7 +4,7 @@
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
 import { backend, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
-import ProductQuery from '@/components/product/productQuery/ProductQuery';
+//import ProductQuery from '@/components/product/productQuery/ProductQuery';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
 
@@ -69,8 +69,8 @@ async function getProducts() {
   
     return (
       <main className="search_page">
-        <ProductQuery keyword_={query} query_={queryProducts} />
-        <SimilarProduct product_={products} titleId_={2} />
+        {/* <ProductQuery keyword_={query} query_={queryProducts} /> */}
+        {/* <SimilarProduct product_={products} titleId_={2} /> */}
       </main>
     )
   }

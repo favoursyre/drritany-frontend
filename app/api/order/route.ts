@@ -3,9 +3,10 @@
 ///Libraries -->
 import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
+import { Product } from "@/models/product";
 import { NextResponse, NextRequest } from "next/server";
 import { sendOrderEmail } from "@/config/email";
-import { ICartItem, IClientInfo, IOrder, IOrderSheet } from "@/config/interfaces";
+import { ICartItem, IClientInfo, IOrder, IOrderSheet, IProduct } from "@/config/interfaces";
 import { orderSheetId, getCurrentTime, getCurrentDate } from "@/config/utils";
 import { GoogleSheetStore } from "@/config/serverUtils";
 
@@ -45,6 +46,31 @@ export async function POST(request: NextRequest) {
         const client: IClientInfo = clientInfo_ as unknown as IClientInfo
         const currencySymbol = client.country?.currency?.symbol
         console.log('Clientinfo: ', clientInfo_)
+
+        const items = order_.productSpec.cart
+        console.log("items: ", items)
+
+        for (let item of items) {
+            console.log("items main: ", item)
+            const _id = item._id
+            const product_ = await Product.getProductById(_id)
+            console.log("Products: ", product_)
+            const oldOrders = product_[0].orders
+            console.log("Old Orders: ", oldOrders, item.quantity)
+            const newOrders = oldOrders! + item.quantity
+            console.log("New Orders: ", newOrders)
+            console.log("Product: ", product_[0])
+            const p = product_[0]
+            //const _p = p.toObject()
+            const updatedProduct = {
+                ...p, orders: newOrders
+            }
+            
+            //Updating the orders value of the product
+            console.log("Updated products: ", updatedProduct)
+            const newProduct = await Product.updateProduct(_id, updatedProduct)
+            console.log("New product: ", newProduct)
+        }
 
         const orderData: Array<IOrderSheet> = []
         if (client.country?.currency?.exchangeRate && client.country?.currency?.symbol) {

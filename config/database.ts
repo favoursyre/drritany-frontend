@@ -1186,7 +1186,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "How can I track my order?",
-        answer: "You will receive an order id number via email once you place an order, you can always use the id to track your order with our customer support team."
+        answer: "You will receive an order invoice slip via email once you place an order, you can always use the invoice slip to track your order status."
     },
     {
         question: "How do I pay for my order?",

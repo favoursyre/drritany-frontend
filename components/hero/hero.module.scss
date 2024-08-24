@@ -34,14 +34,6 @@
         @include size(100%, 100%);
     }
 
-    .background {
-        object-fit: cover;
-        object-position: center 30%;
-        position: absolute;
-        @include size(100%, 100%);
-        background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 0.7));
-    }
-
     .container {
         @include flexBar($position: relative, $align: flex-start, $justify: center, $flex_d: column, $gap: 2%);
         //border: 2px solid yellow;
@@ -147,7 +139,7 @@
                 &::placeholder {
                     @include text-layout($size: 16px, $color: $text-color-3, $l_height: 12px);
                     //border: 1px solid red;
-                    //height: 100%;
+                    height: 50%;
                     position: relative;
 
                     @include phoneMini {
@@ -203,21 +195,23 @@
             @include text-layout($size: 14px, $color: $tertiary-color, $l_height: 24px);
             text-align: justify;
             @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 1%, $flex_d: row);
-            @include size(90%, 3%);
+            @include size(58%, 3%);
             //border: 2px solid yellow;
             font-family: "Roboto";
+            padding-top: 5px;
             top: -1%;
             left: 1%;
+            border-top: 0.5px solid white;
 
             @include tabletPro {
-                @include size(90%, 3%);
+                @include size(58%, 3%);
             }
 
             @include phonePro {
                 @include text-layout($size: 14px, $color: $tertiary-color, $l_height: 20px);
                 font-weight: 400;
                 text-align: center;
-                @include size(80%, 5%);
+                @include size(78%, 5%);
                 top: -7%;
                 left: 1%;
                 //width: auto;
@@ -232,7 +226,7 @@
 
             .flag {
                 position: relative;
-                @include size(2.5%, 80%);
+                @include size(4%, 80%);
 
                 @include phonePro {
                     @include size(6%, 90%);
@@ -241,6 +235,61 @@
         }
     }
 
+    .swipeContainer {
+        //border: 1px solid red;
+        @include flexBar($position: absolute, $align: center, $justify: center, $gap: 0%);
+        @include size(100%, 100%);
+        z-index: 0;
+
+        .slider {
+            @include flexBar($position: relative, $align: center, $justify: center);
+            @include size(100%, 100%);
+
+            .background {
+                //border: 1px solid red;
+                object-fit: cover;
+                object-position: center 30%;
+                position: relative;
+                @include size(100%, 100%);
+                background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 0.7));
+            }
+        }
+
+        
+    }
+
+    .pagination {
+       display: none;
+            // color: $text-color-3;
+            // position: absolute;
+            // top: 22%;
+            // align-items: center;
+            // //@include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+            //border: 1px solid red;
+            // //@include size(30%, 10%);
+            // width: 10%;
+
+            // @include tablet {
+            //     width: 40%;
+            // }
+
+            // @include phonePro {
+            //     gap: 0%;
+            //     flex-direction: row;
+            //     justify-content: center;
+            //     width: 100%;
+            //     top: 15%;
+            // }
+
+            // @include phone {
+            //     //width: 80%;
+            // }
+
+            // @include phoneMini {
+            //     top: -5%;
+            //     line-height: 12px;
+            // }
+        }
     // .blur {
     //     //border: 1px solid red;
     //     z-index: 3;

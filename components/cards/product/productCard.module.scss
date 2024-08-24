@@ -9,20 +9,20 @@
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
     padding: 1%;
     border-radius: 4px;
-    //border: 2px solid $primary-color;
-    @include size(13%, 28%);
+    border: 1px solid $text-color-3;
+    @include size(13%, 36%);
 
     @include tabletPro {
-        @include size(13%, 30%); 
+        @include size(13%, 50%); 
     }
 
     @include tablet {
-        @include size(16%, 35%); 
+        @include size(16%, 50%); 
     }
 
     @include phonePro {
         //border: 2px solid $primary-color;
-        @include size(28%, 40%);
+        @include size(28%, 50%);
         padding: 1.5%;
         gap: 0%;
     }
@@ -74,6 +74,30 @@
             }
         }
 
+        button {
+            @include flexBar ($position: relative, $align: center, $justify: center, $gap: 0%);
+            background-color: transparent;
+            border: none;
+            //border-radius: 50%;
+
+            .icon {
+                //border:  1px solid red;
+                position: relative;
+                border-radius: 50%;
+                color: $secondary-color-2;
+                padding: 10%;
+                background-color: $tertiary-color;
+
+                @include phonePro {
+                    font-size: 1.3rem;
+                }
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+        }
+
         .offer {
             //border: 1px solid red;
             color: $star-color;
@@ -85,14 +109,7 @@
         @include size(100%, 60%);
         padding: 1%;
         @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 1%);
-        //left: 13.5%;
-
-        .img {
-            position: relative;
-            object-fit: contain;
-            @include size(100%, 100%);
-            //border: 1px solid green;
-        }
+        overflow: hidden;
 
         @include tabletPro {
             height: 60%;
@@ -100,6 +117,21 @@
 
         @include phonePro {
             height: 60%;
+        }
+
+        .img {
+            position: relative;
+            object-fit: contain;
+            @include size(100%, 100%);
+            transition: transform 0.5s ease
+            //border: 1px solid green;
+        }
+
+        &:hover {
+            .img {
+                //border: 1px solid red;
+                transform: scale(1.1);
+            }
         }
     }
 
@@ -181,7 +213,8 @@
     //top: 3%;
 
     @include tabletPro {
-        //@include size(13%, 70%); 
+        //@include size(13%, 70%);
+        //width: 100%; 
     }
 
     @include tabletMini {

@@ -4,10 +4,11 @@
 ///Libraries -->
 import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
+import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
 import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
 import { Metadata } from 'next';
-import { IProduct, Props } from '@/config/interfaces';
+import { IProduct, Props, ISlideTitle } from '@/config/interfaces';
 
 ///Commencing the code -->
 
@@ -77,11 +78,16 @@ export default async function ProductByIdPage({ params: { id } }: { params: { id
   const product = await getProduct(id) as unknown as Array<IProduct>
   const products_ = await getProducts() as unknown as Array<IProduct>
   const products = shuffleArray(removeProductFromArray(product[0], products_))
+  const titles1: ISlideTitle = {
+    slideTitleId: 0,
+    barTitleId: 2
+  }
 
   return (
     <main className="product_info_page">
-      <ProductInfo product_={product} />
-      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} titleId_={0}/>
+      <ProductInfo product_={product[0]} />
+      {/* <HomeCampaignB /> */}
+      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} title_={titles1} view_={undefined} />
       {/* <RecommendedProduct product_={products} titleId_={2} /> */}
     </main>
   )

@@ -52,15 +52,24 @@ export interface ISpecification {
     itemCount?: number,
     userAgeRange?: string,
     gender?: string,
+    power?: number, //Power is in Watts
+    horsePower?: number,
+    seaters?: number,
+    engineType?: string,
+    transmissionType?: string,
+    voltage?: number,
     benefits?: Array<string>,
     prescription?: Array<string>,
     ingredients?: Array<string>,
-    colors?: Array<string>,
-    sizes?: Array<string>,
+    colors?: Array<string | IImage>,
+    romStorage?: number,
+    ramStorage?: number,
+    batteryCapacity?: number,
+    sizes?: Array<string | { size: string, percent: number}>,
     productOrigin?: string,
+    productLocation?: string,
     modelNumber?: string,
     weight?: number,
-    power?: number,
     dimension?: {
       length?: number,
       width?: number,
@@ -136,14 +145,12 @@ export interface IOrderModalStore {
 export interface IDiscountModalStore {
   modal: boolean,
   product: {
-    name: string,
-    freeOption: boolean,
+    data: IProduct,
     poppedUp: boolean
   },
   setDiscountModal: (status: boolean) => void
   setDiscountProduct: (product: {
-    name: string,
-    freeOption: boolean,
+    data: IProduct,
     poppedUp: boolean
   }) => void
 }
@@ -155,6 +162,18 @@ export interface IClientInfo {
   ip?: string,
   groupTest?: string,
   country?: ICountry
+}
+
+//This is the interface for product category/filter settings
+export interface IProductFilter {
+  filterId?: number,
+  category?: ICategory | string
+}
+
+//This is the interface for slide titles
+export interface ISlideTitle {
+  barTitleId?: number,
+  slideTitleId?: number
 }
 
 //Interface for client info store
@@ -191,8 +210,8 @@ export interface ICartItem {
     readonly unitWeight: number,
     quantity: number,
     specs?: { 
-      color?: string,
-      size?: string
+      color?: string | IImage,
+      size?: string | { size: string, percent: number }
     },
     extraDiscount: {
       limit?: number,
@@ -393,7 +412,8 @@ export interface IOrder {
 export interface ICategoryInfo {
   macro: string,
   minis: Array<{ 
-    mini: string, 
+    mini: string,
+    image?: IImage, 
     micros: Array<{ 
       micro: string, 
       nanos: Array<string> 
@@ -440,7 +460,7 @@ export interface IProductModel extends Model<IProduct> {
   updateProduct(id: string, product: IProduct): IProduct,
   deleteProduct(id: string): IProduct,
   getProductByLatest(): Array<IProduct>,
-  getProductById(id: string): IProduct,
+  getProductById(id: string): Array<IProduct>,
   getProductByCategory(category: string): Array<IProduct>,
   getProductByPrice(_order: any): Array<IProduct>,
   getProductByOrder(): Array<IProduct>,
@@ -465,7 +485,7 @@ export interface ISheetInfo {
 export interface IQueryResearch {
   IP: string,
   Country: string,
-  Keyword: string,
+  Query: string,
   Date: string,
   Time: string
 }

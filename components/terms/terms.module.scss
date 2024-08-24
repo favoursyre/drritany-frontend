@@ -160,6 +160,11 @@
         height: 130%;
     }
 
+    @include tabletMini {
+        padding-top: 20px;
+        height: 150%;
+    }
+
     @include phonePro {
         @include text-layout($size: 14px, $color: text-color-1, $l_height: 23px);
         height: 230%;

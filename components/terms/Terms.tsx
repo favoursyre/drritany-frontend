@@ -35,9 +35,9 @@ const Terms = () => {
                 <span>
                         By accessing and using our website, you agree to be bound by the following terms;
                     </span>
-                    <ol>
+                    <ol id="personal_data">
                         <li><strong>Website Use:</strong> Our website is intended for informational and e-commerce purposes only. You are prohibited from using our website for any illegal or unauthorized purposes.</li>
-                        <li id="personal_data"><strong>Personal Data:</strong> In other to purchase products from our website, you will be required to provide us with personal information. We respect your privacy and would only share it with the delivery company that&apos;s meant to deliver your products.</li>
+                        <li><strong>Personal Data:</strong> In other to purchase products from our website, you will be required to provide us with personal information. We respect your privacy and would only share it with the delivery company that&apos;s meant to deliver your products.</li>
                         <li><strong>Product Orders:</strong> When you place an order for a product on our website, the delivery fee varies depending on your location. Also, you only are responsible for all applicable taxes associated with your purchase as required in your jurisdiction of residence area.</li>
                         <li><strong>Product Information:</strong> We make every effort to provide accurate and complete product information on our website. We guarantee the accuracy or completeness of any product information on our website.</li>
                         <li><strong>Medical Information:</strong> Our website may provide general medical information, but it is not intended to be a substitute for professional medical advice, diagnosis or treatment. You should always seek the advice of your physician or other qualified healthcare provider with any questions you may have regarding a medical condition</li>

@@ -4,7 +4,7 @@
 ///Libraries -->
 import styles from "./orderModal.module.scss"
 import { useModalBackgroundStore, useOrderModalStore, useClientInfoStore } from "@/config/store";
-import { MouseEvent, useState, FormEvent } from "react";
+import { MouseEvent, useState, FormEvent, useEffect } from "react";
 import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
@@ -32,6 +32,18 @@ const OrderModal = () => {
     const deliveryInfo__ = getItem(deliveryName)
     const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(deliveryInfo__)
     const clientInfo = useClientInfoStore(state => state.info)
+
+    useEffect(() => {
+        //console.log("Client: ", clientInfo)
+        const interval = setInterval(() => {
+            setCart(() => getItem(cartName))
+        }, 100);
+    
+        return () => {
+            clearInterval(interval);
+        };
+        
+    }, [cart]);
 
     ///This function is triggered when the background of the modal is clicked
     const closeModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
@@ -168,7 +180,7 @@ const OrderModal = () => {
         ) : (
             <div className={styles.checkContainer}>
                 <span className={styles.span1}>Payment on Delivery</span>
-                <span className={styles.span2}>By clicking continue, you agree that you are fully physically and financially prepared to receive your delivery</span>
+                <span className={styles.span2}>By clicking <strong>Continue</strong>, you agree that you are fully physically and financially prepared to receive your delivery</span>
                 <div className={styles.buttons}>
                     <button className={styles.button1} onClick={(e) => closeModal(e)}><span>Cancel</span></button>
                     <button className={styles.button2} onClick={(e) => processOrder(e)}><span>Continue</span></button>

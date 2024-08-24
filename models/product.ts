@@ -164,6 +164,40 @@ const productSchema = new Schema<IProduct, IProductModel>(
             required: true,
             trim: true
         },
+        power: {
+          type: Number
+        },
+        voltage: {
+          type: Number
+        },
+        horsePower: {
+          type: Number
+        },
+        engineType: {
+          type: String
+        },
+        transmissionType: {
+          type: String
+        },
+        seaters: {
+          type: Number
+        },
+        romStorage: {
+          type: Number
+        },
+        ramStorage: {
+          type: Number
+        },
+        ram: {
+          type: Number
+        },
+        batteryCapacity: {
+          type: Number
+        },
+        productLocation: {
+          type: String,
+          trim: true
+        },
         dimension: {
           length: {
             type: Number,
@@ -264,7 +298,7 @@ productSchema.statics.getProductById = async function (id: string) {
   if (!Types.ObjectId.isValid(id)) {
     throw Error("Id is invalid");
   }
-  const product = await this.find({ _id: id })
+  const product = await this.find({ _id: id }).lean()
   return product;
 }
 

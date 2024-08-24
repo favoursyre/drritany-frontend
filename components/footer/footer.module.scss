@@ -7,10 +7,10 @@
 .footer {
     @include flexBar($position: absolute, $flex_d: column, $gap: 0%);
     @include size(100%, 50%);
-    @include position($left: 0%, $top: 380%);
+    @include position($left: 0%, $top: 400%);
     //border: 2px solid red;
     font-family: "Roboto";
-    //border-top: 1px solid $text-color-3;
+    border-top: 1px solid $text-color-3;
 
     button {
         outline: none;
@@ -19,26 +19,26 @@
     @include tabletPro {
         //border: 2px solid red;
         //position: relative;
-        top: 185%;
+        top: 210%;
         height: 25%;
     }
 
     @include tablet {
         //border: 2px solid red;
         //position: relative;
-        top: 173%;
+        //top: 373%;
         height: 25%;
     }
 
     @include tabletMini {
-        top: 180%;
+        top: 215%;
     }
 
     @include phonePro {
         height: 60%;
         padding: 2% 0%;
         border-top: 2px solid $text-color-3;
-        top: 270%;
+        top: 280%;
     } 
 
     .background {
@@ -658,25 +658,25 @@
 }
 
 .productInfoPage {
-    top: 225%;
+    top: 220%;
     @extend %footer-layout;
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 130%;
+        top: 160%;
     } 
 
     @include tabletMini {
-        top: 140%;
+        //top: 140%;
     }
 
     @include phonePro {
         //border: 1px solid red;
-        top: 295%;
+        top: 245%;
     } 
 
     @include phone {
-        top: 310%;
+        //top: 255%;
     }
 }
 
@@ -686,7 +686,7 @@
     @extend %footer-layout;
 
     @include tabletPro {
-        top: 80%;
+        top: 85%;
         //border: 2px solid $error-color;
         //@include position($left: 0%, $top: 129px);
         z-index: 1;
@@ -694,7 +694,7 @@
     } 
 
     @include tablet {
-        top: 83%;
+        //top: 83%;
     }
 
     @include phonePro {
@@ -718,6 +718,11 @@
         top: 180%;
     } 
 
+    @include tabletMini {
+        //border: 1px solid red;
+        top: 205%;
+    } 
+
     @include phonePro {
         top: 290%;
     } 
@@ -728,6 +733,18 @@
 
     @include phoneMini {
         top: 320%;
+    }
+}
+
+.wishListPage {
+    top: 150%;
+
+    @include tabletPro { 
+        top: 75%;
+    }
+
+    @include phonePro { 
+        top: 100%;
     }
 }
 
@@ -781,23 +798,23 @@
 }
 
 .faqsPage {
-    top: 265%;
+    top: 295%;
 
     @include tabletPro {
-        top: 140%;
-    } 
-
-    @include tablet {
         top: 150%;
     } 
 
+    @include tablet {
+        top: 155%;
+    } 
+
     @include tabletMini {
-       top: 160%;
+       top: 170%;
     }
 
     @include phonePro {
         //border: 1px solid red;
-        top: 210%;
+        top: 225%;
     }
     
     @include phoneMini {
@@ -806,8 +823,8 @@
     }
 }
 
-.searchPage {
-    top: 180%;
+.productPage {
+    top: 205%;
     //border: 1px solid red;
     @extend %footer-layout;
 
@@ -815,8 +832,12 @@
         top: 90%;
     }
 
+    @include tabletMini {
+        top: 95%;
+    }
+
     @include phonePro {
-        top: 130%;
+        top: 125%;
         //border: 1px solid red;
     }
 }

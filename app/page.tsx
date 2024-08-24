@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Hero from '@/components/hero/Hero';
-import { backend, shuffleArray, sortProductByActiveStatus } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus, sortProductByLatest, sortProductByOrder, sortProductByRating } from '@/config/utils';
 import Stats from "@/components/stats/Stats"
 import ProductGrid from '@/components/product/productGrid/ProductGrid';
 //import dynamic from "next/dynamic"
@@ -11,7 +11,10 @@ import ProductSlide from '@/components/product/productSlide/ProductSlide';
 //const Testimony = dynamic(() => import("@/components/testimony/Testimony"), { ssr: false })
 //import TimeBar from '@/components/timeBar/TimeBar';
 //import Testimony from '@/components/testimony/Testimony';
-import { IProduct } from '@/config/interfaces';
+import { IProduct, ISlideTitle } from '@/config/interfaces';
+import CategorySlide from '@/components/categorySlide/categorySlide';
+import HomeCampaignA from '@/components/campaigns/homeCampaignA/homeCampaignA';
+import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 
 ///Commencing the code
 export const dynamic = "force-dynamic"
@@ -79,17 +82,40 @@ async function getProducts() {
 export default async function Home() {
   const products = sortProductByActiveStatus(await getProducts(), "Active")
   const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
+  const newestArrivals = sortProductByLatest(productSlide)
+  const mostOrdered = sortProductByOrder(productSlide)
+  const mostRated = sortProductByRating(productSlide)
+  const titles1: ISlideTitle = {
+    slideTitleId: 3,
+    barTitleId: 0
+  }
+  const titles2: ISlideTitle = {
+    slideTitleId: 4,
+    barTitleId: 0
+  }
+  const titles3: ISlideTitle = {
+    slideTitleId: 5,
+    barTitleId: 1
+  }
+  const titles4: ISlideTitle = {
+    slideTitleId: 2,
+    barTitleId: 2
+  }
   //console.log("Prod1: ", products)
   // const quotes = shuffleArray(await getQuotes()) 
   // const testimonials = shuffleArray(await getTestimonials())
  
   return (
-    <main className="home_page">
+    <main className="home_page" >
       <Hero />
       <Stats />
-      {/* <TimeBar /> */}
-      <ProductGrid product_={products!} view_={undefined} />
-      <ProductSlide product_={productSlide} titleId_={2}/>
+      <ProductSlide product_={newestArrivals} title_={titles1} view_={"homeSlide1"}/>
+      <CategorySlide />
+      <ProductSlide product_={mostOrdered} title_={titles2} view_={"homeSlide2"}/>
+      {/* <HomeCampaignA /> */}
+      <ProductSlide product_={mostRated} title_={titles4} view_={"homeSlide3"}/>
+      {/* <HomeCampaignB /> */}
+      {/* <ProductSlide product_={productSlide} title_={titles4} view_={"homeSlide4"}/> */}
       {/* <Testimony />   */}
     </main>
   )

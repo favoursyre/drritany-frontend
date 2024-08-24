@@ -6,25 +6,27 @@
 ///Commencing the code
 .main {
     @include flexBar($align: center, $justify: center, $gap: 2%);
-    @include position($left: 0%, $top: 95%);
-    //border: 2px solid red;
-    @include size(100%, 60%);
-    background-color: $secondary-color-2;
+    @include position($left: 0%, $top: 97%);
+    //border: 2px solid purple;
+    @include size(100%, 100px);
+    //display: none;
+    //background-color: $secondary-color-2;
 
     @include tabletPro {
         //border: 2px solid red;
-        top: 50%;
-        height: 30%;
+        top: 52%;
+        height: 150px;
     }
 
     @include tablet {
-        top: 50%;
-        height: 25%;
+        //top: 50%;
+        height: 125px;
+        gap: 0%;
     }
 
     @include phonePro {
         //border: 2px solid red;
-        top: 80%;
+        top: 72%;
         height: 40%;
         padding: 1% 0%;
         gap: 20px;
@@ -33,110 +35,135 @@
         //column-gap: 0px;
     }
 
-    .stat1, .stat2, .stat3, .stat4 {
-        background-color: $secondary-color-3;
-        @include size(17%, 60%);
-        border-radius: 20px;
-        padding: 1.5%;
-        padding-top: 5%;
-        @include flexBar($position: relative, $align: flex-start, $justify: flex-start, $gap: 0%, $flex_d: column);
-
-        @include tabletPro {
-            padding-top: 3%;
-            @include size(19%, 63%);
-        }
-
-        @include tablet {
-            @include size(19%, 70%);
-        }
+    .container {
+        border: 1px solid $text-color-3;
+        @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 0%);
+        @include size(95%, 100%);
+        box-shadow: 0px 2px 4px rgba(52, 69, 99, 0.18);
 
         @include phonePro {
-            //gap: 2%;
-            @include size(35%, 35%);
-            margin: 0px;
-            padding: 3%;
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: -50px;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            //grid-column-gap: 0px;
+            //overflow: hidden;
+            
+            //column-gap: -100px;
         }
 
-        .iconCircle {
-            border: 1px solid $primary-color;
-            @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
-            @include size(60px, 60px);
-            border-radius: 50%;
-
+        .stat1, .stat2, .stat3, .stat4 {
+            //background-color: $secondary-color-3;
+            @include size(25%, 60%);
+            //padding: 1.5%;
+            //padding-top: 5%;
+            //border: 1px solid black;
+            @include flexBar($position: relative, $align: center, $justify: center, $gap: 4%);
+    
+            @include tabletPro {
+                //padding-top: 3%;
+                @include size(25%, 80%);
+            }
+    
             @include tablet {
-                @include size(40px, 40px);  
+                //@include size(19%, 70%);
+                //gap: 1%;
             }
-
+    
             @include phonePro {
-                @include size(50px, 50px);  
-            }
-
-            @include phoneMini {
-                @include size(40px, 40px);  
+                gap: 7%;
+                border: none;
+                @include size(94%, 75%);
+               //@include size(40%, 40%);
+                margin: 0px;
+                padding: 3%;
             }
 
             .icon {
-                color: $text-color-3;
+                //border: 1px solid red;
+                color: $primary-color;
                 position: relative;
                 font-size: 2rem;
+                //outline: 1px solid red;
 
                 @include tablet {
                     font-size: 1.5rem; 
+                }
+
+                @include phonePro {
+                    font-size: 1.7rem; 
                 }
 
                 @include phoneMini {
                     font-size: 1.5rem; 
                 }
             }
+
+            .text {
+                @include flexBar($position: relative, $align: flex-start, $justify: center, $gap: 0%, $flex_d: column);
+                //border: 1px solid black;
+                @include size(65%, 70%);
+
+                .span1 {
+                    @include text-layout($size: 16px, $l_height: 26px, $color: black);
+                    font-weight: 500;
+                    font-family: "Poppins";
+                    //border: 1px solid red;
+                    position: relative;
+        
+                    @include tablet {
+                        font-size: 14px;
+                        line-height: 20px;
+                        //margin: 20px 0px;
+                    }
+        
+                    @include tabletMini {
+                        //margin: 10px 0px;
+                        font-size: 14px;
+                    }
+        
+                    @include phonePro {
+                        //margin: 8px 0px;
+                        font-size: 14px;
+                        line-height: 22px;
+                        width: 70%;
+                    }
+        
+                    @include phoneMini {
+                        font-size: 12px;
+                        line-height: 18px;
+                        width: 80%;
+                    }
+                }
+        
+                .span2 {
+                    //border: 1px solid red;
+                    @include text-layout($size: 13px, $l_height: 20px, $color: black);
+                    font-family: "Inter";
+        
+                    @include tablet {
+                        font-size: 13px;
+                        line-height: 18px;
+                    }
+        
+                    @include tabletMini {
+                        font-size: 11px;
+                    }
+        
+                    @include phonePro {
+                        display: none;
+                    }
+                }
+            }
         }
 
-        h4 {
-            @include text-layout($size: 17px, $l_height: 26px, $color: $tertiary-color);
-            font-weight: 500;
-            font-family: "Poppins";
-            //border: 1px solid red;
-            position: relative;
-
-            @include tablet {
-                font-size: 15px;
-                line-height: 20px;
-                margin: 20px 0px;
-            }
-
-            @include tabletMini {
-                margin: 10px 0px;
-                font-size: 14px;
-            }
+        .stat1, .stat2, .stat3 {
+            border-right: 1px solid $text-color-3;
 
             @include phonePro {
-                margin: 8px 0px;
-                font-size: 14px;
-                line-height: 22px;
-                width: 70%;
-            }
-
-            @include phoneMini {
-                font-size: 12px;
-                line-height: 18px;
-                width: 80%;
-            }
-        }
-
-        span {
-            @include text-layout($size: 15px, $l_height: 20px, $color: $tertiary-color);
-            font-family: "Inter";
-
-            @include tablet {
-                font-size: 13px;
-                line-height: 18px;
-            }
-
-            @include tabletMini {
-                font-size: 11px;
-            }
-
-            @include phonePro {
-                display: none;
+                border: none;
             }
         }
     }

@@ -3,53 +3,61 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
-import React, { useState, useEffect, MouseEvent, Fragment } from "react"
+import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, sleep, slashedPrice, deliveryPeriod, getDeliveryFee, capitalizeFirstLetter, areObjectsEqual, formatObjectValues, removeUndefinedKeys, extraDiscount } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout } from '@mui/icons-material';
+import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout, KeyboardArrowLeft, KeyboardArrowRight, Add, Remove, FavoriteBorder } from '@mui/icons-material';
 import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
 import { useClientInfoStore } from "@/config/store";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { IconButton } from '@mui/material';
-import DisplayBar from '@/components/displayBar/DisplayBar';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Swiper as SwiperCore } from 'swiper/types';
+import Loading from "@/components/loadingCircle/Circle";
+import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 
 ///Commencing the code
 /**
  * @title Product Info Component
  * @returns The Product Info component
  */
-const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
+const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     console.log('Products_: ', product_)
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
+    const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
-    const [mainImage, setMainImage] = useState(product[0].images[0])
+    const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
     const [deliveryDate, setDeliveryDate] = useState<string>("")
     const router = useRouter()
     const [colorId, setColorId] = useState<number>(0)
-    const [selectColor, setSelectColor] = useState<boolean>(false)
+    //const [selectColor, setSelectColor] = useState<boolean>(false)
     const [sizeId, setSizeId] = useState<number>(0)
-    const [selectSize, setSelectSize] = useState<boolean>(false)
+    //const [selectSize, setSelectSize] = useState<boolean>(false)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
     const discountProduct = useDiscountModalStore(state => state.product);
+    const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0))
     const [imageIndex, setImageIndex] = useState<number>(0)
     const [videoIndex, setVideoIndex] = useState<number>(0)
+    const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
+    const [addedToCart, setAddedToCart] = useState<boolean>(false)
+    const [checkoutIsLoading, setCheckoutIsLoading] = useState<boolean>(false)
     const [view, setView] = useState<"image" | "video">("image")
-    const spec = product[0].specification
+    const spec = product.specification
     const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
-    console.log("In Stock: ", product[0].pricing?.inStock)
+    console.log("In Stock: ", product.pricing?.inStock)
 
     ///This contains the accordian details
     const questions = [
@@ -61,13 +69,13 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         {
           question: 'Specifications',
           answer: [
-            `SKU: ${product[0]._id}`,
+            `SKU: ${product._id}`,
             `Brand: ${spec?.brand}`,
             `Item Form: ${spec?.itemForm}`,
             `Item Count: ${spec?.itemCount}`,
             `Gender: ${spec?.gender}`,
             `Age Range: ${spec?.userAgeRange}`,
-            spec?.ingredients && spec.ingredients.length > 0 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
+            spec?.ingredients && spec.ingredients.length > 1 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
             //`${spec?.ingredients ? spec.ingredients : ""}`,
             //`${spec?.ingredients ? Ingredients: ${spec?.ingredients?.join(", ") : ""}}`,
             `Product Origin: ${spec?.productOrigin}`,
@@ -80,12 +88,53 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         },
       ];
 
+    //This contains the specifications of the products
+    const specs = [
+        `SKU: ${product._id}`,
+        `Brand: ${spec?.brand}`,
+        spec?.modelNumber ? `Model Number: ${spec.modelNumber}` : undefined,
+        `Item Form: ${spec?.itemForm}`,
+        `Item Count: ${spec?.itemCount}`,
+        `Gender: ${spec?.gender}`,
+        `Age Range: ${spec?.userAgeRange}`,
+        spec?.ingredients && spec.ingredients.length > 1 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
+        spec?.power ? `Power: ${spec?.power}w` : undefined,
+        spec?.voltage ? `Voltage: ${spec?.voltage}v` : undefined,
+        spec?.horsePower ? `Horsepower: ${spec?.horsePower}hp` : undefined,
+        spec?.seaters ? `Seaters: ${spec?.seaters}` : undefined,
+        spec?.engineType ? `Engine: ${spec?.engineType}` : undefined,
+        spec?.transmissionType ? `Transmission: ${spec?.voltage}v` : undefined,
+        spec?.ramStorage ? `Storage(RAM): ${spec?.ramStorage}gb` : undefined,
+        spec?.romStorage ? `Storage(ROM): ${spec?.romStorage}gb` : undefined,
+        spec?.batteryCapacity ? `Battery: ${spec?.batteryCapacity}mAh` : undefined,
+        `Product Origin: ${spec?.productOrigin}`,
+        spec?.productLocation ? `Product Location: ${spec.productLocation}` : undefined,
+        `Weight: ${spec?.weight}kg`,
+        spec?.dimension?.height ? `Height: ${spec.dimension.height}cm` : undefined,
+        spec?.dimension?.width ? `Width: ${spec.dimension.width}cm` : undefined,
+        spec?.dimension?.length ? `Length: ${spec.dimension.length}cm` : undefined,
+    ]
+
+    useEffect(() => {
+        //console.log("Client: ", clientInfo)
+        const interval = setInterval(() => {
+            const newPrice = getCustomPricing(product, sizeId)
+            setCustomPrice(() => newPrice)
+        }, 100);
+    
+        return () => {
+            clearInterval(interval);
+        };
+        
+    }, [customPrice, sizeId]);
+
     useEffect(() => {
         // This function will be called every time the component is mounted, and
         // whenever the `count` state variable changes
         console.log('Index: ', imageIndex)
+        //console.log("Colors & Sizes: ", product.specification?.colors, product.specification?.sizes)
         //console.log("main: ", mainImage)
-      }, [mainImage, mainImageId, imageIndex, videoIndex, view]);
+      }, [mainImage, mainImageId, imageIndex, videoIndex, view, activeInfoBtn]);
 
     //   //This counts up to 5secs before popping up the discount modal
     //   useEffect(() => {
@@ -122,21 +171,21 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         const formattedDate = nextWeek.toLocaleDateString('en-US', options);
         //console.log("One week from now: ", formattedDate);
         setDeliveryDate(formattedDate)
-    }, [deliveryDate])
+    }, [deliveryDate, addedToCart])
 
     //This function helps choose color
-    const chooseColor = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number) => {
+    const chooseColor = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: number) => {
         e.preventDefault()
 
-        setSelectColor(!selectColor)
+        //setSelectColor(!selectColor)
         setColorId(id)
     }
 
     //This function helps choose size
-    const chooseSize = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number) => {
+    const chooseSize = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: number) => {
         e.preventDefault()
 
-        setSelectSize(!selectSize)
+        //setSelectSize(!selectSize)
         setSizeId(id)
     }
 
@@ -157,24 +206,25 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     ///This function handles the button for `Add to Cart`
     const addToCart = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): void => {
         e.preventDefault()
-        const p = product[0]
+        const p = product
 
         if (p.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
+            return
         } else {
             const pWeight: number = p.specification?.weight as unknown as number
             const cartSpecs = removeUndefinedKeys({
                 color: p.specification?.colors ? p.specification?.colors[colorId] : undefined,
                 size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
             })
-            const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
+            //const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
 
             //Arranging the cart details
             const cartItem: ICartItem = {
                 _id: p._id!,
                 image: p.images[0],
-                name: productName.trim(),
-                unitPrice: p.pricing?.basePrice || 0,
+                name: p.name,
+                unitPrice: customPrice,
                 unitWeight: pWeight,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
@@ -188,8 +238,8 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
             const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
 
             let discount
-            if (cartItem.quantity >= 5) {
-                cartItem.subTotalDiscount = Number(((extraDiscount / 100) * totalPrice).toFixed(2))
+            if (cartItem.quantity >= cartItem.extraDiscount.limit!) {
+                cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * totalPrice).toFixed(2))
                 //discount = (10 / 100) * totalPrice
             } else {
                 cartItem.subTotalDiscount = 0
@@ -234,7 +284,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         cart.cart[index].quantity = quantity
                         cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
                         cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
-                        cart.cart[index].subTotalDiscount = quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                        cart.cart[index].subTotalDiscount = quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                         cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
@@ -270,6 +320,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
 
             }
 
+            setAddedToCart(() => true)
         } 
     }
 
@@ -278,8 +329,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         e.preventDefault()
 
         setDiscountProduct({ 
-            name: product[0].name as unknown as string, 
-            freeOption: false, 
+            data: product,
             poppedUp: false 
         })
         setModalBackground(true)
@@ -290,7 +340,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
     const orderNow = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
 
-        if (product[0].pricing?.inStock === false) {
+        if (product.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
         } else {
             //Add the product to cart
@@ -314,110 +364,181 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
         setQuantity(quantity_)
     }
 
+    //This button is triggered when the info button is clicked
+    const clickInfoBtn = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number): void => {
+        e.preventDefault()
+
+        setActiveInfoBtn(id)
+    }
+
+    //This function is triggered when wish/wish delete is clicked
+    const wishProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+        //e.stopPropagation()
+
+        const wishList_ = getItem(wishListName) as unknown as Array<IProduct>
+        if (wishList_) {
+            const exists = wishList_.some((p) => p._id === product._id);
+            if (exists) {
+                notify('info', "Product has already been added to wish list")
+            } else {
+                const newWishList = [ ...wishList_, product ]
+                setItem(wishListName, newWishList)
+                notify("success", "Product added to wish list")
+            }
+        } else {
+            const newWishList: Array<IProduct> = [ product ]
+            setItem(wishListName, newWishList)
+            notify("success", "Product added to wish list")
+        }
+    }
+
     return (
         <>
-            <DisplayBar text_={undefined} />
+            {/* <DisplayBar text_={undefined} /> */}
             <div className={styles.header}>
-                <span>{product[0].category?.macro}</span>
-                {product[0]?.category?.mini ? (
-                    <>
-                        <KeyboardArrowRightIcon className={styles.icon} />
-                        <span>{product[0].category?.mini}</span>
-                        {product[0].category?.micro ? (
-                            <>
-                                <KeyboardArrowRightIcon className={styles.icon} />
-                                <span>{product[0].category?.micro}</span>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                    </>
-                ) : (
-                    <></>
-                )}
+                <div className={styles.bar}></div>
+                <div className={styles.barTitle}>
+                    <span>{product.category?.macro}</span>
+                    {product?.category?.mini ? (
+                        <>
+                            <KeyboardArrowRight className={styles.icon} />
+                            <span>{product.category?.mini}</span>
+                            {product.category?.micro ? (
+                                <>
+                                    <KeyboardArrowRight className={styles.icon} />
+                                    <span>{product.category?.micro}</span>
+                                    {product.category?.nano ? (
+                                        <>
+                                            <KeyboardArrowRight className={styles.icon} />
+                                            <span>{product.category?.nano}</span>
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             </div>
             <main className={`${styles.main}`}>
-                {product.map((p, _id) => (
-                    <div className={styles.left_section} key={_id}>
-                        <div className={styles.profile_image}>
-                            {view === "video" && product[0].images ? (
-                                <iframe
-                                    className={styles.img}
-                                    src={product[0].images[videoIndex]?.src}
-                                    width={product[0].images[videoIndex]?.width}
-                                    height={product[0].images[videoIndex].height}
-                                    allow="autoplay"
-                                    loading="lazy"
-                                    frameBorder={0}
-                                    sandbox="allow-same-origin allow-scripts"
-                                >
-                                </iframe>
-                            ) : (
-                                <Image
-                                    className={styles.img}
-                                    src={product[0].images[imageIndex].src}
-                                    alt=""
-                                    width={product[0].images[imageIndex].width}
-                                    height={product[0].images[imageIndex].height}
-                                />
-                            )}
-                        </div>
-                        <div className={styles.image_slide}>
-                            {p.images.map((image, imageId) => (
-                                <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
-                                    setView(() => image.type === "image" ? "image" : "video")
-                                    setImageIndex(() => imageId)
-                                }}>
-                                    {image.type === "video" ? (
-                                        <iframe
-                                            className={styles.iframe}
-                                            src={image.src}
-                                            width={image.width}
-                                            height={image.height}
-                                            //allow="autoplay"
-                                            frameBorder={0}
-                                            //sandbox="allow-forms"
-                                        >
-                                        </iframe>
-                                    ) : (
-                                        <Image
-                                            className={styles.img}
-                                            src={image.src}
-                                            alt=""
-                                            width={image.width}
-                                            height={image.height}
-                                        /> 
-                                    )}
-                                    
-                                </div>
-                            ))}
-                            {/* {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
-                                <div className={styles.image} key={videoId} onClick={() => {
-                                    setView(() => "video")
-                                    setVideoIndex(() => videoId)
-                                }}>
+                <div className={styles.left_section}>
+                    <div className={styles.profile_image}>
+                        {product.images && product.images[imageIndex].type === "video"  ? (
+                            <iframe
+                                className={styles.img}
+                                src={product.images[imageIndex]?.src}
+                                width={product.images[imageIndex]?.width}
+                                height={product.images[imageIndex].height}
+                                allow="autoplay"
+                                loading="lazy"
+                                frameBorder={0}
+                                sandbox="allow-scripts allow-downloads"
+                                //sandbox="allow-same-origin allow-scripts"
+                            >
+                            </iframe>
+                        ) : (
+                            <Image
+                                className={styles.img}
+                                src={product.images[imageIndex].src}
+                                alt=""
+                                width={product.images[imageIndex].width}
+                                height={product.images[imageIndex].height}
+                            />
+                        )}
+                    </div>
+                    <Swiper
+                        effect={'slide'}
+                        spaceBetween={8}
+                        grabCursor={true}
+                        centeredSlides={false}
+                        loop={false}
+                        autoplay={{ delay: 4000, pauseOnMouseEnter: true }} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                        slidesPerView={'auto'}
+                        onBeforeInit={(swiper) => {
+                            swiperRef.current = swiper;
+                            }}
+                        coverflowEffect={{
+                            rotate: 0,
+                            stretch: 0,
+                            depth: 100,
+                            modifier: 2.5,
+                        }}
+                        fadeEffect={{ crossFade: true }}
+                        pagination={{ el: '.swiper-pagination', clickable: true }}
+                        //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+                        modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+                        className={styles.image_slide}
+                    >
+                        {product.images?.map((image, id) => (
+                            <SwiperSlide key={id} className={`${styles.image} ${id === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                setView(() => image.type === "image" ? "image" : "video")
+                                setImageIndex(() => id)
+                            }}>
+                                {image.type === "video" ? (
                                     <iframe
                                         className={styles.iframe}
-                                        src={video.src}
-                                        width={video.width}
-                                        height={video.height}
+                                        src={image.src}
+                                        width={image.width}
+                                        height={image.height}
                                         //allow="autoplay"
                                         frameBorder={0}
+                                        sandbox="allow-scripts allow-downloads"
                                         //sandbox="allow-forms"
                                     >
-                                </iframe>
+                                    </iframe>
+                                ) : (
+                                    <Image
+                                        className={styles.img}
+                                        src={image.src}
+                                        alt=""
+                                        width={image.width}
+                                        height={image.height}
+                                    /> 
+                                )}
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                    <div className={styles.image_slide_}>
+                        {/* {product.images.map((image, imageId) => (
+                            <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                setView(() => image.type === "image" ? "image" : "video")
+                                setImageIndex(() => imageId)
+                            }}>
+                                
+                                
                             </div>
-                            )) : (
-                                <></>
-                            )} */}
+                        ))} */}
+                        {/* {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
+                            <div className={styles.image} key={videoId} onClick={() => {
+                                setView(() => "video")
+                                setVideoIndex(() => videoId)
+                            }}>
+                                <iframe
+                                    className={styles.iframe}
+                                    src={video.src}
+                                    width={video.width}
+                                    height={video.height}
+                                    //allow="autoplay"
+                                    frameBorder={0}
+                                    //sandbox="allow-forms"
+                                >
+                            </iframe>
                         </div>
+                        )) : (
+                            <></>
+                        )} */}
                     </div>
-                ))}
-                {product.map((p, _id) => (
-                    <div className={styles.right_section} key={_id}>
+                </div>
+                <div className={styles.right_section}>
                     <h3>
-                        <strong>{p.name}</strong>
-                        {p.pricing?.extraDiscount ? (
+                        <strong>{product.name}</strong>
+                        {checkExtraDiscountOffer(product) ? (
                             // <Tooltip title="Discount Offer" placement='top'>
                             //     <IconButton>
                                 <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
@@ -427,7 +548,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                             <></>
                         )}
                     </h3>
-                    <span className={styles.product_about}>{p.description}</span>
+                    <span className={styles.product_about}>{product.description}</span>
                     <div className={styles.product_price_orders_rating}>
                         <div className={styles.price_orders}>
                         <div className={styles.product_price}>
@@ -440,7 +561,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 )}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {p.pricing?.basePrice ? (round(p.pricing?.basePrice * clientInfo.country.currency.exchangeRate, 1)).toLocaleString("en-US") : ""}
+                                        {round(customPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                     </span> 
                                 ) : (
                                     <></>
@@ -450,7 +571,7 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {p.pricing?.basePrice ? (round(slashedPrice(p.pricing?.basePrice * clientInfo.country.currency.exchangeRate, p.pricing?.discount!), 1).toLocaleString("en-US")) : ""}
+                                        {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 1).toLocaleString("en-US")}
                                     </span>
                                 ) : (
                                     <></>
@@ -459,10 +580,10 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                         </div>
                         <div className={styles.product_orders}>
                             <LocalShippingIcon className={styles.icon} />
-                            <span>{p.orders?.toLocaleString("en-US")} orders</span>
+                            <span>{product.orders?.toLocaleString("en-US")} orders</span>
                         </div>
                         <div className={styles.percent}>
-                            <span>-{p.pricing?.discount}%</span>
+                            <span>-{product.pricing?.discount}%</span>
                         </div>
                         </div>
                         <div className={styles.rating}>
@@ -472,21 +593,142 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 ))}
                                 <StarHalf className={styles.star} />
                             </div>
-                            <span>{p.rating}</span>
+                            <span>{product.rating}</span>
                         </div>
                     </div>
                     <span className={styles.product_deliveryDate}><em>Delivered to you on/before {deliveryDate}.</em></span>
-                    <div className={styles.product_quantity_specs}>
+                    {product.specification?.colors && product.specification.colors[0] !== "" ? (
+                        <div className={styles.product_colors}>
+                            <span className={styles.span1}>Color</span>
+                            <Swiper
+                                effect={'slide'}
+                                spaceBetween={8}
+                                grabCursor={true}
+                                centeredSlides={false}
+                                loop={false}
+                                autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                                slidesPerView={'auto'}
+                                onBeforeInit={(swiper) => {
+                                    swiperRef.current = swiper;
+                                    }}
+                                coverflowEffect={{
+                                    rotate: 0,
+                                    stretch: 0,
+                                    depth: 100,
+                                    modifier: 2.5,
+                                }}
+                                fadeEffect={{ crossFade: true }}
+                                pagination={{ el: '.swiper-pagination', clickable: true }}
+                                //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+                                modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+                                className={styles.colorContainer}
+                            >
+                                {product.specification?.colors?.map((color, id) => (
+                                    <SwiperSlide className={`${styles.slider} ${colorId === id ? styles.activeColorBtn : styles.inActiveColorBtn}`} key={id} onClick={(e) => chooseColor(e, id)}>
+                                        {typeof color === "string" ? (
+                                            <div className={styles.color} style={{ backgroundColor: `${color}`, borderColor: `${color}` }}></div>
+                                        ) : (
+                                            <div className={styles.image}>
+                                                <Image
+                                                    className={styles.img}
+                                                    src={color.src!}
+                                                    alt=""
+                                                    width={color.width!}
+                                                    height={color.height!}
+                                                /> 
+                                            </div>
+                                        )}
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                            <div className={styles.controller}>
+                                <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
+                                    <KeyboardArrowLeft />
+                                </button>
+                                {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+                                <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
+                                    <KeyboardArrowRight />
+                                </button>
+                            </div>
+                        </div>
+                    ) : (<></>)}
+                    {product.specification?.sizes && product.specification!.sizes[0] !== "" ? (
+                        <div className={styles.product_sizes}>
+                            <span className={styles.span1}>Size</span>
+                            <Swiper
+                                effect={'slide'}
+                                spaceBetween={10}
+                                grabCursor={true}
+                                centeredSlides={false}
+                                loop={false}
+                                autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                                slidesPerView={'auto'}
+                                onBeforeInit={(swiper) => {
+                                    swiperRef.current = swiper;
+                                    }}
+                                coverflowEffect={{
+                                    rotate: 0,
+                                    stretch: 0,
+                                    depth: 100,
+                                    modifier: 2.5,
+                                }}
+                                fadeEffect={{ crossFade: true }}
+                                pagination={{ el: '.swiper-pagination', clickable: true }}
+                                //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+                                modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+                                className={styles.sizeContainer}
+                            >
+                                {product.specification?.sizes?.map((size, id) => (
+                                    <SwiperSlide className={`${styles.slider} ${sizeId === id ? styles.activeSizeBtn : styles.inActiveSizeBtn}`} key={id} onClick={(e) => chooseSize(e, id)}>
+                                        <span>{typeof size === "string" ? size : size.size }</span>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                            <div className={styles.controller}>
+                                <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
+                                    <KeyboardArrowLeft />
+                                </button>
+                                {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+                                <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
+                                    <KeyboardArrowRight />
+                                </button>
+                            </div>
+                        </div>
+                    ) : (<></>)}
+                    <div className={styles.buttons}>
                         <div className={styles.product_quantity}>
                             <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
-                                <RemoveIcon style={{ fontSize: "1rem" }} />
+                                <Remove style={{ fontSize: "1rem" }} />
                             </button>
                             <span>{quantity}</span>
                             <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
-                                <AddIcon style={{ fontSize: "1rem" }} />
+                                <Add style={{ fontSize: "1rem" }} />
                             </button>
                         </div>
-                        <div className={styles.product_specs}>
+                        {addedToCart ? (
+                            <button className={styles.cart_button} onClick={(e) => orderNow(e)}>
+                                {checkoutIsLoading ? (
+                                    <Loading width="20px" height="20px" />
+                                ) : (
+                                    <>
+                                        <ShoppingCartCheckout className={styles.icon} />
+                                        <span>Checkout</span>
+                                    </>
+                                )}
+                            </button>
+                        ) : (
+                            <button className={styles.cart_button} onClick={e => {
+                                addToCart(e, false)
+                            }}>
+                                <AddShoppingCart className={styles.icon} />
+                                <span>Add to Cart</span>
+                            </button>
+                        )}
+                        <button className={styles.wish_button} onClick={(e) => wishProduct(e)}>
+                            <FavoriteBorder className={styles.icon} />
+                        </button>
+                    </div>
+                    {/* <div className={styles.product_specs}>
                             {p.specification?.colors && p.specification?.colors.length > 1 ? (
                                 <div className={styles.colors}>
                                     <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
@@ -519,23 +761,32 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                     </div>
                                 </div>
                             ) : (<></>)}
+                    </div> */}
+                    {/* <div className={styles.product_quantity_specs}>
+                        <div className={styles.product_quantity}>
+                            <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
+                                <RemoveIcon style={{ fontSize: "1rem" }} />
+                            </button>
+                            <span>{quantity}</span>
+                            <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
+                                <AddIcon style={{ fontSize: "1rem" }} />
+                            </button>
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className={styles.product_cart_order}>
+                    {/* <div className={styles.product_cart_order}>
                         <button className={styles.order_button} onClick={(e) => orderNow(e)}>
                             <ShoppingCartCheckout className={styles.icon} />
                             <span>Checkout</span>
                         </button>
                         <button className={styles.cart_button} onClick={e => {
                             addToCart(e, false)
-                            //window.location.reload()
                         }}>
                             <AddShoppingCart className={styles.icon} />
                             <span>Add to Cart</span>
                         </button>
-                    </div>
-                    <div className={styles.product_accordian}>
+                    </div> */}
+                    {/* <div className={styles.product_accordian}>
                         {questions.map((q, index) => (
                             <div key={index}>
                                 <button
@@ -567,10 +818,63 @@ const ProductInfo = ({ product_ }: { product_: Array<IProduct> }) => {
                                 </div>
                             </div>
                         ))}
+                    </div> */}
                     </div>
-                    </div>
-                ))}
             </main>
+            <div className={styles.extraInfo}>
+                <div className={styles.buttons}>
+                    <button className={activeInfoBtn === 0 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 0)}>Description</button>
+                    <button className={activeInfoBtn === 1 ? styles.activeInfoBtn: ""} onClick={(e) => clickInfoBtn(e, 1)}>Specifications</button>
+                    {/* <button className={activeInfoBtn === 2 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 2)}>Reviews</button> */}
+                </div>
+                <div className={styles.infoBody}>
+                    {activeInfoBtn === 0 ? (
+                        <Fragment>
+                            <span className={styles.span_d1}>
+                                <strong>Description</strong> <br />
+                                <span>{product.description}</span>
+                            </span>
+                            <span className={styles.span_d2}>
+                                <strong>Customer Benefits</strong>
+                                <ul>
+                                    {product.specification?.benefits?.map((benefit, id) => (
+                                        <li key={id}>{benefit}</li>
+                                    ))}
+                                </ul>
+                            </span>
+                            <span className={styles.span_d3}>
+                                <strong>How to use</strong>
+                                <ul>
+                                    {product.specification?.prescription?.map((step, id) => (
+                                        <li key={id}>{step}</li>
+                                    ))}
+                                </ul>
+                            </span>
+                        </Fragment>
+                    ) : activeInfoBtn === 1 ? (
+                        <Fragment>
+                            <span className={styles.span_s1}>
+                                <strong>Specifications</strong>
+                                <ul>
+                                    {specs?.map((spec, id) => (
+                                        <>
+                                            {spec ? (
+                                                <li key={id}>{spec}</li>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </>
+                                    ))}
+                                </ul>
+                            </span>
+                        </Fragment>
+                    ) : activeInfoBtn === 2 ? (
+                        <></>
+                    ) : (
+                        <></>
+                    )}
+                </div>
+            </div>
         </>
     );
 };

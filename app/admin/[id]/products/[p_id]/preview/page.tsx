@@ -61,7 +61,7 @@ export default async function ProductPreviewPage({ params: { p_id } }: { params:
 
   return (
     <main className="product_info_page">
-      <ProductInfo product_={product} />
+      <ProductInfo product_={product[0]} />
       {/* <RecommendedProduct product_={products} titleId_={2} /> */}
     </main>
   )

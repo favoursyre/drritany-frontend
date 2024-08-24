@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, extraDiscount } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -35,7 +35,8 @@ const Cart = () => {
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
 
     useEffect(() => {
-        //console.log("Client: ", clientInfo)
+        console.log("Cart Size: ", cart?.cart[0].specs?.size)
+
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
             const refreshCart = () => {
@@ -97,7 +98,7 @@ const Cart = () => {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
             cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
-            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+            cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number((( cart.cart[index].extraDiscount?.percent!/100 ) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
@@ -121,7 +122,7 @@ const Cart = () => {
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
                 cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
-                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount && cart.cart[index].quantity >= 5 ? Number(((extraDiscount/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+                cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
@@ -208,37 +209,79 @@ const Cart = () => {
                     </div>
                     <span className={styles.brief_1}>Your cart is empty!</span>
                     <span className={styles.brief_2}>Explore our wide range of products and uncover our unbeatable offers</span>
-                    <button onClick={() => router.push("/#products")}>
+                    <button onClick={() => router.push("/products")}>
                         <AddShoppingCart className={styles.icon} />
                         <span>Start Shopping</span>
                     </button>
                 </div>
             ) : (
                 <div className={styles.active_cart}>
-                    
                     <div className={styles.cart_list}>
                         <span className={styles.cart_list_title}>Checkout Summary</span>
+                        <div className={styles.cart_header}>
+                            <span className={styles.span1}>Product</span>
+                            <span className={styles.span2}>Quantity</span>
+                            <span className={styles.span3}>Subtotal</span>
+                        </div>
                         <div className={styles.cart_lists}>
                             {cart ? cart.cart.map((c, cid) => (
                                 <div className={styles.cart_item} key={cid}>
-                                    <div className={styles.list_image} onClick={(e) => viewProduct(e, c._id)}>
-                                        <Image
-                                            className={styles.img} 
-                                            src={c.image.src}
-                                            alt=""
-                                            width={c.image.width}
-                                            height={c.image.height}
-                                        />
+                                    <div className={styles.list_main} onClick={(e) => viewProduct(e, c._id)}>
+                                        <div className={styles.list_image}>
+                                            <Image
+                                                className={styles.img} 
+                                                src={c.image.src}
+                                                alt=""
+                                                width={c.image.width}
+                                                height={c.image.height}
+                                            />
+                                        </div>
+                                        <div className={styles.list_specs}>
+                                            <span className={styles.list_title}>{c.name}</span>
+                                            {c?.specs?.color ? (
+                                                <div className={styles.list_color}>
+                                                    <strong>Color:</strong>
+                                                    {typeof c?.specs?.color === "string" ? (
+                                                        <div className={styles.color} style={{ backgroundColor: `${c?.specs?.color}` }}></div>
+                                                    ) : (
+                                                        <div className={styles.image}>
+                                                            <Image
+                                                                className={styles.img}
+                                                                src={c?.specs?.color.src!}
+                                                                alt=""
+                                                                width={c?.specs?.color.width!}
+                                                                height={c?.specs?.color.height!}
+                                                            /> 
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (<></>)}
+                                            {c?.specs?.size ? (
+                                                <div className={styles.list_size}>
+                                                    <strong>Size:</strong>
+                                                    <span className={styles.size}>{typeof c.specs?.size === "string" ? c.specs?.size : c.specs?.size.size}</span>
+                                                </div>
+                                            ) : (<></>)}
+                                        </div>
                                     </div>
-                                    <span className={styles.list_title} onClick={(e) => viewProduct(e, c._id)}>{c.name}</span>
                                     <div className={styles.list_quantity}>
                                         <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
-                                            <Remove style={{ fontSize: "1rem" }} />
+                                            <Remove className={styles.icon} />
                                         </button>
                                         <span>{c.quantity}</span>
                                         <button className={styles.plus_button} onClick={e => increaseQuantity(e, cid)}>
-                                            <Add style={{ fontSize: "1rem" }} />
+                                            <Add className={styles.icon} />
                                         </button>
+                                    </div>
+                                    <div className={styles.list_subtotal}>
+                                        <span>{clientInfo?.country?.currency?.symbol}</span>
+                                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                            <span>
+                                                {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            </span>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                     <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
                                         <DeleteOutline className={styles.icon} />
@@ -246,9 +289,44 @@ const Cart = () => {
                                 </div>
                             )) : (<></>)}
                         </div>
+                        {/* <div className={styles.cart_container}>
+                            <div className={styles.cart_header}>
+                                <span>Product</span>
+                                <span>Quantity</span>
+                                <span>Subtotal</span>
+                            </div>
+                            <div className={styles.cart_lists}>
+                                {cart ? cart.cart.map((c, cid) => (
+                                    <div className={styles.cart_item} key={cid}>
+                                        <div className={styles.list_image} onClick={(e) => viewProduct(e, c._id)}>
+                                            <Image
+                                                className={styles.img} 
+                                                src={c.image.src}
+                                                alt=""
+                                                width={c.image.width}
+                                                height={c.image.height}
+                                            />
+                                        </div>
+                                        <span className={styles.list_title} onClick={(e) => viewProduct(e, c._id)}>{c.name}</span>
+                                        <div className={styles.list_quantity}>
+                                            <button className={styles.minus_button} onClick={e => decreaseQuantity(e, cid)}>
+                                                <Remove style={{ fontSize: "1rem" }} />
+                                            </button>
+                                            <span>{c.quantity}</span>
+                                            <button className={styles.plus_button} onClick={e => increaseQuantity(e, cid)}>
+                                                <Add style={{ fontSize: "1rem" }} />
+                                            </button>
+                                        </div>
+                                        <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
+                                            <DeleteOutline className={styles.icon} />
+                                        </button>
+                                    </div>
+                                )) : (<></>)}
+                            </div>
+                        </div> */}
                     </div>
                     <div className={styles.order_price}>
-                        <span className={styles.heading}>Delivery Info</span>
+                        <span className={styles.heading}>Delivery Information</span>
                         <div className={styles.delivery_info} onClick={(e) => editDeliveryInfo(e)}>
                             {deliveryInfo ? (
                                 <div className={styles.info}>
@@ -318,7 +396,7 @@ const Cart = () => {
                                 </div>
                             </div>
                             <div className={styles.total}>
-                                <span className={styles.title}>Total</span>
+                                <span className={styles.title}>Gross Total</span>
                                 <div className={styles.amount}>
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (

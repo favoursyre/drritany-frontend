@@ -5,15 +5,11 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent, useCallback } from 'react';
 import styles from "./header.module.scss"
-import { ICart } from '@/config/interfaces';
-import { getItem } from "@/config/clientUtils"
-import { routeStyle, cartName } from '@/config/utils'
+import { ICart, IProduct, IProductFilter } from '@/config/interfaces';
+import { getItem, notify, setItem } from "@/config/clientUtils"
+import { routeStyle, cartName, wishListName, sleep, productFilterName } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import MenuIcon from '@mui/icons-material/Menu';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloseIcon from '@mui/icons-material/Close';
+import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close } from "@mui/icons-material";
 import Loading from "../loadingCircle/Circle";
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
 import { logo } from "@/config/utils";
@@ -28,6 +24,9 @@ const Header = () => {
   const [menu, setMenu] = useState<boolean>(false)
   const [query, setQuery] = useState<string>("")
   const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
+  const [cartIsLoading, setCartIsLoading] = useState<boolean>(false)
+  const [wishIsLoading, setWishIsLoading] = useState<boolean>(false)
+  const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
   const setContactModal = useContactModalStore(state => state.setContactModal);
@@ -45,13 +44,17 @@ const Header = () => {
         //Updating cart info
         const cart__ = getItem(cartName)
         setCart(() => cart__)
+
+        //Updating wish list
+        const wishList__ = getItem(wishListName)
+        setWishList(() => wishList__)
       }, 100);
   
       return () => {
         clearInterval(interval);
       };
     
-  }, [scrollY, cart]);
+  }, [scrollY, cart, wishList]);
 
   ///This function is triggered when the user clicks on contact
   const openContactModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -83,11 +86,46 @@ const Header = () => {
     setQuery("")
   }
 
+  //This function is trigerred when the user clicks on cart
+  const viewCart = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault()
+
+    //setCartIsLoading(true)
+    router.push("/cart")
+    //await sleep()
+  }
+
+  //This function is triggered when the user clicks on wish list
+  const viewWishList = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault()
+
+    if (wishList === undefined || wishList?.length === 0) {
+      notify("info", "Your wish list is empty")
+    } else {
+      //setWishIsLoading(() => true)
+      router.push("/wishlist")
+    }
+  }
+
+  //This function is trigerred when someone clicks on product
+  const viewProducts = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault()
+
+    const filterSettings: IProductFilter = {
+      filterId: 0,
+      category: "All"
+    }
+    setItem(productFilterName, filterSettings)
+
+    setMenu(() => false)
+    router.push('/products')
+  }
+
   return (
     <>
       <header className={`${styles.header} ${scrollY >= 1 ? styles.scrolled : ""} ${routeStyle(routerPath, styles)}`}>
         <button className={styles.menu_button} onClick={() => setMenu(true)}>
-          <MenuIcon className={styles.icon} />
+          <Menu className={styles.icon} />
         </button>
         <div className={styles.logo} onClick={() => router.push('/')}>
           <Image
@@ -102,7 +140,7 @@ const Header = () => {
           <button onClick={() => {
             router.push('/about')
           }}><span>About Us</span></button>
-          <button onClick={() => router.push('/#products')}><span>Products</span></button>
+          <button onClick={(e) => viewProducts(e)}><span>Products</span></button>
           <button onClick={(e) => openContactModal(e)}>
             <span>Contact Us</span>
           </button>
@@ -114,7 +152,7 @@ const Header = () => {
                 {searchIsLoading ? (
                     <Loading width="10px" height="10px" />
                   ) : (
-                    <SearchIcon />
+                    <Search />
                   )}
               </button>
             ) : (
@@ -132,28 +170,46 @@ const Header = () => {
                   {searchIsLoading ? (
                     <Loading width="10px" height="10px" />
                   ) : (
-                    <SearchIcon style={{ fontSize: "1.1rem" }} className={styles.icon} />
+                    <Search style={{ fontSize: "1.1rem" }} className={styles.icon} />
                   )}
                 </button>
               </form>
             )}
           </div>
+          <div id={styles.wishList}>
+            {wishIsLoading ? (
+              <Loading width="10px" height="10px" />
+            ) : (
+              <button onClick={(e) => viewWishList(e)}>
+                <div id={styles.wishIcon}>
+                  <FavoriteBorder className={styles.wish} />
+                </div>
+                <div id={wishList && wishList.length !== 0 ? styles.active_wish : styles.empty_wish}>
+                  <span>{wishList?.length}</span>
+                </div>
+              </button>
+            )}
+          </div>
           <div id={styles.cart}>
-            <button onClick={() => router.push("/cart")}>
-              <div id={styles.cartIcon}>
-                <ShoppingCartIcon className={styles.cart} />
-              </div>
-              <div id={cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
-                <span>{cart?.cart.length}</span>
-              </div>
-            </button>
+            {cartIsLoading ? (
+              <Loading width="10px" height="10px" />
+            ) : (
+              <button onClick={(e) => viewCart(e)}>
+                <div id={styles.cartIcon}>
+                    <ShoppingCartOutlined className={styles.cart} />
+                </div>
+                <div id={cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
+                  <span>{cart?.cart.length}</span>
+                </div>
+              </button>
+            )}
           </div>
         </div>
       </header>
       <div className={`${search ? styles.activeSearch : styles.inActiveSearch}`}>
         <form className={`${styles.search_form}`} onSubmit={(e) => onSearch(e)}>
           <button className={styles.arrow_left} type="button" onClick={() => setSearch(false)}>
-              <ArrowBackIcon />
+              <ArrowBack />
             </button>
             <input 
               type="text" 
@@ -162,17 +218,17 @@ const Header = () => {
               value={query}
             />
             <button className={styles.close} type="button" onClick={(e) => clearSearch(e)}>
-              <CloseIcon />
+              <Close />
             </button>
             <button className={styles.search_icon} type="submit">
-              <SearchIcon className={styles.icon} />
+              <Search className={styles.icon} />
             </button>
           </form>
       </div>
       <div className={`${menu ? styles.activeMenu : styles.inActiveMenu}`}>
           <div className={styles.menu_heading}>
             <button className={styles.close_button} onClick={() => setMenu(false)}>
-              <CloseIcon />
+              <Close />
             </button>
             <div className={styles.logo} onClick={() => {
               setMenu(() => false)
@@ -194,10 +250,7 @@ const Header = () => {
             <span>About Us</span>
           </button>
           <button className={styles.links} 
-            onClick={() => {
-              setMenu(() => false)
-              router.push('/#products')
-          }}>
+            onClick={(e) => viewProducts(e)}>
             <span>Products</span>
           </button>
           <button 

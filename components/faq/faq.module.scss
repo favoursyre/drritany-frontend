@@ -141,8 +141,8 @@
 }
 
 .faqMain {
-    @include flexBar($align: center, $justify: center, $gap: 2%);
-    @include size($height: 1200px);
+    @include flexBar($align: center, $justify: center, $gap: 2%, $flex_d: column);
+    @include size($height: 1300px);
     margin: 0px;
     left: 0px;
     top: 90%;
@@ -181,7 +181,7 @@
     .accordian {
         @include flexBar($position: relative, $justify: flex-start, $gap: 10px, $flex_d: column, $wrap: wrap, $align: none, $flex: none);
         //border: 2px solid $primary-color;
-        @include size(70%, 100%);
+        @include size(70%, 90%);
         transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
         padding: 0% 0%;
         font-family: "Roboto";
@@ -257,7 +257,7 @@
             }
 
             .answer {
-                //border: 1px solid $primary-color;
+                border-top: 1px solid rgba(238, 80, 36, 0.2);
                 display: none;
                 @include size(96%, 45%);
                 @include text-layout($size: 14px, $l_height: 17px);
@@ -304,6 +304,81 @@
 
         .inactiveAccordian {
             z-index: 5;
+        }
+    }
+
+    .contact {
+        border: 1px solid $text-color-3;
+        @include flexBar($position: relative, $justify: center, $align: center, $gap: 10px);
+        //border: 2px solid $primary-color;
+        @include size(60%, 5%);
+
+        @include tabletPro {
+            top: -4%;
+            width: 80%;
+            //height: 1550px;
+            //border: 1px solid green;
+        }
+
+        @include tablet {
+            top: -7%;
+            width: 90%;
+        }
+
+        @include tabletMini {
+            top: -9%;
+        }
+
+        @include phonePro {
+            top: -15%;
+            @include size(90%, 10%);
+            gap: 10%;
+            flex-direction: column;
+        }
+
+        @include phoneMini {
+            top: -25%;
+        }
+
+        span {
+            @include text-layout($size: 15px, $l_height: 20px);
+            font-weight: 500;
+
+            @include phonePro {
+                text-align: center;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+            }
+        }
+
+        button {
+            //border: 1px solid red;
+            @include flexBar($position: relative, $justify: center, $align: center, $gap: 10px);
+            @include size(20%, 70%);
+            background-color: $primary-color;
+            border: none;
+
+            @include phonePro {
+                top: -4%;
+                @include size(90%, 40%);
+                //height: 1550px;
+                //border: 1px solid green;
+            }
+
+            span {
+                @include text-layout($size: 13px, $l_height: 20px, $color: white);
+                font-weight: 600;
+            }
+
+            .icon {
+                color: white;
+            }
+
+            &:hover {
+                box-shadow: 0 0 10px rgba(238, 80, 36, 0.2);
+            }
         }
     }
 }

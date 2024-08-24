@@ -1,0 +1,124 @@
+/** This contains the scss for the home campaign b component */
+
+///Libraries -->
+@import "@/styles/base.module";
+
+.main {
+    @include flexBar($align: center, $justify: center, $flex_d: column);
+    @include position($left: 0%, $top: 445%);
+    border: 1px solid red;
+    @include size(100%, 75%);
+
+    @include tabletPro {
+        top: 240%;
+        height: 45%;
+    }
+
+    @include tabletMini {
+        top: 242%;
+    }
+
+    @include phonePro {
+        top: 310%;
+        height: 40%;
+    }
+
+    .container {
+        @include flexBar($position: relative, $align: center, $justify: center, $gap: 15px);
+        border: 1px solid red;
+        @include size(80%, 85%);
+
+        .left {
+            border: 1px solid red;
+            @include flexBar($position: relative, $align: center, $justify: center);
+            @include size(48%, 100%);
+            border-radius: 5px;
+
+            @include phonePro {
+                width: 45%;
+            }
+        }
+
+        .right {
+            border: 1px solid purple;
+            @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 15px);
+            @include size(50%, 100%);
+            //border-radius: 5px;
+
+            @include phonePro {
+                width: 47%;
+            }
+
+            .upper {
+                border: 1px solid purple;
+                @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column, $gap: 15px);
+                @include size(100%, 48%);
+                border-radius: 5px; 
+
+                @include phonePro {
+                   height: 45%;
+                }
+            }
+
+            .lower {
+                border: 1px solid purple;
+                @include flexBar($position: relative, $align: center, $justify: center, $gap: 15px);
+                @include size(100%, 48%);
+                //border-radius: 5px; 
+
+                .lower_left {
+                    border: 1px solid red;
+                    @include flexBar($position: relative, $align: center, $justify: center);
+                    @include size(48%, 100%);
+                    border-radius: 5px;
+
+                    @include phonePro {
+                        width: 45%;
+                    }
+                }
+
+                .lower_right {
+                    border: 1px solid red;
+                    @include flexBar($position: relative, $align: center, $justify: center);
+                    @include size(48%, 100%);
+                    border-radius: 5px;
+
+                    @include phonePro {
+                        width: 45%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.productInfoPage {
+    border: 1px solid red;
+    top: 150%;
+
+    @include tabletPro {
+        top: 75%;
+    }
+
+    @include tablet {
+        top: 77%;
+    }
+
+    @include phonePro {
+        top: 177%;
+    }
+
+    @include phone {
+        top: 183%;
+    }
+}
+
+.productPage {
+    border: 1px solid grey;
+    top: 205%;
+}
+
+.wishListPage {
+    border: 1px solid red;
+    top: 80%;
+}

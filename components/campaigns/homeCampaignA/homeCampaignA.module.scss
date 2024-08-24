@@ -1,0 +1,36 @@
+/** This contains the scss for the home campaign a component */
+
+///Libraries -->
+@import "@/styles/base.module";
+
+.main {
+    @include flexBar($align: center, $justify: center, $flex_d: column);
+    @include position($left: 0%, $top: 315%);
+    border: 1px solid red;
+    @include size(100%, 65%);
+
+    @include tabletPro {
+        top: 170%;
+        height: 40%;
+    }
+
+    @include tabletMini {
+        top: 173%;
+    }
+
+    @include phonePro {
+        top: 230%;
+        height: 40%;
+    }
+
+    .container {
+        @include flexBar($position: relative, $align: center, $justify: center, $flex_d: column);
+        border: 1px solid red;
+        @include size(80%, 80%);
+    }
+}
+
+.productPage {
+    border: 1px solid blue;
+    top: 75%;
+}

@@ -32,17 +32,8 @@
     }
 
     .container {
-        //position: relative;
-        //background: #E42C2C;
-        background-color: $primary-color;
-        //left: 0%;
-        display: flex;
+        @include flexBar($position: relative, $justify: flex-start, $align: center, $gap: 1%);
         @include size(95%, 100%);
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        border-radius: 10px 10px 0px 0px;
-        //border: 2px solid $primary-color;
 
         @include tabletPro {
             //border: 2px solid red;
@@ -57,23 +48,25 @@
             //justify-content: center;
         }
 
-        span {
-            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 20px);
+        .bar {
+            border: 1px solid $primary-color;
             position: relative;
-            top: 1%;
-            font-family: "Inter";
+            @include size(14px, 100%);
+            border-radius: 4px;
+            background-color: $primary-color;
+        }
 
-            @include phonePro {
-                position: relative;
-                top: 3%;
-                left: 0%;
-                font-size: 14px;
-            }
+        .barTitle {
+            //border: 1px solid $primary-color;
+            position: relative;
+            @include text-layout($size: 13px, $l_height: 20px, $color: $primary-color);
+            font-weight: 500;
+            font-family: "Poppins";
         }
     }
 }
 
-.searchPage {
+.productPage {
     top: -3%;
 
     @include phonePro {

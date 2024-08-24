@@ -138,7 +138,8 @@
                 @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 24px);
 
                 @include phonePro {
-                    line-height: 18px;
+                    line-height: 17px;
+                    font-size: 13px;
                 }
 
                 @include phoneMini {

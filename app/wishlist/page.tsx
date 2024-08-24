@@ -3,6 +3,7 @@
 
 ///Libraries -->
 //import Cart from "@/components/cart/Cart"
+import HomeCampaignB from "@/components/campaigns/homeCampaignB/homeCampaignB";
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct, ISlideTitle } from "@/config/interfaces";
 import { backend, shuffleArray, sortProductByActiveStatus } from "@/config/utils";
@@ -13,10 +14,10 @@ import { Suspense } from "react";
 
 ///Commencing the code
 export const metadata: Metadata = {
-  title: 'Cart',
-  description: `Add products to your cart and checkout.`,
+  title: 'Wishlist',
+  description: `Explore your wish lists`,
   alternates: {
-    canonical: `/cart`
+    canonical: `/wishlist`
   }
 }
 
@@ -46,14 +47,19 @@ async function getProducts() {
 export default async function CartPage() {
   const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
   const titles1: ISlideTitle = {
+    slideTitleId: 6,
+    barTitleId: 3
+  }
+  const titles2: ISlideTitle = {
     slideTitleId: 2,
     barTitleId: 2
   }
 
   return (
     <main className="cart_page">
-      <Cart />
-      <ProductSlide product_={products} title_={titles1} view_={undefined}/>
+      <ProductSlide product_={undefined!} title_={titles1} view_={"wishSlide1"}/>
+      {/* <HomeCampaignB /> */}
+      <ProductSlide product_={products} title_={titles2} view_={"wishSlide2"}/>
     </main>
   )
 }

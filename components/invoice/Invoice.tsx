@@ -123,8 +123,32 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                                 height={p.image.height}
                             />
                         </div>
-                        <div className={styles.cartName}>
-                            <span>{p.name}</span>
+                        <div className={styles.cartSpecs}>
+                            <span className={styles.cartName}>{p.name}</span>
+                            {p.specs?.color ? (
+                                <div className={styles.cart_color}>
+                                    <strong>Color:</strong>
+                                    {typeof p?.specs?.color === "string" ? (
+                                        <div className={styles.color} style={{ backgroundColor: `${p?.specs?.color}` }}></div>
+                                    ) : (
+                                        <div className={styles.image}>
+                                            <Image
+                                                className={styles.img}
+                                                src={p?.specs?.color.src!}
+                                                alt=""
+                                                width={p?.specs?.color.width!}
+                                                height={p?.specs?.color.height!}
+                                            /> 
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (<></>)}
+                            {p.specs?.size ? (
+                                <div className={styles.cart_size}>
+                                    <strong>Size:</strong>
+                                    <span className={styles.size}>{typeof p.specs?.size === "string" ? p.specs?.size : p.specs?.size.size}</span>
+                                </div>
+                            ) : (<></>)}
                         </div>
                         <div className={styles.cartPriceQuantity}>
                             <span>

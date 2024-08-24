@@ -57,6 +57,8 @@ export const groupList = (arr: Array<any>, length: number): Array<any> => {
 //Cart name
 export const cartName: string = "idealPlugCart"
 
+export const wishListName: string = "idealPlugWishList"
+
 export const deliveryName: string = "idealPlugDeliveryInfo"
 
 export const adminName: string = "idealPlugAdmin"
@@ -64,6 +66,8 @@ export const adminName: string = "idealPlugAdmin"
 export const productInfoName: string = "idealPlugProduct"
 
 export const extraDeliveryFeeName: string = "idealPlugExtraDeliveryFee"
+
+export const productFilterName: string = "idealPlugProductFilterSettings"
 
 //Order name
 export const orderName: string = "idealPlugOrder"
@@ -88,6 +92,8 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
             return styles.homePage
         case "/cart":
             return styles.cartPage
+        case "/wishlist":
+            return styles.wishListPage
         case "/terms":
             return styles.termsPage
         case "/order":
@@ -97,9 +103,7 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
         case "/faqs":
             return styles.faqsPage
         case "/products":
-            return styles.searchPage
-        // case "/admin/login":
-        //     return styles.adminLoginPage
+            return styles.productPage
         default:
             if (router.includes("/admin/login")) {
                 return styles.adminLoginPage
@@ -109,8 +113,6 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
                 return styles.productInfoPage
             } else if (router.includes("/order/invoice")) {
                 return styles.orderInvoicePage
-            } else if (router.includes("/products")) {
-                return styles.searchPage 
             } else {
                 return styles.others
             }
@@ -165,6 +167,16 @@ export const parsedHtml = (htmlTag: string, tagType: string): React.ReactElement
       );
 }
 
+//This function helps check if a discount offer exist
+export const checkExtraDiscountOffer = (product: IProduct): boolean => {
+    const xtraDiscount = product.pricing?.extraDiscount
+    if (!xtraDiscount || !xtraDiscount.limit || !xtraDiscount.percent || xtraDiscount.limit === 0 || xtraDiscount.percent === 0) {
+        return false
+    } else {
+        return true
+    }
+}
+
 ///This function exports a array shuffler function
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     if (array) {
@@ -177,6 +189,22 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     } else {
         return array
     }
+}
+
+//Function to delete a product from an array using _id
+export const deleteProductById = (products: Array<IProduct>, id: string): Array<IProduct> => {
+    return products.filter(product => product._id !== id);
+}
+  
+//Function to check if a product exists by _id, and if not, add it
+export const addProductIfNotExists = (products: Array<IProduct>, newProduct: IProduct): Array<IProduct> => {
+    const exists = products.some(product => product._id === newProduct._id);
+
+    if (!exists) {
+        return [...products, newProduct]; // Add new product if it doesn't exist
+    }
+
+    return products; // Return the original array if the product already exists
 }
 
 //This function checks if a link is an image
@@ -287,7 +315,8 @@ export const sortOptions = [
     {id: 0, name: "Most Ordered"},
     {id: 1, name: "Newest Arrivals"},
     {id: 2, name: "Price: High to Low"},
-    {id: 3, name: "Price: Low to High"}
+    {id: 3, name: "Price: Low to High"},
+    {id: 4, name: "Most Recommended"}
 ]
 
 ///This decodes a unicode string
@@ -410,6 +439,18 @@ export const sortProductByOrder = (products: Array<IProduct>): Array<IProduct> =
     return sortedProducts
 }
 
+//This sorts products by rating from high to low
+export const sortProductByRating = (products: Array<IProduct>): Array<IProduct> => {
+    return products.slice().sort((a, b) => {
+        // If rating is undefined, treat it as 0 for comparison
+        const ratingA = a.rating ?? 0;
+        const ratingB = b.rating ?? 0;
+
+        // Sort in descending order (highest rating first)
+        return ratingB - ratingA;
+    });
+}
+
 ///This function sorts the array from latest to oldest
 export const sortProductByLatest = (products: Array<IProduct>): Array<IProduct> => {
     // Sort the array based on the createdAt property in descending order
@@ -443,21 +484,21 @@ export const sortProductByPrice = (products: Array<IProduct>, action: string): A
 }
 
 ///This function sorts the products by category
-export const sortByCategory = (products: Array<IProduct>, category: string): Array<IProduct> => {
-    const categories_ = categories.map((category) => category.macro)
+// export const sortByCategory = (products: Array<IProduct>, category: string): Array<IProduct> => {
+//     const categories_ = categories.map((category) => category.macro)
 
-    if (category === "All") {
-      return products;
-    } else {
+//     if (category === "All") {
+//       return products;
+//     } else {
         
-        for (let i: number = 0; i < categories_.length; i++) {
-            if (category === categories_[i]) {
-                return products.filter(product => product.category === categories_[i]);
-            } 
-        }
-        return products
-  };
-}
+//         for (let i: number = 0; i < categories_.length; i++) {
+//             if (category === categories_[i]) {
+//                 return products.filter(product => product.category?.macro === categories_[i]);
+//             } 
+//         }
+//         return products
+//   };
+// }
 
 ///This removes undefined keys from an object e.g. {age: 30, color: undefined} => {age: 30}
 export const removeUndefinedKeys = (obj: { [key: string]: any }): { [key: string]: any } => {
@@ -543,60 +584,117 @@ export const removeProductFromArray = (productToRemove: IProduct, products: Arra
     return products;
 };
 
+//This function cleans a product array
+export const removeItemsFromArray = (itemA: Array<IProduct>, itemB: Array<IProduct>): Array<IProduct> => {
+    // Create a Set of _id values from itemB for quick lookup
+    const itemBIds = new Set(itemB.map(item => item._id));
+
+    // Filter out items from itemA whose _id is found in itemBIds
+    return itemA.filter(item => !itemBIds.has(item._id));
+}
+
 // Sample function to determine similarity between two products
 const isSimilarProduct = (productA: IProduct, productB: IProduct, level: number | void): boolean => {
     if (level === 0) {
         return (
-            productA.category === productB.category &&
-            productA.category?.mini === productB.category?.mini &&
-            productA.category?.micro === productB.category?.micro
-            //productA.inStock !== false
+            productA.name === productB.name
         )
     } else if (level === 1) {
         return (
-            productA.category === productB.category &&
+            productA.category?.macro === productB.category?.macro &&
+            productA.category?.mini === productB.category?.mini &&
+            productA.category?.micro === productB.category?.micro &&
+            productA.category?.nano === productB.category?.nano
+        )
+    } else if (level === 2) {
+        return (
+            productA.category?.macro === productB.category?.macro &&
+            productA.category?.mini === productB.category?.mini &&
+            productA.category?.micro === productB.category?.micro
+        )
+    } else if (level === 3) {
+        return (
+            productA.category?.macro === productB.category?.macro &&
             productA.category?.mini === productB.category?.mini
         )
-    } else {
+    } else if (level === 4) {
         return (
-            productA.category === productB.category
+            productA.category?.macro === productB.category?.macro
         )
+    } else {
+        return false
     }
+    // } else {
+    //     return (
+    //         productA.category === productB.category
+    //     )
+    // }
 };
 
 //Function to sort products based on similarity to a target product
 export const sortProductsBySimilarity = (products: Array<IProduct>, targetProduct: IProduct): Array<IProduct> => {
     let similarProducts: Array<IProduct> = [];
     let otherProducts: Array<IProduct> = [];
+    let onlySimilarNamedProducts: Array<IProduct> = []
+    let onlySimilarNanoProducts: Array<IProduct> = []
+    let onlySimilarMicroProducts: Array<IProduct> = []
+    let onlySimilarMiniProducts: Array<IProduct> = []
+    let onlySimilarMacroProducts: Array<IProduct> = []
 
-    //Using the first level of similarity sorting
+    //Using the first level of similarity sorting to find similar names
     products.forEach((product) => {
         if (isSimilarProduct(product, targetProduct, 0)) {
-            similarProducts.push(product);
-        } else {
-            otherProducts.push(product);
+            onlySimilarNamedProducts.push(product);
+        } 
+    });
+
+    //Using the first level of similarity sorting to find only similar nano categories
+    products.forEach((product) => {
+        if (isSimilarProduct(product, targetProduct, 1)) {
+            onlySimilarNanoProducts.push(product);
         }
     });
 
-    //Using the second level of similarity sorting
-    if (similarProducts.length === 0) {
-        products.forEach((product) => {
-            if (isSimilarProduct(product, targetProduct, 1)) {
-                similarProducts.push(product);
-            }
-        });
-    }
+    //Using the first level of similarity sorting to find only similar micro categories
+    products.forEach((product) => {
+        if (isSimilarProduct(product, targetProduct, 2)) {
+            onlySimilarMicroProducts.push(product);
+        }
+    });
 
-    //Using the third level of similarity sorting
-    if (similarProducts.length === 0) {
-        products.forEach((product) => {
-            if (isSimilarProduct(product, targetProduct, 2)) {
-                similarProducts.push(product);
-            }
-        });
-    }
+    //Using the second level of similarity sorting to find only similar mini categories
+    products.forEach((product) => {
+        if (isSimilarProduct(product, targetProduct, 3)) {
+            onlySimilarMiniProducts.push(product);
+        }
+    });
 
-    return [...shuffleArray(similarProducts), ...shuffleArray(otherProducts)];
+    //Using the second level of similarity sorting to find only similar macro categories
+    products.forEach((product) => {
+        if (isSimilarProduct(product, targetProduct, 4)) {
+            onlySimilarMacroProducts.push(product);
+        }
+    });
+
+    //Sorting/Cleaning the products
+    let onlySimilarNanoProducts_ = removeItemsFromArray(onlySimilarNanoProducts, onlySimilarNamedProducts)
+
+    let onlySimilarMicroProducts_ = removeItemsFromArray(onlySimilarMicroProducts, onlySimilarNanoProducts)
+
+    let onlySimilarMiniProducts_ = removeItemsFromArray(onlySimilarMiniProducts, onlySimilarMicroProducts)
+
+    let onlySimilarMacroProducts_ = removeItemsFromArray(onlySimilarMacroProducts, onlySimilarMiniProducts)
+
+    let otherProducts_ = removeItemsFromArray(products, onlySimilarMacroProducts)
+
+    return [
+        ...shuffleArray(onlySimilarNamedProducts), 
+        ...shuffleArray(onlySimilarNanoProducts_), 
+        ...shuffleArray(onlySimilarMicroProducts_),
+        ...shuffleArray(onlySimilarMiniProducts_), 
+        ...shuffleArray(onlySimilarMacroProducts_),
+        ...shuffleArray(otherProducts_)
+    ];
 };
 
 //This function is used to sort products based on active or inactive
@@ -630,6 +728,26 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
         },
     });
     return stream;
+}
+
+//This function helps get custom based pricing
+export const getCustomPricing = (product: IProduct, sizeId: number): number => {
+    const size = product.specification?.sizes![sizeId]
+    if (size) {
+        if (typeof size === "string") {
+            return product.pricing?.basePrice!
+        } else {
+            if (size?.percent === 0) {
+                return product.pricing?.basePrice!
+            } else {
+                const xtraPrice = (size?.percent! / 100) * product.pricing?.basePrice!
+                const newPrice = xtraPrice + product.pricing?.basePrice!
+                return newPrice
+            }
+        }
+    } else {
+        return product.pricing?.basePrice!
+    }
 }
 
 //Convert the file to a buffer and then to a stream
@@ -667,12 +785,36 @@ export const stringToArray = (str: string): string[] => {
     return str.split('. ').map(item => item.trim());
 }
 
+//This converts size percent to array
+export const sizePercentToArray = (input: string): Array<{ size: string, percent: number }> => {
+    return input.split('. ').map(pair => {
+        const [size, percent] = pair.split(', ').map(item => item.trim());
+        return { size, percent: percent !== undefined ? parseFloat(percent) : 0 };
+    });
+}
+
+//This converts size percent to string
+export const sizePercentToString = (input: Array<{ size: string, percent: number } | string>): string => {
+    return input.map(item => {
+        if (typeof item === 'string') {
+            return `${item}, 0`; // Default percent to 0 for string inputs
+        } else {
+            return `${item.size}, ${item.percent}`;
+        }
+    }).join('. ');
+}
+
 export const categories: Array<ICategoryInfo> = [
     {
         macro: "Health & Personal Care",
         minis: [
             {
                 mini: "Medical Supplies & Accessories",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1r0603-JC2w1l8dGz8vCwOFzM5xJ4lY_K",
+                    width: 816,
+                    height: 1224
+                },
                 micros: [
                     {
                         micro: "Healthcare Devices & Equipments",
@@ -711,15 +853,20 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Sports & Outdoor",
+                mini: "Sports & Outdoors",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1yUxV7sxKy1YT9MVj3HWCK_D_UxhT4-zD",
+                    width: 1224,
+                    height: 852
+                },
                 micros: [
                     {
-                        micro: "Gym Equipments & Accessories",
+                        micro: "Sports Equipments & Accessories",
                         nanos: [
                             "Strength Training Equipments",
                             "Cardio Equipments",
                             "Boxing & Martial Arts",
-                            "Wearables & Accessories"
+                            "Accessories & Others"
                         ]
                     },
                     {
@@ -737,13 +884,18 @@ export const categories: Array<ICategoryInfo> = [
                             "Fishing",
                             "Hunting",
                             "Climbing",
-                            "Others & Accessories"
+                            "Accessories & Others"
                         ]
                     }
                 ]
             },
             {
                 mini: "Medicines & Supplements",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1xA-dXOkufSpoBOKqiyvZ-H9G5bLNGjGO",
+                    width: 1224,
+                    height: 816
+                },
                 micros: [
                     {
                         micro: "Medicines",
@@ -765,6 +917,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Personal Care & Hygiene",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1QfOWPAigKDg18MPWgu6Jy8bO5qoyLuU8",
+                    width: 1224,
+                    height: 796
+                },
                 micros: [
                     {
                         micro: "Body Hygiene",
@@ -792,6 +949,11 @@ export const categories: Array<ICategoryInfo> = [
         minis: [
             {
                 mini: "Cosmetics & Lotions",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1q4fzDgCPL9uAyR6LprUXFwOH1lZbOSWI",
+                    width: 1224,
+                    height: 816
+                },
                 micros: [
                     {
                         micro: "Bath & Body",
@@ -829,6 +991,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Fragances",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1pOu1Cyzv928urlC-zdIon6jYNDb5YUwY",
+                    width: 626,
+                    height: 626
+                },
                 micros: [
                     {
                         micro: "Perfumes",
@@ -860,6 +1027,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Clothes",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1v9bLHpMNp_UAF6YsuFqzRhiMkqrS8caG",
+                    width: 1054,
+                    height: 1224
+                },
                 micros: [
                     {
                         micro: "Men's Clothing",
@@ -900,6 +1072,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Footwears",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1pF7VoPC-9jhO7NRxFn8UTBwZbccc4r2K",
+                    width: 1224,
+                    height: 816
+                },
                 micros: [
                     {
                         micro: "Men's Footwears",
@@ -937,7 +1114,12 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Jewelries & Accessories",
+                mini: "Jewelries & Cloth Accessories",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1qtMCbPrYl06-O-AiIjDMZlF9cOd7wVms",
+                    width: 1164,
+                    height: 1224
+                },
                 micros: [
                     {
                         micro: "Jewelries",
@@ -977,13 +1159,7 @@ export const categories: Array<ICategoryInfo> = [
                         ]
                     },
                 ]
-            },
-            // {
-            //     mini: "Textiles",
-            //     micros: [
-                    
-            //     ]
-            // },
+            }
         ]
     },
     {
@@ -991,6 +1167,11 @@ export const categories: Array<ICategoryInfo> = [
         minis: [
             {
                 mini: "Home, Office & Appliances",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1XzRV8cb-FUkq4zaxAwREBdw5d3CkuJ0u",
+                    width: 1100,
+                    height: 1224
+                },
                 micros: [
                     {
                         micro: "Home Appliances",
@@ -1039,64 +1220,32 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Construction, Decors & Tools",
+                mini: "Building Hardware & Decors",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1p7RSwDIQzSEGCbA1933pCoShZm1t2f_O",
+                    width: 1224,
+                    height: 816
+                },
                 micros: [
                     {
-                        micro: "Building Materials",
+                        micro: "Hardwares & Materials",
                         nanos: [
-                            "Roofing Materials",
-                            "Flooring Materials",
-                            "Handrails",
-                            "Ceilings",
-                            "Cements & Sand",
-                            "Others"
-                        ]
-                    },
-                    {
-                        micro: "Hardware",
-                        nanos: [
+                            "Roofings & Ceilings Materials",
+                            "Flooring & Tiles",
                             "Doors & Windows",
-                            "Door Knobs & Handles",
-                            "Cabinet Hardware",
-                            "Locks & Latches",
-                            "Nails, Screws & Fasteners",
-                            "Adhesives & Sealants",
-                            "Hinges & Brackets",
-                            "Tools & Equipments",
+                            "Plumbing & Pipes",
+                            "Electricals & Wiring",
                             "Others"
                         ]
                     },
                     {
-                        micro: "Wallarts & Wallpapers",
+                        micro: "Decors & Wallpapers",
                         nanos: [
                             "Wall Paints",
                             "Paint Brushes & Rollers",
                             "Wallpaper & Borders",
                             "Paint Sprayers",
                             "Paint Strippers & Removers",
-                            "Others"
-                        ]
-                    },
-                    {
-                        micro: "Plumbing",
-                        nanos: [
-                            "Faucets & Fixtures",
-                            "Pipes & Fittings",
-                            "Shower Heads",
-                            "Water Heaters",
-                            "Sinks & Basins",
-                            "Toilets & Bidets",
-                            "Others"
-                        ]
-                    },
-                    {
-                        micro: "Electricals & Wiring",
-                        nanos: [
-                            "Light Switches & Dimmers",
-                            "Outlets & Adapters",
-                            "Extension Cords",
-                            "Circuit Breakers",
-                            "Wiring & Cable Management",
                             "Others"
                         ]
                     }
@@ -1109,6 +1258,11 @@ export const categories: Array<ICategoryInfo> = [
         minis: [
             {
                 mini: "Phones, Tablets & Accessories",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1Kaf1P7SSA_YOJxHBKLzlNjqbJnc4wxyt",
+                    width: 640,
+                    height: 640
+                },
                 micros: [
                     {
                         micro: "Phones",
@@ -1141,7 +1295,12 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Computer & Accessories",
+                mini: "Computers & Accessories",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=11_O3sYu15fZWuZDYHYY1MGfxT_UEOdvQ",
+                    width: 800,
+                    height: 620
+                },
                 micros: [
                     {
                         micro: "Laptops",
@@ -1192,6 +1351,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Electronics & Gadgets",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1DMHNu7vBHWcVdKzn7SYN7NhTu-SU-sdi",
+                    width: 1886,
+                    height: 1886
+                },
                 micros: [
                     {
                         micro: "Gaming",
@@ -1229,10 +1393,15 @@ export const categories: Array<ICategoryInfo> = [
         ]
     },
     {
-        macro: "Education, Entertainment & Arts",
+        macro: "Education & Arts",
         minis: [
             {
                 mini: "Arts & Board Games",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1eHPcHup1rHFflrJsaIo8ueBeFP5Kmml5",
+                    width: 894,
+                    height: 680
+                },
                 micros: [
                     {
                         micro: "Arts & Crafts",
@@ -1256,6 +1425,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Books & School Supplies",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1pSKlKXTLxvjO-JmklVEexJwyxNIRJy8E",
+                    width: 800,
+                    height: 800
+                },
                 micros: [
                     {
                         micro: "Books & Educational Materials",
@@ -1283,39 +1457,44 @@ export const categories: Array<ICategoryInfo> = [
         macro: "Baby, Kids & Toys",
         minis: [
             {
-                mini: "Baby Essentials & Gears",
+                mini: "Baby Essentials & Toys",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1sErZTeV0-CTl_30KGu3G34zGOX1V-agy",
+                    width: 2000,
+                    height: 2000
+                },
                 micros: [
                     {
-                        micro: "Baby Essentials",
+                        micro: "Baby Essentials & Gears",
                         nanos: [
-                            "Diapers",
-                            "Wipers",
+                            "Diapers & Wipers",
+                            "Strollers & Carriers",
                             'Nutrition & Feeding',
+                            "Baby Proofing & Monitors",
+                            "Baby Furnitures",
                             "Accessories & Others"
                         ]
                     },
                     {
-                        micro: "Baby Gears",
+                        micro: "Toys & Games",
                         nanos: [
-                            "Strollers",
-                            "Carriers",
-                            "Travel Accesories",
+                            "Building & Educational Toys",
+                            "Dolls & Action Figures",
+                            "Board Games & Puzzles",
+                            "Outdoor Toys",
+                            "Electronic Toys",
                             'Others'
                         ]
                     },
-                    {
-                        micro: "Baby Health & Safety",
-                        nanos: [
-                            "Baby Proofing",
-                            "Bathing & Skin Care",
-                            "Monitors",
-                            'Others'
-                        ]
-                    }
                 ]
             },
             {
                 mini: "Baby & Kids Clothings",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1jkXlsY64Qvmxp1Ow5TT_TwLZjdXVt0P5",
+                    width: 768,
+                    height: 768
+                },
                 micros: [
                     {
                         micro: "Baby Clothings & Accessories",
@@ -1338,32 +1517,6 @@ export const categories: Array<ICategoryInfo> = [
                         ]
                     }
                 ]
-            },
-            {
-                mini: "Baby Toys & Recreation",
-                micros: [
-                    {
-                        micro: "Toys & Games",
-                        nanos: [
-                            "Building & Educational Toys",
-                            "Dolls & Action Figures",
-                            "Board Games & Puzzles",
-                            "Outdoor Toys",
-                            "Electronic Toys",
-                            'Others'
-                        ]
-                    },
-                    {
-                        micro: "Recreation & Furnitures",
-                        nanos: [
-                            "Baby Furnitures",
-                            "Outdoor play equipments",
-                            "Sports Equipments",
-                            'Baby Rides',
-                            'Others'
-                        ]
-                    }
-                ]
             }
         ]
     },
@@ -1371,7 +1524,12 @@ export const categories: Array<ICategoryInfo> = [
         macro: "Vehicles",
         minis: [
             {
-                mini: "Bicycles & Motorcycles",
+                mini: "Bicycles, Motorcycles & Parts",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=15GmVwAgHuqCLg5ASROxBVHnpKeA3Tmu3",
+                    width: 800,
+                    height: 400
+                },
                 micros: [
                    {
                         micro: "Bicycles",
@@ -1399,7 +1557,12 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Automobiles",
+                mini: "Automobiles & Parts",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1SQTVZ0hS2eatxzlUtadhwVcwgkkxX4g4",
+                    width: 1330,
+                    height: 570
+                },
                 micros: [
                     {
                         micro: "Cars",
@@ -1445,22 +1608,27 @@ export const categories: Array<ICategoryInfo> = [
                             "Others"
                         ]
                     },
-                    {
-                        micro: "Specialty Vehicles & Others",
-                        nanos: [
-                            "Emergency Vehicles",
-                            "Agricultural Vehicles",
-                            "Construction Vehicles",
-                            "Golf Carts",
-                            // "Militar",
-                            "Spare Parts & Accessories",
-                            "Others"
-                        ]
-                    },
+                    // {
+                    //     micro: "Specialty Vehicles & Others",
+                    //     nanos: [
+                    //         "Emergency Vehicles",
+                    //         "Agricultural Vehicles",
+                    //         "Construction Vehicles",
+                    //         "Golf Carts",
+                    //         // "Militar",
+                    //         "Spare Parts & Accessories",
+                    //         "Others"
+                    //     ]
+                    // },
                 ]
             },
             {
-                mini: "Watercrafts",
+                mini: "Watercrafts & Parts",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1gvniWE-DnnY9lZ6NFYwM5hzrQB5acPt5",
+                    width: 612,
+                    height: 350
+                },
                 micros: [
                     {
                         micro: "Jet Skis, Canoes & Boats",
@@ -1497,7 +1665,12 @@ export const categories: Array<ICategoryInfo> = [
                 ]
             },
             {
-                mini: "Aircrafts",
+                mini: "Aircrafts & Parts",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1fd1DW1vaKldArACrZOlG6ZKV5Z9LbLJr",
+                    width: 681,
+                    height: 360
+                },
                 micros: [
                     {
                         micro: "Light Aircrafts & Helicopters",
@@ -1527,10 +1700,15 @@ export const categories: Array<ICategoryInfo> = [
         macro: "Groceries & Food",
         minis: [
             {
-                mini: "Fresh Produce & Dairy",
+                mini: "Food & Spices",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1ilA4kZXNNXe4Oxd0oKVuN4rXjHQ3fIED",
+                    width: 612,
+                    height: 406
+                },
                 micros: [
                     {
-                        micro: "Fresh Produce & Spices",
+                        micro: "Fruits & Vegetables",
                         nanos: [
                             "Fruits",
                             "Vegetables",
@@ -1539,22 +1717,7 @@ export const categories: Array<ICategoryInfo> = [
                         ]
                     },
                     {
-                        micro: "Dairies & Drinks",
-                        nanos: [
-                            "Cheese",
-                            "Yoghurt",
-                            "Butter & Margarine",
-                            "Drinks",
-                            "Others"
-                        ]
-                    }
-                ]
-            },
-            {
-                mini: "Pantry Staples",
-                micros: [
-                    {
-                        micro: "Sauces, Oils, & Canned Goods",
+                        micro: "Sauces, Oils & Canned Foods",
                         nanos: [
                             "Canned Goods",
                             "Oils",
@@ -1570,6 +1733,34 @@ export const categories: Array<ICategoryInfo> = [
                             "Grains",
                             "Others"
                         ]
+                    }
+                ]
+            },
+            {
+                mini: "Drinks & Smoke",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1VXJuwXj9T7FAZpZpr54Ap086mIwuMB33",
+                    width: 720,
+                    height: 1440
+                },
+                micros: [
+                    {
+                        micro: "Drinks",
+                        nanos: [
+                            "Alcoholic Drinks",
+                            "Dairies",
+                            "Juice",
+                            "Soft Drinks",
+                            "Others"
+                        ]
+                    },
+                    {
+                        micro: "Smoke & Accessories",
+                        nanos: [
+                            "Tobacco",
+                            "Cannabis",
+                            "Accessories & Others"
+                        ]
                     },
                 ]
             }
@@ -1580,6 +1771,11 @@ export const categories: Array<ICategoryInfo> = [
         minis: [
             {
                 mini: "Energy",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1ptninjVaRJTgl0T1EecSv0T9nbcKWJK4",
+                    width: 612,
+                    height: 459
+                },
                 micros: [
                     {
                         micro: "Non-Renewable Energy",
@@ -1603,6 +1799,11 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Raw Materials",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=1HP0kIzDMqdq2c1kJ9go6cpbVQJQDNpfK",
+                    width: 600,
+                    height: 398
+                },
                 micros: [
                     {
                         micro: "Fabric & Textiles",
@@ -1645,21 +1846,29 @@ export const categories: Array<ICategoryInfo> = [
             },
             {
                 mini: "Commercial & Tools",
+                image: {
+                    src: "https://drive.google.com/uc?export=download&id=15vPyFOUyMg5eBIofXMEYKVbxRkrTLX84",
+                    width: 612,
+                    height: 377
+                },
                 micros: [
                     {
                         micro: "Commercial Machines & Materials",
                         nanos: [
                             "Catering & Kitchen",
                             "Packaging & Printing",
-                            "Manufacturing",
+                            "Manufacturing & Construction",
                             "Others"
                         ]
                     },
                     {
-                        micro: "Tools & Hardwares",
+                        micro: "Tools & Equipments",
                         nanos: [
                             "Safety & Security",
                             "Testing & Measuring",
+                            "Nails, Screws & Fasteners",
+                            "Adhesives & Sealants",
+                            "Hinges & Brackets",
                             "Material Handling",
                             "Others"
                         ]
@@ -1781,3 +1990,60 @@ export const convertDataToSheet = (data: { [key: string]: any }) => {
     const convertedData: [string, string][] = Object.entries(data).map(([key, value]) => [key, value]);
     return convertedData
 }
+
+// Updated products:  {
+//     '$__': InternalCache {
+//       activePaths: ctor { paths: [Object], states: [Object] },
+//       skipId: true
+//     },
+//     '$isNew': false,
+//     _doc: {
+//       category: {
+//         macro: 'Beauty & Fashion',
+//         mini: 'Clothes',
+//         micro: 'Unisex Clothing',
+//         nano: 'Others'
+//       },
+//       pricing: {
+//         extraDiscount: [Object],
+//         basePrice: 6.8,
+//         discount: 38,
+//         inStock: true,
+//         variantPrices: []
+//       },
+//       specification: {
+//         dimension: {},
+//         brand: 'Others',
+//         itemCount: 1,
+//         itemForm: 'Polyvinyl Chloride (PVC)',
+//         userAgeRange: 'Above 10 years old',
+//         gender: 'Unisex',
+//         ingredients: [Array],
+//         productOrigin: 'China',
+//         prescription: [Array],
+//         benefits: [Array],
+//         colors: [Array],
+//         sizes: [Array],
+//         weight: 1
+//       },
+//       _id: new ObjectId('66866e38e8f02e72be95ee5a'),
+//       subCategory: 'Accessories',
+//       name: 'PVC Rain Coat',
+//       images: [ [Object], [Object], [Object] ],
+//       videos: [],
+//       price: 6.8,
+//       extraDiscount: true,
+//       discount: 38,
+//       rating: 4.9,
+//       freeOption: false,
+//       orders: 0,
+//       description: 'PVC Rain Coat is a durable and waterproof outer garment designed to keep you dry in wet weather conditions. Made from high-quality PVC material, this rain coat is lightweight, flexible and perfect for outdoor activities, commuting or simply running errands on rainy days.',
+//       createdAt: 2024-07-04T09:41:12.356Z,
+//       updatedAt: 2024-08-24T15:54:38.153Z,
+//       __v: 0,
+//       colors: [ 'yellow', 'green', 'blue' ],
+//       sizes: [ 'L', 'XL', 'XXL', 'XXXL' ],
+//       active: true
+//     },
+//     orders: 3
+//   }

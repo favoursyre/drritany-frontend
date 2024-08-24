@@ -6,7 +6,7 @@ import { useState, useEffect, MouseEvent, ChangeEvent, Fragment, DragEvent, useR
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, IPricing, ICategory, ICategoryInfo, IProductGeneric, IImage, IAdmin } from '@/config/interfaces';
 import { setItem, notify, getItem, removeItem } from '@/config/clientUtils';
-import { cartName, sleep, backend, isVideo, capitalizeFirstLetter, categories, formatDateMongo, arrayToString, stringToArray, adminName, productInfoName, isImage, getGDriveDirectLinkId, getGDriveDirectLink, getGDrivePreviewLink } from '@/config/utils'
+import { cartName, sleep, backend, isVideo, capitalizeFirstLetter, categories, formatDateMongo, arrayToString, stringToArray, adminName, productInfoName, isImage, getGDriveDirectLinkId, getGDriveDirectLink, getGDrivePreviewLink, sizePercentToString, sizePercentToArray } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
 import { PreviewOutlined, DeleteOutlined, Edit, ThumbUpOffAlt, Close, FileUploadOutlined, SaveOutlined, ThumbDownOffAlt } from '@mui/icons-material';
@@ -70,6 +70,15 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
     const [productLength, setProductLength] = useState<number>()
     const [productWidth, setProductWidth] = useState<number>()
     const [productHeight, setProductHeight] = useState<number>()
+    const [productPower, setProductPower] = useState<number>()
+    const [productVoltage, setProductVoltage] = useState<number>()
+    const [productHorsePower, setProductHorsePower] = useState<number>()
+    const [productSeaters, setProductSeaters] = useState<number>()
+    const [productRamStorage, setProductRamStorage] = useState<number>()
+    const [productRomStorage, setProductRomStorage] = useState<number>()
+    const [productBattery, setProductBattery] = useState<number>()
+    const [productEngineType, setProductEngineType] = useState<string>("")
+    const [productTransmissionType, setProductTransmissionType] = useState<string>("")
     const [productActiveStatus, setProductActiveStatus] = useState<boolean>()
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
@@ -197,14 +206,23 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         setProductBenefits(arrayToString(p.specification?.benefits!))
         setProductIngredients(arrayToString(p.specification?.ingredients!))
         setProductPrescription(arrayToString(p.specification?.prescription!))
-        setProductColors(arrayToString(p.specification?.colors!))
-        setProductSizes(arrayToString(p.specification?.sizes!))
+        setProductColors(arrayToString(p.specification?.colors! as unknown as Array<string>))
+        setProductSizes(sizePercentToString(p.specification?.sizes!))
         setProductOrigin(p.specification?.productOrigin!)
         setProductWeight(p.specification?.weight)
         setProductLength(p.specification?.dimension?.length)
         setProductHeight(p.specification?.dimension?.height)
         setProductWidth(p.specification?.dimension?.width)
         setProductActiveStatus(p.active)
+        setProductPower(p.specification?.power)
+        setProductVoltage(p.specification?.voltage!)
+        setProductHorsePower(p.specification?.horsePower)
+        setProductSeaters(p.specification?.seaters)
+        setProductRamStorage(p.specification?.ramStorage)
+        setProductRomStorage(p.specification?.romStorage)
+        setProductBattery(p.specification?.batteryCapacity)
+        setProductEngineType(p.specification?.engineType!)
+        setProductTransmissionType(p.specification?.transmissionType!)
     }
 
     useEffect(() => {
@@ -391,7 +409,16 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 prescription: stringToArray(productPrescription),
                 benefits: stringToArray(productBenefits),
                 colors: stringToArray(productColors),
-                sizes: stringToArray(productSizes),
+                sizes: sizePercentToArray(productSizes),
+                power: productPower,
+                voltage: productVoltage,
+                horsePower: productHorsePower,
+                seaters: productSeaters,
+                ramStorage: productRamStorage,
+                romStorage: productRomStorage,
+                batteryCapacity: productBattery,
+                engineType: productEngineType,
+                transmissionType: productTransmissionType,
                 dimension: {
                     height: productHeight,
                     width: productWidth,
@@ -508,8 +535,35 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
             case "productHeight":
                 setProductHeight(Number(value))
                 break
+            case "productPower":
+                setProductPower(Number(value))
+                break
+            case "productVoltage":
+                setProductVoltage(Number(value))
+                break
+            case "productHorsePower":
+                setProductHorsePower(Number(value))
+                break
+            case "productSeaters":
+                setProductSeaters(Number(value))
+                break
+            case "productRamStorage":
+                setProductRamStorage(Number(value))
+                break
+            case "productRomStorage":
+                setProductRomStorage(Number(value))
+                break
+            case "productBatteryCapacity":
+                setProductBattery(Number(value))
+                break
+            case "productEngineType":
+                setProductEngineType(value)
+                break
+            case "productTransmissionType":
+                setProductTransmissionType(value)
+                break
             case "inStockOption":
-                console.log('hi testing: ', value)
+                //console.log('hi testing: ', value)
                 setInStockOption(value)
                 break
             default:
@@ -939,6 +993,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 type="number" 
                                 value={xtraDiscountLimit} 
                                 onChange={(e) => editProductInfo(e, "xtraDiscountLimit")}
+                                disabled={setTagVisibility()}
                             />
                         </label>
                         <label >
@@ -948,6 +1003,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 type="number" 
                                 value={xtraDiscountPercent} 
                                 onChange={(e) => editProductInfo(e, "xtraDiscountPercent")}
+                                disabled={setTagVisibility()}
                             />
                             <div id="textCount">{"testing"}</div>
                         </label>
@@ -1303,10 +1359,106 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                         <label >
                             Sizes:
                             <input 
-                                placeholder="size1. size2. size3" 
+                                placeholder="size1, percent. size2, percent. size3, percent" 
                                 type="text" 
                                 onChange={(e) => editProductInfo(e, "productSizes")}
                                 value={productSizes} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
+                        <label >
+                            Power:
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productPower")}
+                                value={productPower} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>w</span>
+                        </label>
+                        <label >
+                            Voltage:
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productVoltage")}
+                                value={productVoltage} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>v</span>
+                        </label>
+                        <label >
+                            Horsepower:
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productHorsePower")}
+                                value={productHorsePower} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>hp</span>
+                        </label>
+                        <label >
+                            Seaters:
+                            <input 
+                                placeholder="5" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productSeaters")}
+                                value={productSeaters} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
+                        <label >
+                            Storage (RAM):
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productRamStorage")}
+                                value={productRamStorage} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>gb</span>
+                        </label>
+                        <label >
+                            Storage (ROM):
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productRomStorage")}
+                                value={productRomStorage} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>gb</span>
+                        </label>
+                        <label >
+                            Battery Capacity:
+                            <input 
+                                placeholder="1234" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productBatteryCapacity")}
+                                value={productBattery} 
+                                disabled={setTagVisibility()}
+                            />
+                            <span>mAh</span>
+                        </label>
+                        <label >
+                            Engine Type:
+                            <input 
+                                placeholder="V6" 
+                                type="text" 
+                                onChange={(e) => editProductInfo(e, "productEngineType")}
+                                value={productEngineType} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
+                        <label >
+                            Transmission Type:
+                            <input 
+                                placeholder="Automatic" 
+                                type="text" 
+                                onChange={(e) => editProductInfo(e, "productTransmissionType")}
+                                value={productTransmissionType} 
                                 disabled={setTagVisibility()}
                             />
                         </label>

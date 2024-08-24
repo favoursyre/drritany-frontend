@@ -4,12 +4,19 @@
 ///Libraries -->
 import styles from "./hero.module.scss"
 import Image from "next/image";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import SearchIcon from '@mui/icons-material/Search';
 import Loading from "../loadingCircle/Circle"
 import { useClientInfoStore } from "@/config/store";
-import Typewriter from 'typewriter-effect';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Swiper as SwiperCore } from 'swiper/types';
+import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
+import { IImage } from "@/config/interfaces";
 
 ///Commencing the code 
   
@@ -22,7 +29,33 @@ const Hero = () => {
     const router = useRouter()
     const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
     const clientInfo = useClientInfoStore(state => state.info)
-    //const []
+    const swiperRef = useRef<SwiperCore>();
+    const [slides, setSlides] = useState<Array<IImage>>([
+        {
+            src: "https://drive.google.com/uc?export=download&id=1uy_xi_k3Nq1FLkSGP1FF9zr3P6cPf7xu",
+            alt: "hero1",
+            width: 1224,
+            height: 816
+        },
+        {
+            src: "https://drive.google.com/uc?export=download&id=1Ddk50odvREoAgxQ4y8zj6iP5l5rgfyvT",
+            alt: "hero2",
+            width: 1224,
+            height: 816
+        },
+        {
+            src: "https://drive.google.com/uc?export=download&id=1xxuEOleWDLOg__PDf87BUF6E4T_t0xZp",
+            alt: "hero3",
+            width: 1224,
+            height: 816
+        },
+        {
+            src: "https://drive.google.com/uc?export=download&id=1rqF6H3fqDRxTXBBw5qfwFn5HS7AqOhLy",
+            alt: "hero4",
+            width: 1224,
+            height: 804
+        }
+    ])
 
     useEffect(() => {
     }, [clientInfo])
@@ -41,13 +74,8 @@ const Hero = () => {
     return (
         <main className={styles.main}>
             <div className={styles.gradientOverlay}></div>
-            <Image 
-                className={styles.background}
-                src={"https://drive.google.com/uc?export=download&id=1uy_xi_k3Nq1FLkSGP1FF9zr3P6cPf7xu"}
-                alt=""
-                width={1224}
-                height={816}
-            />
+
+            
             <div className={styles.container}>
                 <span className={styles.spans}>
                     <span className={styles.span1}>Your</span>
@@ -87,6 +115,42 @@ const Hero = () => {
                     <></>
                 )}
             </div>
+            <Swiper
+              effect={'slide'}
+              spaceBetween={1}
+              //grabCursor={true}
+              centeredSlides={true}
+              loop={true}
+              autoplay={{ delay: 4000 }} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+              slidesPerView={1}
+              onBeforeInit={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
+              coverflowEffect={{
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+              }}
+              fadeEffect={{ crossFade: true }}
+              pagination={{ el: '.swiper-pagination', clickable: true, dynamicBullets: true, dynamicMainBullets: 4 }}
+              //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+              modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+              className={styles.swipeContainer}
+          >
+            {slides.map((slide, id) => (
+                <SwiperSlide className={styles.slider} key={id}>
+                    <Image 
+                        className={styles.background}
+                        src={slide.src}
+                        alt={slide.alt!}
+                        width={slide.width!}
+                        height={slide.height!}
+                    />
+                </SwiperSlide>
+            ))}
+        </Swiper>
+        <div className={`swiper-pagination ${styles.pagination}`}></div>   
         </main>
     );
 };

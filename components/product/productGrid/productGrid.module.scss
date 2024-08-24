@@ -5,9 +5,9 @@
 
 ///Commencing the code
 .main {
-    @include flexBar($flex_d: column, $align: center, $justify: center);
-    @include position($left: 0%, $top: 155%);
-    @include size(90%, 150%);
+    @include flexBar($position: relative, $flex_d: column, $align: center, $justify: center);
+    @include position($left: 0%, $top: 0%);
+    @include size(90%, 93%);
     //border: 2px solid green;
     padding: 0% 5%;
     font-family: "Roboto";
@@ -15,12 +15,12 @@
 
     @include tabletPro {
         //border: 2px solid red;
-        top: 80%;
+        //top: 80%;
         height: 65%;
     }
 
     @include tablet {
-        top: 75%;
+        //top: 75%;
     }
 
     @include tabletMini {
@@ -29,7 +29,7 @@
 
     @include phonePro {
         //border: 2px solid red;
-        top: 125%;
+        top: 2%;
         height: 90%;
     }
 
@@ -38,33 +38,41 @@
     }
 
     .header_section {
-        //position: relative;
-        //background: #E42C2C;
-        background-color: $primary-color;
-        //left: 0%;
+        position: absolute;
         display: flex;
-        @include size(105%, 40px);
-        justify-content: center;
+        @include size(95%, 35px);
+        justify-content: flex-start;
         align-items: center;
-        text-align: center;
-        border-radius: 10px 10px 0px 0px;
+        //text-align: center;
+        //padding: 0% 2.5%;
         //border: 2px solid red;
+        top: -5%;
 
         @include tabletPro {
             //border: 2px solid red;
             //@include size(100%, 1%);
+            top: -7%;
+        }
+
+        @include tablet {
+            top: -8%;
         }
 
         @include phonePro {
-            position: relative;
+            top: -7%;
+            //position: relative;
             //height: 7%;
             //border: 2px solid yellow;
             //top: -3%;
             //justify-content: center;
         }
 
+        @include phone {
+            top: -8%;
+        }
+
         span {
-            @include text-layout($size: 16px, $color: $tertiary-color, $l_height: 20px);
+            @include text-layout($size: 13px, $l_height: 20px);
             position: relative;
             top: 1%;
             font-family: "Inter";
@@ -84,7 +92,7 @@
     
     .product_list {
         position: relative;
-        @include size(105%, 90%);
+        @include size(105%, 100%);
         //border: 2px solid red;
 
         .filters {
@@ -120,6 +128,7 @@
                     color: $primary-color;
                     background-color: inherit;
                     border-color: transparent;
+                    //border: 1px solid blue;
                 }
     
                 // span {
@@ -137,10 +146,11 @@
                     z-index: 2;
                     @include size(220%, auto);
                     //border: 2px solid red;
-                    font-size: 12px;
+                    @include text-layout($size: 12px, $l_height: 15px);
                     justify-content: center;
                     align-items: center;
-                    padding: 3% 10%;
+                    padding: 10%;
+                    border: 1px solid $text-color-3;
                     font-family: "Inter";
     
                     @include phonePro {
@@ -219,9 +229,11 @@
                 // }
     
                 .category_option {
-                    position: absolute;
-                    display: flex;
-                    flex-direction: column;
+                    @include flexBar($justify: center, $gap: 0px, $flex_d: column, $align: center);
+                    border: 2px solid $text-color-3;
+                    //@include size(70%, 100%);
+                    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                    //padding: 0% 0%;
                     gap: 3px;
                     background: $tertiary-color;
                     box-shadow: 0px 2px 4px rgba(52, 69, 99, 0.18);
@@ -232,10 +244,9 @@
                     left: -130%;
                     //border: 2px solid red;
                     font-size: 12px;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 10% 10%;
+                    padding: 5% 10%;
                     font-family: "Inter";
+                    max-height: 2000%;
     
                     @include phonePro {
                         //border: 2px solid black;
@@ -244,32 +255,167 @@
                         left: -150%;
                     }
     
-                    button {
-                        //border: 2px solid red; 
-                        background-color: inherit;
-                        border-color: transparent;
-                        border-radius: 4px;
-                        width: 100%;
-                        padding: 2% 1%;
+                    // button {
+                    //     //border: 2px solid red; 
+                    //     background-color: inherit;
+                    //     border-color: transparent;
+                    //     border-radius: 4px;
+                    //     width: 100%;
+                    //     padding: 2% 1%;
     
-                        &:active {
-                            background-color: $primary-color;
-                            color: $tertiary-color;
-                        }
-                    }
+                    //     &:active {
+                    //         background-color: $primary-color;
+                    //         color: $tertiary-color;
+                    //     }
+                    // }
     
-                    .activeSortButton {
-                        background-color: $primary-color;
-                        color: $tertiary-color;
-                    }
+                    // .activeSortButton {
+                    //     background-color: $primary-color;
+                    //     color: $tertiary-color;
+                    // }
     
-                    .inActiveSortButton {
-                        //border: 1px solid red;
+                    // .inActiveSortButton {
+                    //     //border: 1px solid red;
                         
-                        &:hover {
-                            //border-bottom: 1px solid $primary-color;
-                            color: $primary-color;
+                    //     &:hover {
+                    //         //border-bottom: 1px solid $primary-color;
+                    //         color: $primary-color;
+                    //     }
+                    // }
+
+                    .accordianItem {
+                        //border-top: 1px solid red;
+                        //border-radius: 8px;
+                        @include flexBar($position: relative, $justify: flex-start, $gap: 0%, $flex_d: column);
+                        //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                        padding: 1% 2%;
+                        @include size(100%, auto);
+                        font-family: "Poppins";
+                        background-color: white;
+                        margin: 0px;
+            
+                        .question {
+                            @include flexBar($position: sticky, $justify: space-between, $gap: 0px, $flex_d: row, $wrap: none, $align: center, $flex: none);
+                            //border: 1px solid $primary-color;
+                            padding: 1% 2%;
+                            text-align: center;
+                            border: none;
+                            background-color: transparent;
+                            @include size(100%, auto);
+                            //text-align: center;
+                            @include text-layout($size: 12px, $l_height: 15px);
+                            font-weight: 500;
+                            //border-radius: 5px;
+                            //box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                            margin: 0px;
+                            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            
+                            @include phonePro {
+                                //@include text-layout($size: 18px, $l_height: 24px);
+                                //height: 50px;
+                                //border: 1px solid red;
+                            }
+            
+                           @include phoneMini {
+                            //font-size: 14px;
+                            //height: 40px;
+                           }
+            
+                            %symbol {
+                                transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+                                font-size: 0.8rem;
+            
+                                @include phoneMini {
+                                    font-size: 1rem;
+                                }
+                            }
+            
+                            .activeSymbol {
+                                // position: relative;
+                                //border: 1px solid $primary-color;
+                                top: -10%;
+                                @extend %symbol;
+                                transform: rotate(45deg);
+            
+                            }
+            
+                            .inactiveSymbol {
+                                //border: 1px solid $primary-color;
+                                @extend %symbol;
+                                transform: rotate(0deg);
+                            }
+
+                            &:hover {
+                                color: $primary-color;
+                            }
                         }
+            
+                        .answer {
+                            border-top: 1px solid rgba(238, 80, 36, 0.2);
+                            @include size(96%, auto);
+                            @include flexBar($position: relative, $display: none, $justify: flex-start, $gap: 0%, $flex_d: column, $align: center);
+                            padding: 1% 2%;
+            
+                            top: -2%;
+                            //padding: 1% 1%;
+            
+                            @include phonePro {
+                                line-height: 16px;
+                                font-size: 12px;
+                            }
+            
+                            @include phoneMini {
+                                font-size: 10px;
+                                line-height: 13px;
+                            }
+            
+                            button {
+                                position: relative;
+                                @include text-layout($size: 12px, $l_height: 15px);
+                                border: none;
+                                background-color: transparent;
+
+                                &:hover {
+                                    color: $primary-color;
+                                }
+                            }
+
+                            .activeMiniBtn {
+                                background-color: $primary-color;
+                                color: white; 
+
+                                &:hover {
+                                    color: white;
+                                }
+                            }
+                        }
+            
+                        .answerActive {
+                            display: block;
+                            align-items: center;
+                            justify-content: center;
+            
+                            //height: 45%;
+            
+                            //padding: 0% 2%;
+                            //border: 2px solid $error-color;
+                            //transform: rotate(90deg);
+                        }
+                    }
+            
+                    .activeAccordian {
+                        border: 1px solid $primary-color;
+                        border-radius: 4px;
+                        //background-color: $primary-color;
+                        //color: white;
+                        //box-shadow: 0 0 10px rgba(238, 80, 36, 0.2);
+                        //border: 3px solid rgba(238, 80, 36, 0.2);
+                        // box-shadow: 0px 106px 82px -10px rgba(0, 0, 0, 0.08);
+                        // border: none;
+                    }
+            
+                    .inactiveAccordian {
+                        z-index: 5;
                     }
                 }
     
@@ -495,28 +641,28 @@
     }
 }
 
-.searchPage {
-    top: 5%;
-    height: 95%;
+// .productPage {
+//     top: 5%;
+//     height: 95%;
 
-    @include phonePro {
-        top: 8%;
-    }
+//     @include phonePro {
+//         top: 8%;
+//     }
 
-    .product_list {
+//     .product_list {
 
-        .filters {
+//         .filters {
 
-            .sort_section {
+//             .sort_section {
     
-                .sort_option {
-                    padding: 15% 15%;
-                }
-            }
+//                 .sort_option {
+//                     padding: 15% 15%;
+//                 }
+//             }
 
-            .category {
-                display: none;
-            }
-        }
-    }
-}
+//             .category {
+//                 display: none;
+//             }
+//         }
+//     }
+// }

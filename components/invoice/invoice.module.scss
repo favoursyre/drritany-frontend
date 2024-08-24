@@ -263,14 +263,45 @@
                     }
                 }
 
-                .cartName {
+                .cartSpecs {
                     //border: 1px solid red;
                     @include size(50%, 90%);
-                    @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
-                    left: 5%;
+                    @include flexBar($position: relative, $align: center, $justify: space-around, $gap: 1%, $flex_d: column);
 
                     @include phonePro {
-                        line-height: 20px;
+                        left: 3%;
+                    }
+
+                    .cartName {
+                        //border: 1px solid red;
+                        @include size(100%, 32%);
+                        @include flexBar($position: relative, $align: center, $justify: flex-start, $gap: 0%);
+                        //left: 5%;
+    
+                        @include phonePro {
+                            line-height: 20px;
+                        }
+                    }
+
+                    .cart_color {
+                        @include text-layout($size: 12px, $color: $text-color-2, $l_height: 20px);
+                        //border: 1px solid red;
+                        @include flexBar($position: relative, $justify: flex-start, $gap: 1%, $align: center);
+                        @include size(100%, 30%);
+
+                        .color {
+                            border: 1px solid $text-color-3;
+                            //background-color: red;
+                            position: relative;
+                            @include size(15px, 15px);
+                        }
+                    }
+
+                    .cart_size {
+                        @include text-layout($size: 12px, $color: $text-color-2, $l_height: 20px);
+                        //border: 1px solid red;
+                        @include flexBar($position: relative, $justify: flex-start, $gap: 1%, $align: center);
+                        @include size(100%, 30%);
                     }
                 }
 
