@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./productSlide.module.scss"
 import { IProduct, ICart, ISlideTitle, IProductFilter } from '@/config/interfaces';
-import { routeStyle, cartName, sortProductByActiveStatus, wishListName, productFilterName } from '@/config/utils'
+import { routeStyle, cartName, sortProductByActiveStatus, wishListName, shuffleArray, productFilterName, sortProductByLatest, sortProductByOrder, sortProductByRating } from '@/config/utils'
 import ProductCard from '@/components/cards/product/ProductCard';
 import { getItem, notify, setItem } from '@/config/clientUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -53,8 +53,30 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
     const swiperRef = useRef<SwiperCore>();
     const [view, setView] =  useState<string>(view_!)
 
+    useEffect(() => {
+      if (view === "homeSlide1") {
+        const newProducts = sortProductByLatest(similarProducts!)
+        setSimilarProducts(() => newProducts)
+      } else if (view === "homeSlide2") {
+        const newProducts = sortProductByOrder(shuffleArray(similarProducts!))
+        setSimilarProducts(() => newProducts)
+      } else if (view === "homeSlide3") {
+        const newProducts = shuffleArray(similarProducts!)
+        setSimilarProducts(() => newProducts)
+      } else if (view === "productSlide1") {
+        const newProducts = sortProductByOrder(shuffleArray(similarProducts!))
+        setSimilarProducts(() => newProducts)
+      } else if (view === "productSlide2") {
+        const newProducts = shuffleArray(similarProducts!)
+        setSimilarProducts(() => newProducts)
+      }
+    }, [])
+
     //console.log("Path: ", routerPath)
     useEffect(() => {
+      //console.log(`Product ${view_}: `, similarProducts, sortProductByLatest(similarProducts!))
+      const p1 = similarProducts![0]
+      //console.log("Time: ", new Date(p1.createdAt!).getTime())
       //Loading the product if its a wish list
       const wishList = getItem(wishListName)
       if (view_ === "wishSlide1" && (!wishList || wishList.length === 0)) {

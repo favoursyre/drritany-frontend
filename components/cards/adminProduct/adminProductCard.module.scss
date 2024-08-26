@@ -82,7 +82,7 @@
     }
 
     .price {
-        border: 1px solid red;
+        border: 1px solid blue;
         @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%);
         @include size(10%, 20%);
         left: 5%;
@@ -92,6 +92,7 @@
         @include phonePro {
             left: 2%;
             width: 20%;
+            font-size: 12px;
         }
 
         @include phoneMini {
@@ -112,6 +113,7 @@
 
         @include phonePro {
             left: 6%;
+            font-size: 12px;
             //width: 20%;
         }
 

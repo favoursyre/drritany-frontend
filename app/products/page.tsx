@@ -114,7 +114,7 @@ async function getProducts() {
       <main className="search_page">
         <ProductCatalog query_={query} products_={products!} />
         {query && (queryProducts === undefined || queryProducts.length === 0) ? (
-          <ProductSlide product_={mostOrdered} title_={titles1} view_={"productSlide1"}/>
+          <ProductSlide product_={allProducts} title_={titles1} view_={"productSlide1"}/>
         ) : (<></>)}
         <ProductSlide product_={allProducts} title_={titles2} view_={"productSlide2"}/>
         {/* <HomeCampaignB /> */}

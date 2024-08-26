@@ -36,7 +36,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     const [sortOptions, setSortOptions] = useState(sortOption)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setContactModal = useContactModalStore(state => state.setContactModal);
-    console.log('Product List: ', productList)
+    //console.log('Product List: ', productList)
 
     useEffect(() => {
         console.log("Test: ", productList, sortProductByLatest(productList), sortProductByPrice(productList, "ascend"))

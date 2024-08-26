@@ -38,7 +38,7 @@ async function getProducts() {
   //     console.log(error);
   // }
   try {
-      const res = await fetch(`${backend}/product?action=order`, {
+      const res = await fetch(`${backend}/product?action=latest`, {
       method: "GET",
       cache: "no-store",
     })
@@ -80,11 +80,11 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function Home() {
-  const products = sortProductByActiveStatus(await getProducts(), "Active")
-  const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
-  const newestArrivals = sortProductByLatest(productSlide)
-  const mostOrdered = sortProductByOrder(productSlide)
-  const mostRated = sortProductByRating(productSlide)
+  const products = shuffleArray(sortProductByActiveStatus(await getProducts(), "Active")!) as unknown as Array<IProduct>
+  // const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
+  // const newestArrivals = sortProductByLatest(products!)
+  // const mostOrdered = sortProductByOrder(products!)
+  // const mostRated = sortProductByRating(products!)
   const titles1: ISlideTitle = {
     slideTitleId: 3,
     barTitleId: 0
@@ -102,6 +102,9 @@ export default async function Home() {
     barTitleId: 2
   }
   //console.log("Prod1: ", products)
+  //console.log("Prod2: ", newestArrivals)
+  //console.log("Prod3: ", mostOrdered)
+  //console.log("Prod4: ", mostRated)
   // const quotes = shuffleArray(await getQuotes()) 
   // const testimonials = shuffleArray(await getTestimonials())
  
@@ -109,11 +112,11 @@ export default async function Home() {
     <main className="home_page" >
       <Hero />
       <Stats />
-      <ProductSlide product_={newestArrivals} title_={titles1} view_={"homeSlide1"}/>
+      <ProductSlide product_={products} title_={titles1} view_={"homeSlide1"}/>
       <CategorySlide />
-      <ProductSlide product_={mostOrdered} title_={titles2} view_={"homeSlide2"}/>
+      <ProductSlide product_={products} title_={titles2} view_={"homeSlide2"}/>
       {/* <HomeCampaignA /> */}
-      <ProductSlide product_={mostRated} title_={titles4} view_={"homeSlide3"}/>
+      <ProductSlide product_={products} title_={titles4} view_={"homeSlide3"}/>
       {/* <HomeCampaignB /> */}
       {/* <ProductSlide product_={productSlide} title_={titles4} view_={"homeSlide4"}/> */}
       {/* <Testimony />   */}

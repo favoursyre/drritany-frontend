@@ -330,7 +330,7 @@ productSchema.statics.getProductByPrice = async function (_order: any) {
  * @returns The products defined by the order of the number of orders
  */
  productSchema.statics.getProductByOrder = async function () {
-  const products = await this.find({}).sort({ orders: -1, createdAt: -1 });
+  const products = await this.find({}).sort({ createdAt: -1 });
   return products;
 };
 

@@ -225,6 +225,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
         setMacroCategoryId(_id === macroCategoryId ? undefined! : _id);
         if (_id === 0) {
+            setMiniCategory(() => undefined!)
             setCategory(() => false)
             setProducts(() => [...productList])
             const _filterSettings: IProductFilter = getItem(productFilterName)

@@ -207,7 +207,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         setProductIngredients(arrayToString(p.specification?.ingredients!))
         setProductPrescription(arrayToString(p.specification?.prescription!))
         setProductColors(arrayToString(p.specification?.colors! as unknown as Array<string>))
-        setProductSizes(sizePercentToString(p.specification?.sizes!))
+        setProductSizes(p.specification?.sizes ? sizePercentToString(p.specification?.sizes) : undefined!)
         setProductOrigin(p.specification?.productOrigin!)
         setProductWeight(p.specification?.weight)
         setProductLength(p.specification?.dimension?.length)
@@ -409,7 +409,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 prescription: stringToArray(productPrescription),
                 benefits: stringToArray(productBenefits),
                 colors: stringToArray(productColors),
-                sizes: sizePercentToArray(productSizes),
+                sizes: productSizes ? sizePercentToArray(productSizes) : undefined,
                 power: productPower,
                 voltage: productVoltage,
                 horsePower: productHorsePower,

@@ -732,18 +732,23 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
 
 //This function helps get custom based pricing
 export const getCustomPricing = (product: IProduct, sizeId: number): number => {
-    const size = product.specification?.sizes![sizeId]
+    const size = product.specification?.sizes
     if (size) {
-        if (typeof size === "string") {
-            return product.pricing?.basePrice!
-        } else {
-            if (size?.percent === 0) {
+        const _size = size[sizeId]
+        if (_size) {
+            if (typeof _size === "string") {
                 return product.pricing?.basePrice!
             } else {
-                const xtraPrice = (size?.percent! / 100) * product.pricing?.basePrice!
-                const newPrice = xtraPrice + product.pricing?.basePrice!
-                return newPrice
+                if (_size?.percent === 0) {
+                    return product.pricing?.basePrice!
+                } else {
+                    const xtraPrice = (_size?.percent! / 100) * product.pricing?.basePrice!
+                    const newPrice = xtraPrice + product.pricing?.basePrice!
+                    return newPrice
+                }
             }
+        } else {
+            return product.pricing?.basePrice!
         }
     } else {
         return product.pricing?.basePrice!

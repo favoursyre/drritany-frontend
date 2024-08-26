@@ -23,7 +23,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const [view, setView] = useState<string>(view_!)
-    const [customPrice, setCustomPrice] = useState<number>(product.pricing?.basePrice!)//(getCustomPricing(product, 0))
+    //const [customPrice, setCustomPrice] = useState<number>(product.pricing?.basePrice!)//(getCustomPricing(product, 0))
     //const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
     const routerPath = usePathname();
     const [deleteIsLoading, setDeleteIsLoading] = useState<boolean>(false)
@@ -34,7 +34,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     useEffect(() => {
         console.log("View: ", view)
         setProduct(() => product_)
-    }, [clientInfo, product, product_, customPrice]);
+    }, [clientInfo, product, product_]);
 
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
@@ -153,7 +153,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                             )}
                             {clientInfo?.country?.currency?.exchangeRate ? (
                                 <span>
-                                    {round(customPrice * clientInfo.country?.currency?.exchangeRate, 1).toLocaleString("en-US")}
+                                    {round(product.pricing?.basePrice! * clientInfo.country?.currency?.exchangeRate, 1).toLocaleString("en-US")}
                                 </span>
                             ) : (
                                 <></>
@@ -170,7 +170,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                         {clientInfo?.country?.currency?.exchangeRate ? (
                             <span>
                                 {product.pricing?.basePrice ? (
-                                    round(slashedPrice(customPrice * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
+                                    round(slashedPrice(product.pricing?.basePrice * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
                                 : (
                                     <></>
                                 )}
