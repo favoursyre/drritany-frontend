@@ -118,6 +118,10 @@ const productSchema = new Schema<IProduct, IProductModel>(
             required: true,
             trim: true
         },
+        modelNumber: {
+          type: String,
+          trim: true
+        },
         itemForm: {
             type: String,
             required: true,
