@@ -80,7 +80,7 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function Home() {
-  const products = shuffleArray(sortProductByActiveStatus(await getProducts(), "Active")!) as unknown as Array<IProduct>
+  const products = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
   // const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
   // const newestArrivals = sortProductByLatest(products!)
   // const mostOrdered = sortProductByOrder(products!)
