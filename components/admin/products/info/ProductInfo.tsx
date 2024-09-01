@@ -468,6 +468,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
             case "productDescription":
                 setProductDescription(value)
                 break
+            case "productExtraDescription":
+                setProductExtraDescription(value)
+                break
             case "productRating":
                 setProductRating(Number(value))
                 break
@@ -570,6 +573,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 break
             case "productEngineType":
                 setProductEngineType(value)
+                break
+            case "productManufactureYear":
+                setProductManufactureYear(Number(value))
                 break
             case "productTransmissionType":
                 setProductTransmissionType(value)
@@ -1471,6 +1477,16 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 type="text" 
                                 onChange={(e) => editProductInfo(e, "productTransmissionType")}
                                 value={productTransmissionType} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
+                        <label >
+                            Manufacture Year:
+                            <input 
+                                placeholder="2024" 
+                                type="number" 
+                                onChange={(e) => editProductInfo(e, "productManufactureYear")}
+                                value={productManufactureYear} 
                                 disabled={setTagVisibility()}
                             />
                         </label>

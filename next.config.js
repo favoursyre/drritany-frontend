@@ -3,7 +3,6 @@ const path = require("path")
 
 const nextConfig = {
     images: {
-      unoptimized: false, //Remove this when you're no longer on free tier
       remotePatterns: [
         {
           protocol: 'https',
