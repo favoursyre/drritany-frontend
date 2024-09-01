@@ -394,7 +394,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         console.log('Edit sect: ', label)
         console.log("Option: ", inStockOption)
         const _product: IProduct = {
-            addedBy: productAddedBy,
+            addedBy: label === "create" ? adminUser?._id : productAddedBy,
             name: productName,
             description: productDescription,
             extraDescription: productExtraDescription,

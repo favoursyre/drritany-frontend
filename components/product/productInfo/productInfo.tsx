@@ -114,6 +114,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         spec?.dimension?.height ? `Height: ${spec.dimension.height}cm` : undefined,
         spec?.dimension?.width ? `Width: ${spec.dimension.width}cm` : undefined,
         spec?.dimension?.length ? `Length: ${spec.dimension.length}cm` : undefined,
+        spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
     ]
 
     useEffect(() => {
