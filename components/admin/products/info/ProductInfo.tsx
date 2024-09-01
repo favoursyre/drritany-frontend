@@ -79,6 +79,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
     const [productBattery, setProductBattery] = useState<number>()
     const [productEngineType, setProductEngineType] = useState<string>("")
     const [productTransmissionType, setProductTransmissionType] = useState<string>("")
+    const [productAddedBy, setProductAddedBy] = useState<string>("")
+    const [productExtraDescription, setProductExtraDescription] = useState<string>("")
+    const [productManufactureYear, setProductManufactureYear] = useState<number>()
     const [productActiveStatus, setProductActiveStatus] = useState<boolean>()
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
@@ -147,6 +150,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         } else if (!baseDiscount) {
             notify("error", "Product base discount is required")
             return
+        } else if (!productMedias) {
+            notify("error", "Product medias are required")
+            return
         } else if (!productBrand) {
             notify("error", "Product brand is required")
             return
@@ -190,6 +196,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
             nano: p.category?.nano!
         })
         setProductDescription(p.description!)
+        setProductExtraDescription(p.extraDescription!)
+        setProductAddedBy(p.addedBy!)
+        setProductManufactureYear(p.specification?.manufactureYear!)
         setBasePrice(p.pricing?.basePrice)
         setProductRating(p.rating)
         setProductMedias(p.images)
@@ -385,8 +394,10 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         console.log('Edit sect: ', label)
         console.log("Option: ", inStockOption)
         const _product: IProduct = {
+            addedBy: productAddedBy,
             name: productName,
             description: productDescription,
+            extraDescription: productExtraDescription,
             category: {
                 macro: macroCategory,
                 mini: miniCategory,
@@ -416,6 +427,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 seaters: productSeaters,
                 ramStorage: productRamStorage,
                 romStorage: productRomStorage,
+                manufactureYear: productManufactureYear,
                 batteryCapacity: productBattery,
                 engineType: productEngineType,
                 transmissionType: productTransmissionType,

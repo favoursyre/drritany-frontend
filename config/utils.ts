@@ -955,7 +955,7 @@ export const categories: Array<ICategoryInfo> = [
             {
                 mini: "Cosmetics & Lotions",
                 image: {
-                    src: "https://drive.google.com/uc?export=download&id=1q4fzDgCPL9uAyR6LprUXFwOH1lZbOSWI",
+                    src: "https://drive.google.com/uc?export=download&id=1j1BL0CBYsfZTtK8iDTODxa673Hk42lQV",
                     width: 1224,
                     height: 816
                 },

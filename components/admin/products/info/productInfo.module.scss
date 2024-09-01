@@ -21,6 +21,7 @@
         @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 2%);
         border: 1px solid red;
         @include size(95%, 40px);
+        //;
         //display: none;
 
         %span {

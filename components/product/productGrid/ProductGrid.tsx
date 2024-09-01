@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./productGrid.module.scss"
 import { IProduct, ICategoryInfo, IProductFilter, ICategory } from '@/config/interfaces';
+import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
 import { groupList, sortOptions as sortOption, sortProductByOrder, sortProductByLatest, sortProductByPrice, categories, routeStyle, productFilterName, sortProductByRating } from '@/config/utils'
 
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -33,6 +34,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     const [sortOptions, setSortOptions] = useState(sortOption)
     const [category, setCategory] = useState<boolean>(false)
     const [categoryId, setCategoryId] = useState<number>(0)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setContactModal = useContactModalStore(state => state.setContactModal);
     const [productFilter, setProductFilter] = useState<IProductFilter>(getItem(productFilterName))
     const [macroCategoryId, setMacroCategoryId] = useState<number>(0)
     const [miniCategory, setMiniCategory] = useState<string>("")
@@ -135,6 +138,14 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         setTimeLeft(86400);
         }
     }, [timeLeft]);
+
+    //This function is triggered when a user wants to make a custom request
+    const customRequest = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+
+        setContactModal(true)
+        setModalBackground(true)
+    }
 
     ///This function formats time
     const formatTime = (seconds: number): string => {
@@ -337,9 +348,19 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                     </div>
                 </div>
                 <div className={styles.product_carousel}>
-                    {products ? products.map((product, _id) => (
+                    {products && products.length !== 0 ? products.map((product, _id) => (
                         <ProductCard key={_id} product_={product} view_={view} />
-                    )) : (<></>)}
+                    )) : (
+                        <div className={styles.empty_section}>
+                            <span className={styles.span1}>No product in this section yet</span>
+                            <div className={styles.custom}>
+                                <span>Have a product in mind? Make a</span>
+                                <button onClick={(e) => customRequest(e)}>
+                                    Custom Request
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 {/* <div className={styles.pagination_section}>
                         <button onClick={e => goPrev(e)}>

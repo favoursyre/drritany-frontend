@@ -9,6 +9,11 @@ import { ISpecification, IProduct, IProductModel, IImage, IPricing } from "@/con
 ///This is the schema for the product database
 const productSchema = new Schema<IProduct, IProductModel>(
   {
+    addedBy: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     category: {
       macro: {
         type: String,
@@ -112,6 +117,10 @@ const productSchema = new Schema<IProduct, IProductModel>(
         required: true,
         trim: true
     },
+    extraDescription: {
+      type: String,
+      trim: true
+  },
     specification: {
         brand: {
             type: String,
@@ -135,6 +144,9 @@ const productSchema = new Schema<IProduct, IProductModel>(
             type: String,
             required: true,
             trim: true
+        },
+        manufactureYear: {
+          type: Number,
         },
         gender: {
           type: String,

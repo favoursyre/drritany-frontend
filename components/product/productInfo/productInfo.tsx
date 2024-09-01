@@ -91,6 +91,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //This contains the specifications of the products
     const specs = [
         `SKU: ${product._id}`,
+        `Condition: Brand New`,
         `Brand: ${spec?.brand}`,
         spec?.modelNumber ? `Model Number: ${spec.modelNumber}` : undefined,
         `Item Form: ${spec?.itemForm}`,
@@ -103,7 +104,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         spec?.horsePower ? `Horsepower: ${spec?.horsePower}hp` : undefined,
         spec?.seaters ? `Seaters: ${spec?.seaters}` : undefined,
         spec?.engineType ? `Engine: ${spec?.engineType}` : undefined,
-        spec?.transmissionType ? `Transmission: ${spec?.voltage}v` : undefined,
+        spec?.transmissionType ? `Transmission: ${spec?.transmissionType}v` : undefined,
         spec?.ramStorage ? `Storage(RAM): ${spec?.ramStorage}gb` : undefined,
         spec?.romStorage ? `Storage(ROM): ${spec?.romStorage}gb` : undefined,
         spec?.batteryCapacity ? `Battery: ${spec?.batteryCapacity}mAh` : undefined,
@@ -438,7 +439,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 allow="autoplay"
                                 loading="lazy"
                                 frameBorder={0}
-                                sandbox="allow-scripts allow-downloads"
+                                sandbox="allow-scripts allow-downloads allow-same-origin"
                                 //sandbox="allow-same-origin allow-scripts"
                             >
                             </iframe>
@@ -488,7 +489,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                         height={image.height}
                                         //allow="autoplay"
                                         frameBorder={0}
-                                        sandbox="allow-scripts allow-downloads"
+                                        sandbox="allow-scripts allow-downloads allow-same-origin"
                                         //sandbox="allow-forms"
                                     >
                                     </iframe>

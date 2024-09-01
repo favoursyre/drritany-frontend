@@ -64,6 +64,7 @@ export interface ISpecification {
     colors?: Array<string | IImage>,
     romStorage?: number,
     ramStorage?: number,
+    manufactureYear?: number,
     batteryCapacity?: number,
     sizes?: Array<string | { size: string, percent: number}>,
     productOrigin?: string,
@@ -187,6 +188,7 @@ export interface IClientInfoStore {
  */
 export interface IProduct {
     _id?: string,
+    addedBy?: string,
     pricing?: IPricing,
     category?: ICategory,
     name?: string,
@@ -195,6 +197,7 @@ export interface IProduct {
     orders?: number,
     rating?: number,
     description?: string,
+    extraDescription?: string,
     specification?: ISpecification,
     createdAt?: string,
     updatedAt?: string,
