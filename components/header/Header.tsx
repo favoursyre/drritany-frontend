@@ -68,6 +68,13 @@ const Header = () => {
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault()
 
+    //Setting the product filter settings
+    const filterSettings: IProductFilter = {
+      filterId: 0,
+      category: "All"
+    }
+    setItem(productFilterName, filterSettings)
+
     if (query) {
       setSearchIsLoading(() => true)
       console.log("searching: ", query)
@@ -111,6 +118,7 @@ const Header = () => {
   const viewProducts = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault()
 
+    //Setting the product filter settings
     const filterSettings: IProductFilter = {
       filterId: 0,
       category: "All"

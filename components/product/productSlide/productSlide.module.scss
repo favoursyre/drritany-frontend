@@ -120,12 +120,15 @@
 
                 @include phonePro {
                     width: 35%;
+                    top: -25px;
+                    //border: 1px solid red;
                     justify-content: flex-end;
                 }
 
                 @include phoneMini {
                     //font-size: 12px;
                     @include size(40%, 100%);
+                    top: -32px;
                 }
 
                 span {
@@ -212,7 +215,11 @@
         color: $primary-color;
 
         @include phonePro {
-            gap: 1%;
+            gap: 3%;
+            top: 10%;
+            width: auto;
+            height: auto;
+            left: 77%;
             //justify-content: space-between;
         }
 
@@ -220,15 +227,33 @@
             color: white;
             border: none;
             border-radius: 5px;
-            border: 1px solid $primary-color;
+            //border: 1px solid $primary-color;
             @include size(3%, 100%);
             @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
             z-index: 5;
             //top: -10%;
 
             @include phonePro {
-                width: 10%;
-                display: none;
+                @include size(30px, 30px);
+                color: black;
+                //display: none;
+            }
+
+            @include phoneMini {
+                @include size(25px, 25px);
+                //display: none;
+            }
+
+            .icon {
+
+                @include phonePro {
+                    //font-size: 1.2rem;
+                    color: $secondary-color-2;
+                }
+
+                @include phoneMini {
+                    font-size: 1.2rem;
+                }
             }
 
             &:hover {
@@ -564,7 +589,7 @@
 }
 
 .productSlide1 {
-    border: 1px solid green;
+    //border: 1px solid green;
     top: 75%;
 
     @include tabletPro {

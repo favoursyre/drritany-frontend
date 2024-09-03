@@ -78,6 +78,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     //This is a use effect function
     useEffect(() => {
+        console.log('Products1: ', product_, productList, products)
+
         if (productFilter) {
             if (productFilter.filterId) {
                 _filterProduct(productFilter.filterId!)
@@ -133,6 +135,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     // }, [mobileCurrentIndex, pcCurrentIndex, products, sort, sortId, productList, width]);
 
     ///
+    
     useEffect(() => {
         if (timeLeft === 0) {
         setTimeLeft(86400);

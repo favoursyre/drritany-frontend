@@ -274,30 +274,54 @@ const OrderFormModal = () => {
         setCountryInfo(() => countryInfo_)
     } else if (label === "state") {
         //console.log("I'm here")
-        //console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
-        if (cart && clientInfo?.country?.currency?.exchangeRate) {
-            setState(() => e.target.value)
+        console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
+        // if (cart && clientInfo?.country?.currency?.exchangeRate) {
+        //     setState(() => e.target.value)
+        //     //console.log("State: ", state)
+
+        //     const symbol = clientInfo.country.currency.symbol
+        
+        //     //Checking if the state has extraDeliveryPercent and notifying the client
+        //     const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
+            
+        //     if (state_?.extraDeliveryPercent === 0) {
+        //             const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+        //             notify("info", `Your total order amount is ${symbol}${total}`)
+        //             setItem(extraDeliveryFeeName, 0)
+                
+        //     } else {
+        //         if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
+        //             const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
+        //             setExtraDeliveryFee(() => extraDeliveryFee)
+        //             setItem(extraDeliveryFeeName, extraDeliveryFee)
+        //             const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+        //             const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+        //             notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
+        //         }
+        //     }
+        // }
+
+        setState(() => e.target.value)
             //console.log("State: ", state)
 
-            const symbol = clientInfo.country.currency.symbol
+        const symbol = clientInfo?.country?.currency?.symbol!
+    
+        //Checking if the state has extraDeliveryPercent and notifying the client
+        const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
         
-            //Checking if the state has extraDeliveryPercent and notifying the client
-            const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
+        if (state_?.extraDeliveryPercent === 0) {
+                const total = round((cart?.totalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                notify("info", `Your total order amount is ${symbol}${total}`)
+                setItem(extraDeliveryFeeName, 0)
             
-            if (state_?.extraDeliveryPercent === 0) {
-                    const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-                    notify("info", `Your total order amount is ${symbol}${total}`)
-                    setItem(extraDeliveryFeeName, 0)
-                
-            } else {
-                if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
-                    const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
-                    setExtraDeliveryFee(() => extraDeliveryFee)
-                    setItem(extraDeliveryFeeName, extraDeliveryFee)
-                    const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-                    const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-                    notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
-                }
+        } else {
+            if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
+                const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
+                setExtraDeliveryFee(() => extraDeliveryFee)
+                setItem(extraDeliveryFeeName, extraDeliveryFee)
+                const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
             }
         }
     }

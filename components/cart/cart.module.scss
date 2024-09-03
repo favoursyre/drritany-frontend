@@ -297,6 +297,10 @@
                                     //width: 37%;
                                     @include text-layout($size: 10px, $color: $text-color-2, $l_height: 11px);
                                     height: 30%;
+                                    text-overflow: ellipsis;
+                                    display: block;
+                                    white-space: nowrap;
+                                    overflow: hidden;
                                 } 
         
                                 @include phoneMini {

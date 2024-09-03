@@ -165,7 +165,10 @@ export interface IClientInfo {
   country?: ICountry
 }
 
-//This is the interface for product category/filter settings
+/**This is the interface for product category/filter settings
+ * 
+ * category
+ */
 export interface IProductFilter {
   filterId?: number,
   category?: ICategory | string

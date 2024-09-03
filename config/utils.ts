@@ -26,7 +26,7 @@ export const minKg: number = 1
 
 //export const mediaFolderId: string = "https://developers.google.com/oauthplayground"
 
-export const deliveryFeePerKg: number = 0.9 //Unit is in USD
+export const deliveryFeePerKg: number = 0.8 //Unit is in USD
 
 //export const domainName: string = "http://localhost:3000"
 //export const domainName: string = "http://192.168.43.133:3000"

@@ -240,7 +240,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
 
             let discount
-            if (cartItem.quantity >= cartItem.extraDiscount.limit!) {
+            if (cartItem.extraDiscount?.limit! && cartItem.quantity >= cartItem.extraDiscount?.limit!) {
                 cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * totalPrice).toFixed(2))
                 //discount = (10 / 100) * totalPrice
             } else {

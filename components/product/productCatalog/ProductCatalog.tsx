@@ -80,6 +80,8 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     }, [products, clientInfo])
 
     useEffect(() => {
+        console.log("Query: ", query, productList)
+
         const intervalId = setInterval(() => {
         }, 100);
 
@@ -97,9 +99,9 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
         }, 100);
     
         return () => clearInterval(intervalId);
-      }, [lastIndex]);
+    }, [lastIndex]);
 
-      useEffect(() => {
+    useEffect(() => {
         const intervalId = setInterval(() => {
             if (currentURL === window.location.href) {
                 //console.log('not changed')

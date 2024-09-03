@@ -16,7 +16,9 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { IImage } from "@/config/interfaces";
+import { IImage, IProductFilter } from "@/config/interfaces";
+import { productFilterName } from "@/config/utils";
+import { setItem } from "@/config/clientUtils";
 
 ///Commencing the code 
   
@@ -60,8 +62,16 @@ const Hero = () => {
     useEffect(() => {
     }, [clientInfo])
 
+    //This function is trigered when the search button is required
     const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
         e.preventDefault()
+
+        //Setting the product filter settings
+        const filterSettings: IProductFilter = {
+            filterId: 0,
+            category: "All"
+        }
+        setItem(productFilterName, filterSettings)
 
         if (query) {
           setSearchIsLoading(() => true)

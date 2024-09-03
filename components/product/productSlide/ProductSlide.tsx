@@ -231,11 +231,11 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
           </Swiper>
         <div className={styles.controller}>
             <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
-                <KeyboardArrowLeftIcon />
+                <KeyboardArrowLeftIcon className={styles.icon} />
             </button>
             {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
             <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
-                <KeyboardArrowRightIcon />
+                <KeyboardArrowRightIcon className={styles.icon} />
             </button>
             
         </div>
