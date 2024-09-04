@@ -250,7 +250,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
             const deliveryFee = getDeliveryFee(totalWeight)
 
-            const productName = `${product.name} (${cartSpecs.color}, ${cartSpecs.size})`
+            const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
 
             //Checking if cart already exist for the client
             if (cart) {
