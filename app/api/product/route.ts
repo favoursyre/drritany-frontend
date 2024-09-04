@@ -7,7 +7,7 @@ import { NextResponse, NextRequest } from "next/server";
 //import { sendSubnewsletterEmail } from "@/config/email";
 import { IProduct } from "@/config/interfaces";
 //import { IInquiry } from "@/config/interfaces";
-import { orderSheetId, querySheetId } from "@/config/utils";
+import { orderSheetId } from "@/config/utils";
 import { GoogleSheetStore } from "@/config/serverUtils";
 
 ///Commencing the code

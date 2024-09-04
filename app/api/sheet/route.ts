@@ -10,7 +10,7 @@ import path from "path";
 import { google } from "googleapis";
 import fs from "fs"
 import { GoogleSheetStore } from "@/config/serverUtils";
-import { querySheetId } from "@/config/utils";
+//import { querySheetId } from "@/config/utils";
 //import { IInquiry } from "@/config/interfaces";
 
 ///Commencing the code

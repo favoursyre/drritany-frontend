@@ -311,7 +311,7 @@ const OrderFormModal = () => {
         
         if (state_?.extraDeliveryPercent === 0) {
                 const total = round((cart?.totalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
-                notify("info", `Your total order amount is ${symbol}${total}`)
+                //notify("info", `Your total order amount is ${symbol}${total}`)
                 setItem(extraDeliveryFeeName, 0)
             
         } else {
@@ -321,7 +321,7 @@ const OrderFormModal = () => {
                 setItem(extraDeliveryFeeName, extraDeliveryFee)
                 const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
-                notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
+                //notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
             }
         }
     }

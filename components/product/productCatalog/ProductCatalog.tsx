@@ -5,7 +5,7 @@
 import styles from "./productCatalog.module.scss"
 import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent, Fragment } from "react"
-import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, querySheetId, backend } from "@/config/utils";
+import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, statSheetId, backend } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -58,7 +58,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                     }
 
                     const sheetInfo: ISheetInfo = {
-                        sheetId: querySheetId,
+                        sheetId: statSheetId,
                         sheetRange: "ProductQuery!A:E",
                         data: queryInfo
                     }

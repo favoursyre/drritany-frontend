@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo } from '@/config/utils';
 import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -180,6 +180,8 @@ const Cart = () => {
         } else if (action === 1 && cart !== null) { ///This represents the final remove button
             console.log("Cart Index: ", deleteIndex)
             cart?.cart.splice(deleteIndex, 1)
+            const productName = `${cart.cart[deleteIndex].name} (${cart.cart[deleteIndex].specs?.color}, ${cart.cart[deleteIndex].specs?.size})`
+            storeCartInfo("Deleted", clientInfo!, productName)
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));

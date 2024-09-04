@@ -4,10 +4,10 @@
 ///Libraries -->
 import styles from "./productCard.module.scss"
 import Image from "next/image";
-import { IProduct, IClientInfo } from "@/config/interfaces";
+import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle, round, wishListName, getCustomPricing } from "@/config/utils";
+import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useDiscountModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline } from '@mui/icons-material';
@@ -81,6 +81,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 setDeleteIsLoading(() => true)
                 const newWishList = wishList_.filter((p) => p._id !== product._id);
                 setItem(wishListName, newWishList)
+                storeWishInfo("Deleted", clientInfo!, product)
                 notify("success", "Product deleted from wish list")
                 window.location.reload()
             }
@@ -94,11 +95,13 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 } else {
                     const newWishList = [ ...wishList_, product ]
                     setItem(wishListName, newWishList)
+                    storeWishInfo("Added", clientInfo!, product)
                     notify("success", "Product added to wish list")
                 }
             } else {
                 const newWishList: Array<IProduct> = [ product ]
                 setItem(wishListName, newWishList)
+                storeWishInfo("Added", clientInfo!, product)
                 notify("success", "Product added to wish list")
             }
             

@@ -3,7 +3,7 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
 
@@ -38,7 +38,7 @@ export const backend = "https://idealplug.com/api"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
-export const querySheetId: string = "1sxI_f2u4Pyxfp-8lwZr6O42YWpIJSEvVfAPrAjkB-oQ"
+export const statSheetId: string = "1sxI_f2u4Pyxfp-8lwZr6O42YWpIJSEvVfAPrAjkB-oQ"
 
 export const mediaFolderId: string = "1c_PAN5IenoKGNtRJJ7MG6zfa5jZC9bwH"
 
@@ -273,8 +273,8 @@ export const getDeliveryFee = (weight: number) => {
         //deliveryFee = minKg * deliveryFeePerKg
         deliveryFee = 3 * deliveryFeePerKg
     } else {
-        const newWeight = round(weight, 0)
-        const xtraWeight = newWeight - minKg
+        //const newWeight = round(weight, 0)
+        const xtraWeight = (weight - minKg)/6
         const baseDeliveryFee = 3 * deliveryFeePerKg
         const extraDeliveryFee = xtraWeight * deliveryFeePerKg
         deliveryFee = baseDeliveryFee + extraDeliveryFee
@@ -752,6 +752,68 @@ export const getCustomPricing = (product: IProduct, sizeId: number): number => {
         }
     } else {
         return product.pricing?.basePrice!
+    }
+}
+
+//This function keeps track of what product is added/deleted to cart
+export const storeWishInfo = async (_action: string, clientInfo: IClientInfo, product: IProduct) => {
+    if (clientInfo) {
+        try {
+            //Arranging the query research info
+            const wishListInfo: IWishlistResearch = {
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Product: product.name!,
+                Action: _action,
+                Date: getCurrentDate(),
+                Time: getCurrentTime()
+            }
+
+            const sheetInfo: ISheetInfo = {
+                sheetId: statSheetId,
+                sheetRange: "Wishlist!A:F",
+                data: wishListInfo
+            }
+    
+            const res = await fetch(`${backend}/sheet`, {
+                method: "POST",
+                body: JSON.stringify(sheetInfo),
+            });
+            console.log("Google Stream: ", res)
+        } catch (error) {
+            console.log("Store Error: ", error)
+        }
+    }
+}
+
+//This function keeps track of what product is added/deleted to cart
+export const storeCartInfo = async (_action: string, clientInfo: IClientInfo, productName: string) => {
+    if (clientInfo) {
+        try {
+            //Arranging the query research info
+            const cartInfo: IWishlistResearch = {
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Product: productName,
+                Action: _action,
+                Date: getCurrentDate(),
+                Time: getCurrentTime()
+            }
+
+            const sheetInfo: ISheetInfo = {
+                sheetId: statSheetId,
+                sheetRange: "Cart!A:F",
+                data: cartInfo
+            }
+    
+            const res = await fetch(`${backend}/sheet`, {
+                method: "POST",
+                body: JSON.stringify(sheetInfo),
+            });
+            console.log("Google Stream: ", res)
+        } catch (error) {
+            console.log("Store Error: ", error)
+        }
     }
 }
 

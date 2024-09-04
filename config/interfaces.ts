@@ -496,6 +496,16 @@ export interface IQueryResearch {
   Time: string
 }
 
+//This is the interface for wishlist research
+export interface IWishlistResearch {
+  IP: string,
+  Country: string,
+  Product: string,
+  Action: string,
+  Date: string,
+  Time: string
+}
+
 ///This is the interface for params
 export interface IParams {
   params: {

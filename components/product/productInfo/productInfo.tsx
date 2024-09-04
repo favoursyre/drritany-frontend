@@ -7,7 +7,7 @@ import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
 import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -250,6 +250,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
             const deliveryFee = getDeliveryFee(totalWeight)
 
+            const productName = `${product.name} (${cartSpecs.color}, ${cartSpecs.size})`
+
             //Checking if cart already exist for the client
             if (cart) {
                 //console.log(true)
@@ -275,6 +277,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setCart(() => cart)
                     setItem(cartName, cart)
                     if (!order) {
+                        storeCartInfo("Added", clientInfo!, productName)
                         notify('success', "Product has been added to cart")
                     }
                 } else {
@@ -294,6 +297,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         setCart(() => cart)
                         setItem(cartName, cart)
                         if (!order) {
+                            storeCartInfo("Added", clientInfo!, productName)
                             notify('success', "Product has been updated to cart")
                         }
                     }
@@ -325,6 +329,38 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             setAddedToCart(() => true)
         } 
     }
+
+    // //This stores data in wishinfo
+    // //Storing the keyword in an excel sheet for research purposes
+    // const storeWishInfo = async (_action: string) => {
+    //     if (clientInfo) {
+    //         try {
+    //             //Arranging the query research info
+    //             const wishListInfo: IWishlistResearch = {
+    //                 IP: clientInfo?.ip!,
+    //                 Country: clientInfo?.country?.name?.common!,
+    //                 Product: product.name!,
+    //                 Action: _action,
+    //                 Date: getCurrentDate(),
+    //                 Time: getCurrentTime()
+    //             }
+
+    //             const sheetInfo: ISheetInfo = {
+    //                 sheetId: statSheetId,
+    //                 sheetRange: "Wishlist!A:F",
+    //                 data: wishListInfo
+    //             }
+        
+    //             const res = await fetch(`${backend}/sheet`, {
+    //                 method: "POST",
+    //                 body: JSON.stringify(sheetInfo),
+    //             });
+    //             console.log("Google Stream: ", res)
+    //         } catch (error) {
+    //             console.log("Store Error: ", error)
+    //         }
+    //     }
+    // }
 
     ///This function opens discount modal
     const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
@@ -386,11 +422,13 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             } else {
                 const newWishList = [ ...wishList_, product ]
                 setItem(wishListName, newWishList)
+                storeWishInfo("Added", clientInfo!, product)
                 notify("success", "Product added to wish list")
             }
         } else {
             const newWishList: Array<IProduct> = [ product ]
             setItem(wishListName, newWishList)
+            storeWishInfo("Added", clientInfo!, product)
             notify("success", "Product added to wish list")
         }
     }
