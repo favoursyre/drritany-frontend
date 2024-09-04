@@ -250,7 +250,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
             const deliveryFee = getDeliveryFee(totalWeight)
 
-            const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
+            // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
 
             //Checking if cart already exist for the client
             if (cart) {
@@ -277,7 +277,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setCart(() => cart)
                     setItem(cartName, cart)
                     if (!order) {
-                        storeCartInfo("Added", clientInfo!, productName)
+                        storeCartInfo("Added", clientInfo!, product.name!)
                         notify('success', "Product has been added to cart")
                     }
                 } else {
@@ -297,7 +297,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         setCart(() => cart)
                         setItem(cartName, cart)
                         if (!order) {
-                            storeCartInfo("Added", clientInfo!, productName)
+                            storeCartInfo("Added", clientInfo!, product.name!)
                             notify('success', "Product has been updated to cart")
                         }
                     }
