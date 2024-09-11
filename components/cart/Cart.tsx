@@ -45,7 +45,7 @@ const Cart = () => {
                     cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                     cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                     setItem(cartName, cart)
                     const updatedCart = cart
                     setCart(() => ({ ...updatedCart }))
@@ -102,7 +102,7 @@ const Cart = () => {
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
             setCart(() => ({ ...cart }))
             setItem(cartName, cart)
         }
@@ -126,7 +126,7 @@ const Cart = () => {
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
                 console.log("after: ", cart)
@@ -186,7 +186,7 @@ const Cart = () => {
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
             console.log("Updated Cart: ", cart)
             setItem(cartName, cart)
             setCart(() => ({ ...cart }))

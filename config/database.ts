@@ -1,8 +1,8 @@
 //This acts as a database for the web app
 
 ///Libraries -->
-import { IFAQState, IQuoteState, ITestimony, ICountry, ICategoryInfo } from "./interfaces";
-import { companyName, deliveryPeriod, formatArrayToString } from "./utils"
+import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
+import { companyName, deliveryPeriod } from "./sharedUtils";
 
 ///Commencing the code -->
 
@@ -126,7 +126,7 @@ export const countryList: Array<ICountry> = [
             name: "Canadian Dollar",
             abbreviation: "CAD",
             symbol: "$",
-            exchangeRate: 1.37
+            exchangeRate: 1.5
         },
         languages: [
             {
@@ -138,6 +138,78 @@ export const countryList: Array<ICountry> = [
                 code: "fra"
             }
         ],
+        states: [
+            {
+                name: "Alberta",
+                abbreviation: "AB",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "British Columbia",
+                abbreviation: "BC",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Manitoba",
+                abbreviation: "MB",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "New Brunswick",
+                abbreviation: "NB",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Newfoundland and Labrador",
+                abbreviation: "NL",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Nova Scotia",
+                abbreviation: "NS",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Ontario",
+                abbreviation: "ON",
+                extraDeliveryPercent: 0,
+            },
+            {
+                name: "Prince Edward Island",
+                abbreviation: "PE",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Quebec",
+                abbreviation: "QC",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Saskatchewan",
+                abbreviation: "SK",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Northwest Territories",
+                abbreviation: "NT",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Nunavut",
+                abbreviation: "NU",
+                extraDeliveryPercent: 10,
+            },
+            {
+                name: "Yukon",
+                abbreviation: "YT",
+                extraDeliveryPercent: 10,
+            }
+        ],
+        delivery: {
+            feePerKg: 0.8,
+            baseNumber: 7
+        }, 
+        priceInflation: 25,
         flag: {
             src: 'https://flagcdn.com/w320/ca.png',
             alt: "The flag of Canada is composed of a red vertical band on the hoist and fly sides and a central white square that is twice the width of the vertical bands. A large eleven-pointed red maple leaf is centered in the white square.",
@@ -413,7 +485,7 @@ export const countryList: Array<ICountry> = [
             }
 
         ],
-        deliveryFeePerKg: 1,
+        priceInflation: 10,
         flag: {
             src: 'https://flagcdn.com/w320/gh.png',
             alt: "The flag of Ghana is composed of three equal horizontal bands of red, gold and green, with a five-pointed black star centered in the gold band.",
@@ -833,7 +905,11 @@ export const countryList: Array<ICountry> = [
             //     code: "swa"
             // }
         ],
-        deliveryFeePerKg: 0.8, 
+        delivery: {
+            feePerKg: 0.7,
+            baseNumber: 3
+        }, 
+        priceInflation: 0,
         flag: {
             src: 'https://flagcdn.com/w320/ng.png',
             alt: "The flag of Nigeria is composed of three equal vertical bands of green, white and green.",
@@ -926,7 +1002,7 @@ export const countryList: Array<ICountry> = [
                 code: "zul"
             }
         ],
-        deliveryFeePerKg: 1.1, 
+        priceInflation: 15, 
         states: [
             {
                 name: "Eastern Cape",
@@ -1171,6 +1247,7 @@ export const countryList: Array<ICountry> = [
     },
 ]
 
+//console.log("Company: ", companyName)
 export const faqs: Array<IFAQState> = [
     {
         question: `Why ${companyName}?`,

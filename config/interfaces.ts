@@ -304,7 +304,11 @@ export interface ICountry {
       total?: number,
       perCapital?: number
     },
-    deliveryFeePerKg?: number, //USD per Kg
+    delivery?: {
+      feePerKg?: number, //USD per Kg
+      baseNumber?: number //Base number to multiply the base fee
+    },
+    priceInflation?: number, //Price inflation percent
     flag?: IImage
 }
 

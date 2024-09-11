@@ -12,6 +12,7 @@ import { getItem, notify, setItem } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useDiscountModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline } from '@mui/icons-material';
 import Loading from "@/components/loadingCircle/Circle";
+import { countryList } from "@/config/database";
 
 ///Commencing the code 
 /**
@@ -23,7 +24,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const [view, setView] = useState<string>(view_!)
-    //const [customPrice, setCustomPrice] = useState<number>(product.pricing?.basePrice!)//(getCustomPricing(product, 0))
+    //const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     //const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
     const routerPath = usePathname();
     const [deleteIsLoading, setDeleteIsLoading] = useState<boolean>(false)
@@ -35,6 +36,19 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
         console.log("View: ", view)
         setProduct(() => product_)
     }, [clientInfo, product, product_]);
+
+    //This displays the custom price based on the country
+    const customPrice = (): number => {
+        let customPrice
+        const clientCountry = countryList.find((c) => c.name?.common === clientInfo?.country?.name?.common)
+        const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
+        if (inflation === 0) {
+            customPrice = product.pricing?.basePrice!
+        } else {
+            customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+        }
+        return customPrice
+    }
 
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
@@ -156,7 +170,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                             )}
                             {clientInfo?.country?.currency?.exchangeRate ? (
                                 <span>
-                                    {round(product.pricing?.basePrice! * clientInfo.country?.currency?.exchangeRate, 1).toLocaleString("en-US")}
+                                    {round(customPrice() * clientInfo.country?.currency?.exchangeRate, 1).toLocaleString("en-US")}
                                 </span>
                             ) : (
                                 <></>
@@ -173,7 +187,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                         {clientInfo?.country?.currency?.exchangeRate ? (
                             <span>
                                 {product.pricing?.basePrice ? (
-                                    round(slashedPrice(product.pricing?.basePrice * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
+                                    round(slashedPrice(customPrice() * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
                                 : (
                                     <></>
                                 )}

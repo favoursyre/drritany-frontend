@@ -34,6 +34,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [product, setProduct] = useState(product_)
     const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
+    const clientInfo = useClientInfoStore(state => state.info)
     const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
@@ -47,7 +48,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
     const discountProduct = useDiscountModalStore(state => state.product);
-    const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0))
+    const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     const [imageIndex, setImageIndex] = useState<number>(0)
     const [videoIndex, setVideoIndex] = useState<number>(0)
     const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
@@ -55,7 +56,6 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [checkoutIsLoading, setCheckoutIsLoading] = useState<boolean>(false)
     const [view, setView] = useState<"image" | "video">("image")
     const spec = product.specification
-    const clientInfo = useClientInfoStore(state => state.info)
     const stars: Array<number> = [1, 2, 3, 4]
     console.log("In Stock: ", product.pricing?.inStock)
 
@@ -120,7 +120,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     useEffect(() => {
         //console.log("Client: ", clientInfo)
         const interval = setInterval(() => {
-            const newPrice = getCustomPricing(product, sizeId)
+            const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!)
             setCustomPrice(() => newPrice)
         }, 100);
     
@@ -248,7 +248,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             }
             const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
-            const deliveryFee = getDeliveryFee(totalWeight)
+            const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.country?.name?.common!)
 
             // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
 
@@ -293,7 +293,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
-                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight)).toFixed(2))
+                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                         setCart(() => cart)
                         setItem(cartName, cart)
                         if (!order) {

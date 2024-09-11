@@ -12,16 +12,13 @@ import { useRouter } from "next/navigation";
 import Loading from "@/components/loadingCircle/Circle";
 import { SearchOutlined, Add, Tune, CategoryOutlined } from "@mui/icons-material";
 import AdminProductCard from "@/components/cards/adminProduct/AdminProductCard";
+import puppeteer from "puppeteer"
 
 ///Commencing the code 
-//Admin product sort options
-// const adminProductCategoryOptions = [
-//     "All"
-//     {id: 0, name: "Most Ordered"},
-//     {id: 1, name: "Newest Arrivals"},
-//     {id: 2, name: "Price: High to Low"},
-//     {id: 3, name: "Price: Low to High"}
-// ]
+ 
+
+ 
+
   
 /**
  * @title Admin Product Component
@@ -42,15 +39,20 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
     
     // useEffect(() => {
-    //     window.scrollTo({ top: 0, behavior: 'smooth' });
-        
+    //     const main = async () => {
+    //         const res = await fetch(`${backend}/scraper`)
+         
+    //         console.log("html scrap", await res.json())
+    //     }
 
-    //     //window.location.reload()
-    //     //  setSearchIsLoading(() => false)
+    //     console.log("testing api")
+    //    main()
     // })
 
     useEffect(() => {
-        console.log("Title: ", document.title)
+        //main();
+
+        console.log("Title1: ", document.title)
         if (!products) {
             notify("info", "Product not found")
         }

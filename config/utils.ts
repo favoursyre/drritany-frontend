@@ -6,9 +6,11 @@ import React from 'react';
 import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
+import { countryList } from './database';
+import { companyName as _companyName, deliveryPeriod as _deliveryPeriod } from './sharedUtils';
 
 ///Commencing the code
-export const companyName: string = "Idealplug"
+export const companyName: string = _companyName
 
 export const companyEmail: string = "support@idealplug.com"
 
@@ -20,13 +22,13 @@ export const discount: number = 33
 
 export const extraDiscount: number = 5
 
-export const deliveryPeriod: number = 4 //(Unit is in days) This means delivery is within 4 days
+export const deliveryPeriod: number = _deliveryPeriod //(Unit is in days) This means delivery is within 4 days
 
 export const minKg: number = 1
 
 //export const mediaFolderId: string = "https://developers.google.com/oauthplayground"
 
-export const deliveryFeePerKg: number = 0.7 //Unit is in USD
+export const deliveryFeePerKg: number = 0.8 //Unit is in USD
 
 //export const domainName: string = "http://localhost:3000"
 //export const domainName: string = "http://192.168.43.133:3000"
@@ -266,17 +268,24 @@ export const round = (value: number, precision: number): number => {
 }
 
 //This function calculates the delivery fee for a cart in USD
-export const getDeliveryFee = (weight: number) => {
+export const getDeliveryFee = (weight: number, country: string) => {
+    
     let deliveryFee: number
+    const clientCountry = countryList.find((c) => c.name?.common === country)
+    const baseNumber = clientCountry?.delivery?.baseNumber ? clientCountry?.delivery?.baseNumber : 9
+    const feePerKg = clientCountry?.delivery?.feePerKg ? clientCountry.delivery.feePerKg : 0.9
+
+    console.log("Total W: ", weight, baseNumber, feePerKg)
 
     if (weight <= minKg) {
         //deliveryFee = minKg * deliveryFeePerKg
-        deliveryFee = 3 * deliveryFeePerKg
+        deliveryFee = baseNumber * feePerKg
     } else {
         //const newWeight = round(weight, 0)
-        const xtraWeight = (weight - minKg)/6
-        const baseDeliveryFee = 3 * deliveryFeePerKg
-        const extraDeliveryFee = xtraWeight * deliveryFeePerKg
+        const xtraWeight = (weight - minKg)
+        console.log("Exra W: ", xtraWeight)
+        const baseDeliveryFee = baseNumber * feePerKg
+        const extraDeliveryFee = xtraWeight * feePerKg
         deliveryFee = baseDeliveryFee + extraDeliveryFee
     }
 
@@ -731,27 +740,37 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
 }
 
 //This function helps get custom based pricing
-export const getCustomPricing = (product: IProduct, sizeId: number): number => {
+export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
+    console.log("custom pricing...")
+    const clientCountry = countryList.find((c) => c.name?.common === country)
     const size = product.specification?.sizes
+    const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
+    let customPrice
+    if (inflation === 0) {
+        customPrice = product.pricing?.basePrice!
+    } else {
+        customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+    }
+
     if (size) {
         const _size = size[sizeId]
         if (_size) {
             if (typeof _size === "string") {
-                return product.pricing?.basePrice!
+                return customPrice
             } else {
                 if (_size?.percent === 0) {
-                    return product.pricing?.basePrice!
+                    return customPrice
                 } else {
-                    const xtraPrice = (_size?.percent! / 100) * product.pricing?.basePrice!
-                    const newPrice = xtraPrice + product.pricing?.basePrice!
+                    const xtraPrice = (_size?.percent! / 100) * customPrice
+                    const newPrice = xtraPrice + customPrice
                     return newPrice
                 }
             }
         } else {
-            return product.pricing?.basePrice!
+            return customPrice
         }
     } else {
-        return product.pricing?.basePrice!
+        return customPrice
     }
 }
 

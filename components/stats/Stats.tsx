@@ -3,17 +3,12 @@
 
 ///Libraries -->
 import styles from "./stats.module.scss"
-import Image from "next/image";
-import PublicIcon from '@mui/icons-material/Public';
 import { BoltOutlined, VerifiedOutlined } from "@mui/icons-material";
-import BoltIcon from '@mui/icons-material/Bolt';
-import GppGoodIcon from '@mui/icons-material/GppGood';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import PriceCheckIcon from '@mui/icons-material/LocalAtm';
+import { deliveryPeriod } from "@/config/utils";
 
 ///Commencing the code 
-const stats = [1, 2]
-  
 /**
  * @title Stats Component
  * @returns The Stats component
@@ -36,7 +31,7 @@ const Stats = () => {
                     <BoltOutlined className={styles.icon} />
                     <div className={styles.text}>
                         <span className={styles.span1}>Fast Delivery</span>
-                        <span className={styles.span2}>Delivery within 1-3 days</span>
+                        <span className={styles.span2}>Delivery within 1-{deliveryPeriod} days</span>
                     </div>
                 </div>
                 <div className={styles.stat3}>
