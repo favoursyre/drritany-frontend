@@ -308,8 +308,9 @@
                     @include text-layout($size: 12px, $l_height: 15px);
                     text-align: center;
 
-                    @include phone {
-                        line-height: 13px;
+                    @include phonePro {
+                        line-height: 12px;
+                        font-size: 10px;
                     }
 
                     @include phoneMini {
