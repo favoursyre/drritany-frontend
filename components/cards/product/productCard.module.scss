@@ -22,7 +22,7 @@
 
     @include phonePro {
         //border: 2px solid $primary-color;
-        @include size(28%, 50%);
+        @include size(28%, 55%);
         padding: 1.5%;
         gap: 0%;
     }
@@ -152,6 +152,7 @@
 
         @include phonePro {
             line-height: 12px;
+            font-size: 10px;
         }
 
         @include phoneMini {
