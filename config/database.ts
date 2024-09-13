@@ -209,7 +209,7 @@ export const countryList: Array<ICountry> = [
             feePerKg: 0.8,
             baseNumber: 7
         }, 
-        priceInflation: 25,
+        priceInflation: 0,
         flag: {
             src: 'https://flagcdn.com/w320/ca.png',
             alt: "The flag of Canada is composed of a red vertical band on the hoist and fly sides and a central white square that is twice the width of the vertical bands. A large eleven-pointed red maple leaf is centered in the white square.",
