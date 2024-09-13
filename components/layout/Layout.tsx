@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import Modal from "@/components/modals/modalBackground/Modal";
 import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore } from "@/config/store";
-import { IClientInfo } from "@/config/interfaces";
+import { IClientInfo, ITrafficResearch, ISheetInfo } from "@/config/interfaces";
 import { countryList } from "@/config/database";
 import GoogleTagManager from "@/config/GoogleTagManager";
 import GoogleAnalytics from '@/config/GoogleAnalytics';
@@ -21,6 +21,7 @@ import bcrypt from "bcrypt"
 import LoadingSkeleton from "@/app/loading_test";
 import { InfoRounded } from "@mui/icons-material";
 import styles_ from "@/styles/_base.module.scss"
+import { getCurrentDate, getCurrentTime, backend, statSheetId } from "@/config/utils";
 
 ///Commencing the code 
 ///This function get client's info
@@ -67,6 +68,39 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         //console.log("Test: ", test)
     });
     
+    //Keeping track of visitors
+    useEffect(() => {
+      //Storing the keyword in an excel sheet for research purposes
+      if (clientInfo) {
+          const storeTraffic = async () => {
+              try {
+                  //Arranging the query research info
+                  const trafficInfo: ITrafficResearch = {
+                      IP: clientInfo?.ip!,
+                      Country: clientInfo?.country?.name?.common!,
+                      Date: getCurrentDate(),
+                      Time: getCurrentTime()
+                  }
+
+                  const sheetInfo: ISheetInfo = {
+                      sheetId: statSheetId,
+                      sheetRange: "Traffic!A:D",
+                      data: trafficInfo
+                  }
+          
+                  const res = await fetch(`${backend}/sheet`, {
+                      method: "POST",
+                      body: JSON.stringify(sheetInfo),
+                  });
+                  console.log("Google Stream: ", res)
+              } catch (error) {
+                  console.log("Store Error: ", error)
+              }
+          }
+          
+          storeTraffic()
+      }
+  }, [clientInfo])
 
   return (
     <html lang="en" className={styles.html}>

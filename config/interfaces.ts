@@ -500,6 +500,14 @@ export interface IQueryResearch {
   Time: string
 }
 
+//This is the interface for traffic research
+export interface ITrafficResearch {
+  IP: string,
+  Country: string,
+  Date: string,
+  Time: string
+}
+
 //This is the interface for wishlist research
 export interface IWishlistResearch {
   IP: string,
