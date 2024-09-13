@@ -206,7 +206,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     }
 
     ///This function handles the button for `Add to Cart`
-    const addToCart = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): void => {
+    const addToCart = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): Promise<void> => {
         e.preventDefault()
         const p = product
 
@@ -277,7 +277,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setCart(() => cart)
                     setItem(cartName, cart)
                     if (!order) {
-                        storeCartInfo("Added", clientInfo!, product.name!)
+                        await storeCartInfo("Added", clientInfo!, product.name!)
                         notify('success', "Product has been added to cart")
                     }
                 } else {
@@ -297,7 +297,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         setCart(() => cart)
                         setItem(cartName, cart)
                         if (!order) {
-                            storeCartInfo("Added", clientInfo!, product.name!)
+                            await storeCartInfo("Added", clientInfo!, product.name!)
                             notify('success', "Product has been updated to cart")
                         }
                     }
