@@ -7,4 +7,4 @@
 
 export const companyName: string = "Idealplug";
 
-export const deliveryPeriod: number = 5 //(Unit is in days) This means delivery is within 4 days
+export const deliveryPeriod: number = 3 //(Unit is in days) This means delivery is within 4 days

@@ -30,7 +30,7 @@ const Stats = () => {
                 <div className={styles.stat2}>
                     <BoltOutlined className={styles.icon} />
                     <div className={styles.text}>
-                        <span className={styles.span1}>Fast Delivery</span>
+                        <span className={styles.span1}>Fast & Free Delivery</span>
                         <span className={styles.span2}>Delivery within 1-{deliveryPeriod} days</span>
                     </div>
                 </div>

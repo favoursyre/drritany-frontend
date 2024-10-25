@@ -709,191 +709,191 @@ export const countryList: Array<ICountry> = [
             exchangeRate: 1300
         },
         states: [
-            {
-                name: "Abuja",
-                abbreviation: "FC",
-                extraDeliveryPercent: 25,
-            },
-            {
-                name: "Abia",
-                abbreviation: "AB",
-                extraDeliveryPercent: 25,
-            },
-            {
-                name: "Adamawa",
-                abbreviation: "AD",
-                extraDeliveryPercent: 45,
-            },
-            {
-                name: "Akwa Ibom",
-                abbreviation: "AK",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Anambra",
-                abbreviation: "AN",
-                extraDeliveryPercent: 25,
-            },
-            {
-                name: "Bauchi",
-                abbreviation: "BA",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Bayelsa",
-                abbreviation: "BY",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Benue",
-                abbreviation: "BE",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Borno",
-                abbreviation: "BO",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Cross River",
-                abbreviation: "CR",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Delta",
-                abbreviation: "DE",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Delta",
-                abbreviation: "DE",
-                extraDeliveryPercent: 25,
-            },
-            {
-                name: "Ebonyi",
-                abbreviation: "EB",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Edo",
-                abbreviation: "ED",
-                extraDeliveryPercent: 25,
-            },
-            {
-                name: "Ekiti",
-                abbreviation: "EK",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Gombe",
-                abbreviation: "GO",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Imo",
-                abbreviation: "IM",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Jigawa",
-                abbreviation: "JI",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Kaduna",
-                abbreviation: "KD",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Kano",
-                abbreviation: "KN",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Katsina",
-                abbreviation: "KT",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Kebbi",
-                abbreviation: "KE",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Kogi",
-                abbreviation: "KO",
-                extraDeliveryPercent: 50,
-            },
-            {
-                name: "Kwara",
-                abbreviation: "KW",
-                extraDeliveryPercent: 40,
-            },
+            // {
+            //     name: "Abuja",
+            //     abbreviation: "FC",
+            //     extraDeliveryPercent: 25,
+            // },
+            // {
+            //     name: "Abia",
+            //     abbreviation: "AB",
+            //     extraDeliveryPercent: 25,
+            // },
+            // {
+            //     name: "Adamawa",
+            //     abbreviation: "AD",
+            //     extraDeliveryPercent: 45,
+            // },
+            // {
+            //     name: "Akwa Ibom",
+            //     abbreviation: "AK",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Anambra",
+            //     abbreviation: "AN",
+            //     extraDeliveryPercent: 25,
+            // },
+            // {
+            //     name: "Bauchi",
+            //     abbreviation: "BA",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Bayelsa",
+            //     abbreviation: "BY",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Benue",
+            //     abbreviation: "BE",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Borno",
+            //     abbreviation: "BO",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Cross River",
+            //     abbreviation: "CR",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Delta",
+            //     abbreviation: "DE",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Delta",
+            //     abbreviation: "DE",
+            //     extraDeliveryPercent: 25,
+            // },
+            // {
+            //     name: "Ebonyi",
+            //     abbreviation: "EB",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Edo",
+            //     abbreviation: "ED",
+            //     extraDeliveryPercent: 25,
+            // },
+            // {
+            //     name: "Ekiti",
+            //     abbreviation: "EK",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Gombe",
+            //     abbreviation: "GO",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Imo",
+            //     abbreviation: "IM",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Jigawa",
+            //     abbreviation: "JI",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Kaduna",
+            //     abbreviation: "KD",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Kano",
+            //     abbreviation: "KN",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Katsina",
+            //     abbreviation: "KT",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Kebbi",
+            //     abbreviation: "KE",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Kogi",
+            //     abbreviation: "KO",
+            //     extraDeliveryPercent: 50,
+            // },
+            // {
+            //     name: "Kwara",
+            //     abbreviation: "KW",
+            //     extraDeliveryPercent: 40,
+            // },
             {
                 name: "Lagos",
                 abbreviation: "LA",
                 extraDeliveryPercent: 0,
             },
-            {
-                name: "Nassarawa",
-                abbreviation: "NA",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Niger",
-                abbreviation: "NI",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Ogun",
-                abbreviation: "OG",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Ondo",
-                abbreviation: "ON",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Osun",
-                abbreviation: "OS",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Oyo",
-                abbreviation: "OY",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Plateau",
-                abbreviation: "PL",
-                extraDeliveryPercent: 40,
-            },
-            {
-                name: "Rivers",
-                abbreviation: "RI",
-                extraDeliveryPercent: 30,
-            },
-            {
-                name: "Sokoto",
-                abbreviation: "SO",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Taraba",
-                abbreviation: "TA",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Yobe",
-                abbreviation: "YO",
-                extraDeliveryPercent: 60,
-            },
-            {
-                name: "Zamfara",
-                abbreviation: "ZA",
-                extraDeliveryPercent: 60,
-            }
+            // {
+            //     name: "Nassarawa",
+            //     abbreviation: "NA",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Niger",
+            //     abbreviation: "NI",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Ogun",
+            //     abbreviation: "OG",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Ondo",
+            //     abbreviation: "ON",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Osun",
+            //     abbreviation: "OS",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Oyo",
+            //     abbreviation: "OY",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Plateau",
+            //     abbreviation: "PL",
+            //     extraDeliveryPercent: 40,
+            // },
+            // {
+            //     name: "Rivers",
+            //     abbreviation: "RI",
+            //     extraDeliveryPercent: 30,
+            // },
+            // {
+            //     name: "Sokoto",
+            //     abbreviation: "SO",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Taraba",
+            //     abbreviation: "TA",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Yobe",
+            //     abbreviation: "YO",
+            //     extraDeliveryPercent: 60,
+            // },
+            // {
+            //     name: "Zamfara",
+            //     abbreviation: "ZA",
+            //     extraDeliveryPercent: 60,
+            // }
         ],
         languages: [
             {
@@ -906,7 +906,7 @@ export const countryList: Array<ICountry> = [
             // }
         ],
         delivery: {
-            feePerKg: 0.7,
+            feePerKg: 0,
             baseNumber: 3
         }, 
         priceInflation: 0,

@@ -270,26 +270,28 @@ export const round = (value: number, precision: number): number => {
 //This function calculates the delivery fee for a cart in USD
 export const getDeliveryFee = (weight: number, country: string) => {
     
-    let deliveryFee: number
-    const clientCountry = countryList.find((c) => c.name?.common === country)
-    const baseNumber = clientCountry?.delivery?.baseNumber ? clientCountry?.delivery?.baseNumber : 9
-    const feePerKg = clientCountry?.delivery?.feePerKg ? clientCountry.delivery.feePerKg : 0.9
+    // let deliveryFee: number
+    // const clientCountry = countryList.find((c) => c.name?.common === country)
+    // const baseNumber = clientCountry?.delivery?.baseNumber ? clientCountry?.delivery?.baseNumber : 9
+    // const feePerKg = clientCountry?.delivery?.feePerKg ? clientCountry.delivery.feePerKg : 0.9
 
-    console.log("Total W: ", weight, baseNumber, feePerKg)
+    // console.log("Total W: ", weight, baseNumber, feePerKg)
 
-    if (weight <= minKg) {
-        //deliveryFee = minKg * deliveryFeePerKg
-        deliveryFee = baseNumber * feePerKg
-    } else {
-        //const newWeight = round(weight, 0)
-        const xtraWeight = (weight - minKg)
-        console.log("Exra W: ", xtraWeight)
-        const baseDeliveryFee = baseNumber * feePerKg
-        const extraDeliveryFee = xtraWeight * feePerKg
-        deliveryFee = baseDeliveryFee + extraDeliveryFee
-    }
+    // if (weight <= minKg) {
+    //     //deliveryFee = minKg * deliveryFeePerKg
+    //     deliveryFee = baseNumber * feePerKg
+    // } else {
+    //     //const newWeight = round(weight, 0)
+    //     const xtraWeight = (weight - minKg)
+    //     console.log("Exra W: ", xtraWeight)
+    //     const baseDeliveryFee = baseNumber * feePerKg
+    //     const extraDeliveryFee = xtraWeight * feePerKg
+    //     deliveryFee = baseDeliveryFee + extraDeliveryFee
+    // }
 
-    return deliveryFee
+    // return deliveryFee
+
+    return 0
 }
 
 //This function returns only a digit after a dash i.e. `+1-292019` => `292019`

@@ -8,7 +8,7 @@ import React, { FC } from 'react';
 const GoogleTagManager: FC<{ containerId: string }> = ({ containerId }) => {
   return (
     <>
-    <Script
+      <Script
           id="google-tag-manager"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
