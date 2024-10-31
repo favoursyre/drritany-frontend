@@ -32,6 +32,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     console.log('Products_: ', product_)
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
+    //const [checkoutIsLoading]
     const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
     const clientInfo = useClientInfoStore(state => state.info)
@@ -381,6 +382,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         if (product.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
         } else {
+            setCheckoutIsLoading(() => true)
+            
             //Add the product to cart
             addToCart(e, true)
 

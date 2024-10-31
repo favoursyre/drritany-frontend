@@ -36,16 +36,18 @@ const Cart = () => {
 
     useEffect(() => {
         //console.log("Cart Size: ", cart?.cart[0].specs?.size)
+        console.log("Client: ", clientInfo?.country?.name?.common!)
 
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
+
             const refreshCart = () => {
                 console.log("the cart is running")
-                if (cart) {
+                if (cart && clientInfo?.country?.name?.common) {
                     cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                     cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
+                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common)).toFixed(2))
                     setItem(cartName, cart)
                     const updatedCart = cart
                     setCart(() => ({ ...updatedCart }))

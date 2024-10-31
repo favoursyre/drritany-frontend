@@ -6,6 +6,7 @@ import styles from "./layout.module.scss"
 import { useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 const Header = dynamic(() => import("@/components/header/Header"), { ssr: false })
+//import Header from "@/components/header/Header"
 import Footer from "@/components/footer/Footer";
 import { ToastContainer } from 'react-toastify';
 import Modal from "@/components/modals/modalBackground/Modal";
