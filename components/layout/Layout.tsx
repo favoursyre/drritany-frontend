@@ -31,7 +31,7 @@ async function getClientInfo(clientInfo: IClientInfo | undefined, setClientInfo:
         if (clientInfo === undefined) {
             const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
                 method: "GET",
-                cache: "no-store",
+                //cache: "default",
             })
         
             if (res.ok) {
