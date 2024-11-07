@@ -34,12 +34,12 @@ const Header = () => {
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
-  const [scrollY, setScrollY] = useState<number>(window.scrollY);
+  const [scrollY, setScrollY] = useState<number | undefined>(window ? window.scrollY : undefined);
 
   useEffect(() => {
     const interval = setInterval(() => {
         //Updating scroll position
-        setScrollY(() => window.scrollY)
+        setScrollY(() => window ? window.scrollY : undefined)
 
         //Updating cart info
         const cart__ = getItem(cartName)
@@ -131,7 +131,7 @@ const Header = () => {
 
   return (
     <>
-      <header className={`${styles.header} ${scrollY >= 1 ? styles.scrolled : ""} ${routeStyle(routerPath, styles)}`}>
+      <header className={`${styles.header} ${scrollY! >= 1 ? styles.scrolled : ""} ${routeStyle(routerPath, styles)}`}>
         <button className={styles.menu_button} onClick={() => setMenu(true)}>
           <Menu className={styles.icon} />
         </button>

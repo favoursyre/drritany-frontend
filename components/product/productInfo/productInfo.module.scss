@@ -315,14 +315,39 @@
             font-weight: 400;
             //border: 2px solid $primary-color;
 
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 6;
+            position: relative;
+            height: auto;
+            //max-height: 30%;
+            overflow: hidden;
+            //white-space: nowrap;
+            text-overflow: ellipsis;
+            
+
+            @include tabletPro {
+                -webkit-line-clamp: 5;
+            }
+
             @include tabletMini {
                 font-size: 13px;
             }
 
             @include phonePro {
+                //border: 1px solid blue;
                 position: relative;
+                height: auto;
+                //max-height: 30%;
+                overflow: hidden;
+                //white-space: nowrap;
+                text-overflow: ellipsis;
                 //width: 95%;
                 //left: 1.5%;
+
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 4
             }
 
             @include phoneMini {

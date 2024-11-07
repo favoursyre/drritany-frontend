@@ -500,6 +500,15 @@ export interface IQueryResearch {
   Time: string
 }
 
+//This is the interface for product view research
+export interface IProductViewResearch {
+  IP: string,
+  Country: string,
+  Product: string,
+  Date: string,
+  Time: string
+}
+
 //This is the interface for traffic research
 export interface ITrafficResearch {
   IP: string,

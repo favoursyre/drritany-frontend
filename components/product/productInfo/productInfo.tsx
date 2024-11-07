@@ -5,9 +5,9 @@
 import { toast } from 'react-toastify';
 import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
-import { IProduct, ICart, ICartItem, IClientInfo } from '@/config/interfaces';
+import { IProduct, ICart, ICartItem, IClientInfo, IProductViewResearch, ISheetInfo } from '@/config/interfaces';
 import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -117,6 +117,42 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         spec?.dimension?.length ? `Length: ${spec.dimension.length}cm` : undefined,
         spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
     ]
+
+    //This stores the viewed peoduct in the sheet
+    useEffect(() => {
+
+        //Storing the product name in an excel sheet for research purposes
+        if (clientInfo) {
+            const storeQuery = async () => {
+                try {
+                    //Arranging the query research info
+                    const queryInfo: IProductViewResearch = {
+                        IP: clientInfo?.ip!,
+                        Country: clientInfo?.country?.name?.common!,
+                        Product: product.name!,
+                        Date: getCurrentDate(),
+                        Time: getCurrentTime()
+                    }
+
+                    const sheetInfo: ISheetInfo = {
+                        sheetId: statSheetId,
+                        sheetRange: "ProductView!A:E",
+                        data: queryInfo
+                    }
+            
+                    const res = await fetch(`${backend}/sheet`, {
+                        method: "POST",
+                        body: JSON.stringify(sheetInfo),
+                    });
+                    console.log("Google Stream: ", res)
+                } catch (error) {
+                    console.log("Store Error: ", error)
+                }
+            }
+
+            storeQuery()
+        }
+    }, [product, clientInfo])
 
     useEffect(() => {
         //console.log("Client: ", clientInfo)

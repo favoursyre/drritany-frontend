@@ -29,24 +29,33 @@ import { getCurrentDate, getCurrentTime, backend, statSheetId } from "@/config/u
 async function getClientInfo(clientInfo: IClientInfo | undefined, setClientInfo: (info: IClientInfo) => void) {
     try {
         if (clientInfo === undefined) {
-            const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
-                method: "GET",
-                //cache: "default",
-            })
+            // ---> Uncomment this for general countries <---
+            // const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
+            //     method: "GET",
+            //     //cache: "default",
+            // })
         
-            if (res.ok) {
-                const info_ = await res.json()
-                //console.log('Info: ', info_)
-                const country_ = countryList.find(country => country.name?.abbreviation === info_.country_code)
-                const info : IClientInfo = {
-                  ip: info_.ip,
-                  country: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "US")
-                }
-                //console.log("Client info: ", info)
-                setClientInfo(info)
-            } else {
-                getClientInfo(clientInfo, setClientInfo)
+            // if (res.ok) {
+            //     const info_ = await res.json()
+            //     //console.log('Info: ', info_)
+            //     const country_ = countryList.find(country => country.name?.abbreviation === info_.country_code)
+            //     const info : IClientInfo = {
+            //       ip: info_.ip,
+            //       country: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "US")
+            //     }
+            //     //console.log("Client info: ", info)
+            //     setClientInfo(info)
+            // } else {
+            //     getClientInfo(clientInfo, setClientInfo)
+            // }
+            // ---> Uncomment this for general countries <---
+
+            const info : IClientInfo = {
+              ip: "xxxxxx",
+              country: countryList.find(country => country.name?.abbreviation === "NG")
             }
+            //console.log("Client info: ", info)
+            setClientInfo(info)
         }
     } catch (error) {
       console.log(error);

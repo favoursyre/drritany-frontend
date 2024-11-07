@@ -743,7 +743,7 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
 
 //This function helps get custom based pricing
 export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
-    console.log("custom pricing...")
+    //console.log("custom pricing...")
     const clientCountry = countryList.find((c) => c.name?.common === country)
     const size = product.specification?.sizes
     const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0

@@ -127,13 +127,13 @@
                     @include phonePro {
                         //margin: 8px 0px;
                         font-size: 14px;
-                        line-height: 22px;
+                        line-height: 18px;
                         width: 70%;
                     }
         
                     @include phoneMini {
                         font-size: 12px;
-                        line-height: 18px;
+                        //line-height: 18px;
                         width: 80%;
                     }
                 }
