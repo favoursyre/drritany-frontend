@@ -63,12 +63,21 @@
             @include size(100%, 50%);
             @include flexBar($position: relative, $justify: flex-start, $align: center, $gap: 1%);
 
+
+            // @include phonePro {
+            //     height: 60%;
+            // }
+
             .bar {
                 border: 1px solid $primary-color;
                 position: relative;
                 @include size(14px, 100%);
                 border-radius: 4px;
                 background-color: $primary-color;
+
+                @include phonePro {
+                    height: 120%;
+                }
             }
 
             .barTitle {
@@ -95,8 +104,10 @@
                 @include flexBar($position: relative, $justify: flex-start, $flex_d: row, $wrap: none, $align: center);
 
                 @include phonePro {
-                    font-size: 18px;
+                    font-size: 17px;
                     font-weight: 600;
+                    padding-top: 8px;
+                    //border: 1px solid red;
                 }
 
                 @include phoneMini {
@@ -550,6 +561,19 @@
     @include phone {
         //top: 190%;
     }
+}
+
+.infoSlide2 {
+    //border: 2px solid black;
+    top: 220%;
+
+    @include tabletPro {
+        top: 195%;
+    }
+
+    @include phonePro {
+        top: 250%;
+    } 
 }
 
 .cartPage {

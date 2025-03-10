@@ -81,9 +81,10 @@ const productSchema = new Schema<IProduct, IProductModel>(
       variantPrices: [{
         country: {
           type: String,
-          trim: true
+          trim: true,
+          unique: true
         },
-        percent: {
+        amount: {
           type: Number,
         }
       }],
@@ -229,6 +230,14 @@ const productSchema = new Schema<IProduct, IProductModel>(
             type: Number,
             required: true,
         }
+    },
+    url: {
+      type: String,
+      trim: true
+    },
+    addDelivery: {
+      type: Boolean,
+      required: true
     }
   },
   { timestamps: true }

@@ -25,6 +25,8 @@ const Cart = () => {
     const [deleteIndex, setDeleteIndex] = useState(Number)
     const [deleteModal, setDeleteModal] = useState(false)
     const router = useRouter()
+    const [cartDeliveryFee, setCartDeliveryFee] = useState<number>()
+    const [cartDiscount, setCartDiscount] = useState<number>()
     const routerPath = usePathname();
     const [cartInitialRender, setCartInitialRender] = useState(false);
     const clientInfo = useClientInfoStore(state => state.info)
@@ -37,6 +39,8 @@ const Cart = () => {
     useEffect(() => {
         //console.log("Cart Size: ", cart?.cart[0].specs?.size)
         console.log("Client: ", clientInfo?.country?.name?.common!)
+        console.log("Cart ob: ", cart)
+        console.log("details: ", cart, getCartDiscount(), getCartDeliveryFee())
 
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
@@ -93,6 +97,33 @@ const Cart = () => {
         
     }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo, cartInitialRender, clientInfo]);
 
+    //This function calculates the cart discount
+    const getCartDiscount = () => {
+        let discount
+        discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
+
+        if (discount < 0) {
+            discount = 0
+        }
+
+        return discount
+    }
+
+    //This function calculates the cart delivery fee
+    const getCartDeliveryFee = () => {
+        let deliveryFee
+        let discount
+        discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
+
+        if (discount < 0) {
+            deliveryFee = -discount
+        } else {
+            deliveryFee = 0
+        }
+
+        return deliveryFee
+    }
+
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
         e.preventDefault()
@@ -100,10 +131,12 @@ const Cart = () => {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
             cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
+            cart.cart[index].subTotalHiddenDeliveryFee = cart.cart[index].quantity * cart.cart[index].unitHiddenDeliveryFee
             cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number((( cart.cart[index].extraDiscount?.percent!/100 ) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
             cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
             setCart(() => ({ ...cart }))
             setItem(cartName, cart)
@@ -124,10 +157,12 @@ const Cart = () => {
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
                 cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
+                cart.cart[index].subTotalHiddenDeliveryFee = cart.cart[index].quantity * cart.cart[index].unitHiddenDeliveryFee
                 cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                 cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+                cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
                 cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
@@ -140,6 +175,14 @@ const Cart = () => {
     ///This function is triggered when the checkout button is clicked
     const checkoutOrder = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
         e.preventDefault()
+
+        //Updating cart with the new discount and delivery fee value
+        if(cart) {
+            cart.deliveryFee = getCartDeliveryFee()
+            cart.totalDiscount = getCartDiscount()
+            setItem(cartName, cart)
+            setCart(() => ({ ...cart }))
+        }
 
         setModalBackground(true)
         if (deliveryInfo) {
@@ -188,6 +231,7 @@ const Cart = () => {
             cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
+            cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
             cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
             console.log("Updated Cart: ", cart)
             setItem(cartName, cart)
@@ -379,7 +423,7 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.totalDiscount * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(getCartDiscount() * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -393,7 +437,7 @@ const Cart = () => {
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(getCartDeliveryFee() * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -406,7 +450,7 @@ const Cart = () => {
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round((cart.totalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>

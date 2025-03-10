@@ -11,7 +11,7 @@ import { routeStyle, cartName, wishListName, sleep, productFilterName } from '@/
 import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close } from "@mui/icons-material";
 import Loading from "../loadingCircle/Circle";
-import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
+import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore } from "@/config/store";
 import { logo } from "@/config/utils";
 
 ///Commencing the code 
@@ -30,6 +30,7 @@ const Header = () => {
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
   const setContactModal = useContactModalStore(state => state.setContactModal);
+  const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
   const [cart, setCart] = useState<ICart | null>(cart__)
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
@@ -97,7 +98,10 @@ const Header = () => {
   const viewCart = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault()
 
-    //setCartIsLoading(true)
+    //Setting the loading
+    setModalBackground(true)
+    setLoadingModal(true)
+
     router.push("/cart")
     //await sleep()
   }
@@ -109,24 +113,35 @@ const Header = () => {
     if (wishList === undefined || wishList?.length === 0) {
       notify("info", "Your wish list is empty")
     } else {
-      //setWishIsLoading(() => true)
+      //Setting the loading
+      setModalBackground(true)
+      setLoadingModal(true)
+      
       router.push("/wishlist")
     }
   }
 
   //This function is trigerred when someone clicks on product
-  const viewProducts = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const clickNav = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, nav: string) => {
     e.preventDefault()
 
-    //Setting the product filter settings
-    const filterSettings: IProductFilter = {
-      filterId: 0,
-      category: "All"
-    }
-    setItem(productFilterName, filterSettings)
+    //Setting the loading
+    setModalBackground(true)
+    setLoadingModal(true)
 
-    setMenu(() => false)
-    router.push('/products')
+    if (nav === "about") {
+      router.push('/about')
+    } else if (nav === "products") {
+      //Setting the product filter settings
+      const filterSettings: IProductFilter = {
+        filterId: 0,
+        category: "All"
+      }
+      setItem(productFilterName, filterSettings)
+
+      setMenu(() => false)
+      router.push('/products')
+    }
   }
 
   return (
@@ -145,10 +160,8 @@ const Header = () => {
           />
         </div>
         <div className={`${styles.links}`}>
-          <button onClick={() => {
-            router.push('/about')
-          }}><span>About Us</span></button>
-          <button onClick={(e) => viewProducts(e)}><span>Products</span></button>
+          <button onClick={(e) => clickNav(e, "about")}><span>About Us</span></button>
+          <button onClick={(e) => clickNav(e, "products")}><span>Products</span></button>
           <button onClick={(e) => openContactModal(e)}>
             <span>Contact Us</span>
           </button>
@@ -251,14 +264,13 @@ const Header = () => {
               />
             </div>
           </div>
-          <button className={`${styles.links} ${routerPath === "/about" ? styles.activeLink : styles.inactiveLink}`} onClick={() => {
+          <button className={`${styles.links} ${routerPath === "/about" ? styles.activeLink : styles.inactiveLink}`} onClick={(e) => {
             setMenu(() => false)
-            router.push('/about')
+            clickNav(e, "about")
           }}>
             <span>About Us</span>
           </button>
-          <button className={styles.links} 
-            onClick={(e) => viewProducts(e)}>
+          <button className={styles.links} onClick={(e) => clickNav(e, "products")}>
             <span>Products</span>
           </button>
           <button 

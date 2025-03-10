@@ -8,7 +8,7 @@ import { IProduct, IClientInfo, IAdmin } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { backend, routeStyle, round, adminName } from "@/config/utils";
-import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore } from "@/config/store";
+import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore, useLoadingModalStore } from "@/config/store";
 import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt } from '@mui/icons-material';
 import { getItem, notify } from "@/config/clientUtils";
 import Loading from "@/components/loadingCircle/Circle";
@@ -28,6 +28,8 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
     const setConfirmationModal = useConfirmationModalStore(state => state.setConfirmationModal);
     const confirmationModal = useConfirmationModalStore(state => state.modal);
     const confirmationChoice = useConfirmationModalStore(state => state.choice);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     
 
     useEffect(() => {
@@ -39,8 +41,10 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, p_id: string) => {
         e.preventDefault()
-        //console.log("Type: ", typeof event)
-        //console.log("id: ", id)
+
+        //Setting the loading modal
+        setModalBackground(true)
+        setLoadingModal(true)
         
         router.push(`/admin/hjddkd/products/${p_id}`);
     }

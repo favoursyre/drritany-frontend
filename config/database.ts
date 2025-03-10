@@ -2,7 +2,7 @@
 
 ///Libraries -->
 import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
-import { companyName, deliveryPeriod } from "./sharedUtils";
+import { companyName, deliveryDuration, deliveryPeriod } from "./sharedUtils";
 
 ///Commencing the code -->
 
@@ -1310,7 +1310,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "When should I expect my delivery?",
-        answer: `Deliveries are usually within 1 - ${deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
+        answer: `Deliveries are usually within ${deliveryPeriod} - ${deliveryDuration + deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
     },
     {
         question: "How can I track my order?",
@@ -1318,7 +1318,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "How do I pay for my order?",
-        answer: "For the mean time, payments are and can only be made when you receive your orders in person"
+        answer: "We offer a wide range of payment options through Stripe payment gateway"
     },
     {
         question: "What should I do if I receive a damaged item?",
@@ -1326,7 +1326,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "Do you offer discounts or promotions?",
-        answer: "Yes, all of our products comes with price discounts and extra price discounts offer when you order more than a stipulated quantity. Aside that, we also occasionally offer other kinds discounts and promotions, sign up for our newsletter to stay updated on our latest deals."
+        answer: "Yes, all of our products comes with price discounts and extra price discounts offer when you order more quantities. Aside that, we also occasionally offer other kinds discounts and promotions, sign up for our newsletter to stay updated on our latest deals."
     },
     {
         question: "Do you offer gift wrapping?",
@@ -1334,7 +1334,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "What is your return policy?",
-        answer: "Damaged or wrong products should be returned within 7 days of purchase. To be eligible, items must be unused and in original packaging/condition, contact our support team for more info."
+        answer: "Damaged or wrong products should be returned within 7 days of purchase. To be eligible, items must be unused and in original packaging/condition and we'd refund you accordingly, contact our support team for more info."
     },
     {
         question: "Can I change or cancel my order?",

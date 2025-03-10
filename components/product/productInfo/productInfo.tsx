@@ -7,7 +7,7 @@ import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IProductViewResearch, ISheetInfo } from '@/config/interfaces';
 import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -39,7 +39,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [deliveryDate, setDeliveryDate] = useState<string>("")
+    const [startDeliveryDate, setStartDeliveryDate] = useState<string>("")
+    const [endDeliveryDate, setEndDeliveryDate] = useState<string>("")
     const router = useRouter()
     const [colorId, setColorId] = useState<number>(0)
     //const [selectColor, setSelectColor] = useState<boolean>(false)
@@ -55,6 +56,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
     const [addedToCart, setAddedToCart] = useState<boolean>(false)
     const [checkoutIsLoading, setCheckoutIsLoading] = useState<boolean>(false)
+    const [addToCartIsLoading, setAddToCartIsLoading] = useState<boolean>(false)
     const [view, setView] = useState<"image" | "video">("image")
     const spec = product.specification
     const stars: Array<number> = [1, 2, 3, 4]
@@ -112,9 +114,9 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         `Product Origin: ${spec?.productOrigin}`,
         spec?.productLocation ? `Product Location: ${spec.productLocation}` : undefined,
         `Weight: ${spec?.weight}kg`,
-        spec?.dimension?.height ? `Height: ${spec.dimension.height}cm` : undefined,
-        spec?.dimension?.width ? `Width: ${spec.dimension.width}cm` : undefined,
-        spec?.dimension?.length ? `Length: ${spec.dimension.length}cm` : undefined,
+        spec?.dimension?.height ? `Height: ${spec.dimension.height}inches` : undefined,
+        spec?.dimension?.width ? `Width: ${spec.dimension.width}inches` : undefined,
+        spec?.dimension?.length ? `Length: ${spec.dimension.length}inches` : undefined,
         spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
     ]
 
@@ -156,16 +158,31 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
     useEffect(() => {
         //console.log("Client: ", clientInfo)
-        const interval = setInterval(() => {
-            const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!)
-            setCustomPrice(() => newPrice)
-        }, 100);
+        // const interval = setInterval(() => {
+        //     if (clientInfo !== undefined) {
+        //         console.log("client is defined")
+        //         const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!)
+        //         setCustomPrice(() => newPrice)
+        //     } else {
+        //         console.log("Client is undefined")
+        //     }
+        // }, 100);
     
-        return () => {
-            clearInterval(interval);
-        };
+        // return () => {
+        //     clearInterval(interval);
+        // };
+
+        // Check if clientInfo is defined, if not, rerun the effect.
+        if (clientInfo !== undefined) {
+            console.log("Client is defined");
+
+            const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!);
+            setCustomPrice(newPrice);
+        } else {
+            console.log("Client is undefined");
+        }
         
-    }, [customPrice, sizeId]);
+    }, [clientInfo, customPrice, sizeId]);
 
     useEffect(() => {
         // This function will be called every time the component is mounted, and
@@ -206,11 +223,15 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     useEffect(() => {
         const currentDate = new Date();
         const nextWeek = new Date(currentDate.getTime() + deliveryPeriod * 24 * 60 * 60 * 1000);
-        const options: Intl.DateTimeFormatOptions = { weekday: "long", year: 'numeric', month: 'long', day: 'numeric' };
+        const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
         const formattedDate = nextWeek.toLocaleDateString('en-US', options);
+
+        nextWeek.setDate(nextWeek.getDate() + deliveryDuration);
+        const formattedDate_ = nextWeek.toLocaleDateString('en-US', options);
         //console.log("One week from now: ", formattedDate);
-        setDeliveryDate(formattedDate)
-    }, [deliveryDate, addedToCart])
+        setStartDeliveryDate(formattedDate)
+        setEndDeliveryDate(formattedDate_)
+    }, [startDeliveryDate, endDeliveryDate, addedToCart])
 
     //This function helps choose color
     const chooseColor = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: number) => {
@@ -251,12 +272,15 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             notify("info", "This product is currently out of stock, check back later!")
             return
         } else {
+            setAddToCartIsLoading(() => true)
+
             const pWeight: number = p.specification?.weight as unknown as number
             const cartSpecs = removeUndefinedKeys({
                 color: p.specification?.colors ? p.specification?.colors[colorId] : undefined,
                 size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
             })
             //const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
+            const deliveryFee_ = getDeliveryFee(pWeight, clientInfo?.country?.name?.common!)
 
             //Arranging the cart details
             const cartItem: ICartItem = {
@@ -265,10 +289,12 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 name: p.name,
                 unitPrice: customPrice,
                 unitWeight: pWeight,
+                unitHiddenDeliveryFee: deliveryFee_,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
                 specs: cartSpecs,
                 extraDiscount: p.pricing?.extraDiscount!,
+                subTotalHiddenDeliveryFee: deliveryFee_ * quantity,
                 subTotalPrice: p.pricing?.basePrice || 0 * quantity,
                 subTotalDiscount: 0
             }
@@ -286,6 +312,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
             const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.country?.name?.common!)
+            const totalHiddenDeliveryFee = Number(cartItem.subTotalHiddenDeliveryFee.toFixed(2))
 
             // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
 
@@ -310,6 +337,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
                     cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
                     cart.deliveryFee = Number(deliveryFee.toFixed(2))
+                    cart.totalHiddenDeliveryFee = Number((cart.totalHiddenDeliveryFee + totalHiddenDeliveryFee).toFixed(2))
                     cart.cart.push(cartItem)
                     setCart(() => cart)
                     setItem(cartName, cart)
@@ -326,10 +354,12 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         cart.cart[index].quantity = quantity
                         cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
                         cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
+                        cart.cart[index].subTotalHiddenDeliveryFee = Number((cart.cart[index].unitHiddenDeliveryFee * quantity).toFixed(2))
                         cart.cart[index].subTotalDiscount = quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
                         cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
+                        cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
                         cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                         setCart(() => cart)
                         setItem(cartName, cart)
@@ -350,6 +380,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     totalPrice: totalPrice,
                     totalDiscount: totalDiscount,
                     totalWeight: totalWeight,
+                    totalHiddenDeliveryFee: totalHiddenDeliveryFee,
                     deliveryFee: deliveryFee,
                     cart: [cartItem]
                 }
@@ -364,6 +395,10 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             }
 
             setAddedToCart(() => true)
+
+            //This ends the loading icon
+            await sleep(1)
+            setAddToCartIsLoading(() => false)
         } 
     }
 
@@ -434,6 +469,29 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     setActiveHeading(index === activeHeading ? null : index);
   };
 
+    //This function changes the main picture on the product info
+    const changePicture = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: string) => {
+        e.preventDefault()
+
+        console.log("Arrow clicked")
+        const imageLength = product.images.length
+        let newIndex = imageIndex
+
+        // Handle left arrow click
+        if (action === "left") {
+            // Move left, if already at the first image, loop to the last image
+            newIndex = newIndex === 0 ? imageLength - 1 : newIndex - 1;
+        } 
+        // Handle right arrow click
+        else if (action === "right") {
+            // Move right, if already at the last image, loop to the first image
+            newIndex = newIndex === imageLength - 1 ? 0 : newIndex + 1;
+        }
+
+        // Update the image index
+        setImageIndex(() => newIndex);
+    }
+
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
@@ -478,7 +536,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             <div className={styles.header}>
                 <div className={styles.bar}></div>
                 <div className={styles.barTitle}>
-                    <span>{product.category?.macro}</span>
+                    <span>Shop more & get more discounts</span>
+                    {/* <span>{product.category?.macro}</span>
                     {product?.category?.mini ? (
                         <>
                             <KeyboardArrowRight className={styles.icon} />
@@ -502,7 +561,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         </>
                     ) : (
                         <></>
-                    )}
+                    )} */}
                 </div>
             </div>
             <main className={`${styles.main}`}>
@@ -530,6 +589,15 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 height={product.images[imageIndex].height}
                             />
                         )}
+                    </div>
+                    <div className={styles.controller}>
+                        <button className={`arrow-left arrow ${styles.prev}`} onClick={(e) => changePicture(e,"left")}>
+                            <KeyboardArrowLeft />
+                        </button>
+                        {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+                        <button className={`arrow-right arrow ${styles.next}`} onClick={(e) => changePicture(e,"right")}>
+                            <KeyboardArrowRight />
+                        </button>
                     </div>
                     <Swiper
                         effect={'slide'}
@@ -675,7 +743,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             <span>{product.rating}</span>
                         </div>
                     </div>
-                    <span className={styles.product_deliveryDate}><em>Delivered to you on/before {deliveryDate}.</em></span>
+                    <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
                     {product.specification?.colors && product.specification.colors[0] !== "" ? (
                         <div className={styles.product_colors}>
                             <span className={styles.span1}>Color</span>
@@ -720,15 +788,6 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                     </SwiperSlide>
                                 ))}
                             </Swiper>
-                            <div className={styles.controller}>
-                                <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
-                                    <KeyboardArrowLeft />
-                                </button>
-                                {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
-                                <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
-                                    <KeyboardArrowRight />
-                                </button>
-                            </div>
                         </div>
                     ) : (<></>)}
                     {product.specification?.sizes && product.specification!.sizes[0] !== "" ? (
@@ -796,11 +855,15 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 )}
                             </button>
                         ) : (
-                            <button className={styles.cart_button} onClick={e => {
-                                addToCart(e, false)
-                            }}>
-                                <AddShoppingCart className={styles.icon} />
-                                <span>Add to Cart</span>
+                            <button className={styles.cart_button} onClick={(e) => addToCart(e, false)}>
+                                {addToCartIsLoading ? (
+                                    <Loading width="20px" height="20px" />
+                                ) : (
+                                    <>
+                                        <AddShoppingCart className={styles.icon} />
+                                        <span>Add to Cart</span>
+                                    </>
+                                )}
                             </button>
                         )}
                         <button className={styles.wish_button} onClick={(e) => wishProduct(e)}>

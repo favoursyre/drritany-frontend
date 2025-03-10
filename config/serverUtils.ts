@@ -341,3 +341,8 @@ export const GoogleSheetStore = async (sheetId: string) => {
         addSheet
     }
 }
+
+//This function allows users scrape data from Aliexpress
+const scrapeAliexpress = async (url: string) => {
+
+}

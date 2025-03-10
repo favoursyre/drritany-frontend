@@ -14,6 +14,7 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import Image from 'next/image';
+import { useModalBackgroundStore, useLoadingModalStore } from '@/config/store';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
@@ -32,6 +33,8 @@ const CategorySlide = () => {
     const [barTitle, setBarTitle] = useState<string>()
     const swiperRef = useRef<SwiperCore>();
     const [miniCategories, setMiniCategories] = useState(shuffleArray(categories.flatMap(category => category.minis)))
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
 
     //console.log("Path: ", routerPath)
 
@@ -84,6 +87,10 @@ const CategorySlide = () => {
     //This function is used for viewing a sub category
     const viewSubCategory = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, miniCategory: string) => {
       e.preventDefault()
+
+      //This sets the loading modal
+      setModalBackground(true)
+      setLoadingModal(true)
 
       //Stop the autoplay when Swiper is clicked
       if (swiperRef.current) {

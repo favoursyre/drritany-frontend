@@ -34,7 +34,7 @@
 
     @include phoneMini {
         height: 6%;
-        //top: 19%;
+        top: 11%;
         align-items: center;
         //overflow: hidden;
     }
@@ -48,20 +48,20 @@
 
         @include phonePro {
             //width: 20px;
-            display: none;
+            //display: none;
         }
     }
 
     .barTitle {
         //border: 1px solid $primary-color;
         @include flexBar($position: relative, $justify: center, $gap: 0%, $align: flex-start);
-        @include text-layout($size: 13px, $l_height: 20px, $color: $primary-color);
+        @include text-layout($size: 14px, $l_height: 20px, $color: $primary-color);
         font-weight: 500;
         //font-family: "Poppins";
 
         span {
             color: $primary-color;
-            @include text-layout($size: 13px, $l_height: 20px, $color: $primary-color);
+            @include text-layout($size: 14px, $l_height: 20px, $color: $primary-color);
             font-weight: 500;
 
             @include phonePro {
@@ -74,8 +74,12 @@
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
-                font-size: 10px;
+                //font-size: 12px;
                 //line-height: 11px;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
             }
         }
     
@@ -178,6 +182,91 @@
             }
         }
 
+        .controller {
+            //border: 1px solid red;
+            @include flexBar($position: absolute, $align: center, $flex_d: row, $justify: space-between, $gap: 5%);
+            @include size(90%, 55px);
+            top: 35%;
+            color: $primary-color;
+            //display: none;
+
+            @include tabletPro {
+                //display: flex;
+            }
+
+            @include tablet {
+                height: 45px;
+            }
+    
+            @include phonePro {
+                gap: 1%;
+                //display: flex;
+                @include size(100%, 45px);
+                //justify-content: space-between;
+            }
+    
+            .prev, .next {
+                color: white;
+                //border: none;
+                border-radius: 5px;
+                border: 1px solid $primary-color;
+                @include size(55px, 100%);
+                @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+                z-index: 5;
+                //top: -10%;
+
+                @include tablet {
+                    width: 45px;
+                }
+    
+                @include phonePro {
+                    width: 45px;
+                    height: 55px;
+                }
+
+                @include phoneMini {
+                    width: 35px;
+                    height: 45px;
+                }
+    
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+    
+            .pagination {
+                color: $text-color-3;
+                position: relative;
+                top: 22%;
+                align-items: center;
+                //@include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
+                //border: 1px solid red;
+                //display: none;
+                @include size(30%, 100%);
+    
+                @include tablet {
+                    width: 40%;
+                }
+    
+                @include phonePro {
+                    gap: 0%;
+                    flex-direction: row;
+                    justify-content: center;
+                    width: 100%;
+                    top: 15%;
+                }
+    
+                @include phone {
+                    //width: 80%;
+                }
+    
+                @include phoneMini {
+                    top: -5%;
+                    line-height: 12px;
+                }
+            }
+        }
+
         .image_slide {
             @include flexBar($position: relative, $justify: center, $gap: 2%, $flex_d: row, $align: center);
             //padding: 2% 2%;
@@ -256,6 +345,13 @@
                 }
             }
         }
+
+        // &:hover {
+
+        //     .controller {
+        //         display: flex;
+        //     }
+        // }
     }
 
     .right_section {
@@ -597,72 +693,6 @@
                 //     }
                 //     border: 2px solid $primary-color;
                 // }
-            }
-
-            .controller {
-                border: 1px solid red;
-                @include flexBar($position: absolute, $align: center, $flex_d: row, $justify: space-between, $gap: 5%);
-                @include size(95%, 55%);
-                top: 50%;
-                color: $primary-color;
-                display: none;
-        
-                @include phonePro {
-                    gap: 1%;
-                    //justify-content: space-between;
-                }
-        
-                .prev, .next {
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    border: 1px solid $primary-color;
-                    @include size(3%, 100%);
-                    @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
-                    z-index: 5;
-                    //top: -10%;
-        
-                    @include phonePro {
-                        width: 10%;
-                        display: none;
-                    }
-        
-                    &:hover {
-                        color: $primary-color;
-                    }
-                }
-        
-                .pagination {
-                    color: $text-color-3;
-                    position: relative;
-                    top: 22%;
-                    align-items: center;
-                    //@include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 3%);
-                    //border: 1px solid red;
-                    //display: none;
-                    @include size(30%, 100%);
-        
-                    @include tablet {
-                        width: 40%;
-                    }
-        
-                    @include phonePro {
-                        gap: 0%;
-                        flex-direction: row;
-                        justify-content: center;
-                        width: 100%;
-                        top: 15%;
-                    }
-        
-                    @include phone {
-                        //width: 80%;
-                    }
-        
-                    @include phoneMini {
-                        top: -5%;
-                        line-height: 12px;
-                    }
-                }
             }
         }
 

@@ -79,7 +79,11 @@ export default async function ProductByIdPage({ params: { id } }: { params: { id
   const products_ = await getProducts() as unknown as Array<IProduct>
   const products = shuffleArray(removeProductFromArray(product[0], products_))
   const titles1: ISlideTitle = {
-    slideTitleId: 0,
+    slideTitleId: 1,
+    barTitleId: 2
+  }
+  const titles2: ISlideTitle = {
+    slideTitleId: 2,
     barTitleId: 2
   }
 
@@ -87,8 +91,8 @@ export default async function ProductByIdPage({ params: { id } }: { params: { id
     <main className="product_info_page">
       <ProductInfo product_={product[0]} />
       {/* <HomeCampaignB /> */}
-      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} title_={titles1} view_={undefined} />
-      {/* <RecommendedProduct product_={products} titleId_={2} /> */}
+      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} title_={titles1} view_={"infoSlide1"} />
+      <RecommendedProduct product_={products} title_={titles2} view_={"infoSlide2"} />
     </main>
   )
 }

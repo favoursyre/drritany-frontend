@@ -7,7 +7,7 @@ import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./invoice.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
 import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses } from '@/config/utils';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration } from '@/config/utils';
 import { useClientInfoStore } from "@/config/store";
 import { Remove, Add } from '@mui/icons-material';
 import { countryList } from '@/config/database';
@@ -21,7 +21,8 @@ import { countryList } from '@/config/database';
 const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
     const router = useRouter()
     const [order, setOrder] = useState<IOrder>(order_)
-    const [deliveryDate, setDeliveryDate] = useState<string>("")
+    const [startDeliveryDate, setStartDeliveryDate] = useState<string>("")
+    const [endDeliveryDate, setEndDeliveryDate] = useState<string>("")
     const routerPath = usePathname()
     const [deliveryStatus, setDeliveryStatus] = useState<IEventStatus>()
     const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
@@ -41,11 +42,18 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
         date.setDate(date.getDate() + deliveryPeriod);
 
         // Format the date
-        const formattedDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}, ${date.getFullYear()}`;
+        const formattedDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}}`;
+
+        date.setDate(date.getDate() + deliveryDuration);
+
+        // Format the new date
+        const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+        const formattedDate_ = date.toLocaleDateString('en-US', options);
 
         // Print the formatted date
         console.log(formattedDate);
-        setDeliveryDate(() => formattedDate)
+        setStartDeliveryDate(() => formattedDate)
+        setEndDeliveryDate(() => formattedDate_)
 
         if (order.deliverySpec && order.paymentSpec) {
             const deliveryStatus_ = deliveryStatuses.find((status) => status.status === order.deliverySpec.status)
@@ -76,8 +84,8 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
             <div className={styles.deliverySection}>
                 <div className={styles.deliveryInfo}>
                     <div className={styles.deliveryDate}>
-                        <span><strong>Delivered On/Before</strong></span>
-                        <span>{deliveryDate}</span>
+                        <span><strong>Delivered by</strong></span>
+                        <span>{startDeliveryDate}-{endDeliveryDate}</span>
                     </div>
                     {deliveryStatus ? (
                         <div className={styles.deliveryStatus}>

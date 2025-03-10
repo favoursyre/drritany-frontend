@@ -2,13 +2,13 @@
 
 ///Libraries -->
 import { create } from "zustand";
-import { IModalBackgroundStore, IAdminSideBarStore, IProduct, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore } from "@/config/interfaces";
+import { IModalBackgroundStore, IAdminSideBarStore, IImportProductModalStore, IProduct, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore, ILoadingModalStore } from "@/config/interfaces";
 
 //Commencing code -->
 
 //Modal Background state store
 export const useModalBackgroundStore = create<IModalBackgroundStore>((set) => ({
-    modal: false,
+    modal: true,
     setModalBackground: (status) => set(() => ({ modal: status }))
 }))
 
@@ -26,10 +26,22 @@ export const useConfirmationModalStore = create<IConfirmationModalStore>((set) =
     setConfirmationChoice: (status) => set(() => ({ choice: status }))
 }))
 
+//Loading Modal state store
+export const useLoadingModalStore = create<ILoadingModalStore>((set) => ({
+    modal: true,
+    setLoadingModal: (status) => set(() => ({ modal: status }))
+}))
+
 //Order state store
 export const useOrderModalStore = create<IOrderModalStore>((set) => ({
     modal: false,
     setOrderModal: (status) => set(() => ({ modal: status }))
+}))
+
+//Import Product state store
+export const useImportProductModalStore = create<IImportProductModalStore>((set) => ({
+    modal: false,
+    setImportProductModal: (status) => set(() => ({ modal: status }))
 }))
 
 //Order Form state store

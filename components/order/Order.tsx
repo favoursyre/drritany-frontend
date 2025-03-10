@@ -144,6 +144,7 @@ const Order = () => {
                     const _cart_: ICart = {
                         totalPrice: 0,
                         totalDiscount: 0,
+                        totalHiddenDeliveryFee: 0,
                         totalWeight: 0,
                         deliveryFee: 0,
                         cart: []

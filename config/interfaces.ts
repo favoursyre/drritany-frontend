@@ -122,6 +122,12 @@ export interface IContactModalStore {
   setContactModal: (status: boolean) => void
 }
 
+//Interface for loading modal store
+export interface ILoadingModalStore {
+  modal: boolean;
+  setLoadingModal: (status: boolean) => void
+}
+
 //Interface for confirmation modal store
 export interface IConfirmationModalStore {
   modal: boolean;
@@ -140,6 +146,12 @@ export interface IOrderFormModalStore {
 export interface IOrderModalStore {
   modal: boolean;
   setOrderModal: (status: boolean) => void
+}
+
+//Interface for import product modal store
+export interface IImportProductModalStore {
+  modal: boolean;
+  setImportProductModal: (status: boolean) => void
 }
 
 //Interface for discount modal store
@@ -188,6 +200,8 @@ export interface IClientInfoStore {
 
 /**
  * @notice The interface for product mongoose schema api
+ * @param _id - The id of the product (also SKU)
+ * @param addedBy - The account id who added the product
  */
 export interface IProduct {
     _id?: string,
@@ -202,6 +216,8 @@ export interface IProduct {
     description?: string,
     extraDescription?: string,
     specification?: ISpecification,
+    addDelivery?: boolean,
+    url?: string,
     createdAt?: string,
     updatedAt?: string,
     __v?: number
@@ -214,6 +230,7 @@ export interface ICartItem {
     readonly name?: string,
     readonly unitPrice: number,
     readonly unitWeight: number,
+    readonly unitHiddenDeliveryFee: number,
     quantity: number,
     specs?: { 
       color?: string | IImage,
@@ -225,6 +242,7 @@ export interface ICartItem {
     },
     subTotalWeight: number,
     subTotalPrice: number,
+    subTotalHiddenDeliveryFee: number,
     subTotalDiscount: number
 } 
 
@@ -233,6 +251,7 @@ export interface ICart {
   totalPrice: number,
   totalDiscount: number,
   totalWeight: number,
+  totalHiddenDeliveryFee: number,
   deliveryFee: number,
   cart: Array<ICartItem>
 }
@@ -445,7 +464,7 @@ export interface IPricing {
   discount?: number,
   variantPrices?: Array<{
     country?: string,
-    percent?: number ///This refer to the percent of inflation
+    amount?: number ///This refer to the amount in dollar equivalent to the country's own currency
   }>,
   extraDiscount?: {
     limit?: number,
@@ -513,6 +532,8 @@ export interface IProductViewResearch {
 export interface ITrafficResearch {
   IP: string,
   Country: string,
+  Page_Title: string,
+  Page_URL: string,
   Date: string,
   Time: string
 }
@@ -600,6 +621,21 @@ export enum PaymentStatus {
   SUCCESS = "Successful",
   REFUND = "Refunded",
   FAILED = "Failed"
+}
+
+//The enum for the various platforms
+export enum MarketPlatforms {
+  ALIEXPRESS = "Aliexpress",
+  TAOBAO = "Taobao",
+  _1688 = "1688",
+  AMAZON = "Amazon",
+  CJDROPSHIP = "CJDropshipping"
+}
+
+///The interface for market platforms
+export interface IMarketPlatform {
+  name: string,
+  url: string
 }
 
 ///The interface for a payment status and corresponding text color

@@ -10,6 +10,8 @@ import DiscountModal from "../discountModal/DiscountModal";
 import OrderModal from "../orderModal/OrderModal";
 import OrderFormModal from "../orderFormModal/OrderFormModal";
 import ConfirmationModal from "../confirmationModal/ConfirmationModal";
+import ImportProductModal from "../importProductModal/importProductModal";
+import LoadingModal from "../loadingModal/LoadingModal";
 
 ///Commencing the code 
 
@@ -35,6 +37,8 @@ const Modal = () => {
         <ConfirmationModal />
         <OrderFormModal />
         <OrderModal />
+        <ImportProductModal />
+        <LoadingModal />
     </div>
   );
 };

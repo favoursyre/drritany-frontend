@@ -1,0 +1,167 @@
+/* This contains the scss for the import product modal component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar ($position: relative, $align: center, $justify: center, $gap: 5%, $flex_d: column);
+    //justify-content: center;
+    border: 1px solid green;
+    @include size(40%, 50%);
+    background-color: white;
+    padding: 0% 2% 0% 2%;
+    border-radius: 8px;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+    font-family: "Inter";
+
+    @include tabletPro {
+      @include size(60%, 40%);
+    }
+
+    @include phonePro {
+      @include size(80%, 40%);
+      //left: 10%;
+    }
+
+    .modal_head {
+        //border: 1px solid green;
+        @include flexBar ($position: relative, $display: flex, $wrap: none, $align: center, $justify: space-between, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
+        @include size(90%, 8%);
+        //top: 5%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dotted  $primary-color;
+
+        .title {
+            border: 1px solid green;
+            @include text-layout($size: 22px, $color: $primary-color, $l_height: 20px);
+            font-weight: 600;
+            font-family: "Poppins";
+            
+            @include phonePro {
+            font-size: 15px;
+            line-height: 20px;
+            }
+
+            @include phone {
+            font-size: 10px;
+            line-height: 15px;
+            }
+        }
+  
+        button {
+          position: relative;
+          display: flex;
+          width: 7%;
+          flex-direction: row;
+          justify-content: center;
+          border: none;
+          background-color: transparent;
+          border: 2px solid red;
+  
+          .icon {
+  
+            @include phonePro {
+              font-size: 1rem;
+            }
+          }
+  
+          @include phonePro {
+            width: 15%;
+          }
+    
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+    }
+
+    .form {
+        //position: absolute;
+        // display: flex;
+        // position: relative;
+        // flex-direction: column;
+        position: relative;
+        @include size(90%, 60%);
+        //gap: 5%;
+        border: 1px solid red;
+        @include text-layout($size: 14px, $color: $text-color-2, $l_height: 20px);
+        padding-top: 10px;
+        padding-bottom: 10px;
+    
+        @include phonePro {
+          width: 90%;
+          height: 90%;
+          //border: 2px solid green;
+        }
+    
+        &:focus {
+          //background-color: red;
+          outline-color: $primary-color;
+          border: 1px solid $primary-color;
+        }
+    
+        ::placeholder {
+          //@include formTag;
+          padding: 1%;
+        }
+    
+        label {
+          //display: block;
+          //margin-bottom: 1rem;
+          font-weight: 500;
+        }
+    
+        input {
+          margin-bottom: 0.7rem;
+          @include size(98%, 30px);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+          //padding: 1%;
+    
+          @include phonePro {
+            height: 35px;
+            //border: 2px solid red;
+          }
+        }
+
+        .numberLabel {
+          //border: 1px solid red;
+        }
+    
+        select {
+          margin-bottom: 0.7rem;
+          @include size(100%, 35px);
+          border: 1.5px solid #cbd5e1;
+          border-radius: 4px;
+    
+          @include phonePro {
+            height: 35px;
+          }
+        }
+
+        button {
+            @include flexBar(
+              $position: relative,
+              $display: flex,
+              $wrap: none,
+              $align: center,
+              $justify: center,
+              $gap: 2%,
+              $flex_d: row,
+              $flex: none,
+              $bg-color: $primary-color
+            );
+            @include size(100%, 40px);
+            border: 1px solid $primary-color;
+            color: $tertiary-color;
+            border-radius: 4px;
+      
+            &:hover {
+              background-color: $tertiary-color;
+              color: $primary-color;
+            }
+          }
+    }
+}

@@ -658,12 +658,12 @@
 }
 
 .productInfoPage {
-    top: 220%;
+    top: 290%;
     @extend %footer-layout;
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 160%;
+        top: 230%;
     } 
 
     @include tabletMini {
@@ -671,8 +671,8 @@
     }
 
     @include phonePro {
-        //border: 1px solid red;
-        top: 245%;
+        //border: 1px solid black;
+        top: 305%;
     } 
 
     @include phone {
@@ -706,7 +706,7 @@
 
 .termsPage {
     @extend %footer-layout;
-    top: 250%;
+    top: 255%;
 
     @include tabletPro {
         //border: 1px solid red;

@@ -1,0 +1,11 @@
+/* This contains the scss for the loading modal component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar ($position: relative, $align: center, $justify: center, $gap: 5%, $flex_d: column);
+    //justify-content: center;
+    //border: 1px solid green;
+}

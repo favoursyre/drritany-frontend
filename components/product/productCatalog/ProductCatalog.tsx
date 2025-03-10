@@ -182,7 +182,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                 <div className={styles.heading}>
                     <div className={styles.upper}>
                         <div className={styles.bar}></div>
-                        <span className={styles.barTitle}>Shop now & Pay on Delivery</span>
+                        <span className={styles.barTitle}>Shop more & get more discounts</span>
                     </div>
                     
                 </div>

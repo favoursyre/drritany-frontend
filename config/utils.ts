@@ -3,11 +3,11 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
 import { countryList } from './database';
-import { companyName as _companyName, deliveryPeriod as _deliveryPeriod } from './sharedUtils';
+import { companyName as _companyName, deliveryPeriod as _deliveryPeriod, deliveryDuration as _deliveryDuration } from './sharedUtils';
 
 ///Commencing the code
 export const companyName: string = _companyName
@@ -23,6 +23,8 @@ export const discount: number = 33
 export const extraDiscount: number = 5
 
 export const deliveryPeriod: number = _deliveryPeriod //(Unit is in days) This means delivery is within 4 days
+
+export const deliveryDuration: number = _deliveryDuration //This represents the time range within which the delivery will be made
 
 export const minKg: number = 1
 
@@ -77,6 +79,12 @@ export const orderName: string = "idealPlugOrder"
 export const SUPPORT_EMAIL: string = companyEmail
 export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
 
+///These are list of various platforms
+export const platformList: Array<IMarketPlatform> = [
+    { name: "Aliexpress", url: "aliexpress.us" },
+    { name: "Amazon", url: "amazon.com" },
+]
+
 export const logo: IImage = {
     src: "https://drive.google.com/uc?export=download&id=1V-QyvBujfHsM0fIimUT3PL2DwjZCWJXG",
     alt: "logo",
@@ -121,6 +129,11 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
     }
 }
 
+///This extracts title
+export const extractBaseTitle = (title: string): string => {
+    const [baseTitle] = title.split(' | '); // Split by ' | ' and take the first part
+    return baseTitle;
+}
     
 //This function checks if 2 objects are equal
 export const areObjectsEqual = <T extends { [key: string]: any }>(obj1: T | undefined, obj2: T | undefined): boolean => {
@@ -267,7 +280,7 @@ export const round = (value: number, precision: number): number => {
     return Math.round(value * multiplier) / multiplier;
 }
 
-//This function calculates the delivery fee for a cart in USD
+//This function calculates the delivery fee for a product in USD
 export const getDeliveryFee = (weight: number, country: string) => {
     
     let deliveryFee: number
@@ -465,6 +478,7 @@ export const sortProductByRating = (products: Array<IProduct>): Array<IProduct> 
 ///This function sorts the array from latest to oldest
 export const sortProductByLatest = (products: Array<IProduct>): Array<IProduct> => {
     // Sort the array based on the createdAt property in descending order
+    console.log("Sorted: ", products)
     const sortedProducts = products.sort((a, b) => {
         return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime();
     }); 
@@ -745,35 +759,68 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
 export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
     //console.log("custom pricing...")
     const clientCountry = countryList.find((c) => c.name?.common === country)
+    console.log("Client: ", country)
     const size = product.specification?.sizes
-    const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
     let customPrice
-    if (inflation === 0) {
-        customPrice = product.pricing?.basePrice!
+    console.log("Customm P: ", product)
+
+    const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common)
+    console.log("Variants: ", variant)
+    if (variant && clientCountry) {
+        customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
     } else {
-        customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+        customPrice = product.pricing?.basePrice!
     }
+    console.log('Custom Price: ', customPrice)
 
     if (size) {
         const _size = size[sizeId]
         if (_size) {
             if (typeof _size === "string") {
-                return customPrice
+                console.log('Custom Price 2: ', customPrice)
+                //return customPrice
             } else {
                 if (_size?.percent === 0) {
-                    return customPrice
+                    console.log('Custom Price 2: ', customPrice)
+                    //return customPrice
                 } else {
                     const xtraPrice = (_size?.percent! / 100) * customPrice
                     const newPrice = xtraPrice + customPrice
-                    return newPrice
+                    console.log('Custom Price 2: ', newPrice)
+                    customPrice = newPrice
                 }
             }
         } else {
-            return customPrice
+            console.log('Custom Price 2: ', customPrice)
+            //return customPrice
+            
         }
     } else {
-        return customPrice
+        console.log('Custom Price 2: ', customPrice)
+        //return customPrice
     }
+
+    //This calculates delivery fee
+    if (product.addDelivery === false && product.addDelivery !== undefined) {
+        customPrice = customPrice
+    } else {
+        let deliveryFee = getDeliveryFee(product.specification?.weight!, clientCountry?.name?.common!)
+        customPrice = customPrice + deliveryFee
+    }
+        
+    console.log('Custom Price 3: ', customPrice)
+    return customPrice
+    // const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
+    
+    // if (inflation === 0) {
+    //     customPrice = product.pricing?.basePrice!
+    // } else {
+    //     customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+    // }
+
+    
+
+    
 }
 
 //This function keeps track of what product is added/deleted to cart
@@ -881,6 +928,14 @@ export const sizePercentToArray = (input: string): Array<{ size: string, percent
     });
 }
 
+//This converts size percent to array
+export const stringNumToArray = (input: string): Array<{ country: string, amount: number }> => {
+    return input.split('. ').map(pair => {
+        const [country, amount] = pair.split(', ').map(item => item.trim());
+        return { country, amount: amount !== undefined ? parseFloat(amount) : 0 };
+    });
+} 
+
 //This converts size percent to string
 export const sizePercentToString = (input: Array<{ size: string, percent: number } | string>): string => {
     return input.map(item => {
@@ -891,6 +946,17 @@ export const sizePercentToString = (input: Array<{ size: string, percent: number
         }
     }).join('. ');
 }
+
+//This converts size percent to array
+export const stringNumToString = (input: Array<{ country?: string, amount?: number }>): string => {
+    return input.map(item => {
+        if (typeof item === 'string') {
+            return `${item}, 0`; // Default percent to 0 for string inputs
+        } else {
+            return `${item.country}, ${item.amount}`;
+        }
+    }).join('. ');
+} 
 
 export const categories: Array<ICategoryInfo> = [
     {
@@ -1327,13 +1393,13 @@ export const categories: Array<ICategoryInfo> = [
                         ]
                     },
                     {
-                        micro: "Decors & Wallpapers",
+                        micro: "Decors & Arts",
                         nanos: [
-                            "Wall Paints",
-                            "Paint Brushes & Rollers",
-                            "Wallpaper & Borders",
-                            "Paint Sprayers",
-                            "Paint Strippers & Removers",
+                            "Paints & Accessories",
+                            "Wallpapers",
+                            "Ornaments",
+                            "Vases",
+                            "Flowers",
                             "Others"
                         ]
                     }
@@ -1496,7 +1562,7 @@ export const categories: Array<ICategoryInfo> = [
                         nanos: [
                             "Paintings",
                             "Sketches",
-                            "Scultpures",
+                            "Sculptures",
                             "Art Supplies & Accessories"
                         ]
                     },

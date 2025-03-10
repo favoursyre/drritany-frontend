@@ -14,6 +14,7 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import { useModalBackgroundStore, useLoadingModalStore } from '@/config/store';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import { ArrowRightAlt } from '@mui/icons-material';
@@ -24,7 +25,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 //These are the various titles for product slide
 const slideTitles: Array<string> = [
   "Customers also viewed",
-  "Customers also ordered",
+  "Customers also bought",
   "Recommended for you",
   "Newest Arrivals",
   "Best Selling",
@@ -34,7 +35,7 @@ const slideTitles: Array<string> = [
 
 const barTitles: Array<string> = [
   "This month's",
-  "Shop now & Pay on delivery",
+  "Free delivery",
   "Highlights",
   "Wishes do come true"
 ]
@@ -52,6 +53,8 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
     const [barTitle, setBarTitle] = useState<string>(barTitles[title_.barTitleId!])
     const swiperRef = useRef<SwiperCore>();
     const [view, setView] =  useState<string>(view_!)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
 
     useEffect(() => {
       if (view === "homeSlide1") {
@@ -67,6 +70,9 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
         const newProducts = sortProductByOrder(shuffleArray(similarProducts!))
         setSimilarProducts(() => newProducts)
       } else if (view === "productSlide2") {
+        const newProducts = shuffleArray(similarProducts!)
+        setSimilarProducts(() => newProducts)
+      } else if (view === "infoSlide2") {
         const newProducts = shuffleArray(similarProducts!)
         setSimilarProducts(() => newProducts)
       }
@@ -136,6 +142,8 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
             return styles.wishSlide1
           case "wishSlide2":
             return styles.wishSlide2
+          case "infoSlide2":
+            return styles.infoSlide2
           case "query":
               return styles.queryView
           default: 
@@ -146,6 +154,10 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
   //This function is triggered when the user clicks on see more
   const seeMore = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
     e.preventDefault()
+
+    //Setting the loading screen
+    setModalBackground(true)
+    setLoadingModal(true)
 
     let productFilter
     if (view === "homeSlide1") {
@@ -174,6 +186,11 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
         category: "All"
       }
     } else if (view === "wishSlide2") {
+      productFilter = {
+        filterId: 4,
+        category: "All"
+      }
+    } else if (view === "infoSlide2") {
       productFilter = {
         filterId: 4,
         category: "All"

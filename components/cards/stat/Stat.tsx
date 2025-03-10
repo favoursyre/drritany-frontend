@@ -8,9 +8,9 @@ import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { slashedPrice, routeStyle } from "@/config/utils";
-import { useClientInfoStore } from "@/config/store";
+import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 
-///Commencing the code 
+///Commencing the code
 /**
  * @title Stat Card Component
  * @returns The Stat Card component
@@ -20,6 +20,8 @@ const StatCard = ({ product_, view }: { product_: IProduct, view: string | undef
     const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const routerPath = usePathname();
+    // const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
+    // const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
 
     useEffect(() => {
         //console.log("Loc: ", clientInfo)
@@ -27,22 +29,24 @@ const StatCard = ({ product_, view }: { product_: IProduct, view: string | undef
     }, [clientInfo, product, product_]);
 
     ///This handles what happens when a product is clicked
-    const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
+    const viewCategory = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
         e.preventDefault()
-        //console.log("Type: ", typeof event)
-        //console.log("id: ", id)
-        
+
+        //This sets the loading modal
+        // setModalBackground(true)
+        // setLoadingModal(true)
+
         router.push(`/products/${id}`);
     }
 
     return (
-        <main className={`${styles.main} ${view === "slide" ? styles.slideView : ""}`} onClick={(e) => viewProduct(e, product._id!)}>
+        <main className={`${styles.main} ${view === "slide" ? styles.slideView : ""}`} onClick={(e) => viewCategory(e, product._id!)}>
             <div className={styles.discount}>
                 <span>-{product.pricing?.discount}%</span>
             </div>
             <div className={styles.card_image}>
                 <Image
-                    className={styles.img} 
+                    className={styles.img}
                     src={product.images[0].src}
                     alt=""
                     width={product.images[0].width}
@@ -69,5 +73,5 @@ const StatCard = ({ product_, view }: { product_: IProduct, view: string | undef
         </main>
     );
 };
-  
+
 export default StatCard;

@@ -6,10 +6,10 @@ import { useState, useEffect, MouseEvent, ChangeEvent, Fragment, DragEvent, useR
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, IPricing, ICategory, ICategoryInfo, IProductGeneric, IImage, IAdmin } from '@/config/interfaces';
 import { setItem, notify, getItem, removeItem } from '@/config/clientUtils';
-import { cartName, sleep, backend, isVideo, capitalizeFirstLetter, categories, formatDateMongo, arrayToString, stringToArray, adminName, productInfoName, isImage, getGDriveDirectLinkId, getGDriveDirectLink, getGDrivePreviewLink, sizePercentToString, sizePercentToArray } from '@/config/utils'
+import { cartName, sleep, backend, isVideo, capitalizeFirstLetter, categories, formatDateMongo, arrayToString, stringToArray, stringNumToArray, stringNumToString, adminName, productInfoName, isImage, getGDriveDirectLinkId, getGDriveDirectLink, getGDrivePreviewLink, sizePercentToString, sizePercentToArray } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
-import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
-import { PreviewOutlined, DeleteOutlined, Edit, ThumbUpOffAlt, Close, FileUploadOutlined, SaveOutlined, ThumbDownOffAlt } from '@mui/icons-material';
+import { useModalBackgroundStore, useDiscountModalStore, useImportProductModalStore } from '@/config/store';
+import { PreviewOutlined, DeleteOutlined, Edit, ThumbUpOffAlt, Close, FileUploadOutlined, SaveOutlined, ThumbDownOffAlt, DownloadOutlined } from '@mui/icons-material';
 import Loading from '@/components/loadingCircle/Circle';
 import fs from "fs"
 import FormData from "form-data";
@@ -65,6 +65,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
     const [productIngredients, setProductIngredients] = useState<string>("")
     const [productColors, setProductColors] = useState<string>("")
     const [productSizes, setProductSizes] = useState<string>("")
+    const [variantPrices, setVariantPrices] = useState<string>("")
     const [productWeight, setProductWeight] = useState<number>()
     const [productOrigin, setProductOrigin] = useState<string>("")
     const [productLength, setProductLength] = useState<number>()
@@ -83,8 +84,10 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
     const [productExtraDescription, setProductExtraDescription] = useState<string>("")
     const [productManufactureYear, setProductManufactureYear] = useState<number>()
     const [productActiveStatus, setProductActiveStatus] = useState<boolean>()
+    const [productUrl, setProductUrl] = useState<string>("")
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
+    const [addDelivery, setAddDelivery] = useState<string>("")
     const [deliveryDate, setDeliveryDate] = useState<string>("")
     const router = useRouter()
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,6 +96,8 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
     const [imageMaxLength, setImageMaxLength] = useState(3)
     const [imageMaxSize, setImageMaxSize] = useState(15)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setImportProductModal = useImportProductModalStore(state => state.setImportProductModal)
+    const modalBackground = useModalBackgroundStore(state => state.modal);
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
     const discountProduct = useDiscountModalStore(state => state.product);
@@ -182,6 +187,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
 
     ///This function fills up the infos with available data
     const fillUpProductForm = (p: IProduct) => {
+        console.log("Product fill up: ", p)
+        //return
+
         //const p = product_[0]
         setProduct(() => p)
         setProductName(p.name!)
@@ -198,6 +206,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         setProductDescription(p.description!)
         setProductExtraDescription(p.extraDescription!)
         setProductAddedBy(p.addedBy!)
+        setProductUrl(p.url!)
         setProductManufactureYear(p.specification?.manufactureYear!)
         setBasePrice(p.pricing?.basePrice)
         setProductRating(p.rating)
@@ -206,6 +215,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         setInStockOption(p.pricing?.inStock ? "True" : "False")
         setXtraDiscountLimit(p.pricing?.extraDiscount?.limit)
         setXtraDiscountPercent(p.pricing?.extraDiscount?.percent)
+        setVariantPrices(p.pricing?.variantPrices ? stringNumToString(p.pricing?.variantPrices) : undefined!)
         setProductBrand(p.specification?.brand!)
         setProductModel(p.specification?.modelNumber!)
         setProductItemForm(p.specification?.itemForm!)
@@ -274,6 +284,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         // if (label === "edit") {
         //     setProductActiveStatus(false)
         // }
+        //console.log("Product Date: ")
 
         //Validate all required infos
         //await validateRequiredInputs()
@@ -331,6 +342,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         //const product = getItem(productInfoName) as unknown as IProduct
         const productData = arrangeProductData(label)
         console.log("Product Data: ", productData)
+        //return
 
         //console.log("reached here")
         //Setting the loading effect properly
@@ -371,8 +383,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 })
             
                 if (res.ok) {
-                    console.log("Res: ", res.json())
+                    console.log("Res Suc: ", await res.json())
                     notify("success", "Product Updated Successfully")
+                    //return
                     window.location.reload()
                 }
             } catch (error) {
@@ -445,9 +458,12 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                     limit: xtraDiscountLimit,
                     percent: xtraDiscountPercent
                 } : undefined,
-                inStock: inStockOption === "True" ? true : false
+                inStock: inStockOption === "True" ? true : false,
+                variantPrices: variantPrices ? stringNumToArray(variantPrices) : undefined,
             },
+            url: productUrl,
             active: label === "edit" || label === "create" || label === "deactivate" ? false : true,
+            addDelivery: true, //This value is hard coded
         }
         return _product
     }
@@ -486,6 +502,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
             case "nanoCategory":
                 setNanoCategory(value)
                 break
+            case "productUrl":
+                setProductUrl(value)
+                break
             case "basePrice":
                 console.log("Price")
                 setBasePrice(Number(value))
@@ -501,6 +520,10 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
             case "xtraDiscountPercent":
                 console.log("Discount Percent")
                 setXtraDiscountPercent(Number(value))
+                break
+            case "variantPrices":
+                console.log("Variant Prices")
+                setVariantPrices(value)
                 break
             case "productBrand":
                 setProductBrand(capitalizeFirstLetter(value))
@@ -584,6 +607,9 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                 //console.log('hi testing: ', value)
                 setInStockOption(value)
                 break
+            case "addDelivery":
+                setAddDelivery(value)
+                break
             default:
                 undefined
                 break
@@ -638,6 +664,14 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         //Saving the info to local storage
         //setItem(productInfoName, _product)
         console.log("New product: ", _product_)
+    }
+
+    ///This function is used to trigger the modal for importing product(s) from a link
+    const importProduct = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+
+        setModalBackground(true)
+        setImportProductModal(true)
     }
 
     ///This handles what happens when delete product is clicked
@@ -889,13 +923,18 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             </button>
                         </Fragment>
                     ) : (
-                        <button className={styles.edit}>
-                            {editIsLoading ? (
-                                <Loading width="20px" height="20px" />
-                            ) : (
-                                <SaveOutlined className={styles.icon} onClick={(e) => updateProductInfo(e, "create")} />
-                            )}
-                        </button>
+                        <Fragment>
+                            <button className={styles.import}>
+                                <DownloadOutlined className={styles.icon} onClick={(e) => importProduct(e)} />
+                            </button>
+                            <button className={styles.edit}>
+                                {editIsLoading ? (
+                                    <Loading width="20px" height="20px" />
+                                ) : (
+                                    <SaveOutlined className={styles.icon} onClick={(e) => updateProductInfo(e, "create")} />
+                                )}
+                            </button>
+                        </Fragment>
                     )}
                 </div>  
             </div>
@@ -1037,7 +1076,17 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 <option value={"False"}>{"False"}</option>
                             </select>
                         </label>
-                        <button>Add variant prices</button>
+                        <label >
+                            Variant:
+                            <input 
+                                className={styles.variantInput}
+                                placeholder="country1, amount. country2, amount. country3, amount" 
+                                type="text" 
+                                onChange={(e) => editProductInfo(e, "variantPrices")}
+                                value={variantPrices} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
                     </div>
                 </div>
                 <div className={styles.genericSect}>
@@ -1078,6 +1127,28 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 ))}
                             </select>
                         </label>
+                        <label >
+                            Product Url:
+                            <input 
+                                placeholder="Product url" 
+                                type="text" 
+                                onChange={(e) => editProductInfo(e, "productUrl")}
+                                value={productUrl} 
+                                disabled={setTagVisibility()}
+                            />
+                        </label>
+                        {/* <label >
+                            Add Delivery:
+                            <select 
+                                value={addDelivery} 
+                                onChange={(e) => editProductInfo(e, "addDelivery")}
+                                disabled={setTagVisibility()}
+                            >
+                                <option value="" disabled selected hidden>Choose an option</option>
+                                <option value={"True"}>{"True"}</option>
+                                <option value={"False"}>{"False"}</option>
+                            </select>
+                        </label> */}
                         <div className={styles.orders}>
                             <span className={styles.key}>Orders: </span>
                             <span className={styles.value}>{product?.orders}</span>

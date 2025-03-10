@@ -70,9 +70,9 @@ const OrderModal = () => {
             //Send the order to the backend
             try {
                 //console.log('Clicked')
-                const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
-                cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
-                setCart(() => ({ ...cart }))
+                //const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
+                // cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
+                // setCart(() => ({ ...cart }))
                 const productSpec: ICart = cart
                 const clientInfo_ = clientInfo as unknown as IClientInfo
                 const customerSpec: ICustomerSpec = deliveryInfo as unknown as ICustomerSpec

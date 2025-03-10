@@ -7,9 +7,9 @@ import Image from "next/image";
 import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo } from "@/config/utils";
+import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
-import { useClientInfoStore, useModalBackgroundStore, useDiscountModalStore } from "@/config/store";
+import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline } from '@mui/icons-material';
 import Loading from "@/components/loadingCircle/Circle";
 import { countryList } from "@/config/database";
@@ -28,34 +28,52 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     //const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
     const routerPath = usePathname();
     const [deleteIsLoading, setDeleteIsLoading] = useState<boolean>(false)
-    //const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     //const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
-    //const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
 
     useEffect(() => {
         console.log("View: ", view)
         setProduct(() => product_)
     }, [clientInfo, product, product_]);
 
-    //This displays the custom price based on the country
+    //This displays the custom price based on the country if it exist
     const customPrice = (): number => {
         let customPrice
+        let newCustomPrice
         const clientCountry = countryList.find((c) => c.name?.common === clientInfo?.country?.name?.common)
-        const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
-        if (inflation === 0) {
-            customPrice = product.pricing?.basePrice!
+        const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common)
+        if (variant && clientCountry) {
+            customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
         } else {
-            customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+            customPrice = product.pricing?.basePrice!
         }
-        return customPrice
+
+        //This calculates delivery fee
+        if (product.addDelivery === false && product.addDelivery !== undefined) {
+            newCustomPrice = customPrice
+        } else {
+            let deliveryFee = getDeliveryFee(product.specification?.weight!, clientCountry?.name?.common!)
+            newCustomPrice = customPrice + deliveryFee
+        }
+        
+        // const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
+        // if (inflation === 0) {
+        //     customPrice = product.pricing?.basePrice!
+        // } else {
+        //     customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+        // }
+
+        return newCustomPrice
     }
 
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
         e.preventDefault()
-        //console.log("Type: ", typeof event)
-        //console.log("id: ", id)
-        
+
+        setModalBackground(true)
+        setLoadingModal(true)
+
         router.push(`/products/${id}`);
     }
 
