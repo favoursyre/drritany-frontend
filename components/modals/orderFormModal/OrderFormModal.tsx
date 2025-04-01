@@ -13,7 +13,7 @@ import { ICart, IClientInfo, ICountry, ICustomerSpec  } from "@/config/interface
 import { countryList } from "@/config/database";
 import { notify, setItem, getItem } from "@/config/clientUtils";
 import validator from "validator";
-import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash } from "@/config/utils"
+import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash, userIdName } from "@/config/utils"
 
 ///Commencing the code 
 
@@ -46,6 +46,7 @@ const OrderFormModal = () => {
     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(0) //Unit is in USD
     //const cart_ = 
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
+    const [userId, setUserId] = useState<string | null>(getItem(userIdName))
 
     ///This function is triggered when the background of the modal is clicked
     const closeModal = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
@@ -81,7 +82,7 @@ const OrderFormModal = () => {
         
         if (clientInfo && clientInfo?.country) {
             //setCountryCode1(() => clientInfo.country)
-            console.log("Loc: ", clientInfo)
+            //console.log("Loc: ", clientInfo)
             if (!countryCode1 && !countryCode2 && !country) {
                 setCountryCode1(() => clientInfo.country)
                 setCountryCode2(() => clientInfo.country)
@@ -89,7 +90,7 @@ const OrderFormModal = () => {
                 const country_ = clientInfo.country.name?.common as unknown as string
                 setCountry(() => country_)
                 const info = countryList.find(country => country.name?.common === clientInfo?.country?.name?.common)
-                console.log("Country: ", info)
+                //console.log("Country: ", info)
                 setCountryInfo(() => info)
 
                 const state_ = findStateWithZeroExtraDeliveryPercent(info)
@@ -99,7 +100,7 @@ const OrderFormModal = () => {
                 //setExtraDeliveryFee(() => state_?.extraDeliveryPercent as unknown as number)
             }
         }
-    }, [clientInfo, countryInfo]);
+    }, [clientInfo, countryInfo, country, countryCode1, countryCode2, state]);
     
     ///This function is triggered when the form is submitted
     // const processOrder = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -240,7 +241,7 @@ const OrderFormModal = () => {
         setIsLoading(() => true)
 
         try {
-            const customerSpec: ICustomerSpec = {fullName, email: emailAddress, phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], country, state, deliveryAddress, postalCode}
+            const customerSpec: ICustomerSpec = { userId: userId!, fullName, email: emailAddress, phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], country, state, deliveryAddress, postalCode}
             setItem(deliveryName, customerSpec)
             //router.refresh()
             await sleep(1.5)
@@ -248,9 +249,9 @@ const OrderFormModal = () => {
             await sleep(0.3)
             setModalBackground(false)
             setIsLoading(false)
-            window.location.reload()
+            //window.location.reload()
         } catch (error) {
-            console.log("Save Delivery Error: ", error)
+            //console.log("Save Delivery Error: ", error)
             setIsLoading(false)
         }
     }
@@ -272,9 +273,10 @@ const OrderFormModal = () => {
 
         const countryInfo_ = countryList.find(country => country.name?.common === e.target.value) as unknown as ICountry
         setCountryInfo(() => countryInfo_)
+        setState(() => countryInfo_.states![0].name)
     } else if (label === "state") {
         //console.log("I'm here")
-        console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
+        //console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
         // if (cart && clientInfo?.country?.currency?.exchangeRate) {
         //     setState(() => e.target.value)
         //     //console.log("State: ", state)
@@ -285,7 +287,7 @@ const OrderFormModal = () => {
         //     const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
             
         //     if (state_?.extraDeliveryPercent === 0) {
-        //             const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+        //             const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
         //             notify("info", `Your total order amount is ${symbol}${total}`)
         //             setItem(extraDeliveryFeeName, 0)
                 
@@ -295,7 +297,7 @@ const OrderFormModal = () => {
         //             setExtraDeliveryFee(() => extraDeliveryFee)
         //             setItem(extraDeliveryFeeName, extraDeliveryFee)
         //             const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-        //             const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
+        //             const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
         //             notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
         //         }
         //     }
@@ -310,7 +312,7 @@ const OrderFormModal = () => {
         const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
         
         if (state_?.extraDeliveryPercent === 0) {
-                const total = round((cart?.totalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const total = round((cart?.grossTotalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 //notify("info", `Your total order amount is ${symbol}${total}`)
                 setItem(extraDeliveryFeeName, 0)
             
@@ -320,7 +322,7 @@ const OrderFormModal = () => {
                 setExtraDeliveryFee(() => extraDeliveryFee)
                 setItem(extraDeliveryFeeName, extraDeliveryFee)
                 const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
-                const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 //notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
             }
         }
@@ -331,7 +333,7 @@ const OrderFormModal = () => {
   const chooseCode = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, position: string | number, country: ICountry) => {
     e.preventDefault()
 
-    console.log("Position: ", typeof position)
+    //console.log("Position: ", typeof position)
     if (position === "1") {
         setDropList1(() => false)
         //console.log("Country1: ", country)

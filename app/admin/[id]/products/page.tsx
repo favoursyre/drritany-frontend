@@ -3,7 +3,7 @@
 ///Libraries -->
 import { Metadata, NextApiResponse } from "next";
 import AdminProducts from "@/components/admin/products/collection/Products";
-import { backend, sortProductByLatest } from "@/config/utils";
+import { backend, sortMongoQueryByTime } from "@/config/utils";
 import { IProduct, Props } from "@/config/interfaces";
 
 ///Commencing the code
@@ -59,11 +59,11 @@ async function getQueriedProducts(query: string | string[] | undefined) {
  * @title Admin Products page
  */
 export default async function AdminProductPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
-    const products = sortProductByLatest(await getProducts()) as unknown as Array<IProduct>
+    const products = sortMongoQueryByTime(await getProducts(), "latest") as unknown as Array<IProduct>
     const { query } = req.searchParams
     console.log("Query: ", query)
     console.log('testing why')
-    const queriedProducts = sortProductByLatest(await getQueriedProducts(query)) as unknown as Array<IProduct>
+    const queriedProducts = sortMongoQueryByTime(await getQueriedProducts(query), "latest") as unknown as Array<IProduct>
 
   return (
     <main className="admin_product">

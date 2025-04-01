@@ -7,7 +7,7 @@ import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./productGrid.module.scss"
 import { IProduct, ICategoryInfo, IProductFilter, ICategory } from '@/config/interfaces';
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
-import { groupList, sortOptions as sortOption, sortProductByOrder, sortProductByLatest, sortProductByPrice, categories, routeStyle, productFilterName, sortProductByRating } from '@/config/utils'
+import { groupList, sortProductOptions as sortOption, sortProductByOrder, sortMongoQueryByTime, sortProductByPrice, categories, routeStyle, productFilterName, sortProductByRating } from '@/config/utils'
 
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -57,7 +57,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             //setProductList(() => [...product_])
             setProducts(() => [...newProducts])
         } else if (sort === 1) {
-            const newProducts = sortProductByLatest(products)
+            const newProducts = sortMongoQueryByTime(products, "latest")
             //product_ = sortByCategory(productList, "Health & Personal Care")
             //setProductList(() => [...product_])
             setProducts(() => [...newProducts])
@@ -100,7 +100,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             }
             //removeItem(productFilterName)
         }
-    }, [])
+    }, [productFilter, productList, product_, products])
 
     useEffect(() => {
         //Setting product filter

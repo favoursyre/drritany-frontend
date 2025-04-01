@@ -82,7 +82,7 @@
             }
 
             @include phone {
-                //font-size: 45px;
+                font-size: 40px;
                 height: 60%;
             }
 
@@ -142,7 +142,7 @@
                     height: 50%;
                     position: relative;
 
-                    @include phoneMini {
+                    @include phonePro {
                         font-size: 14px;
                     }
                 }

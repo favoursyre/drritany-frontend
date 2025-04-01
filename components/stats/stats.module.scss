@@ -93,7 +93,7 @@
                 }
 
                 @include phonePro {
-                    font-size: 1.7rem; 
+                    font-size: 1.5rem; 
                 }
 
                 @include phoneMini {
@@ -126,7 +126,7 @@
         
                     @include phonePro {
                         //margin: 8px 0px;
-                        font-size: 14px;
+                        font-size: 13px;
                         line-height: 18px;
                         width: 70%;
                     }

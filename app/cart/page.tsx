@@ -5,11 +5,13 @@
 //import Cart from "@/components/cart/Cart"
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct, ISlideTitle } from "@/config/interfaces";
-import { backend, shuffleArray, sortProductByActiveStatus } from "@/config/utils";
+import { backend, shuffleArray, sortProductByActiveStatus, getProducts } from "@/config/utils";
 import { Metadata } from "next";
 import dynamicImport from "next/dynamic";
-const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
+//const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
 import { Suspense } from "react";
+import Cart from "@/components/cart/Cart";
+import Loading from "@/components/loadingCircle/Circle";
 
 ///Commencing the code
 export const metadata: Metadata = {
@@ -19,26 +21,16 @@ export const metadata: Metadata = {
     canonical: `/cart`
   }
 }
-
-export const dynamic = "force-dynamic"
-
-///This fetches a list of all products
-async function getProducts() {
-  try {
-    const res = await fetch(`${backend}/product?action=order`, {
-      method: "GET",
-      cache: "no-store",
-    })
-
-    if (res.ok) {
-      return res.json()
-    } else {
-      getProducts()
-    }
-  } catch (error) {
-      console.error(error);
-  }
+ 
+// This component passed as fallback to the Suspense boundary
+// will be rendered in place of the search bar in the initial HTML.
+// When the value is available during React hydration the fallback
+// will be replaced with the `<SearchBar>` component.
+function Fallback() {
+  return <Loading width="20px" height="20px" />
 }
+
+//export const dynamic = "force-dynamic"
 
 /**
  * @title Homepage
@@ -52,7 +44,9 @@ export default async function CartPage() {
 
   return (
     <main className="cart_page">
-      <Cart />
+      <Suspense fallback={<Fallback />}>
+          <Cart />
+      </Suspense>
       <ProductSlide product_={products} title_={titles1} view_={undefined}/>
     </main>
   )

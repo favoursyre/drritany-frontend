@@ -5,7 +5,12 @@ import Script from 'next/script';
 import React, { FC } from 'react';
 
 //Commencing the code
-const GoogleTagManager: FC<{ containerId: string }> = ({ containerId }) => {
+const GoogleTagManager: FC = () => {
+  const containerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
+  if (!containerId) {
+    console.log("GTM container id not detected")
+  }
+
   return (
     <>
       <Script

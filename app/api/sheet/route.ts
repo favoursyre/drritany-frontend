@@ -19,13 +19,13 @@ import { GoogleSheetStore } from "@/config/serverUtils";
 export async function POST(request: NextRequest) {
     try {
         const queryData: ISheetInfo = await request.json();
-        console.log("in...")
+        //console.log("in...")
 
         ///Sending confirmation email to the person
 
         const google = await GoogleSheetStore(queryData.sheetId)
         const sheet = await google.addSheet(queryData.sheetRange, queryData.data)
-        console.log("Sheet Query: ", sheet)
+        //console.log("Sheet Query: ", sheet)
 
         return NextResponse.json({ sheet, message: "Sheet Added Successful" }, { status: 200 });
     } catch (error: any) {

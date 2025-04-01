@@ -5,7 +5,12 @@
 import { google } from "googleapis";
 import { Readable } from "stream";
 import fs from "fs"
-import { convertToNodeReadableStream } from "./utils";
+import sharp from "sharp"
+import FormData from "form-data";
+import axios from "axios";
+import { IImage } from "./interfaces";
+import { drive_v3 } from "googleapis";
+import { convertToNodeReadableStream, getGDriveDirectLink, isImage, backend, isVideo, getGDrivePreviewLink } from "./utils";
 
 ///Commencing the code
 //Declaring the neccesary variables
@@ -51,6 +56,65 @@ const data = {
 //     });
 //     return stream;
 // }
+
+//This function gets a image file path and uploads it to GDrive
+export const processImage = async (filePath: string): Promise<IImage> => {
+    try {
+        // Verify file exists
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at: ${filePath}`);
+        } 
+
+        //Check if the file is an image
+        let fileType
+        let metadata
+        const fileIsImage = isImage(filePath)
+        const fileIsVideo = isVideo(filePath)
+        if (fileIsImage) {
+            fileType = "image"
+            // Get image dimensions using sharp
+            metadata = await sharp(filePath).metadata();
+            if (!metadata.width || !metadata.height) {
+                throw new Error("Could not determine image dimensions");
+            }
+        } else if (fileIsVideo) {
+            fileType = "video"
+        } else {
+            throw new Error("File format is not valid")
+        }
+        
+        //const fileType = "image"
+        const form = new FormData();
+
+        // Create a read stream for the file
+        const fileStream = fs.readFileSync(filePath);
+
+        // Append the file to FormData
+        form.append('file', fileStream);
+
+        //Sending the form data via HTTP request using axios
+        const response = await axios.post(`${backend}/file`, form, {
+            headers: {
+                ...form.getHeaders() // Important: includes multipart/form-data boundary
+            }
+        });
+
+        const data = response.data.drive as unknown as drive_v3.Schema$File
+        const image: IImage = {
+            driveId: data.id!,
+            src: fileType === "image" ? getGDriveDirectLink(data.id!) : getGDrivePreviewLink(data.id!),
+            name: undefined,
+            width: fileType === "image" ? metadata?.width : 640,
+            height: fileType === "image" ? metadata?.height : 480,
+            type: fileType!
+        }
+        return image
+        
+    } catch (error) {
+        console.error('Error processing image with FormData:', error);
+        throw error;
+    }
+}
 
 ///This function allows one to perform CRUD operation using Google Drive
 class GoogleDriveCRUD {

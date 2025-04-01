@@ -4,13 +4,14 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
-import { setItem, getItem, notify, removeItem as removeItem_ } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo } from '@/config/utils';
-import { ICart, ICartItem, IClientInfo, ICustomerSpec } from '@/config/interfaces';
-import { usePathname, useRouter } from 'next/navigation';
+import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils';
+import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { useClientInfoStore, useOrderFormModalStore, useModalBackgroundStore, useOrderModalStore } from "@/config/store";
-import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote } from '@mui/icons-material';
+import { useClientInfoStore, useOrderFormModalStore, useModalBackgroundStore, useOrderModalStore, useLoadingModalStore, useCartItemDiscountModalStore } from "@/config/store";
+import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote, DiscountOutlined, Payment } from '@mui/icons-material';
+import { countryList } from '@/config/database';
 
 ///Commencing the code 
 /**
@@ -33,22 +34,56 @@ const Cart = () => {
     const orderForm = useOrderFormModalStore(state => state.modal)
     const setOrderForm = useOrderFormModalStore(state => state.setOrderFormModal)
     const setOrderModal = useOrderModalStore(state => state.setOrderModal)
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const modalBackground = useModalBackgroundStore(state => state.modal);
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setCartItemDiscountModal = useCartItemDiscountModalStore(state => state.setCartItemDiscountModal)
+    const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal)
+    const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
+    const searchParams = useSearchParams()
+    
+    //Checking the url to know if stripe payment session is active
+    useEffect(() => {
+        const sessionId = searchParams.get('session_id')
+        //const { session_id } = router.query;
+        if (sessionId) {
+            setModalBackground(true)
+            setOrderModal(true)
+        }
+    }, [searchParams, setModalBackground, setOrderModal]);
+
+    //Trying to refresh delivery info
+    useEffect(() => {
+        let _deliveryInfo
+
+        const interval = setInterval(() => {
+            _deliveryInfo = getItem(deliveryName)
+            //console.log("Delivery Info: ", _deliveryInfo)
+            setDeliveryInfo(_deliveryInfo)
+        }, 100);
+
+        //console.log("Delivery Info: ", deliveryInfo)
+    
+        return () => {
+            clearInterval(interval);
+        };
+
+    }, [deliveryInfo])
 
     useEffect(() => {
+        //console.log('Params: ', searchParams.get('session_id'))
         //console.log("Cart Size: ", cart?.cart[0].specs?.size)
-        console.log("Client: ", clientInfo?.country?.name?.common!)
-        console.log("Cart ob: ", cart)
-        console.log("details: ", cart, getCartDiscount(), getCartDeliveryFee())
+        //console.log("Client: ", clientInfo?.country?.name?.common!)
+        //console.log("Cart ob: ", cart)
+        //console.log("details: ", cart, getCartDiscount(), getCartDeliveryFee())
 
         const interval = setInterval(() => {
             //setModalState(() => getModalState())
 
             const refreshCart = () => {
-                console.log("the cart is running")
+                //console.log("the cart is running")
                 if (cart && clientInfo?.country?.name?.common) {
-                    cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                    cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                     cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
                     cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common)).toFixed(2))
@@ -60,7 +95,7 @@ const Cart = () => {
     
             if (!cartInitialRender) {
                 setCartInitialRender(true);
-                console.log("Initial: ", cartInitialRender)
+                //console.log("Initial: ", cartInitialRender)
     
                 refreshCart()
               }
@@ -98,15 +133,65 @@ const Cart = () => {
     }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo, cartInitialRender, clientInfo]);
 
     //This function calculates the cart discount
-    const getCartDiscount = () => {
+    //Generic is for all everyday users while special is for students, military, etc.
+    const getCartDiscount = (user: "generic" | "special" = "generic") => {
         let discount
+        //console.log("Delivery fees: ", cart?.totalHiddenDeliveryFee, cart?.deliveryFee, getCartDeliveryFee())
         discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
 
         if (discount < 0) {
             discount = 0
+            return discount
         }
 
+        //I want to deduct about 20% off the discount and reserve the full discount only for students/officers
+        if (user === "generic") {
+            //console.log("Discounts: ", discount, (80/100) * discount)
+            const discount_ = (80/100) * discount
+            return discount_
+        } else if (user === "special") {
+            //Gets the full discount
+        }
+
+        // const _genDiscount = (80/100) * discount
+        // //const _reservedDiscount = (20/100) * discount
+        // discount = _genDiscount
+        // console.log("Discounts: ", )
         return discount
+    }
+
+    //This function is trigered when a user wants to view the discount offer on each cart item
+    const viewCartItemDiscount = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLDivElement, globalThis.MouseEvent>, cartId: number) => {
+        e.preventDefault()
+
+        if(cart) {
+            //cart.deliveryFee = getCartDeliveryFee()
+            cart.totalDiscount = getCartDiscount()
+            setItem(cartName, cart)
+            setCart(() => ({ ...cart }))
+            const cartItem: ICartItemDiscount = getEachCartItemDiscount(cart, cartId)
+            //console.log("Item: ", cartItem)
+            setCartItemDiscount(cartItem)
+            setModalBackground(true)
+            setCartItemDiscountModal(true)
+            //console.log("Modal: ", cartItemDiscountModal)
+        }
+
+        //Storing this info in button research
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "viewCartItemDiscount()",
+            Button_Info: `Clicked discount icon in cart`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+        await storeButtonInfo(info)
     }
 
     //This function calculates the cart delivery fee
@@ -116,7 +201,7 @@ const Cart = () => {
         discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
 
         if (discount < 0) {
-            deliveryFee = -discount
+            deliveryFee = Math.abs(discount)
         } else {
             deliveryFee = 0
         }
@@ -127,13 +212,13 @@ const Cart = () => {
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
         e.preventDefault()
-        if (cart !== null) {
+        if (cart !== null && clientInfo) {
             cart.cart[index].quantity = cart.cart[index].quantity + 1
             cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
             cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
             cart.cart[index].subTotalHiddenDeliveryFee = cart.cart[index].quantity * cart.cart[index].unitHiddenDeliveryFee
             cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number((( cart.cart[index].extraDiscount?.percent!/100 ) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
-            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
             cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
@@ -152,21 +237,21 @@ const Cart = () => {
             if (cart.cart[index].quantity === 1) {
                 notify("error", '1 is the minimum quantity you can order')
             } else {
-                console.log("reduce quantity")
-                console.log("before: ", cart)
+                //console.log("reduce quantity")
+                //console.log("before: ", cart)
                 cart.cart[index].quantity = cart.cart[index].quantity - 1
                 cart.cart[index].subTotalPrice = cart.cart[index].quantity * cart.cart[index].unitPrice
                 cart.cart[index].subTotalWeight = cart.cart[index].quantity * cart.cart[index].unitWeight
                 cart.cart[index].subTotalHiddenDeliveryFee = cart.cart[index].quantity * cart.cart[index].unitHiddenDeliveryFee
                 cart.cart[index].subTotalDiscount = cart.cart[index].extraDiscount?.limit! && cart.cart[index].quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
-                cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
                 cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
                 cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
-                console.log("after: ", cart)
+                //console.log("after: ", cart)
             }
         }
         //window.location.reload()
@@ -174,18 +259,30 @@ const Cart = () => {
 
     ///This function is triggered when the checkout button is clicked
     const checkoutOrder = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
-        e.preventDefault()
+        e.preventDefault()  
 
-        //Updating cart with the new discount and delivery fee value
+        //Updating cart with the new values
         if(cart) {
-            cart.deliveryFee = getCartDeliveryFee()
+            //cart.deliveryFee = getCartDeliveryFee()
             cart.totalDiscount = getCartDiscount()
+            cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
             setItem(cartName, cart)
             setCart(() => ({ ...cart }))
+            console.log('Cart: ', cart)
+        } else {
+            notify('error', "Cart is empty")
+            return
         }
 
         setModalBackground(true)
         if (deliveryInfo) {
+            //Validating if the user is from the USA, we only serve US clients for the meantime
+            const usCountryInfo = countryList.find((country) => country.name?.abbreviation === "US")
+            if (deliveryInfo.country !== usCountryInfo?.name?.common) {
+                notify("error", `In the meantime, we don't operate in ${deliveryInfo.country}`)
+                return
+            }
+
             setOrderModal(true)
             //removeItem_(cartName)
             // console.log("deleted")
@@ -197,6 +294,21 @@ const Cart = () => {
             //window.location.reload()
         }
         
+        //Storing this info in button research
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "checkoutOrder()",
+            Button_Info: `Clicked "pay" in cart`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+        await storeButtonInfo(info)
     }
 
     ///This function is triggered when the user wants to input a delivery info
@@ -206,7 +318,7 @@ const Cart = () => {
         setModalBackground(!modalBackground)
         await sleep(0.2)
         setOrderForm(!orderForm)
-        console.log("Order form: ", orderForm)
+        //console.log("Order form: ", orderForm)
         //window.location.reload()
 
         // if (orderForm) {
@@ -223,27 +335,35 @@ const Cart = () => {
             setDeleteIndex(() => index)
             setDeleteModal(() => true)
         } else if (action === 1 && cart !== null) { ///This represents the final remove button
-            console.log("Cart Index: ", deleteIndex)
+            //console.log("Cart Index: ", deleteIndex)
             cart?.cart.splice(deleteIndex, 1)
             //const pSize = typeof cart.cart[deleteIndex].specs?.size === "string" ? cart.cart[deleteIndex].specs?.size : cart.cart[deleteIndex].specs?.size?.size!
             //const productName = `${cart.cart[deleteIndex].name} (${cart.cart[deleteIndex].specs?.color}, ${cart.cart[deleteIndex].specs?.size})`
             //storeCartInfo("Deleted", clientInfo!, productName)
-            cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+            cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
             cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
             cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
-            console.log("Updated Cart: ", cart)
+            //console.log("Updated Cart: ", cart)
             setItem(cartName, cart)
             setCart(() => ({ ...cart }))
             setDeleteModal(() => false)
+
+            //Refreshing the page
+            if (typeof window !== undefined) {
+                window.location.reload()
+            }
         }
-        
     }
 
     ///This function helps to view a product
     const viewProduct = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent> | MouseEvent<HTMLSpanElement, globalThis.MouseEvent>, id: string) => {
         e.preventDefault()
+
+        //Setting the loading modal
+        setModalBackground(true)
+        setLoadingModal(true)
 
         router.push(`/products/${id}`);
     }
@@ -322,14 +442,19 @@ const Cart = () => {
                                             <Add className={styles.icon} />
                                         </button>
                                     </div>
-                                    <div className={styles.list_subtotal}>
-                                        <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    <div className={styles.list_subtotal} onClick={(e) => viewCartItemDiscount(e, cid)}>
+                                        <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.country?.currency?.symbol}</span>
                                         {cart && clientInfo?.country?.currency?.exchangeRate ? (
-                                            <span>
+                                            <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>
                                                 {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                             </span>
                                         ) : (
                                             <></>
+                                        )}
+                                        {getCartDiscount() <= 0 ? (
+                                            <></>
+                                        ) : (
+                                            <DiscountOutlined className={styles.discountIcon} onClick={(e) => viewCartItemDiscount(e, cid)} />
                                         )}
                                     </div>
                                     <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
@@ -395,7 +520,7 @@ const Cart = () => {
                         </div>
                         <div className={styles.price_items}>
                             <div className={styles.subtotal}>
-                                <span className={styles.title}>Subtotal</span>
+                                <span className={styles.title}>Gross Total</span>
                                 <div className={styles.amount}>
                                     {clientInfo?.country?.currency?.symbol ? (
                                         <span>{clientInfo?.country?.currency?.symbol}</span>
@@ -404,7 +529,7 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.totalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(cart.grossTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -413,7 +538,7 @@ const Cart = () => {
                                 </div>
                             </div>
                             <div className={styles.discount}>
-                                <span className={styles.title}>Discount</span>
+                                <span className={styles.title}>Total Discount</span>
                                 <div className={styles.amount}>
                                     <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
                                     {clientInfo?.country?.currency?.symbol ? (
@@ -445,12 +570,12 @@ const Cart = () => {
                                 </div>
                             </div>
                             <div className={styles.total}>
-                                <span className={styles.title}>Gross Total</span>
+                                <span className={styles.title}>Overall Total</span>
                                 <div className={styles.amount}>
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.totalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -459,8 +584,8 @@ const Cart = () => {
                             </div>
                         </div>
                         <button onClick={(e) => checkoutOrder(e)}>
-                            <LocalShipping className={styles.icon} />
-                            <span>Order Now</span>
+                            <Payment className={styles.icon} />
+                            <span>Pay</span>
                         </button>
                     </div>
                     
@@ -478,7 +603,6 @@ const Cart = () => {
                 <span className={styles.modal_body}>Are you sure you want to remove this item from your cart?</span>
                 <button onClick={e => {
                     removeItem(e, null, 1)
-                    window.location.reload()
                 }} 
                 className={styles.remove_item_button}>
                     <DeleteOutline className={styles.icon} />

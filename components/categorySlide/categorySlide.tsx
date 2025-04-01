@@ -5,19 +5,20 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./categorySlide.module.scss"
-import { IImage, ICart, ISlideTitle, IProductFilter } from '@/config/interfaces';
-import { routeStyle, cartName, shuffleArray, categories, productFilterName } from '@/config/utils'
-import { getItem, setItem } from '@/config/clientUtils';
+import { IImage, ICart, ISlideTitle, IProductFilter, IButtonResearch } from '@/config/interfaces';
+import { routeStyle, cartName, shuffleArray, categories, productFilterName, storeButtonInfo, extractBaseTitle, getCurrentDate, getCurrentTime, userIdName } from '@/config/utils'
+import { getDevice, getItem, setItem, getOS } from '@/config/clientUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import Image from 'next/image';
-import { useModalBackgroundStore, useLoadingModalStore } from '@/config/store';
+import { useModalBackgroundStore, useLoadingModalStore, useClientInfoStore } from '@/config/store';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { info } from 'console';
 
 ///Commencing the code 
 
@@ -28,6 +29,7 @@ import { ArrowBack, ArrowForward } from '@mui/icons-material';
 const CategorySlide = () => {
     const routerPath = usePathname();
     const router = useRouter();
+    const clientInfo = useClientInfoStore(state => state.info)
     const [lastIndex, setLastIndex] = useState(6)
     const [title, setTitle] = useState<string>()
     const [barTitle, setBarTitle] = useState<string>()
@@ -82,10 +84,10 @@ const CategorySlide = () => {
 
       //getViewClass(view)
 
-    }, [title])
+    }, [title, routerPath])
     
     //This function is used for viewing a sub category
-    const viewSubCategory = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, miniCategory: string) => {
+    const viewSubCategory = async (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, miniCategory: string) => {
       e.preventDefault()
 
       //This sets the loading modal
@@ -96,6 +98,22 @@ const CategorySlide = () => {
       if (swiperRef.current) {
         swiperRef.current.autoplay.stop();
       }
+
+      //Storing this info in button research
+      const info: IButtonResearch = {
+        ID: getItem(userIdName),
+        IP: clientInfo?.ip!,
+        Country: clientInfo?.country?.name?.common!,
+        Button_Name: "viewSubCategory()",
+        Button_Info: `Clicked ${miniCategory}`,
+        Page_Title: extractBaseTitle(document.title),
+        Page_URL: routerPath,
+        Date: getCurrentDate(),
+        Time: getCurrentTime(),
+        OS: getOS(),
+        Device: getDevice()
+      }
+      storeButtonInfo(info)
 
       const category_ = categories.find(category =>
         category.minis.some(miniItem => miniItem.mini === miniCategory)

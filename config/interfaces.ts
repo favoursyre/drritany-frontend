@@ -42,7 +42,9 @@ export interface IQuoteState {
 export interface IOrderModel extends Model<IOrder> {
   processOrder(order: IOrder): IOrder,
   getOrders(): Array<IOrder>,
-  getOrderById(id: string): Array<IOrder>
+  getOrderById(id: string): Array<IOrder>,
+  deleteOrder(id: string): IOrder,
+  updateOrder(id: string, order: IOrder): IOrder
 }  
 
 ///Declaring the interface for specification 
@@ -168,10 +170,19 @@ export interface IDiscountModalStore {
   }) => void
 }
 
+//Interface for product discount modal
+export interface ICartItemDiscountModalStore {
+  modal: boolean,
+  cartItem: ICartItemDiscount,
+  setCartItemDiscountModal: (status: boolean) => void
+  setCartItemDiscount: (cartItem: ICartItemDiscount) => void
+}
+
 /**
  * @notice The interface for client info
  */
 export interface IClientInfo {
+  _id?: string,
   ip?: string,
   groupTest?: string,
   country?: ICountry
@@ -223,6 +234,15 @@ export interface IProduct {
     __v?: number
 }
 
+//Declaring the interface cart item discount
+export interface ICartItemDiscount {
+  img: IImage,
+  oldPrice: number,
+  discountedPrice: number,
+  newPrice: number,
+  newXtraDiscount: number
+}
+
 ///Declaring the interface for cart term
 export interface ICartItem {
     readonly _id: string,
@@ -248,7 +268,8 @@ export interface ICartItem {
 
 ///Declaring the interface for the cart
 export interface ICart {
-  totalPrice: number,
+  overallTotalPrice?: number,
+  grossTotalPrice: number,
   totalDiscount: number,
   totalWeight: number,
   totalHiddenDeliveryFee: number,
@@ -378,6 +399,12 @@ export interface IAdmin {
   __v?: number
 }
 
+///This is the interface for return policy modal
+export interface IReturnPolicyModalStore {
+  modal: boolean;
+  setReturnPolicyModal: (status: boolean) => void
+}
+
 /**
  * @notice The interface for newsletter subscribers mongoose schema
  * @param subscriber The email address of the subscriber
@@ -392,6 +419,7 @@ export interface IAdmin {
 
 ///Declaring the interface for customer order
 export interface ICustomerSpec {
+  readonly userId: string,
   readonly fullName: string,
   readonly email: string,
   readonly phoneNumbers: Array<string | undefined>,
@@ -530,12 +558,30 @@ export interface IProductViewResearch {
 
 //This is the interface for traffic research
 export interface ITrafficResearch {
+  ID: string,
   IP: string,
   Country: string,
   Page_Title: string,
   Page_URL: string,
   Date: string,
-  Time: string
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
+}
+
+//This is the interface for button research
+export interface IButtonResearch {
+  ID: string,
+  IP: string,
+  Country: string,
+  Button_Name: string,
+  Button_Info: string,
+  Page_Title: string,
+  Page_URL: string,
+  Date: string,
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
 }
 
 //This is the interface for wishlist research
@@ -557,6 +603,7 @@ export interface IParams {
 
 ///Declaring the interface for order sheet
 export interface IOrderSheet {
+  UserId?: string,
   OrderId?: string,
   CartId?: string,
   FullName?: string,
@@ -615,6 +662,13 @@ export enum DeliveryStatus {
   CANCELLED = "Cancelled"
 }
 
+//Interface for cached data
+export interface ICacheData {
+  value: any;
+  timestamp: number; // Timestamp when the data was set
+  expirationTime: number; // Expiration time in seconds
+}
+
 //The enum for payment status
 export enum PaymentStatus {
   PENDING = "Pending",
@@ -625,7 +679,7 @@ export enum PaymentStatus {
 
 //The enum for the various platforms
 export enum MarketPlatforms {
-  ALIEXPRESS = "Aliexpress",
+  ALIEXPRESS = "AliExpress",
   TAOBAO = "Taobao",
   _1688 = "1688",
   AMAZON = "Amazon",
@@ -635,7 +689,8 @@ export enum MarketPlatforms {
 ///The interface for market platforms
 export interface IMarketPlatform {
   name: string,
-  url: string
+  url: string,
+  content?: string
 }
 
 ///The interface for a payment status and corresponding text color

@@ -1,4 +1,4 @@
-/* This contains the scss for the order component */
+/* This contains the scss for the order receipt component */
 
 //Libraries -->
 @import "@/styles/base.module";
@@ -312,6 +312,21 @@
                     @include flexBar($position: relative, $align: flex-end, $justify: center, $flex_d: column, $gap: 0%);
                     line-height: 20px;
                     left: 24%;
+
+                    .discountIcon {
+                        color: $text-color-2;
+                        font-size: 1rem;
+                        position: relative;
+                        left: 5px;
+
+                        @include phonePro {
+                            display: none;
+                        }
+
+                        &:hover {
+                            color: $primary-color;
+                        }
+                    }
 
                     @include phonePro {
                         width: 20%;

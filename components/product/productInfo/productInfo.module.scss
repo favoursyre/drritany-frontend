@@ -163,6 +163,7 @@
             border: 1px solid $text-color-3;
             @include size(90%, 75%);
             //padding: 3% 10%;
+            overflow: hidden;
 
             @include phonePro {
                 //border: 2px solid $error-color;
@@ -175,9 +176,19 @@
                 //border: 2px solid $primary-color;
                 object-fit: contain;
                 @include size(95%, 95%);
+                z-index: 5;
+                //cursor: zoom-in;
 
                 &:hover {
                     //transform: scale(1.1);
+                }
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) { /* Adjust breakpoint as needed */
+                .profile_image {
+                    width: 100%;
+                    height: 75%;
                 }
             }
         }
@@ -188,10 +199,10 @@
             @include size(90%, 55px);
             top: 35%;
             color: $primary-color;
-            //display: none;
+            display: none;
 
             @include tabletPro {
-                //display: flex;
+                display: flex;
             }
 
             @include tablet {
@@ -200,7 +211,7 @@
     
             @include phonePro {
                 gap: 1%;
-                //display: flex;
+                display: flex;
                 @include size(100%, 45px);
                 //justify-content: space-between;
             }
@@ -346,12 +357,13 @@
             }
         }
 
-        // &:hover {
+        &:hover {
 
-        //     .controller {
-        //         display: flex;
-        //     }
-        // }
+            .controller {
+                display: flex;
+                //color:;
+            }
+        }
     }
 
     .right_section {
@@ -413,17 +425,16 @@
 
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 6;
+            -webkit-line-clamp: 4;
             position: relative;
             height: auto;
             //max-height: 30%;
             overflow: hidden;
             //white-space: nowrap;
             text-overflow: ellipsis;
-            
 
             @include tabletPro {
-                -webkit-line-clamp: 5;
+                -webkit-line-clamp: 4;
             }
 
             @include tabletMini {
@@ -440,7 +451,6 @@
                 text-overflow: ellipsis;
                 //width: 95%;
                 //left: 1.5%;
-
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 4
@@ -624,6 +634,18 @@
             }
         }
 
+        .return {
+            background-color: none;
+            border: none;
+            @include flexBar($position: relative, $justify: center, $gap: 1%, $flex_d: row, $wrap: none, $align: center, $flex: none);
+            @include text-layout($size: 14px, $l_height: 24px, $color: green);
+            font-weight: 600;
+
+            @include phoneMini {
+                font-size: 12px;
+            }
+        }
+
         .product_deliveryDate {
             //border: 2px solid $primary-color;
             @include text-layout($size: 14px, $l_height: 24px);
@@ -647,6 +669,10 @@
                 @include text-layout($size: 13px, $l_height: 15px);
                 position: relative;
                 font-weight: 600;
+
+                ._span1 {
+                    font-weight: 100;
+                }
             }
 
             .colorContainer {
@@ -729,6 +755,8 @@
                     @include size(9%, 87%);
                     @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
                     border-radius: 4px;
+                    padding-left: 5px;
+                    padding-right: 5px;
 
                     @include phonePro {
                         width: 15%;

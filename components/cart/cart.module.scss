@@ -388,6 +388,7 @@
                             justify-content: center;
                             align-items: center;
                             height: 100%;
+                            cursor: pointer;
 
                             @include phonePro {
                                 height: 100%;
@@ -449,6 +450,28 @@
                         @include size(20%, 50%);
                         left: 68%;
                         @include text-layout($size: 15px, $l_height: 18px);
+
+                        .discountIcon {
+                            color: $text-color-2;
+                            font-size: 1rem;
+                            position: relative;
+                            left: 5px;
+
+                            @include phonePro {
+                                display: none;
+                            }
+
+                            &:hover {
+                                color: $primary-color;
+                            }
+                        }
+
+                        .activeSpan {
+
+                            @include phonePro {
+                                color: $primary-color;
+                            }
+                        }
 
                         @include phonePro {
                             font-size: 12px;

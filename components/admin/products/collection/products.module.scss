@@ -11,6 +11,7 @@
     left: 0%;
     @include flexBar($position: absolute, $align: center, $justify: center, $gap: 1%, $flex_d: column);
     background-color: transparent;
+    //color:;
 
     .div1 {
         border: 1px solid red;
@@ -394,37 +395,41 @@
 
             .span1 {
                 position: relative;
-                left: 5%;
+                left: 7%;
+
+                @include phonePro {
+                    left: 5%;
+                }
             }
 
             .span2 {
                 position: relative;
-                left: 30%;
+                left: 25%;
 
                 @include phonePro {
-                    left: 35%;
+                    left: 30%;
                 }
             }
 
             .span3 {
                 position: relative;
-                left: 40%;
+                left: 37%;
 
                 @include phonePro {
-                    left: 50%;
+                    left: 45%;
                 }
 
                 @include phoneMini {
-                    left: 45%;
+                    left: 40%;
                 }
             }
 
             .span4 {
                 position: relative;
-                left: 80%;
+                left: 75%;
 
                 @include tabletPro {
-                    left: 70%;
+                    left: 65%;
                 }
 
                 @include phonePro {

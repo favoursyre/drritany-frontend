@@ -1,24 +1,25 @@
 "use client"
-///Order Invoice component
+///Order Receipt component
 
 ///Libraries -->
 import Image from 'next/image';
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
-import styles from "./invoice.module.scss"
+import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
-import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration } from '@/config/utils';
-import { useClientInfoStore } from "@/config/store";
-import { Remove, Add } from '@mui/icons-material';
+import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus, IButtonResearch, ICartItemDiscount } from '@/config/interfaces';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName } from '@/config/utils';
+import { useClientInfoStore, useModalBackgroundStore, useCartItemDiscountModalStore } from "@/config/store";
+import { Remove, Add, DiscountOutlined } from '@mui/icons-material';
 import { countryList } from '@/config/database';
+import { getItem, getOS, getDevice } from '@/config/clientUtils';
 //import { deliveryStatuses } from '@/config/clientUtils';
 
 ///Commencing the code 
 /**
- * @title Order Invoice Component
- * @returns The Order Invoice component
+ * @title Order Receipt Component
+ * @returns The Order Receipt component
  */
-const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
+const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
     const router = useRouter()
     const [order, setOrder] = useState<IOrder>(order_)
     const [startDeliveryDate, setStartDeliveryDate] = useState<string>("")
@@ -28,6 +29,10 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
     const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
     const [country, setCountry] = useState<ICountry | undefined>(countryList.find((country) => country?.name?.common === order.customerSpec.country))
     const clientInfo = useClientInfoStore(state => state.info)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setCartItemDiscountModal = useCartItemDiscountModalStore(state => state.setCartItemDiscountModal)
+    //const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal)
+    const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
 
     //console.log("cart hh: ", paymentStatus)
 
@@ -42,7 +47,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
         date.setDate(date.getDate() + deliveryPeriod);
 
         // Format the date
-        const formattedDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}}`;
+        const formattedDate = `${date.toLocaleString('en-US', { month: 'long' })} ${date.getDate()}`;
 
         date.setDate(date.getDate() + deliveryDuration);
 
@@ -62,13 +67,38 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
             const paymentStatus_ = paymentStatuses.find((status) => status.status === order.paymentSpec.status)
             setPaymentStatus(() => paymentStatus_)
         }
-    }, [order?.createdAt, deliveryStatus, paymentStatus])
+    }, [order, deliveryStatus, paymentStatus])
 
-    //console.log("order: ", order ? formatDateMongo(order?.createdAt) : "")
+    //This function is trigered when a user wants to view the discount offer on each cart item
+    const viewCartItemDiscount = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLDivElement, globalThis.MouseEvent>, cartId: number) => {
+        e.preventDefault()
+
+        const cartItem: ICartItemDiscount = getEachCartItemDiscount(order.productSpec, cartId)
+        console.log("Item: ", cartItem)
+        setCartItemDiscount(cartItem)
+        setModalBackground(true)
+        setCartItemDiscountModal(true)
+
+        //Storing this info in button research
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "viewCartItemDiscount()",
+            Button_Info: `Clicked discount icon in invoice`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+        storeButtonInfo(info)
+    }
 
   return (
     <div className={styles.main}>
-        <h2><strong>Order Invoice</strong></h2>
+        <h2><strong>Order Receipt</strong></h2>
         <span className={styles.mainBrief}>Thanks for patronizing {companyName}</span>
         <div className={styles.container}>
             <div className={styles.orderSection}>
@@ -158,7 +188,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                                 </div>
                             ) : (<></>)}
                         </div>
-                        <div className={styles.cartPriceQuantity}>
+                        <div className={styles.cartPriceQuantity} onClick={(e) => viewCartItemDiscount(e, id)}>
                             <span>
                                 {country ? (
                                     <span>{country?.currency?.symbol}</span>
@@ -172,6 +202,11 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                                 ) : (
                                     <></>
                                 )}
+                                {getEachCartItemDiscount(order.productSpec, id).newXtraDiscount <= 0 ? (
+                                    <></>
+                                ) : (
+                                    <DiscountOutlined className={styles.discountIcon} onClick={(e) => viewCartItemDiscount(e, id)} />
+                                )}
                             </span>
                             <span>Qty: {p.quantity}</span>
                         </div>
@@ -183,7 +218,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
             </div>
             <div className={styles.totalSection}>
                 <div className={styles.subTotal}>
-                    <span><strong>Subtotal</strong></span>
+                    <span><strong>Gross Total</strong></span>
                     <span>
                         {country ? (
                             <span>{country?.currency?.symbol}</span>
@@ -192,7 +227,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.totalPrice * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
+                                {round(order.productSpec.grossTotalPrice * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -200,7 +235,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                     </span>
                 </div>
                 <div className={styles.discount}>
-                    <span><strong>Discount</strong></span>
+                    <span><strong>Total Discount</strong></span>
                     <div className={styles.amount}>
                         <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
                         {country ? (
@@ -236,7 +271,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                     </div>
                 </div>
                 <div className={styles.total}>
-                    <span><strong>Total</strong></span>
+                    <span><strong>Overall Total</strong></span>
                     <span>
                         {country ? (
                             <span>{country?.currency?.symbol}</span>
@@ -245,7 +280,7 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
+                                {round(order.productSpec.overallTotalPrice! * order.paymentSpec.exchangeRate, 1).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -258,4 +293,4 @@ const OrderInvoice = ({ order_ }: { order_: IOrder }) => {
   );
 };
 
-export default OrderInvoice;
+export default OrderReceipt;

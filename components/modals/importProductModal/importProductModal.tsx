@@ -9,8 +9,8 @@ import Loading from "@/components/loadingCircle/Circle";
 import { Download, Close } from "@mui/icons-material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, platformList } from "@/config/utils";
-import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, MarketPlatforms, IMarketPlatform } from "@/config/interfaces";
+import { adminName, extraDeliveryFeeName, cartName, deliveryName, backend, platformList } from "@/config/utils";
+import { IAdmin, ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, MarketPlatforms, IMarketPlatform, IProduct } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 
 ///Commencing the code 
@@ -25,9 +25,11 @@ const ImportProductModal = () => {
     const setImportProductModal = useImportProductModalStore(state => state.setImportProductModal);
     const [platformLink, setPlatformLink] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [adminUser, setAdminUser] = useState<IAdmin | undefined>(getItem(adminName))
     const router = useRouter()
     const [platforms, setPlatforms] = useState<Array<string>>(platformList.map(platform => platform.name))
     const [selectedPlatform, setSelectedPlatform] = useState<string>(platforms[0])
+    const [htmlContent, setHtmlContent] = useState<string>("")
 
     useEffect(() => {
         //console.log("Client: ", clientInfo)
@@ -52,7 +54,11 @@ const ImportProductModal = () => {
         } else if (!platformLink) {
             notify("error", "Link is required")
             return
+        } else if (!htmlContent) {
+            notify("error", "Content is required")
+            return
         }
+
 
         console.log("test")
         console.log("Check: ", selectedPlatform, platformLink)
@@ -66,11 +72,12 @@ const ImportProductModal = () => {
             //Send the details to backend
             setIsLoading(() => true)
             try {
-                const platformData: IMarketPlatform = { name: selectedPlatform, url: platformLink}
+                const platformData: IMarketPlatform = { name: selectedPlatform, url: platformLink, content: htmlContent}
                 console.log("Platform Data_: ", platformData)
+                const adminId = adminUser?._id
                 const res = await fetch(`${backend}/scraper`, {
                     method: 'POST',
-                    body: JSON.stringify(platformData),
+                    body: JSON.stringify({adminId, platformData}),
                     headers: {
                     'Content-Type': 'application/json',
                     },
@@ -83,8 +90,10 @@ const ImportProductModal = () => {
                 }
             
                 console.log("Data Res: ", data);
+                const _data = data.message as unknown as IProduct
 
                 notify("success", `Your products was imported successfully`)
+                router.push(`/admin/${adminUser?._id}/products/${_data._id}`)
             } catch (error) {
                 console.log("error: ", error)
                 notify("error", `${error}`)
@@ -131,6 +140,15 @@ const ImportProductModal = () => {
                     type="text" 
                     onChange={(e) => setPlatformLink(e.target.value)}
                     value={platformLink}
+                />
+            </label>
+            <label>
+                HTML
+                <input
+                    placeholder="html content"
+                    type="textarea"
+                    onChange={(e) => setHtmlContent(e.target.value)}
+                    value={htmlContent}
                 />
             </label>
             <br />

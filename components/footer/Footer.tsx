@@ -2,16 +2,18 @@
 ///Footer component
 
 ///Libraries -->
-import { notify, visitSocialLink } from '@/config/clientUtils';
+import { getDevice, getItem, notify, visitSocialLink, getOS } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend, companyName, logo } from '@/config/utils'
-import { IContact, INews, IOrderSheet } from "@/config/interfaces";
+import { routeStyle, backend, companyName, logo, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils'
+import { IContact, INews, IOrderSheet, IButtonResearch } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";
 import validator from "validator";
+import { useClientInfoStore } from '@/config/store';
 import Image from 'next/image';
 import tiktok from "../../public/images/tiktok.svg"
-import { LinkedIn, X, WhatsApp, Instagram, Facebook, MailOutline } from '@mui/icons-material';
+import { useModalBackgroundStore, useLoadingModalStore } from '@/config/store';
+import { LinkedIn, X, WhatsApp, Instagram, Facebook, MailOutline, Place, Business } from '@mui/icons-material';
 import Loading from '../loadingCircle/Circle';
 
 ///Commencing the code 
@@ -25,6 +27,9 @@ const Footer = () => {
     const routerPath = usePathname();
     const [email, setEmail] = useState<string>("")
     const router = useRouter()
+    const clientInfo = useClientInfoStore(state => state.info)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
 
       useEffect(() => {
         const interval = setInterval(() => {
@@ -51,6 +56,59 @@ const Footer = () => {
         );
       };
 
+      ///This function is trigerred when a link in the footer is clicked
+      const viewFooterNav = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, nav: string) => {
+        e.preventDefault()
+
+        //Setting loading modal
+        setModalBackground(true)
+        setLoadingModal(true)
+
+        //Storing this info in button research
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "viewFooterNav()",
+            Button_Info: `Clicked ${nav} in footer`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+        storeButtonInfo(info)
+
+        router.push(`/${nav}`)
+      }
+
+      //This function is trigerred when a social link is clicked
+      const _visitSocialLink = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>, social: string) => {
+        e.preventDefault()
+
+        //Setting loading modal
+        setModalBackground(true)
+        setLoadingModal(true)
+
+        //Arranging button research info
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "visitSocialLink()",
+            Button_Info: `Clicked ${social} in footer`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+
+        await visitSocialLink(social, info)
+      }
+
       ///This function adds a new subscriber
       const subNewsLetter = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
@@ -71,7 +129,7 @@ const Footer = () => {
         try {
             const subscriber = email
             const newsletter: INews = { subscriber }
-            //console.log("Email: ", subscriber)
+            console.log("Sending email: ", subscriber)
             const res = await fetch(`${backend}/news/`, {
                 method: 'POST',
                 body: JSON.stringify(newsletter),
@@ -125,11 +183,11 @@ const Footer = () => {
                     <div className={styles.socials}>
                         <span className={styles.text}>Connect with us at</span>
                         <div className={styles.social_medias}>
-                            <MailOutline className={styles.mail} onClick={(e) => visitSocialLink(e, "mail")} />
-                            <Facebook className={styles.facebook} onClick={(e) => visitSocialLink(e, "facebook")} />
-                            <Instagram className={styles.instagram} onClick={(e) => visitSocialLink(e, "instagram")} />
-                            <WhatsApp className={styles.whatsapp} onClick={(e) => visitSocialLink(e, "whatsapp")} />
-                            <X className={styles.x} onClick={(e) => visitSocialLink(e, "x")} />
+                            <MailOutline className={styles.mail} onClick={(e) => _visitSocialLink(e, "mail")} />
+                            <Facebook className={styles.facebook} onClick={(e) => _visitSocialLink(e, "facebook")} />
+                            <Instagram className={styles.instagram} onClick={(e) => _visitSocialLink(e, "instagram")} />
+                            {/* <WhatsApp className={styles.whatsapp} onClick={(e) => _visitSocialLink(e, "whatsapp")} /> */}
+                            <X className={styles.x} onClick={(e) => _visitSocialLink(e, "x")} />
                             {/* <Image 
                                 className={styles.tiktok}
                                 src={tiktok}
@@ -143,6 +201,10 @@ const Footer = () => {
                                 
                             </button> */}
                         </div>
+                    </div>
+                    <div className={styles.addr}>
+                        <Business className={styles.icon} />
+                        <span>1111B S Governors Ave, STE 28549, Dover, Delaware. 19904.</span>
                     </div>
                 </div>
                 <hr className={styles.slash} />
@@ -173,83 +235,15 @@ const Footer = () => {
            <hr className={styles.footer_slash}/>
            <div className={styles.lower_footer}>
             <div className={styles.footer_menu}>
-                <button onClick={() => router.push('/about')}><span>About Us</span></button>
-                <button onClick={() => router.push('/#products')}><span>Products</span></button>
-                <button onClick={() => router.push('/faqs')}><span>FAQs</span></button>
-                <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
+                <button onClick={(e) => viewFooterNav(e, "about")}><span>About Us</span></button>
+                <button onClick={(e) => viewFooterNav(e, "products")}><span>Products</span></button>
+                <button onClick={(e) => viewFooterNav(e, "faqs")}><span>FAQs</span></button>
+                <button onClick={(e) => viewFooterNav(e, "terms")}><span>Terms of Use</span></button>
             </div>
             {/* <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span> */}
             <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} {companyName} Inc., All rights reserved</span>
            </div>
         </footer>
-        {/* <footer className={`${styles.mobile_footer} ${routeStyle(routerPath, styles)}`} id="contacts">
-            <Image 
-                className={styles.background}
-                src={"https://drive.google.com/uc?export=download&id=1G9YYqLAIMY7SIq0cZ6o_kyR6IkrmTCNO"}
-                alt=""
-                width={1440}
-                height={1462}
-            />
-            <div className={styles.newsletter_section}>
-                <h3><strong>Newsletter</strong></h3>
-                <span className={styles.text2}>Be the first to know about discounts, new products and special offers. 
-                    Join our community today and take the first step towards a healthier, happier you!</span>
-                <form className={styles.news_form} onSubmit={(e) => subNewsLetter(e)}>
-                    <input  
-                        type="email" 
-                        placeholder="example@mail.com" 
-                        onChange={(e) => setEmail(() => e.target.value)}
-                        value={email}
-                    />
-                    <MailOutlineIcon className={styles.mailIcon}/>
-                    <button>
-                        {isLoading ? (
-                            <Loading width='10px' height='10px' />
-                        ) : (
-                            <span>Submit</span>
-                        )}
-                    </button>
-                </form>
-            </div>
-            <div className={styles.contact_section}>
-                <div className={styles.whatsapp_social}>
-                    <button>
-                        <img
-                            src="https://drive.google.com/uc?export=download&id=19bUJMJNtW8KywhjRaVRQZVxFtJFPjVQ8"
-                            alt=""
-                        />
-                    </button>
-                    <div className={styles.texts}>
-                        <span className={styles.text1}>Have a question?</span>
-                        <span className={styles.text2}>+234-9090982848</span>
-                    </div>
-                </div>
-                <div className={styles.email_social}>
-                    <button>
-                        <Image
-                            src="https://drive.google.com/uc?export=download&id=1xBD5VMMs720V9OkNwxYaStgXqez975Rj"
-                            alt=""
-                            width={48}
-                            height={49}
-                        />
-                    </button>
-                    <div className={styles.texts}>
-                        <span className={styles.text1}>Contact us at</span>
-                        <span className={styles.text2}>{companyEmail}</span>
-                    </div>
-                </div>
-            </div>
-            <div className={styles.lower_footer}>
-                <div className={styles.footer_menu}>
-                    <button onClick={() => router.push('/about')}><span>About Us</span></button>
-                    <button onClick={() => router.push('/#products')}><span>Products</span></button>
-                    <button onClick={() => router.push('/about/#faqs')}><span>FAQ</span></button>
-                    <button onClick={() => router.push('/terms')}><span>Terms of Use</span></button>
-                </div>
-                <span className={styles.address}>541 Montgomery Street, San Francisco, CA 94111, United States.</span>
-            <span className={styles.copyright}>Copyright &copy; {new Date().getFullYear()} Dr Ritany Inc., All rights reserved</span>
-           </div>
-        </footer> */}
         </>
     );
 };

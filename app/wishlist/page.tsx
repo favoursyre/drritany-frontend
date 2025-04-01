@@ -6,7 +6,7 @@
 import HomeCampaignB from "@/components/campaigns/homeCampaignB/homeCampaignB";
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct, ISlideTitle } from "@/config/interfaces";
-import { backend, shuffleArray, sortProductByActiveStatus } from "@/config/utils";
+import { backend, shuffleArray, sortProductByActiveStatus, getProducts } from "@/config/utils";
 import { Metadata } from "next";
 import dynamicImport from "next/dynamic";
 const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
@@ -22,24 +22,6 @@ export const metadata: Metadata = {
 }
 
 export const dynamic = "force-dynamic"
-
-///This fetches a list of all products
-async function getProducts() {
-  try {
-    const res = await fetch(`${backend}/product?action=order`, {
-      method: "GET",
-      cache: "no-store",
-    })
-
-    if (res.ok) {
-      return res.json()
-    } else {
-      getProducts()
-    }
-  } catch (error) {
-      console.error(error);
-  }
-}
 
 /**
  * @title Homepage

@@ -48,6 +48,7 @@
             //border: 2px solid red;
             @include size(90%, 35%);
             padding: 0% 3%;
+            gap: 2%;
         }
 
         h2 {
@@ -61,8 +62,9 @@
             }
 
             @include phonePro {
-                height: 20%;
+                height: 15%;
                 margin-bottom: 5px;
+                font-size: 25px;
             }
 
             @include phoneMini {

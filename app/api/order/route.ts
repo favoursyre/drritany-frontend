@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
                 const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 
                 orderData.push({
+                    UserId: customer.userId,
                     OrderId: order_._id,
                     CartId: cart_._id,
                     FullName: customer.fullName,
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
         //Adding the orders to the sheet
         for (let order of orderData) {
             const google = await GoogleSheetStore(orderSheetId)
-            const sheetRange = `Order_Sheet_NG!A:R`
+            const sheetRange = `Order_Sheet_US!A:S`
             const sheet = await google.addSheet(sheetRange, order)
             console.log("Sheet status: ", sheet)
         }

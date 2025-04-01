@@ -5,7 +5,7 @@
 import styles from "./productCatalog.module.scss"
 import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent, Fragment } from "react"
-import { sortOptions as sortOption, sortProductByOrder, sortProductByPrice, sortProductByLatest, getCurrentDate, getCurrentTime, statSheetId, backend } from "@/config/utils";
+import { sortProductByOrder, sortProductByPrice, sortMongoQueryByTime, getCurrentDate, getCurrentTime, statSheetId, backend } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -31,16 +31,13 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     const router = useRouter()
     const [currentURL, setCurrentURL] = useState(window.location.href)
     const clientInfo = useClientInfoStore(state => state.info)
-    const [sort, setSort] = useState(false)
-    const [sortId, setSortId] = useState(0)
-    const [sortOptions, setSortOptions] = useState(sortOption)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setContactModal = useContactModalStore(state => state.setContactModal);
     //console.log('Product List: ', productList)
 
     useEffect(() => {
-        console.log("Test: ", productList, sortProductByLatest(productList), sortProductByPrice(productList, "ascend"))
-        const products_: Array<IProduct> = sortProductByLatest(productList)
+        //console.log("Test: ", productList, sortMongoQueryByTime(productList, "latest"), sortProductByPrice(productList, "ascend"))
+        const products_: Array<IProduct> = sortMongoQueryByTime(productList,"latest")
         //console.log("After: ", products_)
         setProducts(() => products_)
 
@@ -77,10 +74,10 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                 storeQuery()
             }
         }
-    }, [products, clientInfo])
+    }, [products, clientInfo, productList, query, query_])
 
     useEffect(() => {
-        console.log("Query: ", query, productList)
+        //console.log("Query: ", query, productList)
 
         const intervalId = setInterval(() => {
         }, 100);
@@ -124,33 +121,6 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
 
         setContactModal(true)
         setModalBackground(true)
-    }
-
-    ///This function filters the products
-    const filterProduct = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, sort: number): Promise<void> => {
-        e.preventDefault()
-        setSort(false)
-        setSortId(sort)
-        let product_: Array<IProduct>
-
-        if (sort === 0) {
-            product_ = sortProductByOrder(productList)
-            //setProductList(() => [...product_])
-            setProducts(() => [...products_])
-        } else if (sort === 1) {
-            product_ = sortProductByLatest(productList)
-            //setProductList(() => [...product_])
-            setProducts(() => [...product_])
-        } else if (sort === 2) {
-            product_ = sortProductByPrice(productList, "descend")
-            //console.log("Query: ", query_)
-            //setProductList(() => [...product_])
-            setProducts(() => [...product_])
-        } else if (sort === 3) {
-            product_ = sortProductByPrice(productList, "ascend")
-            //setProductList(() => [...product_])
-            setProducts(() => [...product_])
-        }
     }
 
     //Conditionally rendering various components

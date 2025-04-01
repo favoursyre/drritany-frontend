@@ -1222,8 +1222,8 @@ export const countryList: Array<ICountry> = [
             { name: "Wyoming", abbreviation: "WY", extraDeliveryPercent: 0 }
         ],
         delivery: {
-            feePerKg: 0.8,
-            baseNumber: 7
+            feePerKg: 1,
+            baseNumber: 2.9
         },
         flag: {
             src: 'https://flagcdn.com/w320/us.png',

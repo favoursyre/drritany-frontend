@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         const product_: IProduct = await request.json();
         await connectMongoDB();
         const product = await Product.createProduct(product_)
-        console.log("Product: ", product)
+        //console.log("Product: ", product)
 
         ///Sending confirmation email to the person
         //const status = await sendSubnewsletterEmail(newsletter?.subscriber)

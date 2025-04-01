@@ -36,8 +36,7 @@ const nextConfig = {
       //   }
       // },
       // experimental: {
-      //   workerThreads: false,
-      //   cpus: 1,
+      //   missingSuspenseWithCSRBailout: false,
       // },
 };
 

@@ -6,7 +6,7 @@ import styles from "./contactModal.module.scss"
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
 import { MouseEvent, useState, FormEvent } from "react";
 import Loading from "@/components/loadingCircle/Circle";
-import CloseIcon from "@mui/icons-material/Close";
+import { Place, Close, Business } from "@mui/icons-material";
 import Image from "next/image";
 import { capitalizeFirstLetter, backend } from "@/config/utils";
 import { notify } from "@/config/clientUtils";
@@ -104,11 +104,15 @@ const ContactModal = () => {
               width={2048}
               height={1341}
             />
+            <div className={styles.addr}>
+                <Business className={styles.icon} />
+                <span>1111B S Governors Ave, STE 28549, Dover, Delaware. 19904</span>
+            </div>
           </div>
           <div className={styles.form}>
             <header>
               <button onClick={(e) => closeModal(e)}>
-                <CloseIcon />
+                <Close />
               </button>
             </header>
             <div className={styles.brief}>

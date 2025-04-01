@@ -113,6 +113,19 @@
           line-height: 15px;
         }
       }
+
+      .thanks {
+        flex-direction: row;
+        //border: 1px solid red;
+
+        .receipt {
+          position: relative;
+          display: flex;
+          color: blue;
+          @include size(auto, auto);
+          text-align: auto;
+        }
+      }
     }
 
     .checkContainer {
@@ -157,6 +170,12 @@
         @include phoneMini {
           font-size: 12px;
           line-height: 18px;
+        }
+
+        .terms {
+          color: blue;
+          text-decoration: underline;
+          cursor: pointer;
         }
       }
 

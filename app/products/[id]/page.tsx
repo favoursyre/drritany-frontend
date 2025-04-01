@@ -6,9 +6,9 @@ import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
+import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity, getProducts } from '@/config/utils';
 import { Metadata } from 'next';
-import { IProduct, Props, ISlideTitle } from '@/config/interfaces';
+import { IProduct, Props, ISlideTitle, IResponse } from '@/config/interfaces';
 
 ///Commencing the code -->
 
@@ -17,11 +17,14 @@ async function getProduct(id: string) {
   try {
     const res = await fetch(`${backend}/product/${id}`, {
       method: "GET",
-      cache: "no-store",
+      //cache: "force-cache",
+      //next: { revalidate: 120 },
     })
 
     if (res.ok) {
-      return res.json()
+      const data = await res.json()
+      //console.log("Product: ", data)
+      return data
     } else {
       console.log("not refetching")
       //getProduct(id)
@@ -32,14 +35,33 @@ async function getProduct(id: string) {
   }
 }
 
+// Pre-render known product pages at build time
+// export async function generateStaticParams(): Promise<Array<{ id?: string }>> {
+//   try {
+//     const products_ = await getProducts() as unknown as Array<IProduct>
+//     //console.log('Products: ', products_)
+//     //console.log("Backend: ", backend)
+  
+//     const productIds = products_.map((product: IProduct) => product._id!.toString());
+//     //console.log('Product Ids: ', productIds)
+//     return productIds.map((id) => ({ id }));
+//   } catch (error) {
+//     console.log("GSP Error: ", error)
+//     return [{ id: "66e97b258cd36b9a41654a36"}]
+//   }
+// }
+
+// Optional: Control dynamic params behavior
+//export const dynamicParams = true; // Allow dynamic rendering for new IDs (default)
+
 
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product: Array<IProduct> | undefined = await getProduct(params.id)
   if (!product || product?.length === 0) {
     return {
-      title: "Not found",
-      description: "Page not found"
+      title: "Product not found",
+      description: "Product not found"
     }
   } else {
     return {
@@ -49,25 +71,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         canonical: `/products/${params.id}`
       }
     }
-  }
-}
-
-//This function sets the products
-async function getProducts() {
-  try {
-    const res = await fetch(`${backend}/product?action=order`, {
-      method: "GET",
-      cache: "no-store",
-    })
-
-    if (res.ok) {
-      return res.json()
-    } else {
-      getProducts()
-    }
-    
-  } catch (error) {
-      console.error(error);
   }
 }
 

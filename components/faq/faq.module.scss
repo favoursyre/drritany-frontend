@@ -170,7 +170,7 @@
 
     @include phonePro {
         top: 57%;
-        //height: 1550px;
+        height: 1350px;
         //border: 1px solid green;
     }
 
@@ -194,6 +194,7 @@
             top: 0%;
             //border: 2px solid red;
             width: 95%;
+            height: 90%;
         }
 
         .accordianItem {
@@ -222,15 +223,15 @@
                 transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 
                 @include phonePro {
-                    @include text-layout($size: 18px, $l_height: 24px);
+                    @include text-layout($size: 15px, $l_height: 22px);
                     //height: 50px;
                     //border: 1px solid red;
                 }
 
-               @include phoneMini {
-                font-size: 14px;
-                height: 40px;
-               }
+                @include phoneMini {
+                        font-size: 14px;
+                        height: 40px;
+                }
 
                 %symbol {
                     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -268,7 +269,7 @@
 
                 @include phonePro {
                     line-height: 16px;
-                    font-size: 12px;
+                    font-size: 11px;
                 }
 
                 @include phoneMini {

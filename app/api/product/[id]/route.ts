@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         const { id } = params;
         const product_: IProduct = await request.json();
         await connectMongoDB();
-        console.log("Product Data: ", product_.pricing?.variantPrices)
+        //console.log("Product Data: ", product_.pricing?.variantPrices)
         //return
 
         const product = await Product.updateProduct(id, product_)

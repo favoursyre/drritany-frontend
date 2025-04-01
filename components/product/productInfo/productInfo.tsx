@@ -5,14 +5,14 @@
 import { toast } from 'react-toastify';
 import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
-import { IProduct, ICart, ICartItem, IClientInfo, IProductViewResearch, ISheetInfo } from '@/config/interfaces';
-import { setItem, notify, getItem } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration } from '@/config/utils'
+import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
+import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout, KeyboardArrowLeft, KeyboardArrowRight, Add, Remove, FavoriteBorder } from '@mui/icons-material';
-import { useModalBackgroundStore, useDiscountModalStore } from '@/config/store';
+import { useModalBackgroundStore, useDiscountModalStore, useReturnPolicyModalStore } from '@/config/store';
 import { useClientInfoStore } from "@/config/store";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -29,12 +29,13 @@ import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 's
  * @returns The Product Info component
  */
 const ProductInfo = ({ product_ }: { product_: IProduct }) => {
-    console.log('Products_: ', product_)
+    //console.log('Products_: ', product_)
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
     //const [checkoutIsLoading]
     const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
+    const [transformOrigin, setTransformOrigin] = useState('center center');
     const clientInfo = useClientInfoStore(state => state.info)
     const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
@@ -48,7 +49,9 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //const [selectSize, setSelectSize] = useState<boolean>(false)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
+    const setReturnPolicyModal = useReturnPolicyModalStore(state => state.setReturnPolicyModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
+    const routerPath = usePathname()
     const discountProduct = useDiscountModalStore(state => state.product);
     const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     const [imageIndex, setImageIndex] = useState<number>(0)
@@ -58,6 +61,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [checkoutIsLoading, setCheckoutIsLoading] = useState<boolean>(false)
     const [addToCartIsLoading, setAddToCartIsLoading] = useState<boolean>(false)
     const [view, setView] = useState<"image" | "video">("image")
+    const [isZoomed, setIsZoomed] = useState(false);
     const spec = product.specification
     const stars: Array<number> = [1, 2, 3, 4]
     console.log("In Stock: ", product.pricing?.inStock)
@@ -182,7 +186,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             console.log("Client is undefined");
         }
         
-    }, [clientInfo, customPrice, sizeId]);
+    }, [clientInfo, customPrice, sizeId, product]);
 
     useEffect(() => {
         // This function will be called every time the component is mounted, and
@@ -192,33 +196,26 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         //console.log("main: ", mainImage)
       }, [mainImage, mainImageId, imageIndex, videoIndex, view, activeInfoBtn]);
 
-    //   //This counts up to 5secs before popping up the discount modal
-    //   useEffect(() => {
-    //     const productName = product[0].name as unknown as string
-    //     const productFreeOption = product[0].freeOption as unknown as boolean
-    //     //const popped = false
-    //     console.log('details: ', productName, productFreeOption)
-    //     //setDiscountProduct({ name: productName, freeOption: productFreeOption, poppedUp: false })
+    //This gets the picked Color Name
+    const getColorName = (): string | undefined => {
+        let colorName
+        const colors = product.specification?.colors
+        if (colors) {
+            //Checking if its an array of strings
+            if (Array.isArray(colors) && colors.every(item => typeof item === 'string')) {
+                colorName = colors[colorId]
+            } else {
+                const imgPatterns = colors as unknown as IImage
+                colorName = imgPatterns.name
+            }
+        }
 
-    //     // async function openDiscountModal(seconds: number) {
-    //     //     //setDiscountProduct({ name: productName, freeOption: productFreeOption, poppedUp: false })
-    //     //     await sleep(seconds)
+        if (colorName && typeof colorName === "string") {
+            return capitalizeFirstLetter(colorName)
+        }
 
-    //     //     if (discountProduct.poppedUp) {
-    //     //         return
-    //     //     } else {
-
-    //     //         //setDiscountProduct({ ...discountProduct, poppedUp: true })
-    //     //         setModalBackground(true)
-    //     //         setDiscountModal(true)
-    //     //     }
-    //     //     //console.log("finished counting")
-    //     // }
-
-    //     // if (product[0].extraDiscount) {
-    //     //     openDiscountModal(5)
-    //     // }
-    //   })
+        return 
+    }
 
     useEffect(() => {
         const currentDate = new Date();
@@ -232,6 +229,31 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         setStartDeliveryDate(formattedDate)
         setEndDeliveryDate(formattedDate_)
     }, [startDeliveryDate, endDeliveryDate, addedToCart])
+
+    //This function is used to view return policy
+    const viewReturnPolicy = async (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+
+        //Switching on the return policy modal
+        setModalBackground(true)
+        setReturnPolicyModal(true)
+
+        //Storing this info in button research
+        const info: IButtonResearch = {
+            ID: getItem(userIdName),
+            IP: clientInfo?.ip!,
+            Country: clientInfo?.country?.name?.common!,
+            Button_Name: "viewReturnPolicy()",
+            Button_Info: `Clicked "return policy" in product info`,
+            Page_Title: extractBaseTitle(document.title),
+            Page_URL: routerPath,
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: getOS(),
+            Device: getDevice()
+        }
+        storeButtonInfo(info)
+    }
 
     //This function helps choose color
     const chooseColor = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: number) => {
@@ -270,6 +292,23 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
         if (p.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
+
+            //Storing this info in button research
+            const info: IButtonResearch = {
+                ID: getItem(userIdName),
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Button_Name: "addToCart()",
+                Button_Info: `Tried adding "${p.name}" to cart in product info but its out of stock`,
+                Page_Title: extractBaseTitle(document.title),
+                Page_URL: routerPath,
+                Date: getCurrentDate(),
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
+            }
+            storeButtonInfo(info)
+
             return
         } else {
             setAddToCartIsLoading(() => true)
@@ -333,7 +372,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
                 //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
                 if (index === undefined) {
-                    cart.totalPrice = Number((cart.totalPrice + totalPrice).toFixed(2))
+                    cart.grossTotalPrice = Number((cart.grossTotalPrice + totalPrice).toFixed(2))
                     cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
                     cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
                     cart.deliveryFee = Number(deliveryFee.toFixed(2))
@@ -356,7 +395,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
                         cart.cart[index].subTotalHiddenDeliveryFee = Number((cart.cart[index].unitHiddenDeliveryFee * quantity).toFixed(2))
                         cart.cart[index].subTotalDiscount = quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
-                        cart.totalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+                        cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
                         cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
@@ -377,7 +416,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 console.log("No cart: ", false)
 
                 const cart: ICart = {
-                    totalPrice: totalPrice,
+                    grossTotalPrice: totalPrice,
                     totalDiscount: totalDiscount,
                     totalWeight: totalWeight,
                     totalHiddenDeliveryFee: totalHiddenDeliveryFee,
@@ -397,8 +436,24 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             setAddedToCart(() => true)
 
             //This ends the loading icon
-            await sleep(1)
+            //await sleep(0.5)
             setAddToCartIsLoading(() => false)
+
+            //Storing this info in button research
+            const info: IButtonResearch = {
+                ID: getItem(userIdName),
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Button_Name: "addToCart()",
+                Button_Info: `Added "${cartItem.name}" to cart in product info`,
+                Page_Title: extractBaseTitle(document.title),
+                Page_URL: routerPath,
+                Date: getCurrentDate(),
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
+            }
+            storeButtonInfo(info)
         } 
     }
 
@@ -447,7 +502,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     }
 
     ///This function is triggered when the order now is pressed
-    const orderNow = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
+    const orderNow = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
         e.preventDefault()
 
         if (product.pricing?.inStock === false) {
@@ -457,6 +512,22 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             
             //Add the product to cart
             addToCart(e, true)
+
+            //Storing this info in button research
+            const info: IButtonResearch = {
+                ID: getItem(userIdName),
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Button_Name: "orderNow()",
+                Button_Info: `Clicked "checkout" in product info`,
+                Page_Title: extractBaseTitle(document.title),
+                Page_URL: routerPath,
+                Date: getCurrentDate(),
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
+            }
+            storeButtonInfo(info)
 
             //Routing the user to cart page
             //window.location.reload()
@@ -499,6 +570,34 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         setQuantity(quantity_)
     }
 
+    // Function to handle the zoom effect on mouse move
+    const handleMouseMove = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+        
+        const target = e.currentTarget;
+        const { left, top, width, height } = target.getBoundingClientRect();
+        const offsetX = e.clientX - left;
+        const offsetY = e.clientY - top;
+
+        //Get the percentage position of the cursor inside the image
+        const posX = (offsetX / width) * 100;
+        const posY = (offsetY / height) * 100;
+
+        setTransformOrigin(`${posX}% ${posY}%`);
+        console.log("Dimension: ", `${posX}% ${posY}%`)
+    };
+
+    // Handle mouse enter to enable zoom
+    const handleMouseEnter = () => {
+        setIsZoomed(true);
+    };
+
+    // Handle mouse leave to reset zoom and origin
+    const handleMouseLeave = () => {
+        setIsZoomed(false);
+        setTransformOrigin('center center');
+    };
+
     //This button is triggered when the info button is clicked
     const clickInfoBtn = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number): void => {
         e.preventDefault()
@@ -507,9 +606,10 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     }
 
     //This function is triggered when wish/wish delete is clicked
-    const wishProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+    const wishProduct = async (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
         e.preventDefault()
         //e.stopPropagation()
+        let addToWishList: boolean = false
 
         const wishList_ = getItem(wishListName) as unknown as Array<IProduct>
         if (wishList_) {
@@ -521,12 +621,32 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 setItem(wishListName, newWishList)
                 storeWishInfo("Added", clientInfo!, product)
                 notify("success", "Product added to wish list")
+                addToWishList = true
             }
         } else {
             const newWishList: Array<IProduct> = [ product ]
             setItem(wishListName, newWishList)
             storeWishInfo("Added", clientInfo!, product)
             notify("success", "Product added to wish list")
+            addToWishList = true
+        }
+
+        if (addToWishList) {
+            //Storing this info in button research
+            const info: IButtonResearch = {
+                ID: getItem(userIdName),
+                IP: clientInfo?.ip!,
+                Country: clientInfo?.country?.name?.common!,
+                Button_Name: "wishProduct()",
+                Button_Info: `Added "${product.name}" to wish list in product info`,
+                Page_Title: extractBaseTitle(document.title),
+                Page_URL: routerPath,
+                Date: getCurrentDate(),
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
+            }
+            storeButtonInfo(info)
         }
     }
 
@@ -566,7 +686,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             </div>
             <main className={`${styles.main}`}>
                 <div className={styles.left_section}>
-                    <div className={styles.profile_image}>
+                    <div className={styles.profile_image}
+                        onMouseMove={(e) => handleMouseMove(e)}
+                        onMouseEnter={() => setTransformOrigin('center center')}
+                        onMouseLeave={() => setTransformOrigin('center center')}
+                    >
                         {product.images && product.images[imageIndex].type === "video"  ? (
                             <iframe
                                 className={styles.img}
@@ -587,6 +711,10 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 alt=""
                                 width={product.images[imageIndex].width}
                                 height={product.images[imageIndex].height}
+                                style={{
+                                    transformOrigin: transformOrigin,
+                                    transform: isZoomed ? 'scale(1.5)' : 'scale(1)'
+                                }}  
                             />
                         )}
                     </div>
@@ -685,7 +813,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 <div className={styles.right_section}>
                     <h3>
                         <strong>{product.name}</strong>
-                        {checkExtraDiscountOffer(product) ? (
+                        {/* {checkExtraDiscountOffer(product) ? (
                             // <Tooltip title="Discount Offer" placement='top'>
                             //     <IconButton>
                                 <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
@@ -693,7 +821,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             // </Tooltip>
                         ) : (
                             <></>
-                        )}
+                        )} */}
                     </h3>
                     <span className={styles.product_about}>{product.description}</span>
                     <div className={styles.product_price_orders_rating}>
@@ -743,10 +871,14 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             <span>{product.rating}</span>
                         </div>
                     </div>
+                    <button className={styles.return} onClick={(e) => viewReturnPolicy(e)}>
+                        <span>Return & Refund Policy</span>
+                        <Add style={{ fontSize: "1rem" }}/>
+                    </button>
                     <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
                     {product.specification?.colors && product.specification.colors[0] !== "" ? (
                         <div className={styles.product_colors}>
-                            <span className={styles.span1}>Color</span>
+                            <span className={styles.span1}>Color: <span className={styles._span1}>{getColorName()}</span></span>
                             <Swiper
                                 effect={'slide'}
                                 spaceBetween={8}

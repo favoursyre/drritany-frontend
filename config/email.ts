@@ -4,6 +4,7 @@
 import nodemailer from "nodemailer"
 import { IOrder, IInquiry, IAdmin } from "./interfaces"
 import { companyName, SUPPORT_EMAIL, SUPPORT_PASSWORD, domainName } from "./utils"
+import { html } from "cheerio/dist/commonjs/static";
 
 ///Commencing the code
 
@@ -60,7 +61,7 @@ export const sendEmail = async (
             to: recipientEmail,
             subject: subject,
             text: body,
-            template: template,
+            html: template,
             context: context
           };
           
@@ -77,7 +78,7 @@ export const sendEmail = async (
               }
             });
           })
-    }
+}
 
 
 /**
@@ -90,7 +91,6 @@ export const sendEmail = async (
  */
 export const sendSubnewsletterEmail = async (recipientEmail: string): Promise<any> => {
   const template: string = `
-  <!DOCTYPE html>
   <html lang="en">
     <head>
       <title></title>
@@ -110,6 +110,7 @@ export const sendSubnewsletterEmail = async (recipientEmail: string): Promise<an
           display: flex;
           justify-content: center;
           font-family: 'Inter';
+          background-color: blue;
         }
   
         body {
@@ -118,6 +119,7 @@ export const sendSubnewsletterEmail = async (recipientEmail: string): Promise<an
           /* border: 2px solid blue; */
           width: 95%;
           height: 95%;
+          background-color: blue;
         }
   
         main {
@@ -130,6 +132,7 @@ export const sendSubnewsletterEmail = async (recipientEmail: string): Promise<an
           width: 95%;
           height: 100%;
           padding: 1% 2.5%;
+          background-color: blue;
         }
   
         .logo {
@@ -260,7 +263,7 @@ If you ever have any questions, concerns or suggestions, feel free to reply to t
 Warmest regards, 
 
 Customer Support Team
-${companyName}
+${companyName} Inc.
   `
   const status = await sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, recipientEmail, `Successful Newsletter Subscription`, body, undefined, undefined)
   return status
@@ -434,7 +437,7 @@ If you have any further questions or concerns in the meantime, please do not hes
 Warmest regards, 
 
 Customer Support Team
-${companyName}
+${companyName} Inc.
   `
   
   const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, inquiry.emailAddress, ` Acknowledgment of your Inquiry`, body, undefined, undefined)
@@ -599,11 +602,9 @@ export const sendOrderEmail = (order: IOrder): any => {
     const body = `
 Dear ${order.customerSpec.fullName},
 
-We are pleased to inform you that your order was sent successfully. Our team is currently reviewing your order so that it can be processed properly.
+We are pleased to inform you that your payment for your order was processed successfully. Our team is currently reviewing your order so that it can be fulfilled properly.
 
-You can view your order invoice slip at ${domainName}/order/invoice/${order._id}
-
-Payment would be made on delivery to the third party logistics company that would deliver your orders to you.
+You can view your order receipt slip at ${domainName}/order/receipt/${order._id}
 
 If you ever have any questions or would like to edit/cancel your order, feel free to reply to this email. We value your feedback immensely.
 
@@ -612,7 +613,7 @@ If you don't recognise this activity, feel free to reply this email.
 Warmest regards, 
 
 Customer Support Team
-${companyName}
+${companyName} Inc.
     `
     
     const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, order.customerSpec.email, `Successful Order`, body, undefined, undefined)
@@ -793,7 +794,7 @@ If you don't recognise this activity, feel free to reply this email.
 Warmest regards, 
 
 Customer Support Team
-${companyName}
+${companyName} Inc.
   `
   
   const status = sendEmail(`${companyName}`, SUPPORT_EMAIL, SUPPORT_PASSWORD, admin.emailAddress!, `Admin Successfully Created`, body, undefined, undefined)

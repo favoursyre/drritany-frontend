@@ -227,6 +227,11 @@
             grid-column-start: 2;
             grid-column-end: 4;
 
+            ::-webkit-scrollbar {
+                width: 5px;  /* Width of the scrollbar */
+                height: 5px;
+            }
+
             .image {
                 border: 1px solid red;
                 @include flexBar($position: relative, $align: center, $justify: center, $gap: 1%, $flex_d: column);
@@ -414,13 +419,14 @@
 
                 .fileSlide {
                     border: 1px solid $primary-color;
-                    @include flexBar($position: relative, $align: center, $justify: center, $gap: 3%);
+                    @include flexBar($position: relative, $align: center, $justify: center, $gap: 1%);
                     @include size(90%, 30%);
+                    overflow: auto;
 
                     .fileItem {
                         border: 1px solid red;
                         @include flexBar($position: relative, $align: center, $justify: center, $gap: 0%);
-                        @include size(20%, 90%);
+                        @include size(10%, 90%);
                         overflow: hidden;
                         border-radius: 4px;
 

@@ -13,4 +13,9 @@
     top: 0px;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 100;
+
+    @include phonePro {
+        height: 110%;
+        //position: st;
+    }
 }

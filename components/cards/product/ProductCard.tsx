@@ -33,7 +33,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
 
     useEffect(() => {
-        console.log("View: ", view)
+        //console.log("View: ", view)
         setProduct(() => product_)
     }, [clientInfo, product, product_]);
 

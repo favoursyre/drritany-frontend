@@ -146,4 +146,35 @@ orderSchema.statics.getOrderById = async function (id: string) {
     return order;
 }
 
+/**
+ * @notice Static order method
+ * @param id The _id of the order
+ * @returns The deleted data
+ */
+orderSchema.statics.deleteOrder = async function (id: string) {
+  //Validation of args
+  if (!Types.ObjectId.isValid(id)) {
+    throw Error("Id is invalid");
+  }
+
+  //This deletes the ingredient from the database
+  const delete_ = await this.findOneAndDelete({ _id: id });
+  return delete_;
+};
+
+/**
+ * @notice Static update order method
+ * @param req The params that were passed in during the client request
+ * @param res The response of the query by client request
+ * @returns The updated data
+ */
+orderSchema.statics.updateOrder = async function (id: string, order: IOrder) {
+  //This updates the value in the database
+  const update = await this.findOneAndUpdate(
+    { _id: id },
+    { ...order }
+  );
+  return update;
+};
+
 export const Order: IOrderModel = (models.Order || model<IOrder, IOrderModel>("Order", orderSchema)) as unknown as IOrderModel;

@@ -5,7 +5,7 @@
 import styles from "./products.module.scss"
 import Image from 'next/image';
 import { notify, getItem } from "@/config/clientUtils";
-import { sortOptions, backend, sortProductByLatest, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName } from "@/config/utils"
+import { sortProductOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName, sortProductByRating } from "@/config/utils"
 import { IAdmin, IPricing, IProduct } from "@/config/interfaces";
 import { useEffect, MouseEvent, FormEvent, useState, Fragment } from "react";
 import { useRouter } from "next/navigation";
@@ -14,12 +14,6 @@ import { SearchOutlined, Add, Tune, CategoryOutlined } from "@mui/icons-material
 import AdminProductCard from "@/components/cards/adminProduct/AdminProductCard";
 import puppeteer from "puppeteer"
 
-///Commencing the code 
- 
-
- 
-
-  
 /**
  * @title Admin Product Component
  * @returns The Admin Product component
@@ -32,6 +26,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
     const [sort, setSort] = useState(false)
     const [sortId, setSortId] = useState(1)
     const [category, setCategory] = useState<boolean>(false)
+    const [sortOptions, setSortOptions] = useState<Array<{ id: number, name: string}>>([...sortProductOptions, { id: 5, name: "Oldest"}])
     const [categoryOptions, setCategoryOptions] = useState<Array<string>>([ "All", "Active", "Inactive" ])
     const [products, setProducts] = useState<Array<IProduct>>(products_)
     const [categoryId, setCategoryId] = useState<number>(0)
@@ -71,7 +66,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [currentURL]);
+    }, [currentURL, products]);
 
     //This is triggered when the user searches for a product
     const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
@@ -91,15 +86,22 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
         setCategoryId(id)
         let sortedProducts: Array<IProduct>
 
-        if (id === 0) {
-            sortedProducts = sortProductByActiveStatus(products_, "All")!
-            setProducts(() => [...sortedProducts])
-        } else if (id === 1) {
-            sortedProducts = sortProductByActiveStatus(products_, "Active")!
-            setProducts(() => [...sortedProducts])
-        } else if (id === 2) {
-            sortedProducts = sortProductByActiveStatus(products_, "Inactive")!
-            setProducts(() => [...sortedProducts])
+        //Sorting the products
+        switch (id) {
+            case 0:
+                sortedProducts = sortProductByActiveStatus(products_, "All")!
+                setProducts(() => [...sortedProducts])
+                break
+            case 1:
+                sortedProducts = sortProductByActiveStatus(products_, "Active")!
+                setProducts(() => [...sortedProducts])
+                break
+            case 2:
+                sortedProducts = sortProductByActiveStatus(products_, "Inactive")!
+                setProducts(() => [...sortedProducts])
+                break
+            default:
+                break
         }
     }
 
@@ -110,23 +112,35 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
         setSortId(sort)
         let sortedProducts: Array<IProduct>
 
-        if (sort === 0) {
-            sortedProducts = sortProductByOrder(products_)
-            //setProductList(() => [...product_])
-            setProducts(() => [...sortedProducts])
-        } else if (sort === 1) {
-            sortedProducts = sortProductByLatest(products_)
-            //product_ = sortByCategory(productList, "Health & Personal Care")
-            //setProductList(() => [...product_])
-            setProducts(() => [...sortedProducts])
-        } else if (sort === 2) {
-            sortedProducts = sortProductByPrice(products_, "descend")
-            //setProductList(() => [...product_])
-            setProducts(() => [...sortedProducts])
-        } else if (sort === 3) {
-            sortedProducts = sortProductByPrice(products_, "ascend")
-            //setProductList(() => [...product_])
-            setProducts(() => [...sortedProducts])
+        //Sorting the products
+        switch (sort) {
+            case 0:
+                sortedProducts = sortProductByOrder(products_)
+                setProducts(() => [...sortedProducts])
+                break;
+            case 1:
+                sortedProducts = sortMongoQueryByTime(products_, "latest")
+                setProducts(() => [...sortedProducts])
+                break;
+            case 2:
+                sortedProducts = sortProductByPrice(products_, "descend")
+                setProducts(() => [...sortedProducts])
+                break;
+            case 3:
+                sortedProducts = sortProductByPrice(products_, "ascend")
+                setProducts(() => [...sortedProducts])
+                break;
+            case 4:
+                sortedProducts = sortProductByRating(products_)
+                setProducts(() => [...sortedProducts])
+                break;
+            case 5:
+                sortedProducts = sortMongoQueryByTime(products_, "oldest")
+                setProducts(() => [...sortedProducts])
+                break;
+            default:
+                console.log('Unknown action. Please use start, stop, or pause.');
+                break;
         }
     }
 
@@ -228,7 +242,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
             </div>
             <div className={styles.product_list}>
                 <div className={styles.product_header}>
-                    <span className={styles.span1}><strong>Product</strong></span>
+                    <span className={styles.span1}><strong>Product</strong><span>({products.length})</span></span>
                     <span className={styles.span2}><strong>Price</strong></span>
                     <span className={styles.span3}><strong>Status</strong></span>
                     <span className={styles.span4}><strong>Action</strong></span>

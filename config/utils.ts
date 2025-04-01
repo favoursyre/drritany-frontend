@@ -3,10 +3,18 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
 import { countryList } from './database';
+import axios from 'axios';
+import fs from "fs"
+import FormData from 'form-data';
+import { drive_v3 } from "googleapis";
+import https from "https"
+import path from "path";
+//import sharp from 'sharp';
+import { IncomingMessage } from 'http';
 import { companyName as _companyName, deliveryPeriod as _deliveryPeriod, deliveryDuration as _deliveryDuration } from './sharedUtils';
 
 ///Commencing the code
@@ -26,25 +34,29 @@ export const deliveryPeriod: number = _deliveryPeriod //(Unit is in days) This m
 
 export const deliveryDuration: number = _deliveryDuration //This represents the time range within which the delivery will be made
 
-export const minKg: number = 1
+export const minKg: number = 0.5
 
 //export const mediaFolderId: string = "https://developers.google.com/oauthplayground"
 
 export const deliveryFeePerKg: number = 0.8 //Unit is in USD
 
-//export const domainName: string = "http://localhost:3000"
+export const domainName: string = process.env.NEXT_PUBLIC_DOMAIN_NAME! //"http://localhost:3000"
 //export const domainName: string = "http://192.168.43.133:3000"
-export const domainName: string = "https://idealplug.com"
+//export const domainName: string = "https://idealplug.com"
 
 ///The backend api point
-export const backend = "https://idealplug.com/api"
-//export const backend = "http://localhost:3000/api"
+//export const backend = "https://idealplug.com/api"
+export const backend = process.env.NEXT_PUBLIC_BACKEND! //"http://localhost:3000/api"
 
 export const orderSheetId: string = "1sRUnpH6idKiS3pFH50DAPxL29PJpPXEgFHipC7O5kps"
 
 export const statSheetId: string = "1sxI_f2u4Pyxfp-8lwZr6O42YWpIJSEvVfAPrAjkB-oQ"
 
 export const mediaFolderId: string = "1c_PAN5IenoKGNtRJJ7MG6zfa5jZC9bwH"
+
+export const stripePublishableKey: string = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+
+export const stripeSecretKey: string = process.env.STRIPE_SECRET_KEY!
 
 ///This function gets an array and sends the regrouped array of specified length
 export const groupList = (arr: Array<any>, length: number): Array<any> => {
@@ -73,6 +85,12 @@ export const extraDeliveryFeeName: string = "idealPlugExtraDeliveryFee"
 
 export const productFilterName: string = "idealPlugProductFilterSettings"
 
+export const clientInfoName: string = "idealPlugClientInfo"
+
+export const userIdName: string = "idealPlugUserId"
+
+export const productsName: string = "idealPlugProducts"
+
 //Order name
 export const orderName: string = "idealPlugOrder"
 
@@ -81,7 +99,7 @@ export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
 
 ///These are list of various platforms
 export const platformList: Array<IMarketPlatform> = [
-    { name: "Aliexpress", url: "aliexpress.us" },
+    { name: "AliExpress", url: "aliexpress.us" },
     { name: "Amazon", url: "amazon.com" },
 ]
 
@@ -248,6 +266,31 @@ export const isVideo = (url: string | undefined): boolean => {
     }
 };
 
+//This function deletes the downloaded image from the system
+export const deleteFile = async (filePath: string): Promise<void> => {
+    try {
+        // Resolve the full path
+        const absolutePath = path.resolve(filePath);
+
+        // Check if file exists
+        if (!fs.existsSync(absolutePath)) {
+            console.warn(`File does not exist at: ${absolutePath}`);
+            return; // Not throwing an error here, as file is already gone
+        }
+
+        // Delete the file (using promises version of fs)
+        await fs.promises.unlink(absolutePath);
+        console.log(`File deleted successfully: ${absolutePath}`);
+
+    } catch (error) {
+        console.error('Error deleting file:', {
+            message: (error as Error).message,
+            path: filePath
+        });
+        throw error;
+    }
+}
+
 //This function generates direct links for google drive files
 export const getGDriveDirectLink = (driveId: string): string  => {
     return `https://drive.google.com/uc?export=download&id=${driveId}`
@@ -288,7 +331,7 @@ export const getDeliveryFee = (weight: number, country: string) => {
     const baseNumber = clientCountry?.delivery?.baseNumber ? clientCountry?.delivery?.baseNumber : 9
     const feePerKg = clientCountry?.delivery?.feePerKg ? clientCountry.delivery.feePerKg : 0.9
 
-    console.log("Total W: ", weight, baseNumber, feePerKg, clientCountry, country)
+    //console.log("Total W: ", weight, baseNumber, feePerKg, clientCountry, country)
 
     if (weight <= minKg) {
         //deliveryFee = minKg * deliveryFeePerKg
@@ -296,7 +339,7 @@ export const getDeliveryFee = (weight: number, country: string) => {
     } else {
         //const newWeight = round(weight, 0)
         const xtraWeight = (weight - minKg)
-        console.log("Exra W: ", xtraWeight)
+        //console.log("Exra W: ", xtraWeight)
         const baseDeliveryFee = baseNumber * feePerKg
         const extraDeliveryFee = xtraWeight * feePerKg
         deliveryFee = baseDeliveryFee + extraDeliveryFee
@@ -306,6 +349,27 @@ export const getDeliveryFee = (weight: number, country: string) => {
 
     //return 0
 }
+
+///This fetches a list of all products
+export async function getProducts() {
+    try {
+      const res = await fetch(`${backend}/product?action=order`, {
+        method: "GET",
+        //cache: "no-store",
+        //next: { revalidate: 120 }
+      })
+  
+      if (res.ok) {
+        const data = await res.json()
+        //console.log("Products: ", data)
+        return data
+      } else {
+        getProducts()
+      }
+    } catch (error) {
+        console.error(error);
+    }
+  }
 
 //This function returns only a digit after a dash i.e. `+1-292019` => `292019`
 export const extractDigitsAfterDash = (phoneNumber: string): string => {
@@ -334,13 +398,27 @@ export const findStateWithZeroExtraDeliveryPercent = (country: ICountry | undefi
     } 
 };
 
-///This contains the sort orders
-export const sortOptions = [
+///This contains the sort options for products
+export const sortProductOptions = [
     {id: 0, name: "Most Ordered"},
     {id: 1, name: "Newest Arrivals"},
     {id: 2, name: "Price: High to Low"},
     {id: 3, name: "Price: Low to High"},
     {id: 4, name: "Most Recommended"}
+]
+
+///This contains the sort options for orders
+export const sortOrderOptions = [
+    {id: 0, name: "Latest"},
+    {id: 1, name: "Oldest"},
+    {id: 2, name: "Price: High to Low"},
+    {id: 3, name: "Price: Low to High"},
+    {id: 4, name: DeliveryStatus.PENDING},
+    {id: 4, name: DeliveryStatus.IN_TRANSIT},
+    {id: 6, name: DeliveryStatus.DELIVERED},
+    {id: 7, name: DeliveryStatus.RETURNED},
+    {id: 8, name: DeliveryStatus.EXCEPTION},
+    {id: 9, name: DeliveryStatus.CANCELLED}
 ]
 
 ///This decodes a unicode string
@@ -475,18 +553,29 @@ export const sortProductByRating = (products: Array<IProduct>): Array<IProduct> 
     });
 }
 
-///This function sorts the array from latest to oldest
-export const sortProductByLatest = (products: Array<IProduct>): Array<IProduct> => {
-    // Sort the array based on the createdAt property in descending order
-    console.log("Sorted: ", products)
-    const sortedProducts = products.sort((a, b) => {
-        return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime();
-    }); 
-    return sortedProducts
-}
+//Generic sorting mongo query function
+export const sortMongoQueryByTime = <T extends { createdAt?: string }>(
+    items: Array<T>, action: "latest" | "oldest"
+): Array<T> => {
+    if (items) {
+        // Create a copy to avoid mutating the original array
+        const sortedItems = [...items].sort((a, b) => {
+            // Handle cases where createdAt might be undefined or invalid
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0); // Fallback to epoch
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0); // Fallback to epoch
+            // Sort based on action
+            return action === "latest" ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime(); // Descending order (latest first)
+        });
+
+        //console.log("Sorted: ", sortedItems);
+        return sortedItems;
+    } else {
+        return items
+    }
+};
 
 ///This function sorts the array by the price property
-export const sortProductByPrice = (products: Array<IProduct>, action: string): Array<IProduct> => {
+export const sortProductByPrice = (products: Array<IProduct>, action: "descend" | "ascend"): Array<IProduct> => {
     ///This function sorts the price property from highest price to lowest price
     if (action === "descend") {
         const sortedProducts = products.sort((a, b) => {
@@ -554,6 +643,33 @@ export const formatObjectValues = (obj: { [key: string]: any }): string => {
 
     // Join the values with a comma and space, and enclose in parentheses
     return `(${values.join(', ')})`;
+}
+
+//This function is used to format aliexpress image url to have a better resolution i.e. 960x960
+export const formatAliexpressImageUrl = (url: string) => {
+    return url.replace(
+        /_(\d+x\d+)[a-z\d]*(\.[a-z]+_)/i,
+        '_960x960$2'
+    );
+}
+
+//This removes all non numeric chars liek $, %, &, etc.
+export const extractNum = (char: string): number => {
+    if (typeof char !== 'string') {
+        throw new TypeError('Input must be a string');
+    }
+
+    // Remove any non-numeric characters (like $, %, etc.)
+    const numericString = char.replace(/[^0-9.-]/g, '');
+
+    // Convert the cleaned string to a number
+    const number = parseFloat(numericString);
+
+    if (isNaN(number)) {
+        throw new Error('Input string does not contain a valid number');
+    }
+
+    return number;
 }
 
 /**
@@ -957,6 +1073,88 @@ export const stringNumToString = (input: Array<{ country?: string, amount?: numb
         }
     }).join('. ');
 } 
+
+//This function gets random ratings from [4.7, 4.8, 4.9]
+export const getRating = () => {
+    const numbers = [4.7, 4.8, 4.9];
+    const randomIndex = Math.floor(Math.random() * numbers.length);
+    return numbers[randomIndex];
+}
+
+//This function keeps track of clicked buttons
+export const storeButtonInfo = async (info: IButtonResearch) => {
+    try {
+        const sheetInfo: ISheetInfo = {
+            sheetId: statSheetId,
+            sheetRange: "Button!A:K",
+            data: info
+        }
+
+        const res = await fetch(`${backend}/sheet`, {
+            method: "POST",
+            body: JSON.stringify(sheetInfo),
+        });
+        console.log("Google Stream: ", res)
+    } catch (error) {
+        console.log("Store Error: ", error)
+    }
+}
+
+//This function calculates each cart item's discount information
+export const getEachCartItemDiscount = (cart: ICart, cartId: number) => {
+    const cartItem = cart.cart[cartId]
+    const weightPercent = cartItem.subTotalWeight / cart.totalWeight // => 0.1 for 10% 
+    const cartDiscountPrice = weightPercent * cart.totalDiscount //discount
+    const newCartSubTotalPrice = cartItem.subTotalPrice - cartDiscountPrice
+    const newDiscountPercent = (cartDiscountPrice / cartItem.subTotalPrice) * 100 // => 10 for 10% 
+    const itemDiscount: ICartItemDiscount = {
+        img: cartItem.image,
+        oldPrice: cartItem.subTotalPrice,
+        discountedPrice: cartDiscountPrice,
+        newPrice: newCartSubTotalPrice,
+        newXtraDiscount: newDiscountPercent
+    }
+    return itemDiscount
+}
+
+//This function downloads the image using the src url
+export const downloadImageURL = async (url: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        // Generate filename from URL or timestamp
+        const urlObj = new URL(url);
+        let filename = path.basename(urlObj.pathname);
+        if (!filename || !path.extname(filename)) {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000);
+            filename = `image_${timestamp}_${random}.jpg`;
+        }
+
+        https.get(url, (response: IncomingMessage) => {
+            if (response.statusCode !== 200) {
+                reject(new Error(`Failed to get '${url}' (${response.statusCode})`));
+                return;
+            }
+
+            const filePath = path.resolve(__dirname, filename);
+            const fileStream = fs.createWriteStream(filePath);
+            
+            response.pipe(fileStream);
+            
+            fileStream.on('finish', () => {
+                fileStream.close();
+                resolve(filePath);
+            });
+            
+            fileStream.on('error', (error) => {
+                fs.unlink(filePath, () => {});
+                reject(error);
+            });
+            
+        }).on('error', (error: NodeJS.ErrnoException) => {
+            reject(error);
+        });
+    });
+}
 
 export const categories: Array<ICategoryInfo> = [
     {
@@ -1563,7 +1761,8 @@ export const categories: Array<ICategoryInfo> = [
                             "Paintings",
                             "Sketches",
                             "Sculptures",
-                            "Art Supplies & Accessories"
+                            "Art Accessories",
+                            "Theatre Arts"
                         ]
                     },
                     {

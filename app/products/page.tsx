@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
-import { backend, shuffleArray, sortProductByActiveStatus, sortProductByOrder } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus, sortProductByOrder, getProducts } from '@/config/utils';
 import ProductSlide from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props, ISlideTitle } from '@/config/interfaces';
 import ProductCatalog from '@/components/product/productCatalog/ProductCatalog';
@@ -45,25 +45,6 @@ async function getQueriedProducts(query: string | undefined) {
         //getQueriedProducts(query)
         console.log("request not ok")
       }
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-
-///This fetches the products
-async function getProducts() {
-  try {
-    const res = await fetch(`${backend}/product?action=order`, {
-      method: "GET",
-      cache: "no-store",
-    })
-
-    if (res.ok) {
-      return res.json()
-    } else {
-      getProducts()
-    }
   } catch (error) {
       console.error(error);
   }

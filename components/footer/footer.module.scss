@@ -62,7 +62,7 @@
         }
 
         .contact_section {
-            @include flexBar($position: relative, $justify: none, $flex_d: column, $gap: 10%);
+            @include flexBar($position: relative, $justify: none, $flex_d: column, $gap: 6%);
             //display: none;
             //border: 2px solid violet;
             @include size(40%, 85%);
@@ -137,7 +137,7 @@
             .socials {
                 @include flexBar($position: relative, $justify: none, $flex_d: column, $gap: 15%);
                 //border: 2px solid $error-color;
-                @include size(100%, 35%);
+                @include size(100%, 25%);
 
                 @include tablet {
                     gap: 10%;
@@ -172,6 +172,7 @@
                     }
 
                     @include phoneMini {
+                        //display: none;
                         font-size: 11px;
                     }
                 }
@@ -374,6 +375,61 @@
                             color: black;
                         }
                     }
+                }
+            }
+
+            .addr {
+                //border: 1px solid red;
+                @include flexBar($position: relative, $justify: center, $flex_d: row, $align: center, $gap: 4px);
+                @include text-layout($size: 13px, $l_height: 14px);
+                top: 2%;
+
+                @include tablet {
+                    width: 150%;
+                    justify-content: flex-start;
+                    top: 0%;
+                    gap: 2px;
+
+                    .icon {
+                        display: none;
+                    }
+                }
+
+                @include tabletMini {
+                    top: 6%;
+                }
+
+                @include phonePro {
+                    gap: 6px;
+                    //top: 0%;
+                    font-size: 10px;
+
+                    .icon {
+                        font-size: 1rem;
+                    }
+                }
+
+                @include phone {
+                    //top: -2%;
+                }
+
+                @include phoneMini {
+                    font-size: 11px;
+                    top: -8%;
+
+                    .icon {
+                        display: none;
+                    }
+                }
+
+                .icon {
+                    color: $primary-color;
+                    position: relative;
+                }
+
+                span {
+                    position: relative;
+                    //border: 1px solid orange;
                 }
             }
         }
@@ -706,29 +762,29 @@
 
 .termsPage {
     @extend %footer-layout;
-    top: 255%;
+    top: 265%;
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 150%;
+        top: 160%;
     } 
 
     @include tablet {
         //border: 1px solid red;
-        top: 180%;
+        top: 200%;
     } 
 
     @include tabletMini {
         //border: 1px solid red;
-        top: 205%;
+        top: 235%;
     } 
 
     @include phonePro {
-        top: 290%;
+        top: 315%;
     } 
 
     @include phone {
-        top: 270%;
+        top: 355%;
     }
 
     @include phoneMini {
@@ -775,25 +831,25 @@
 }
 
 .aboutPage {
-    top: 320%;
+    top: 400%;
     @extend %footer-layout;
 
     @include tabletPro {
-        top: 140%;
+        top: 170%;
     } 
 
     @include tabletMini {
-        top: 150%;
+        top: 180%;
     }
 
     @include phonePro {
         //border: 1px solid red;
-        top: 265%;
+        top: 330%;
     }
     
     @include phoneMini {
         //border: 1px solid red;
-        top: 270%;
+        top: 340%;
     }
 }
 

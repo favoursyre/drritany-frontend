@@ -11,6 +11,7 @@
     margin: 0px;
     left: 0px;
     top: 0px;
+    //color:;
 
     @include tabletPro {
         //top: 6%;
@@ -142,7 +143,7 @@
 
 .main {
     @include flexBar($position: absolute, $justify: center, $gap: 0%, $flex_d: column, $align: center);
-    @include size(100%, 160%, 100%, 400%);
+    @include size(100%, 170%, 100%, 400%);
     @include position($left: 0%, $top: 90%);
     //border: 2px solid $primary-color;
     @include text-layout($size: 16px, $color: text-color-1, $l_height: 35px);
@@ -153,21 +154,21 @@
     @include tabletPro {
         //border: 2px solid $primary-color;
         top: 50%;
-        height: 100%;
+        height: 110%;
     } 
 
     @include tablet {
-        height: 130%;
+        height: 150%;
     }
 
     @include tabletMini {
         padding-top: 20px;
-        height: 150%;
+        height: 180%;
     }
 
     @include phonePro {
         @include text-layout($size: 14px, $color: text-color-1, $l_height: 23px);
-        height: 230%;
+        height: 260%;
         align-items: center;
         top: 55%;
         //padding: 3% 10%;
@@ -176,11 +177,11 @@
 
     @include phone {
         //border: 2px solid $primary-color;
-        height: 210%;
+        height: 300%;
     }
 
     @include phoneMini {
-        height: 260%;
+        height: 350%;
         @include text-layout($size: 12px, $color: text-color-1, $l_height: 20px);
     }
 

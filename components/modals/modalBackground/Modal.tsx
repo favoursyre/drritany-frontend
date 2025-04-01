@@ -4,7 +4,7 @@
 ///Libraries -->
 import styles from "./modal.module.scss"
 import { useModalBackgroundStore } from "@/config/store";
-import { MouseEvent } from "react";
+import { MouseEvent, Suspense } from "react";
 import ContactModal from "../contactModal/ContactModal";
 import DiscountModal from "../discountModal/DiscountModal";
 import OrderModal from "../orderModal/OrderModal";
@@ -12,8 +12,14 @@ import OrderFormModal from "../orderFormModal/OrderFormModal";
 import ConfirmationModal from "../confirmationModal/ConfirmationModal";
 import ImportProductModal from "../importProductModal/importProductModal";
 import LoadingModal from "../loadingModal/LoadingModal";
+import ReturnModal from "../returnModal/ReturnModal";
+import CartProductDiscountModal from "../cartProductModal/CartProductModal";
+import Loading from "@/components/loadingCircle/Circle";
 
 ///Commencing the code 
+function Fallback() {
+  return <Loading width="20px" height="20px" />
+}
 
 /**
  * @title Modal Component
@@ -36,8 +42,13 @@ const Modal = () => {
         <ContactModal />
         <ConfirmationModal />
         <OrderFormModal />
-        <OrderModal />
+        <Suspense fallback={<Fallback />}>
+            <OrderModal />
+        </Suspense>
+        {/* <OrderModal /> */}
         <ImportProductModal />
+        <ReturnModal />
+        <CartProductDiscountModal />
         <LoadingModal />
     </div>
   );

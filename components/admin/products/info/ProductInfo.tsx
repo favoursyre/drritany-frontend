@@ -261,7 +261,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         //     // const info = categories.find((c) => c.macro === macro)
         //     // setCategoryInfo(() => info)
         // }
-    }, [])
+    }, [product_])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -701,8 +701,25 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
 
         if(choice) {
             console.log("yes delete")
-            ///Sending a delete request
+            
             try {
+                //Deleting all the images first from gdrive
+                for (const media of productMedias) {
+                    let id
+                    if (media.driveId) {
+                        id = media.driveId
+                    } else {
+                        id = getGDriveDirectLinkId(media.src)
+                        //console.log('Id: ', id)
+                    }
+
+                    const res = await fetch(`${backend}/file?id=${id}`, {
+                        method: "DELETE"
+                    });
+                    console.log("Delete: ", await res.json())
+                }
+
+                ///Sending a delete request
                 const res = await fetch(`${backend}/product/${product?._id}`, {
                   method: "DELETE",
                   cache: "no-store",
@@ -875,10 +892,6 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
         editProductInfo(e)
         setUploadIsLoading(false)
     }
-
-    // useEffect(() => {
-    //     console.log("Product Medias 1: ", productMedias)
-    // }, [productMedias])
 
     return (
         <main className={`${styles.main}`}>

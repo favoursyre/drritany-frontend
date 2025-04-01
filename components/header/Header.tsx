@@ -5,13 +5,13 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent, useCallback } from 'react';
 import styles from "./header.module.scss"
-import { ICart, IProduct, IProductFilter } from '@/config/interfaces';
-import { getItem, notify, setItem } from "@/config/clientUtils"
-import { routeStyle, cartName, wishListName, sleep, productFilterName } from '@/config/utils'
+import { ICart, IProduct, IProductFilter, IButtonResearch } from '@/config/interfaces';
+import { getDevice, getItem, getOS, notify, setItem } from "@/config/clientUtils"
+import { routeStyle, cartName, wishListName, sleep, productFilterName, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle, userIdName } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close } from "@mui/icons-material";
 import Loading from "../loadingCircle/Circle";
-import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore } from "@/config/store";
+import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore, useClientInfoStore } from "@/config/store";
 import { logo } from "@/config/utils";
 
 ///Commencing the code 
@@ -29,18 +29,21 @@ const Header = () => {
   const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+  const clientInfo = useClientInfoStore(state => state.info)
   const setContactModal = useContactModalStore(state => state.setContactModal);
   const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
   const [cart, setCart] = useState<ICart | null>(cart__)
   //console.log("Cart New: ", cart)
   const routerPath = usePathname();
   const router = useRouter()
-  const [scrollY, setScrollY] = useState<number | undefined>(window ? window.scrollY : undefined);
+  const [scrollY, setScrollY] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const interval = setInterval(() => {
-        //Updating scroll position
-        setScrollY(() => window ? window.scrollY : undefined)
+        if (typeof window !== undefined) {
+            //Updating scroll position
+            setScrollY(() => window.scrollY)
+        }
 
         //Updating cart info
         const cart__ = getItem(cartName)
@@ -49,7 +52,7 @@ const Header = () => {
         //Updating wish list
         const wishList__ = getItem(wishListName)
         setWishList(() => wishList__)
-      }, 100);
+      }, 1000);
   
       return () => {
         clearInterval(interval);
@@ -122,12 +125,28 @@ const Header = () => {
   }
 
   //This function is trigerred when someone clicks on product
-  const clickNav = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, nav: string) => {
+  const clickNav = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, nav: string) => {
     e.preventDefault()
 
     //Setting the loading
     setModalBackground(true)
     setLoadingModal(true)
+
+    //Storing this info in button research
+    const info: IButtonResearch = {
+      ID: getItem(userIdName),
+      IP: clientInfo?.ip!,
+      Country: clientInfo?.country?.name?.common!,
+      Button_Name: "viewNavBar()",
+      Button_Info: `Clicked ${nav} in header`,
+      Page_Title: extractBaseTitle(document.title),
+      Page_URL: routerPath,
+      Date: getCurrentDate(),
+      Time: getCurrentTime(),
+      OS: getOS(),
+      Device: getDevice()
+    }
+    storeButtonInfo(info)
 
     if (nav === "about") {
       router.push('/about')

@@ -82,7 +82,6 @@ const AdminLogin = () => {
             if (res.ok) {
                 notify("success", `${data.message}`)
                 console.log('Data: ', data.admin)
-                //window.location.reload()
                 //const id = data.account[0]._id
                 // if (rememberMe) {
                 //     console.log("Admin: ", data.admin)

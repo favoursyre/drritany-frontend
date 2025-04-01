@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Hero from '@/components/hero/Hero';
-import { backend, shuffleArray, sortProductByActiveStatus, sortProductByLatest, sortProductByOrder, sortProductByRating } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus, sortMongoQueryByTime, sortProductByOrder, sortProductByRating } from '@/config/utils';
 import Stats from "@/components/stats/Stats"
 import ProductGrid from '@/components/product/productGrid/ProductGrid';
 //import dynamic from "next/dynamic"
@@ -54,6 +54,12 @@ async function getProducts() {
   }
   
 }
+
+//Changing this page to static
+// export async function getStaticProps(context) {
+//   return []
+// }
+
 
 ///This function gets all testimonials
 // async function getTestimonials() {

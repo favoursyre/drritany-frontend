@@ -7,7 +7,7 @@ import Image from "next/image";
 import { IProduct, IClientInfo, IAdmin } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { backend, routeStyle, round, adminName } from "@/config/utils";
+import { backend, routeStyle, round, adminName, domainName } from "@/config/utils";
 import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore, useLoadingModalStore } from "@/config/store";
 import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt } from '@mui/icons-material';
 import { getItem, notify } from "@/config/clientUtils";
@@ -30,23 +30,27 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
     const confirmationChoice = useConfirmationModalStore(state => state.choice);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
-    
+    const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
 
     useEffect(() => {
         //console.log("Loc: ", clientInfo)
         console.log("Choice: ", confirmationChoice)
         setProduct(() => products_)
-    }, [clientInfo, product, products_, confirmationModal]);
+    }, [clientInfo, product, products_, confirmationModal, confirmationChoice]);
 
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, p_id: string) => {
         e.preventDefault()
 
-        //Setting the loading modal
+        //Setting the loading modal on
         setModalBackground(true)
         setLoadingModal(true)
         
-        router.push(`/admin/hjddkd/products/${p_id}`);
+        window.open(`${domainName}/admin/${admin._id}/products/${p_id}`, "_blank");
+
+        //Setting the loading modal off
+        setModalBackground(false)
+        setLoadingModal(false)
     }
 
     ///This handles what happens when delete product is clicked

@@ -4,7 +4,7 @@
 ///Libraries -->
 import styles from "./about.module.scss"
 import Image from 'next/image';
-import { companyName } from "@/config/utils"
+import { companyName, getDeliveryFee } from "@/config/utils"
 import { useEffect } from "react";
 
 ///Commencing the code 
@@ -16,7 +16,26 @@ import { useEffect } from "react";
 const About = () => {
     
     useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (typeof window !== undefined) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        //I needed to inspect the delivery fees here
+        // let country_ = "United States"
+
+        // function getDeliveryFeesForRange(country: string) {
+        //     const result = [];
+          
+        //     for (let weight = 0.5; weight <= 150; weight += 0.5) {
+        //       const price = getDeliveryFee(weight, country);
+        //       result.push({ weight: weight, price: price });
+        //     }
+          
+        //     return result;
+        // }
+
+        // const results = getDeliveryFeesForRange(country_)
+        // console.log('Delivery Fees: ', results)
     })
 
     return (

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   }
 }
 
+
 /**
  * @title Faqspage
  */

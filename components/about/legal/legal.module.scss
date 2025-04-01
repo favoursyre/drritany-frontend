@@ -1,0 +1,159 @@
+/* This contains the scss for the miison component page */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    @include flexBar($flex_d: row, $justify: center, $align: flex-start, $gap: 5%);
+    @include position($left: 0%, $top: 315%);
+    @include size($height:70%);
+    //padding: 2% 5%;
+    //border: 2px solid blue;
+    font-family: "Roboto";
+
+    @include tabletPro {
+        top: 138%;
+        @include size($height:30%);
+        //border: 2px solid red;
+    } 
+
+    @include tabletMini {
+        top: 147%;
+    }
+
+    @include phonePro {
+        //border: 2px solid red;
+        top: 260%;
+        height: 70%;
+        //width: 95%;
+        gap: 0%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    @include phoneMini {
+        top: 265%;
+    }
+
+    .image {
+        border: 1px dotted $primary-color;
+        @include size(50%, 100%);
+        background-image: linear-gradient(to right, transparent, transparent, rgba(255, 255, 255, 1));
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        @include tabletPro {
+            height: 90%;
+            top: 5%;
+        }
+
+        .background {
+            object-fit: contain;
+            object-position: center 30%;
+            position: relative;
+            @include size(100%, 100%);
+            transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background-image: linear-gradient(to right, transparent, transparent, rgba(255, 255, 255, 1));
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+
+        .icon {
+            position: absolute;
+            z-index: 2;
+            //border: 1px solid red;
+            left: 95%;
+            top: 94%;
+
+            @include tabletPro {
+                top: 92%;
+            }
+
+            @include phonePro {
+                top: 90%;
+                left: 91%;
+            }
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+
+        @include phonePro {
+            //border: 2px solid black;
+            position: relative;
+            //background-image: linear-gradient(to bottom, transparent, transparent, rgba(255, 255, 255, 1.5)), url("https://drive.google.com/uc?export=download&id=1_ii-qH5IlFzJcG2jCTVRUANRUu2XCcsr");
+            @include size(90%, 55%);
+            //left: 5%;
+        }
+    }
+
+    .brief {
+        @include flexBar($position: relative, $flex_d: column, $justify: center, $align: none, $gap: 5%);
+        //border: 2px solid green;
+        //padding: 0% 2%;
+        @include size(40%, 100%);
+
+        @include tablet {
+            gap: 0%;
+        }
+
+        @include phonePro {
+            //border: 2px solid red;
+            padding: 0% 3%;
+            @include size(90%, 35%);
+            gap: 2%;
+        }
+
+        h2 {
+            //border: 2px solid red;
+            @include text-layout($size: 30px, $color: $text-color-1, $l_height: 72px);
+            font-weight: 600;
+            @include flexBar($position: relative, $justify: none, $align: center);
+
+            @include tablet {
+                margin: 0px;
+            }
+
+            @include phonePro {
+                //border: 2px solid red;
+                height: 15%;
+                margin-bottom: 5px;
+                font-size: 25px;
+            }
+
+            @include phoneMini {
+                font-size: 25px;
+                height: 15%;
+            }
+        }
+
+        span {
+            //border: 2px solid red;
+            @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+
+            @include phonePro {
+                //border: 2px solid red;
+                line-height: 20px;
+                font-size: 13px;
+            }
+
+            @include phoneMini {
+                font-size: 12px;
+                line-height: 20px;
+                height: 70%;
+            }
+
+            .verify {
+                font-style: italic;
+                color: blue;
+                text-decoration: underline;
+            }
+        }
+    }
+}

@@ -48,6 +48,18 @@
                 object-position: -560px 10%; 
             }
         }
+
+        .addr {
+            //border: 1px solid red;
+            top: 5%;
+            @include text-layout($size: 14px, $color: $text-color-1, $l_height: 20px);
+            @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: center, $gap: 3%, $flex_d: row, $flex: none, $bg-color: none);
+            display: none;
+
+            .icon {
+                color: $primary-color;
+            }
+        }
     }
 
     .form {

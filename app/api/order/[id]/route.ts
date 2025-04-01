@@ -4,25 +4,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
-import { IResponse } from "@/config/interfaces";
+import { IResponse, IOrder } from "@/config/interfaces";
 
 ///Commecing code
-//Patching details in a product
-// export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+//Patching details in a order
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
 
-//     try {
-//         const { id } = params;
-//         const product: IProduct = await request.json();
-//         await connectMongoDB();
-//         const product_ = await Product.updateProduct(id, product)
-//         return NextResponse.json({ message: "Product Edited Successful", product_ }, { status: 200 });
+    try {
+        const { id } = params;
+        const order: IOrder = await request.json();
+        await connectMongoDB();
+        const product_ = await Order.updateOrder(id, order)
+        return NextResponse.json({ message: "Order Edited Successful", product_ }, { status: 200 });
 
-//     } catch (error: any) {
-//         console.log("Error: ", error)
-//         return NextResponse.json({ message: error.message }, { status: 400 });
-//     }
+    } catch (error: any) {
+        console.log("Error: ", error)
+        return NextResponse.json({ message: error.message }, { status: 400 });
+    }
     
-// }
+}
 
 //Get details of an order
 export async function GET(request: NextRequest, response: IResponse) {
@@ -47,19 +47,19 @@ export async function GET(request: NextRequest, response: IResponse) {
     }
 }
 
-///Delete an acocunt
-// export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-//     const { id } = params;
-//     //console.log("ID: ", id)
+///Delete an account
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
+    //console.log("ID: ", id)
 
-//     try {
-//         await connectMongoDB();
-//         //await Order.deleteOrder(id)
-//         return NextResponse.json({ message: "Product deleted" }, { status: 200 });
-//     } catch (error: any) {
-//         console.log("Error: ", error)
-//         return NextResponse.json({ message: error.message }, { status: 400 });
-//     }
-// }
+    try {
+        await connectMongoDB();
+        await Order.deleteOrder(id)
+        return NextResponse.json({ message: "Order deleted" }, { status: 200 });
+    } catch (error: any) {
+        console.log("Error: ", error)
+        return NextResponse.json({ message: error.message }, { status: 400 });
+    }
+}
 
 //export default GET

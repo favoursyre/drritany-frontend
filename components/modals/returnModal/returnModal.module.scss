@@ -1,0 +1,99 @@
+/* This contains the scss for the return modal component */
+
+//Libraries -->
+@import "@/styles/base.module";
+
+//Commencing the code -->
+.main {
+    //border: 1px solid red;
+    @include flexBar ($position: sticky, $wrap: none, $align: center, $justify: flex-start, $gap: 0%, $flex_d: row, $flex: none);
+    @include size(30%, 50%);
+    top: 10%;
+    z-index: 150;
+    background-color: $tertiary-color;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-family: "Inter";
+
+    @include tabletPro {
+        @include size(55%, 30%);
+        top: 0%;
+    }
+
+    @include phonePro {
+        top: 10%;
+        @include size(90%, 400px);
+    }
+
+    @include phoneMini {
+        height: 500px;
+    }
+
+    .text {
+        //border: 1px solid blue;
+        @include flexBar($position: relative, $display: flex, $align: center, $flex_d: column, $justify: center, $gap: 5%);
+        @include size(90%, 100%);
+        padding: 0px 5% 0px 5%;
+
+        @include tabletPro {
+            gap: 10%;
+        }
+
+        @include phoneMini {
+            width: 90%;
+            gap: 15%;
+        }
+
+        header {
+            //border: 1px solid red;
+            @include flexBar($position: relative, $display: flex, $align: center, $justify: flex-end, $flex_d: row);
+            width: 100%;
+
+            button {
+                background-color: transparent;
+                border: none;
+                color: $text-color-3;
+                
+                &:hover {
+                    color: $text-color-2;
+                }
+            }
+        }
+
+        .brief {
+            //border: 1px solid blue;
+            @include flexBar($position: relative, $display: flex, $align: flex-start, $flex_d: column, $justify: center);
+
+            .brief_1 {
+                //border: 1px solid blue;
+                @include text-layout($size: 16px, $color: $primary-color, $l_height: 24px);
+                font-family: "Roboto";
+                font-weight: 600;
+                margin-bottom: -5px;
+            }
+
+            ul {
+                @include text-layout($size: 14px, $color: $text-color-2, $l_height: 18px); 
+
+                .spanLink {
+                    color: $primary-color;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .continue {
+            @include flexBar($position: relative, $display: flex, $align: center, $flex_d: row, $justify: center);
+            @include size(100%, 45px);
+            @include text-layout($size: 14px, $color: $text-color-2, $l_height: 18px); 
+            font-weight: 600;
+            border: 1px solid $primary-color;
+            border-radius: 5px;
+
+            &:hover {
+                color: white;
+                background-color: $primary-color;
+            }
+        }
+    }
+}

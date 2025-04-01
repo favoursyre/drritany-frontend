@@ -2,7 +2,7 @@
 ///This handles the cart receipt page
 
 ///Libraries -->
-import OrderInvoice from '@/components/invoice/Invoice';
+import OrderReceipt from '@/components/receipt/Receipt';
 import { IOrder, Props } from '@/config/interfaces';
 import { Metadata } from 'next';
 import { backend } from '@/config/utils';
@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   } else {
     return {
-      title: `Invoice`,
-      description: `Dear ${order[0].customerSpec.fullName}, view your invoice`,
+      title: `Receipt`,
+      description: `Dear ${order[0].customerSpec.fullName}, view your receipt`,
       alternates: {
-        canonical: `/order/invoice/${params.id}`
+        canonical: `/order/receipt/${params.id}`
       }
     }
   }
@@ -32,7 +32,7 @@ async function getCart(id: string) {
   try {
     const res = await fetch(`${backend}/order/${id}`, {
       method: "GET",
-      cache: "no-store",
+      cache: "force-cache",
     })
 
     //console.log("Res: ", await res)
@@ -60,7 +60,7 @@ export default async function CartOrderByIdPage({ params: { id } }: { params: { 
 
   return (
     <main className="cart">
-      <OrderInvoice order_={cart[0]} />
+      <OrderReceipt order_={cart[0]} />
     </main>
   )
 }

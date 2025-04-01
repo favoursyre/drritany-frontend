@@ -78,6 +78,7 @@
             //border: 2px solid red;
             padding: 0% 3%;
             @include size(90%, 35%);
+            gap: 2%;
         }
 
         h2 {
@@ -92,15 +93,15 @@
 
             @include phonePro {
                 //border: 2px solid red;
-                height: 20%;
+                height: 15%;
                 margin-bottom: 5px;
+                font-size: 25px;
             }
 
-            @include phoneMini {
-                
-                font-size: 25px;
-                height: 15%;
-            }
+            // @include phoneMini {
+            //     font-size: 25px;
+            //     height: 15%;
+            // }
         }
 
         span {

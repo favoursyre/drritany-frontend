@@ -5,16 +5,16 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./productSlide.module.scss"
-import { IProduct, ICart, ISlideTitle, IProductFilter } from '@/config/interfaces';
-import { routeStyle, cartName, sortProductByActiveStatus, wishListName, shuffleArray, productFilterName, sortProductByLatest, sortProductByOrder, sortProductByRating } from '@/config/utils'
+import { IProduct, ICart, ISlideTitle, IProductFilter, IButtonResearch } from '@/config/interfaces';
+import { routeStyle, cartName, sortProductByActiveStatus, wishListName, shuffleArray, productFilterName, sortMongoQueryByTime, sortProductByOrder, sortProductByRating, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils'
 import ProductCard from '@/components/cards/product/ProductCard';
-import { getItem, notify, setItem } from '@/config/clientUtils';
+import { getDevice, getItem, getOS, notify, setItem } from '@/config/clientUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { useModalBackgroundStore, useLoadingModalStore } from '@/config/store';
+import { useModalBackgroundStore, useLoadingModalStore, useClientInfoStore } from '@/config/store';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import { ArrowRightAlt } from '@mui/icons-material';
@@ -54,11 +54,12 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
     const swiperRef = useRef<SwiperCore>();
     const [view, setView] =  useState<string>(view_!)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
+    const clientInfo = useClientInfoStore(state => state.info)
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
 
     useEffect(() => {
       if (view === "homeSlide1") {
-        const newProducts = sortProductByLatest(similarProducts!)
+        const newProducts = sortMongoQueryByTime(similarProducts!, "latest")
         setSimilarProducts(() => newProducts)
       } else if (view === "homeSlide2") {
         const newProducts = sortProductByOrder(shuffleArray(similarProducts!))
@@ -76,7 +77,7 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
         const newProducts = shuffleArray(similarProducts!)
         setSimilarProducts(() => newProducts)
       }
-    }, [])
+    }, [similarProducts, view])
 
     //console.log("Path: ", routerPath)
     useEffect(() => {
@@ -106,7 +107,7 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
 
       //getViewClass(view)
 
-    }, [title])
+    }, [title, router, routerPath, similarProducts, view_])
 
     useEffect(() => {
       const intervalId = setInterval(() => {
@@ -125,7 +126,7 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
       }, 1000);
   
       return () => clearInterval(intervalId);
-    }, [lastIndex, title, similarProducts]);
+    }, [lastIndex, title, similarProducts, view]);
 
     //This gets the class name based on the view
     const getViewClass = (view: string | undefined) => {
@@ -152,7 +153,7 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
   }
 
   //This function is triggered when the user clicks on see more
-  const seeMore = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
+  const seeMore = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
     e.preventDefault()
 
     //Setting the loading screen
@@ -196,6 +197,22 @@ const ProductSlide = ({ product_, title_, view_ }: { product_: Array<IProduct>, 
         category: "All"
       }
     }
+
+    //Storing this info in button research
+    const info: IButtonResearch = {
+      ID: getItem(userIdName),
+      IP: clientInfo?.ip!,
+      Country: clientInfo?.country?.name?.common!,
+      Button_Name: "seeMoreProduct()",
+      Button_Info: `Clicked ${title} product slide`,
+      Page_Title: extractBaseTitle(document.title),
+      Page_URL: routerPath,
+      Date: getCurrentDate(),
+      Time: getCurrentTime(),
+      OS: getOS(),
+      Device: getDevice()
+    }
+    storeButtonInfo(info)
 
     setItem(productFilterName, productFilter)
     router.push('/products')

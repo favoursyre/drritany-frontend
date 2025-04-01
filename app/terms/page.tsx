@@ -1,9 +1,10 @@
-"use Client"
 ///This handles the terms of service page
 
 ///Libraries -->
 import Terms from "@/components/terms/Terms"
 import { Metadata } from "next"
+//import dynamic from "next/dynamic";
+//const Terms = dynamic(() => import("@/components/terms/Terms"), { ssr: false })
 
 ///Commencing the code
 export const metadata: Metadata = {

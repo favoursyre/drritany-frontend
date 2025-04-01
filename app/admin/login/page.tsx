@@ -8,7 +8,7 @@ import { IProduct } from "@/config/interfaces";
 import { shuffleArray } from "@/config/utils";
 import { Metadata } from "next";
 import dynamicImport from "next/dynamic";
-const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
+//const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
 import { Suspense } from "react";
 import AdminLogin from "@/components/admin/login/Login";
 

@@ -2,7 +2,9 @@
 
 ///Libraries -->
 import { create } from "zustand";
-import { IModalBackgroundStore, IAdminSideBarStore, IImportProductModalStore, IProduct, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore, ILoadingModalStore } from "@/config/interfaces";
+import { IModalBackgroundStore, IAdminSideBarStore, IImportProductModalStore, IProduct, IContactModalStore, IDiscountModalStore, IOrderModalStore, IClientInfoStore, IOrderFormModalStore, IConfirmationModalStore, ILoadingModalStore,IReturnPolicyModalStore, ICartItemDiscountModalStore } from "@/config/interfaces";
+import { getItem } from "./clientUtils";
+import { clientInfoName } from "./utils";
 
 //Commencing code -->
 
@@ -24,6 +26,12 @@ export const useConfirmationModalStore = create<IConfirmationModalStore>((set) =
     choice: false,
     setConfirmationModal: (status) => set(() => ({ modal: status })),
     setConfirmationChoice: (status) => set(() => ({ choice: status }))
+}))
+
+//Return Policy Modal state store
+export const useReturnPolicyModalStore = create<IReturnPolicyModalStore>((set) => ({
+    modal: false,
+    setReturnPolicyModal: (status) => set(() => ({ modal: status })),
 }))
 
 //Loading Modal state store
@@ -56,6 +64,14 @@ export const useDiscountModalStore = create<IDiscountModalStore>((set) => ({
     product: { data: undefined!, poppedUp: false },
     setDiscountModal: (status) => set(() => ({ modal: status })),
     setDiscountProduct: (product) => set(() => ({ product: product }))
+}))
+
+//Cart Item Discount Modal state store
+export const useCartItemDiscountModalStore = create<ICartItemDiscountModalStore>((set) => ({
+    modal: false,
+    cartItem: undefined!,
+    setCartItemDiscountModal: (status) => set(() => ({ modal: status })),
+    setCartItemDiscount: (cartItem) => set(() => ({ cartItem: cartItem }))
 }))
 
 //Client Info State Store

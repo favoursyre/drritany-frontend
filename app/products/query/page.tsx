@@ -1,9 +1,8 @@
-
 ///This handles the product query page
 
 ///Libraries -->
 import { NextApiRequest, NextApiResponse, Metadata } from 'next';
-import { backend, shuffleArray, capitalizeFirstLetter } from '@/config/utils';
+import { backend, shuffleArray, capitalizeFirstLetter, getProducts } from '@/config/utils';
 //import ProductQuery from '@/components/product/productQuery/ProductQuery';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
@@ -23,8 +22,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 async function getQueriedProducts(query: string | string[] | undefined) {
     try {
       const res = await fetch(`${backend}/product?action=search&query=${query}`, {
-        method: "GET",
-        cache: "no-store",
+       // method: "GET",
+        //cache: "no-store",
       });
       
       if (res.ok) {
@@ -37,25 +36,6 @@ async function getQueriedProducts(query: string | string[] | undefined) {
       console.error(error);
   }
 }
-
-
-///This fetches the products
-async function getProducts() {
-    try {
-      const res = await fetch(`${backend}/product?action=order`, {
-        method: "GET",
-        cache: "no-store",
-      })
-  
-      if (res.ok) {
-        return res.json()
-      } else {
-        getProducts()
-      }
-    } catch (error) {
-        console.error(error);
-    }
-  }
 
 /**
  * @title Product query page

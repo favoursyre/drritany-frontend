@@ -2,7 +2,7 @@
 ///This handles the terms of order page
 
 ///Libraries -->
-import Order from "@/components/order/Order"
+//import Order from "@/components/order/Order"
 import { Metadata } from "next"
 
 ///Commencing the code
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function OrderPage() {
   return (
     <main>
-        <Order />
+        {/* <Order /> */}
     </main>
   )
 }

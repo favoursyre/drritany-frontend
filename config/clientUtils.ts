@@ -4,8 +4,9 @@
 ///Libraries -->
 import { toast } from 'react-toastify';
 import { MouseEvent } from 'react';
-import { companyEmail } from './utils';
-import { ClientDevice, ClientOS, DeliveryStatus, IEventStatus, PaymentStatus } from './interfaces';
+import { companyEmail, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle } from './utils';
+import { ClientDevice, ClientOS, DeliveryStatus, IClientInfo, IEventStatus, PaymentStatus, IButtonResearch, ICacheData } from './interfaces';
+import { analytics } from 'googleapis/build/src/apis/analytics';
 
 ///Commencing the code
 //console.log("Domain: ", domainName)
@@ -83,8 +84,9 @@ export const removeItem = (key: string) => {
 }
 
 ///This links opens the social link
-export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, social: string) => {
-    e.preventDefault()
+export const visitSocialLink = async (social: string, info: IButtonResearch) => {
+    //Storing the button information
+    await storeButtonInfo(info)
 
     if (window) {
         if (social === "instagram") {
@@ -110,7 +112,7 @@ export const visitSocialLink = (e:  MouseEvent<SVGSVGElement, globalThis.MouseEv
 }
 
 ///This function is used to get the OS version of a client's device
-export const getOS = () => {
+export const getOS = (): ClientOS => {
     var userAgent = navigator.userAgent,
         platform = navigator.platform,
         macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
@@ -136,9 +138,9 @@ export const getOS = () => {
 }
 
 ///This function is used to get the client's device type
-export const getDevice = () => {
+export const getDevice = (): ClientDevice => {
     const width = screen.width
-    let device
+    let device: ClientDevice
 
     if (width <= 600) {
         device = ClientDevice.MOBILE
@@ -148,5 +150,120 @@ export const getDevice = () => {
         device = ClientDevice.DESKTOP
     }
 
-    return device
+    return device!
 }
+
+//This is a custom cache function
+// export const setCacheItem = (key: string, value: any, expirationTime: number = 0, override: boolean = false): void => {
+//     if (typeof window !== 'undefined' && window.localStorage) {
+//         // Check if item exists in localStorage and if override is false
+//         const existingItem = localStorage.getItem(key);
+//         if (existingItem && !override) {
+//             const existingData: ICacheData = JSON.parse(existingItem);
+//             const currentTime = Date.now();
+
+//             // If the data has expired, we should save new data
+//             if (currentTime > existingData.timestamp + existingData.expirationTime) {
+//                 console.log('Cache expired, saving new data.');
+//             } else {
+//                 console.log('Cache still valid, not overriding.');
+//                 return; // Don't override if cache is still valid and override flag is false
+//             }
+//         }
+
+//         // Create CacheData object with expiration time (in ms)
+//         const cacheData: ICacheData = {
+//             value: value,
+//             timestamp: Date.now(),
+//             expirationTime: expirationTime * 1000
+//         };
+
+//         // Save cache data to localStorage
+//         localStorage.setItem(key, JSON.stringify(cacheData));
+//     }
+// };
+
+// //This is a custom cache function
+// export const getCacheItem = (key: string): any => {
+//     if (typeof window !== 'undefined' && window.localStorage) {
+//         const item = localStorage.getItem(key);
+
+//         if (item === null) {
+//             return null; // If the item doesn't exist
+//         } else {
+//             try {
+//                 const cacheData: ICacheData = JSON.parse(item);
+//                 const currentTime = Date.now();
+
+//                 // If the cache data has expired
+//                 if (currentTime > cacheData.timestamp + cacheData.expirationTime && cacheData.expirationTime > 0) {
+//                     // Remove expired data from cache
+//                     localStorage.removeItem(key);
+//                     return null;
+//                 }
+
+//                 // Return the cached value
+//                 return cacheData.value;
+//             } catch (error) {
+//                 console.error('Error parsing cache data:', error);
+//                 return null;
+//             }
+//         }
+//     }
+//     return null;
+// };
+
+//This is a function that handles caching of data using local storage
+export const Cache = (key: string) => {
+
+    const get = () => {
+        try {
+            const item = getItem(key) as unknown as { value: any, validPeriod: number, dateCreated: number }
+            if (item) {
+                if (item.validPeriod === 0) {
+                    return item.value
+                } else {
+                    const currentTime = Date.now()
+                    const timeDifference = (currentTime - item.dateCreated) / 1000;  // Converting ms to s
+                    if (timeDifference > item.validPeriod) {
+                        throw new Error("Data is expired")
+                    } else {
+                        return item.value
+                    }
+                }
+            } else {
+                throw new Error("Data doesn't exist, crosscheck key")
+            }
+        } catch (error) {
+            console.log('Error in getting cache: ', error)
+            return undefined
+        }
+    }
+
+    const set = (value: any, revalidate: number = 0): boolean => {
+        //0 means never expires, meaning never refreshes
+        try {
+            const data: {
+                value: any,
+                validPeriod: number, //This is in seconds
+                dateCreated: number
+            } = {
+                value: value,
+                validPeriod: revalidate,
+                dateCreated: Date.now()
+            }
+            setItem(key, data)
+            return true
+        } catch (error) {
+            console.log('Error in setting cache: ', error)
+            return false
+        }
+    }
+
+    return {
+        get,
+        set
+    };
+}
+
+//const test = cache
