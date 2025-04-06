@@ -31,10 +31,17 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
     const [categoryOptions, setCategoryOptions] = useState<Array<string>>([ "All", "Active", "Inactive" ])
     const [orders, setOrders] = useState<Array<IOrder>>(orders_)
     const [categoryId, setCategoryId] = useState<number>(0)
-    const [currentURL, setCurrentURL] = useState(typeof window !== undefined ? window.location.href : undefined)
+    const [currentURL, setCurrentURL] = useState<string>()
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setCurrentURL(() => window.location.href)
+        }
+
+    }, [])
     
     // useEffect(() => {
     //     const main = async () => {

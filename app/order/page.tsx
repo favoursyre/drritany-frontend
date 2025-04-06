@@ -2,12 +2,17 @@
 ///This handles the terms of order page
 
 ///Libraries -->
-import Order from "@/components/order/Order"
+//import Order from "@/components/order/Order"
 import { Metadata } from "next"
 import { backend, sortMongoQueryByTime } from "@/config/utils"
 import { IOrder } from "@/config/interfaces"
 import Loading from "@/components/loadingCircle/Circle"
 import { Suspense } from "react"
+import dynamic from 'next/dynamic'
+const Order = dynamic(
+  () => import('@/components/order/Order'),
+  { ssr: false }
+)
 
 ///Commencing the code
 export const metadata: Metadata = {
