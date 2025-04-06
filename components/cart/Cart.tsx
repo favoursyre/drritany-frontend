@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName } from '@/config/utils';
 import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -30,7 +30,9 @@ const Cart = () => {
     const [cartDiscount, setCartDiscount] = useState<number>()
     const routerPath = usePathname();
     const [cartInitialRender, setCartInitialRender] = useState(false);
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const orderForm = useOrderFormModalStore(state => state.modal)
     const setOrderForm = useOrderFormModalStore(state => state.setOrderFormModal)
     const setOrderModal = useOrderModalStore(state => state.setOrderModal)
@@ -41,6 +43,33 @@ const Cart = () => {
     const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal)
     const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
     const searchParams = useSearchParams()
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
     
     //Checking the url to know if stripe payment session is active
     useEffect(() => {

@@ -16,9 +16,9 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { IImage, IProductFilter } from "@/config/interfaces";
-import { productFilterName } from "@/config/utils";
-import { setItem } from "@/config/clientUtils";
+import { IImage, IProductFilter, IClientInfo } from "@/config/interfaces";
+import { productFilterName, clientInfoName } from "@/config/utils";
+import { setItem, getItem } from "@/config/clientUtils";
 
 ///Commencing the code 
   
@@ -30,7 +30,9 @@ const Hero = () => {
     const [query, setQuery] = useState<string>("")
     const router = useRouter()
     const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo ? _clientInfo : undefined)
     const swiperRef = useRef<SwiperCore>();
     const [slides, setSlides] = useState<Array<IImage>>([
         {
@@ -59,7 +61,29 @@ const Hero = () => {
         }
     ])
 
+    //Updating client info
     useEffect(() => {
+        console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            console.log("Client info detected")
+        }  
+
     }, [clientInfo])
 
     //This function is trigered when the search button is required

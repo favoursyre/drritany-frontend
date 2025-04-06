@@ -5,12 +5,13 @@
 import styles from "./faq.module.scss"
 import Link from "next/link";
 import Image from "next/image";
-import { IFAQState } from "@/config/interfaces";
+import { IFAQState, IClientInfo } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent } from "react";
 import { SupportAgent, Add } from "@mui/icons-material";
 import { faqs } from "@/config/database";
-import { companyName } from "@/config/utils";
-import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
+import { companyName, clientInfoName } from "@/config/utils";
+import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore } from "@/config/store";
+import { getItem } from "@/config/clientUtils";
 
 ///Commencing the code 
 /**
@@ -21,7 +22,37 @@ const FAQ = () => {
     //const [faqs, setFaqs] = useState<Array<IFAQState>>(faq_)
     const [activeHeading, setActiveHeading] = useState(0);
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const setContactModal = useContactModalStore(state => state.setContactModal);
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 500);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     ///This function triggers when someone opens an accordian
   const handleHeadingClick = (index: any) => {

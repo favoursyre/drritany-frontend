@@ -27,7 +27,7 @@ export const dynamic = "force-dynamic"
  * @title Homepage
  */
 export default async function CartPage() {
-  const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
+  //const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
   const titles1: ISlideTitle = {
     slideTitleId: 6,
     barTitleId: 3
@@ -39,9 +39,9 @@ export default async function CartPage() {
 
   return (
     <main className="cart_page">
-      <ProductSlide product_={undefined!} title_={titles1} view_={"wishSlide1"}/>
+      <ProductSlide _product={undefined} title_={titles1} view_={"wishSlide1"}/>
       {/* <HomeCampaignB /> */}
-      <ProductSlide product_={products} title_={titles2} view_={"wishSlide2"}/>
+      <ProductSlide _product={undefined} title_={titles2} view_={"wishSlide2"}/>
     </main>
   )
 }

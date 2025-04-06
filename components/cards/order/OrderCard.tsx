@@ -1,25 +1,25 @@
 "use client"
-///Admin Order Card component
+///Order Card component
 
 ///Libraries -->
-import styles from "./adminOrderCard.module.scss"
+import styles from "./orderCard.module.scss"
 import Image from "next/image";
 import { IProduct, IClientInfo, IAdmin, IOrder, ICountry, IEventStatus, PaymentStatus, DeliveryStatus } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect, ChangeEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { backend, routeStyle, round, adminName, paymentStatuses, deliveryStatuses, clientInfoName } from "@/config/utils";
 import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore, useLoadingModalStore } from "@/config/store";
-import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt } from '@mui/icons-material';
+import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt, PreviewOutlined } from '@mui/icons-material';
 import { getItem, notify } from "@/config/clientUtils";
 import Loading from "@/components/loadingCircle/Circle";
 import { countryList } from "@/config/database";
 
 ///Commencing the code 
 /**
- * @title Admin Order Card Component
- * @returns The Admin Order Card component
+ * @title Order Card Component
+ * @returns The Order Card component
  */
-const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined }) => {
+const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [order, setOrder] = useState<IOrder>({...order_})
     //const clientInfo = useClientInfoStore(state => state.info)
@@ -137,8 +137,8 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
         window.location.reload()
     }
 
-    ///This handles what happens when delete order is clicked
-    const deleteOrder = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    ///This handles what happens when preview order is clicked
+    const previewOrder = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent> | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
         e.preventDefault()
         console.log('Here')
 
@@ -212,26 +212,16 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
                 )}
             </div>
             {paymentStatus ? (
-                // <div className={styles.paymentStatus}>
-                //     <span className={styles.text} style={{ color: paymentStatus.color?.text, backgroundColor: paymentStatus.color?.background, fontWeight: "600px" }}>{paymentStatus.status}</span>
-                // </div>
-                <select className={styles.paymentStatus} style={{ color: paymentStatus.color?.text, backgroundColor: paymentStatus.color?.background, fontWeight: "600" }} value={paymentStatus.status} onChange={(e) => onChange(e, "payment")}>
-                {paymentStatuses.map((stat, sid) => (
-                    <option style={{ backgroundColor: "white", color: "black" }} value={stat.status} key={sid}>{stat.status}</option>
-                ))}
-            </select>
+                <div className={styles.paymentStatus} style={{ color: paymentStatus.color?.text, backgroundColor: paymentStatus.color?.background, fontWeight: "600" }}>
+                    <span>{paymentStatus.status}</span>
+                </div>
             ) : (
                 <></>
             )}
             {deliveryStatus ? (
-                <select className={styles.deliveryStatus} style={{ color: deliveryStatus.color?.text, backgroundColor: deliveryStatus.color?.background, fontWeight: "600" }} value={deliveryStatus.status} onChange={(e) => onChange(e, "delivery")}>
-                    {deliveryStatuses.map((stat, sid) => (
-                        <option style={{ backgroundColor: "white", color: "black" }} value={stat.status} key={sid}>{stat.status}</option>
-                    ))}
-                </select>
-                // <div className={styles.deliveryStatus}>
-                //     <span className={styles.text} style={{ color: deliveryStatus.color?.text, backgroundColor: deliveryStatus.color?.background, fontWeight: "600px" }}>{deliveryStatus.status}</span>
-                // </div>
+                <div className={styles.deliveryStatus} style={{ color: deliveryStatus.color?.text, backgroundColor: deliveryStatus.color?.background, fontWeight: "600" }}>
+                    <span>{deliveryStatus.status}</span>
+                </div>
             ) : (
                 <></>
             )}
@@ -248,11 +238,11 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
                 <div className={styles.actions}>
                     {/* <button className={styles.view}></button> */}
                     {/* <button className={styles.edit}><Edit className={styles.icon} /></button> */}
-                    <button className={styles.delete} onClick={(e) => deleteOrder(e)}>
+                    <button className={styles.delete}>
                         {isLoading ? (
                             <Loading width="20px" height="20px" />
                         ) : (
-                            <DeleteOutlined className={styles.icon} onClick={(e) => deleteOrder(e)} />
+                            <PreviewOutlined className={styles.icon} onClick={(e) => previewOrder(e)} />
                         )}
                     </button>
                     {/* {!product.active ? (
@@ -264,4 +254,4 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
     );
 };
   
-export default AdminOrderCard;
+export default OrderCard;

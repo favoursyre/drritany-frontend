@@ -13,7 +13,7 @@ import { ICart, IClientInfo, ICountry, ICustomerSpec  } from "@/config/interface
 import { countryList } from "@/config/database";
 import { notify, setItem, getItem } from "@/config/clientUtils";
 import validator from "validator";
-import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash, userIdName } from "@/config/utils"
+import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash, userIdName, clientInfoName } from "@/config/utils"
 
 ///Commencing the code 
 
@@ -28,7 +28,7 @@ const OrderFormModal = () => {
     const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | null>(deliveryInfo__)
     const orderFormModal = useOrderFormModalStore(state => state.modal);
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const [fullName, setFullName] = useState<string>(deliveryInfo ? deliveryInfo.fullName : "")
     const [phoneNumber1, setPhoneNumber1] = useState<string>(deliveryInfo && deliveryInfo.phoneNumbers[0] ? extractDigitsAfterDash(deliveryInfo.phoneNumbers[0]) : "")
@@ -47,6 +47,33 @@ const OrderFormModal = () => {
     //const cart_ = 
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [userId, setUserId] = useState<string | null>(getItem(userIdName))
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     ///This function is triggered when the background of the modal is clicked
     const closeModal = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {

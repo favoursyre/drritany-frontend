@@ -5,8 +5,8 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./categorySlide.module.scss"
-import { IImage, ICart, ISlideTitle, IProductFilter, IButtonResearch } from '@/config/interfaces';
-import { routeStyle, cartName, shuffleArray, categories, productFilterName, storeButtonInfo, extractBaseTitle, getCurrentDate, getCurrentTime, userIdName } from '@/config/utils'
+import { IImage, ICart, ISlideTitle, IProductFilter, IButtonResearch, IClientInfo } from '@/config/interfaces';
+import { routeStyle, cartName, shuffleArray, categories, productFilterName, storeButtonInfo, extractBaseTitle, getCurrentDate, getCurrentTime, userIdName, clientInfoName } from '@/config/utils'
 import { getDevice, getItem, setItem, getOS } from '@/config/clientUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -29,7 +29,9 @@ import { info } from 'console';
 const CategorySlide = () => {
     const routerPath = usePathname();
     const router = useRouter();
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const [lastIndex, setLastIndex] = useState(6)
     const [title, setTitle] = useState<string>()
     const [barTitle, setBarTitle] = useState<string>()
@@ -39,6 +41,32 @@ const CategorySlide = () => {
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
 
     //console.log("Path: ", routerPath)
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     useEffect(() => {
       const intervalId = setInterval(() => {

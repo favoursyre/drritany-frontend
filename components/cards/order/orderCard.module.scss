@@ -1,0 +1,288 @@
+/** This contains the scss for the admin order card component */
+
+///Libraries -->
+@import "@/styles/base.module";
+
+///Commencing the code
+.main {
+    @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%);
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    padding: 1%;
+    border-radius: 5px;
+    border: 1px solid $primary-color-2;
+    @include size(96%, 60px);
+    padding: 1% 2%;
+    background-color: white;
+
+    @include phoneMini {
+        height: 55px;
+    }
+
+    .bio {
+        border: 1px solid green;
+        @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%, $flex_d: column);
+        @include size(20%, 90%);
+        overflow: hidden;
+
+        @include tabletPro {
+            gap: 2%;
+        }
+
+        @include tablet {
+            width: 30%;
+        }
+
+        @include phonePro {
+            width: 30%;
+        }
+    
+        span {
+            //border: 2px solid red;
+            @include text-layout($size: 15px, $l_height: 18px);
+            height: 100%;
+            font-family: "Roboto";
+            @include size(100%, auto);
+            @include flexBar ($position: relative, $wrap: wrap, $align: center, $justify: flex-start, $gap: 1%);
+            line-break: auto;
+    
+            @include phonePro {
+                line-height: 17px;
+                font-size: 12px;
+            }
+    
+            @include phoneMini {
+                font-size: 9px;
+                line-height: 10px;
+                width: 65%;
+            }
+        }
+    }
+
+    .price {
+        border: 1px solid blue;
+        @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%);
+        @include size(10%, 20%);
+        left: 5%;
+        @include text-layout($size: 15px, $l_height: 18px);
+        font-family: "Inter";
+
+        @include phonePro {
+            left: 2%;
+            width: auto;
+            font-size: 12px;
+        }
+
+        @include phoneMini {
+            font-size: 10px;
+        }
+    }
+
+    .paymentStatus, .deliveryStatus {
+        //border: 1px solid red;
+        @include flexBar ($position: relative, $align: flex-start, $justify: flex-start, $gap: 1%);
+        @include size(auto, auto);
+        left: 10%;
+        padding: 2px 4px;
+        //background-color: $cancel-color-2;
+        @include text-layout($size: 15px, $l_height: 18px, $color: $cancel-color-1);
+        font-family: "Inter";
+        border-radius: 5px;
+
+        @include phonePro {
+            left: 6%;
+            font-size: 12px;
+            //width: 20%;
+        }
+
+        @include phoneMini {
+            font-size: 10px;
+            //width: 20%;
+        }
+    }
+
+    .deliveryStatus {
+        left: 15%;
+
+        @include phonePro {
+            left: 12%;
+        }
+
+        @include phone {
+            left: 10%;
+        }
+    }
+
+    .activeStatus {
+        background-color: $success-color-2;
+        color: $success-color-1;
+    }
+
+    .actions_menu {
+        border: 1px solid red;
+        @include flexBar ($position: relative, $align: flex-start, $justify: flex-end, $gap: 1%);
+        @include size(20%, 40px);
+        left: 25%;
+        //height: 40px;
+        z-index: 2;
+
+        @include tablet {
+            left: 25%;
+            width: auto;
+        }
+
+        @include phonePro {
+            left: 15%;
+            width: auto;
+        }
+
+        .menu {
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            @include phonePro {
+                display: flex;
+                background-color: transparent;
+                border: none;
+                position: relative;
+                height: 100%;
+                
+
+                .icon {
+                    color: $text-color-1;
+                    //box-shadow: 0 0 10px $secondary-color;
+
+                    @include phoneMini {
+                        font-size: 1rem;
+                    }
+                    //
+    
+                    &:hover {
+                        color: $primary-color;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            @include flexBar ($position: relative, $align: flex-start, $justify: flex-end, $gap: 3%);
+            height: 100%;
+            //border: 1px solid green;
+
+            @include phonePro {
+                //display: none;
+                // position: absolute;
+                // background-color: white;
+                // left: -200%;
+                // z-index: 3;
+                // top: 100%;
+                // padding: 1% 3%;
+                // border: 1px solid $primary-color;
+                // box-shadow: 0px 2px 4px rgba(52, 69, 99, 0.18);
+            }
+
+            @include phone {
+                //left: -250%;
+            }
+
+            @include phoneMini {
+                //left: -300%;
+            }
+
+            button {
+                position: relative;
+                height: 100%;
+                background-color: transparent;
+                border: none;
+
+                .icon {
+                    color: $text-color-1;
+                    //box-shadow: 0 0 10px $secondary-color;
+
+                    @include phoneMini {
+                        font-size: 1rem;
+                    }
+    
+                    &:hover {
+                        color: $primary-color;
+                    }
+                }
+            }
+        }
+    }
+
+    &:hover {
+        //transform: scale(1.01);
+        border: 1px solid red;
+        box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.slideView {
+    @include size(98%, 98%); 
+    //border: 1px solid black;
+    //padding: 1% 2%;
+    //top: 3%;
+
+    @include tabletPro {
+        //@include size(13%, 70%); 
+    }
+
+    @include tabletMini {
+        //width: 15%;
+    }
+
+    @include phonePro {
+        //border: 2px solid $error-color;
+        //@include size(28%, 80%);
+        gap: 1%;
+     } 
+
+     .card_image {
+        width: 94%;
+    }
+
+    .card_name {
+        width: 93%;
+    }
+
+    // .card_prices {
+    //     border: 2px solid red;
+    //     @include size(100%, 20%);
+    //     @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: space-between, $gap: 0%, $flex_d: row);
+
+    //     @include tablet {
+    //         height: 18%;
+    //     }
+
+        
+
+        
+    // }
+
+    .card_price {
+        width: 94%;
+    }
+
+    //  &:hover {
+    //     transform: scale(1);
+    //     box-shadow: none;
+    // }
+}
+
+.queryView {
+    height: 55%;
+    //border: 1px solid red;
+
+    // @include tablet {
+    //     height: 55%
+    // }
+
+    // @include phonePro {
+    //     height: 55%;
+    // }
+
+    // @include phoneMini {
+    //     //@include size(26%, 40%);
+    // }
+}

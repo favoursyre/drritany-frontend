@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
-import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus, IButtonResearch, ICartItemDiscount } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName } from '@/config/utils';
+import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus, IButtonResearch, ICartItemDiscount, IClientInfo } from '@/config/interfaces';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName, clientInfoName } from '@/config/utils';
 import { useClientInfoStore, useModalBackgroundStore, useCartItemDiscountModalStore } from "@/config/store";
 import { Remove, Add, DiscountOutlined } from '@mui/icons-material';
 import { countryList } from '@/config/database';
@@ -28,13 +28,38 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
     const [deliveryStatus, setDeliveryStatus] = useState<IEventStatus>()
     const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
     const [country, setCountry] = useState<ICountry | undefined>(countryList.find((country) => country?.name?.common === order.customerSpec.country))
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setCartItemDiscountModal = useCartItemDiscountModalStore(state => state.setCartItemDiscountModal)
     //const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal)
     const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
 
-    //console.log("cart hh: ", paymentStatus)
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     useEffect(() => {
         console.log("cart: ", order)

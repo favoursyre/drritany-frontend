@@ -7,13 +7,12 @@ import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName, clientInfoName } from '@/config/utils'
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout, KeyboardArrowLeft, KeyboardArrowRight, Add, Remove, FavoriteBorder } from '@mui/icons-material';
-import { useModalBackgroundStore, useDiscountModalStore, useReturnPolicyModalStore } from '@/config/store';
-import { useClientInfoStore } from "@/config/store";
+import { useModalBackgroundStore, useDiscountModalStore, useReturnPolicyModalStore, useLoadingModalStore } from '@/config/store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
@@ -36,7 +35,9 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
     const [transformOrigin, setTransformOrigin] = useState('center center');
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
@@ -51,6 +52,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setReturnPolicyModal = useReturnPolicyModalStore(state => state.setReturnPolicyModal);
     const setDiscountProduct = useDiscountModalStore(state => state.setDiscountProduct);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const routerPath = usePathname()
     const discountProduct = useDiscountModalStore(state => state.product);
     const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
@@ -123,6 +125,33 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         spec?.dimension?.length ? `Length: ${spec.dimension.length}inches` : undefined,
         spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
     ]
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     //This stores the viewed peoduct in the sheet
     useEffect(() => {
@@ -922,7 +951,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             </Swiper>
                         </div>
                     ) : (<></>)}
-                    {product.specification?.sizes && product.specification!.sizes[0] !== "" ? (
+                    {product.specification?.sizes && product.specification!.sizes[0] !== "" && product.specification!.sizes.length !== 0 ? (
                         <div className={styles.product_sizes}>
                             <span className={styles.span1}>Size</span>
                             <Swiper

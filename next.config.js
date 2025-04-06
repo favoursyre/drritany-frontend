@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const path = require("path")
 
-const nextConfig = {
+//This initializes the bundle analyzer
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true', // Conditional trigger
+  openAnalyzer: true, // Auto-opens the report in your browser
+});
+
+const nextConfig = withBundleAnalyzer({
     images: {
       remotePatterns: [
         {
@@ -38,6 +44,6 @@ const nextConfig = {
       // experimental: {
       //   missingSuspenseWithCSRBailout: false,
       // },
-};
+});
 
 module.exports = nextConfig;

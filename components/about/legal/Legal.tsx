@@ -5,9 +5,9 @@
 import styles from "./legal.module.scss"
 import Image from "next/image";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
-import { MouseEvent } from "react";
-import { IButtonResearch } from "@/config/interfaces";
-import { extractBaseTitle, getCurrentDate, getCurrentTime, storeButtonInfo, userIdName } from "@/config/utils";
+import { MouseEvent, useState, useEffect } from "react";
+import { IButtonResearch, IClientInfo } from "@/config/interfaces";
+import { extractBaseTitle, getCurrentDate, getCurrentTime, storeButtonInfo, userIdName, clientInfoName } from "@/config/utils";
 import { usePathname } from 'next/navigation';
 import { DownloadOutlined } from "@mui/icons-material";
 import { getItem, getOS, getDevice } from "@/config/clientUtils";
@@ -19,10 +19,39 @@ import { getItem, getOS, getDevice } from "@/config/clientUtils";
  * @returns The Legal component
  */
 const Legal = () => {
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const routerPath = usePathname();
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     //This function is trigerred when verify cert is clicked
     const verifyCert = async (e: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>) => {

@@ -7,8 +7,9 @@ import Image from "next/image";
 import { IProduct, IClientInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle } from "@/config/utils";
+import { slashedPrice, routeStyle, clientInfoName } from "@/config/utils";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
+import { getItem } from "@/config/clientUtils";
 
 ///Commencing the code
 /**
@@ -17,11 +18,40 @@ import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } fro
  */
 const StatCard = ({ product_, view }: { product_: IProduct, view: string | undefined }) => {
     const [product, setProduct] = useState<IProduct>({...product_})
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const router = useRouter()
     const routerPath = usePathname();
-    // const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
-    // const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     useEffect(() => {
         //console.log("Loc: ", clientInfo)

@@ -5,11 +5,11 @@
 import Image from "next/image";
 import { useState, useEffect, MouseEvent, FormEvent, useCallback } from 'react';
 import styles from "./header.module.scss"
-import { ICart, IProduct, IProductFilter, IButtonResearch } from '@/config/interfaces';
+import { ICart, IProduct, IProductFilter, IButtonResearch, IClientInfo, IOrder } from '@/config/interfaces';
 import { getDevice, getItem, getOS, notify, setItem } from "@/config/clientUtils"
-import { routeStyle, cartName, wishListName, sleep, productFilterName, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle, userIdName } from '@/config/utils'
+import { routeStyle, cartName, wishListName, sleep, productFilterName, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle, userIdName, clientInfoName, orderName } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
-import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close } from "@mui/icons-material";
+import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close, AccountCircleOutlined, KeyboardArrowRight } from "@mui/icons-material";
 import Loading from "../loadingCircle/Circle";
 import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore, useClientInfoStore } from "@/config/store";
 import { logo } from "@/config/utils";
@@ -27,9 +27,10 @@ const Header = () => {
   const [cartIsLoading, setCartIsLoading] = useState<boolean>(false)
   const [wishIsLoading, setWishIsLoading] = useState<boolean>(false)
   const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
+  const [orders, setOrders] = useState<Array<IOrder>>(getItem(orderName))
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
-  const clientInfo = useClientInfoStore(state => state.info)
+  //const clientInfo = useClientInfoStore(state => state.info)
   const setContactModal = useContactModalStore(state => state.setContactModal);
   const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
   const [cart, setCart] = useState<ICart | null>(cart__)
@@ -37,6 +38,34 @@ const Header = () => {
   const routerPath = usePathname();
   const router = useRouter()
   const [scrollY, setScrollY] = useState<number | undefined>(undefined);
+  const _clientInfo = getItem(clientInfoName)
+  const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+  const [accountModal, setAccountModal] = useState<boolean>(false)
+
+  //Updating client info
+  useEffect(() => {
+      //console.log("Hero: ", _clientInfo, clientInfo)
+
+      let _clientInfo_
+      
+      if (!clientInfo) {
+          //console.log("Client info not detected")
+          const interval = setInterval(() => {
+              _clientInfo_ = getItem(clientInfoName)
+              //console.log("Delivery Info: ", _deliveryInfo)
+              setClientInfo(_clientInfo_)
+          }, 100);
+  
+          //console.log("Delivery Info: ", deliveryInfo)
+      
+          return () => {
+              clearInterval(interval);
+          };
+      } else {
+          //console.log("Client info detected")
+      }  
+
+  }, [clientInfo])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,6 +96,13 @@ const Header = () => {
     setContactModal(true)
     setModalBackground(true)
 }
+
+  //This function is trigerred when a user clicks on account
+  const viewAccountModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault()
+
+    setAccountModal(() => !accountModal)
+  }
 
   //This handles the search
   const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
@@ -163,6 +199,33 @@ const Header = () => {
     }
   }
 
+  //This function is trigerred when an account modal option is clicked
+  const chooseAccountModalOption = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: "wishlist" | "orders") => {
+    e.preventDefault()
+
+    setAccountModal(false)
+
+    if (action === "wishlist") {
+      if (wishList && wishList.length > 0) {
+        setModalBackground(true)
+        setLoadingModal(true)
+
+        router.push("/wishlist")
+      } else {
+        notify("info", "Wishlist is empty")
+      }
+    } else if (action === "orders") {
+      if (orders && orders.length > 0) {
+        setModalBackground(true)
+        setLoadingModal(true)
+
+        router.push("/orders")
+      } else {
+        notify("info", "You have no orders")
+      }
+    }
+  }
+
   return (
     <>
       <header className={`${styles.header} ${scrollY! >= 1 ? styles.scrolled : ""} ${routeStyle(routerPath, styles)}`}>
@@ -216,7 +279,7 @@ const Header = () => {
               </form>
             )}
           </div>
-          <div id={styles.wishList}>
+         {/* <div id={styles.wishList}>
             {wishIsLoading ? (
               <Loading width="10px" height="10px" />
             ) : (
@@ -229,7 +292,7 @@ const Header = () => {
                 </div>
               </button>
             )}
-          </div>
+          </div> */}
           <div id={styles.cart}>
             {cartIsLoading ? (
               <Loading width="10px" height="10px" />
@@ -243,6 +306,20 @@ const Header = () => {
                 </div>
               </button>
             )}
+          </div>
+          <div id={styles.account}>
+            <button onClick={(e) => viewAccountModal(e)}>
+              <AccountCircleOutlined className={styles.accountIcon} />
+              <KeyboardArrowRight className={styles.arrIcon} />
+            </button>
+            <div className={`${styles.modal_option} ${!accountModal ? styles.inactiveAccountModal : ""}`}>
+              <button className={styles.wish} onClick={(e) => chooseAccountModalOption(e, "wishlist")}>
+                <span>Wishlist ({wishList ? wishList.length : 0})</span>
+              </button>
+              <button className={styles.orders} onClick={(e) => chooseAccountModalOption(e, "orders")}>
+                <span>Orders ({orders ? orders.length : 0})</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

@@ -7,12 +7,13 @@ import Image from "next/image";
 import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee } from "@/config/utils";
+import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, productsName } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline } from '@mui/icons-material';
 import Loading from "@/components/loadingCircle/Circle";
 import { countryList } from "@/config/database";
+import { Cache } from "@/config/clientUtils";
 
 ///Commencing the code 
 /**
@@ -21,7 +22,7 @@ import { countryList } from "@/config/database";
  */
 const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | undefined }) => {
     const [product, setProduct] = useState<IProduct>({...product_})
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
     const router = useRouter()
     const [view, setView] = useState<string>(view_!)
     //const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
@@ -31,11 +32,43 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     //const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo ? _clientInfo : undefined)
+    //const _products = Cache(productsName).get()
+    //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
+    //Updating products
     useEffect(() => {
         //console.log("View: ", view)
         setProduct(() => product_)
-    }, [clientInfo, product, product_]);
+    }, [product, product_]);
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     //This displays the custom price based on the country if it exist
     const customPrice = (): number => {

@@ -3,12 +3,12 @@
 
 ///Libraries -->
 import { useRouter, usePathname } from 'next/navigation';
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, useRef, Fragment } from 'react';
 import styles from "./productGrid.module.scss"
 import { IProduct, ICategoryInfo, IProductFilter, ICategory } from '@/config/interfaces';
 import { useModalBackgroundStore, useContactModalStore } from "@/config/store";
-import { groupList, sortProductOptions as sortOption, sortProductByOrder, sortMongoQueryByTime, sortProductByPrice, categories, routeStyle, productFilterName, sortProductByRating } from '@/config/utils'
-
+import { groupList, sortProductOptions as sortOption, sortProductByOrder, sortMongoQueryByTime, sortProductByPrice, categories, routeStyle, productFilterName, sortProductByRating, sleep } from '@/config/utils'
+import InfiniteScroll from 'react-infinite-scroll-component';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Image from 'next/image';
@@ -16,17 +16,18 @@ import { useClientInfoStore } from "@/config/store";
 import ProductCard from '@/components/cards/product/ProductCard';
 import { Add, Category, Tune } from '@mui/icons-material';
 import { getItem, notify, removeItem, setItem } from '@/config/clientUtils';
+import Loading from '@/components/loadingCircle/Circle';
 import DisplayBar from '@/components/displayBar/DisplayBar';
 
-///Commencing the code 
+///Commencing the code
 /**
  * @title Product Component
  * @returns The Product component
  */
 const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: string | undefined }) => {
     const routerPath = usePathname();
-    const [productList, setProductList] = useState(product_)
-    const [products, setProducts] = useState<Array<IProduct>>([...productList])
+    const [productList, setProductList] = useState<Array<IProduct>>([])
+    const [products, setProducts] = useState<Array<IProduct>>([])
     const [pcCurrentIndex, setPcCurrentIndex] = useState(0)
     const [mobileCurrentIndex, setMobileCurrentIndex] = useState(0)
     const [sort, setSort] = useState(false)
@@ -39,12 +40,74 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     const [productFilter, setProductFilter] = useState<IProductFilter>(getItem(productFilterName))
     const [macroCategoryId, setMacroCategoryId] = useState<number>(0)
     const [miniCategory, setMiniCategory] = useState<string>("")
-    const [categoryOptions, setCategoryOptions] = useState<Array<string | ICategoryInfo >>(["All", ...categories]) 
+    const [categoryOptions, setCategoryOptions] = useState<Array<string | ICategoryInfo >>(["All", ...categories])
     const [pcTotalPage, setPcTotalPage] = useState<Array<any>>([])
     const [mobileTotalPage, setMobileTotalPage] = useState<Array<any>>([])
     const [timeLeft, setTimeLeft] = useState<number>(54400);
     const [width, setWidth] = useState<number>(typeof window !== 'undefined' && window.screen ? window.screen.width : 0)
     const [view, setView] = useState<string | undefined>(view_)
+    const [p_, setP_] = useState<boolean>(false)
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const productsPerLoad = 10;
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [dataIsLoading, setDataIsLoading] = useState<boolean>(false)
+    const limit = 12; // Define how many products per page (controls payload size per "load")
+    const [currentBatch, setCurrentBatch] = useState<number>(1);
+    const [currentIndex, setCurrentIndex] = useState<number>()
+    const [totalBatch, setTotalBatch] = useState<number>()
+
+    //Updating products
+    // useEffect(() => {
+    //     console.log('test p: ', product_)
+    //     const product__ = product_.slice(0, 12)
+
+    //     if (!p_) {
+    //         if (!products) {
+    //             console.log("Products not detected")
+    //             setProductList(() => product__)
+    //             setProducts(() => product__)
+
+    //         } else {
+    //             setP_(() => true)
+    //         }
+    //     }
+
+
+    //     // if (!p_) {
+    //     //     setProductList(() => product__)
+    //     //     setProducts(() => product__)
+    //     //     setP_(() => true)
+    //     // } else {
+    //     //     console.log("set already")
+    //     // }
+
+    //     console.log('test p 2: ', products, productList, p_)
+
+    // }, [productList, products])
+
+    useEffect(() => {
+        
+        //console.log("Products Len: ", products.length)
+        const start = (currentBatch - 1) * limit
+        const end = start + limit
+
+        //console.log("Product data:", product_);
+
+        if (product_ && product_.length > 0) {
+            const product__ = product_.slice(0, end)
+            setProductList(product_);
+            setProducts(() => product__);
+            console.log("Products 2: ", product__)
+            const _possibleBatches = Math.ceil(product_.length / limit)
+            //console.log("Total batch: ", _possibleBatches)
+            setTotalBatch(() => _possibleBatches)
+        }
+
+        console.log("Products 5: ", products)
+        //notify("info", `Len ${products.length}`)
+        //setViewProducts(() => newProducts.slice(start, end))
+    }, [product_]);
 
     //This function filters products
     const _filterProduct = (sort: number) => {
@@ -78,14 +141,14 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     //This is a use effect function
     useEffect(() => {
-        console.log('Products1: ', product_, productList, products)
+        //console.log('Products1: ', product_, productList, products)
 
         if (productFilter) {
             if (productFilter.filterId) {
                 _filterProduct(productFilter.filterId!)
                 //setSortId(() => )
             }
-            
+
             if (productFilter.category) {
                 if (typeof productFilter.category !== "string") {
                     const filterCategory = productFilter.category as unknown as ICategory
@@ -104,7 +167,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     useEffect(() => {
         //Setting product filter
-         
+
 
         const intervalId = setInterval(() => {
             //console.log("Effect: ", products)
@@ -115,7 +178,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     }, [products, productList, product_]);
 
     // useEffect(() => {
-        
+
     //     const intervalId = setInterval(() => {
     //         //console.log("checking screen width")
     //         if (width <= 550) {
@@ -135,7 +198,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     // }, [mobileCurrentIndex, pcCurrentIndex, products, sort, sortId, productList, width]);
 
     ///
-    
+
     useEffect(() => {
         if (timeLeft === 0) {
         setTimeLeft(86400);
@@ -218,6 +281,45 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         }
     }
 
+    // Check if we've reached the bottom of the div
+    const handleScroll = async () => {
+        if (containerRef.current) {  // Make sure the ref is not null
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;  // Get scroll information
+        //notify("info", `testing`)
+
+        // If the user has scrolled to the bottom of the container
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
+                console.log("Batch: ", currentBatch, totalBatch)
+                //notify("info", `data: ${dataIsLoading}, ${currentBatch}, ${totalBatch}`)
+
+            if (!dataIsLoading && currentBatch < totalBatch!) {  // Only load more if it's not currently loading and there are more products
+                console.log("It has reached the bottom")
+                //notify("info", `bottom reached`)
+
+                setDataIsLoading(() => true)
+
+                const newBatch = currentBatch + 1
+                setCurrentBatch(() => newBatch)
+                const start = (newBatch - 1) * limit
+                const end = start + limit
+                console.log("SE: ", start, end)
+                const newProducts = productList?.slice(start, end)
+                //products.push(...newProducts)
+                //const _products = [...products, ...newProducts]
+                setProducts((prevProducts) => [...prevProducts, ...newProducts])
+
+                console.log("Products Len: ", products.length)
+
+                await sleep(1)
+                setDataIsLoading(() => false)
+                //setLoading(true);  // Set loading to true to display the loading message
+                //loadMoreProducts();  // Load more products
+                //setLoading(false);  // Set loading to false once loading is complete
+            }
+        }
+        }
+    }
+
     ///This function filters the products
     const filterProduct = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, sort: number): Promise<void> => {
         e.preventDefault()
@@ -225,8 +327,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         _filterProduct(sort)
 
         const _filterSettings: IProductFilter = getItem(productFilterName)
-        const __filter: IProductFilter = { 
-            filterId: sort, 
+        const __filter: IProductFilter = {
+            filterId: sort,
             category: _filterSettings.category
         }
         setItem(productFilterName, __filter)
@@ -243,8 +345,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             setCategory(() => false)
             setProducts(() => [...productList])
             const _filterSettings: IProductFilter = getItem(productFilterName)
-            const __filter: IProductFilter = { 
-                filterId: _filterSettings.filterId, 
+            const __filter: IProductFilter = {
+                filterId: _filterSettings.filterId,
                 category: categoryOptions[_id]
             }
             setItem(productFilterName, __filter)
@@ -266,8 +368,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             setProducts(() => [...newProducts])
 
             const _filterSettings: IProductFilter = getItem(productFilterName)
-            const __filter: IProductFilter = { 
-                filterId: _filterSettings.filterId, 
+            const __filter: IProductFilter = {
+                filterId: _filterSettings.filterId,
                 category: {
                     macro: _category.macro,
                     mini: miniCategory
@@ -276,8 +378,8 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             setItem(productFilterName, __filter)
             setProductFilter(() => __filter)
         }
-        
-        
+
+
 
         // const category: string = categoryOptions[_id]
 
@@ -288,21 +390,25 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
         // } else {
         //     notify("info", "Products doesn't exist in this category yet, check back later")
         // }
-        
+
         //console.log('Products: ', products)
+    }
+
+    const loadMoreProducts = () => {
+
     }
 
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`} id="products">
             <div className={styles.header_section}>
-                <span className={styles.text}>{products?.length} product{products.length > 1 ? "s": ""} found</span>
+                <span className={styles.text}>{productList?.length} product{productList.length > 1 ? "s": ""} found</span>
             </div>
             <div className={styles.product_list}>
                 <div className={styles.filters}>
                     <div className={`${styles.sort_section}`}>
                         <button className={styles.sort_button} onClick={() => setSort(!sort)}>
                             <Tune />
-                        </button> 
+                        </button>
                         <span>Sort</span>
                         <div className={`${styles.sort_option} ${!sort ? styles.inactiveSort : ""}`}>
                             {sortOptions.map((option, _id) => (
@@ -316,9 +422,9 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                         <span>Category</span>
                         <button className={styles.category_button} onClick={() => setCategory(() => !category)}>
                             <Category />
-                        </button> 
+                        </button>
                         <div className={`${styles.category_option} ${!category ? styles.inactiveSort : ""}`}>
-                            {categoryOptions.map((category, id) => ( 
+                            {categoryOptions.map((category, id) => (
                                 <div key={id} className={`${styles.accordianItem} ${macroCategoryId === id ? styles.activeAccordian : styles.inactiveAccordian}`}>
                                     <button
                                         className={`${styles.question} ${macroCategoryId === id ? styles.activeQuestion : styles.inactiveQuestion}`}
@@ -350,8 +456,26 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                         </div>
                     </div>
                 </div>
-                <div className={styles.product_carousel}>
+                <div 
+                    className={styles.product_carousel}
+                    ref={containerRef}
+                    onScroll={handleScroll}
+                >
                     {products && products.length !== 0 ? products.map((product, _id) => (
+                        // <InfiniteScroll
+                        //     dataLength={0}  // Number of loaded products
+                        //     next={loadMoreProducts}  // Function to call for loading more
+                        //     hasMore={false}  // Whether there are more products to load
+                        //     loader={<div>Loading...</div>}  // Display when loading
+                        //     endMessage={<div>No more products to show</div>}  // Display when no more products are available
+                        //     className={styles.product_carousel}
+                        // >
+                        //     {/* <div className="product-list"> */}
+                        //     {products.map((product, _id) => (
+                        //         <ProductCard key={_id} product_={product} view_={view} />
+                        //     ))}
+                        //     {/* </div> */}
+                        // </InfiniteScroll>
                         <ProductCard key={_id} product_={product} view_={view} />
                     )) : (
                         <div className={styles.empty_section}>
@@ -364,6 +488,11 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                             </div>
                         </div>
                     )}
+                    {dataIsLoading ? (
+                        <Loading width='20px' height='20px' />
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 {/* <div className={styles.pagination_section}>
                         <button onClick={e => goPrev(e)}>
@@ -375,9 +504,9 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                         </button>
                     </div> */}
             </div>
-            
+
         </main>
     );
 };
-  
+
 export default ProductGrid;

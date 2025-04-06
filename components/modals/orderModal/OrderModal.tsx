@@ -9,7 +9,7 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey } from "@/config/utils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
@@ -38,10 +38,37 @@ const OrderModal = () => {
     const deliveryInfo__ = getItem(deliveryName)
     const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(deliveryInfo__)
     const searchParams = useSearchParams()
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
     const [txSessionId, setTxSessionId] = useState<string>("")
     const [paymentStatus, setPaymentStatus] = useState<string>("");
     const [paymentSuccess, setPaymentSuccess] = useState<"success" | "failed" | null>(null)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     ///This function processes the order
     const processOrder = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | void) => {

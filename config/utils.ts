@@ -92,7 +92,7 @@ export const userIdName: string = "idealPlugUserId"
 export const productsName: string = "idealPlugProducts"
 
 //Order name
-export const orderName: string = "idealPlugOrder"
+export const orderName: string = "idealPlugOrders"
 
 export const SUPPORT_EMAIL: string = companyEmail
 export const SUPPORT_PASSWORD: string = process.env.NEXT_PUBLIC_SENDER_PASSWORD!
@@ -280,7 +280,7 @@ export const deleteFile = async (filePath: string): Promise<void> => {
 
         // Delete the file (using promises version of fs)
         await fs.promises.unlink(absolutePath);
-        console.log(`File deleted successfully: ${absolutePath}`);
+        //console.log(`File deleted successfully: ${absolutePath}`);
 
     } catch (error) {
         console.error('Error deleting file:', {
@@ -352,11 +352,10 @@ export const getDeliveryFee = (weight: number, country: string) => {
 
 ///This fetches a list of all products
 export async function getProducts() {
+
     try {
       const res = await fetch(`${backend}/product?action=order`, {
         method: "GET",
-        //cache: "no-store",
-        //next: { revalidate: 120 }
       })
   
       if (res.ok) {
@@ -367,6 +366,7 @@ export async function getProducts() {
         getProducts()
       }
     } catch (error) {
+        //console.log('Products Error: ', error)
         console.error(error);
     }
   }
@@ -875,44 +875,44 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
 export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
     //console.log("custom pricing...")
     const clientCountry = countryList.find((c) => c.name?.common === country)
-    console.log("Client: ", country)
+    //console.log("Client: ", country)
     const size = product.specification?.sizes
     let customPrice
-    console.log("Customm P: ", product)
+    //console.log("Customm P: ", product)
 
     const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common)
-    console.log("Variants: ", variant)
+    //console.log("Variants: ", variant)
     if (variant && clientCountry) {
         customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
     } else {
         customPrice = product.pricing?.basePrice!
     }
-    console.log('Custom Price: ', customPrice)
+    //console.log('Custom Price: ', customPrice)
 
     if (size) {
         const _size = size[sizeId]
         if (_size) {
             if (typeof _size === "string") {
-                console.log('Custom Price 2: ', customPrice)
+                //console.log('Custom Price 2: ', customPrice)
                 //return customPrice
             } else {
                 if (_size?.percent === 0) {
-                    console.log('Custom Price 2: ', customPrice)
+                    //console.log('Custom Price 2: ', customPrice)
                     //return customPrice
                 } else {
                     const xtraPrice = (_size?.percent! / 100) * customPrice
                     const newPrice = xtraPrice + customPrice
-                    console.log('Custom Price 2: ', newPrice)
+                    //console.log('Custom Price 2: ', newPrice)
                     customPrice = newPrice
                 }
             }
         } else {
-            console.log('Custom Price 2: ', customPrice)
+            //console.log('Custom Price 2: ', customPrice)
             //return customPrice
             
         }
     } else {
-        console.log('Custom Price 2: ', customPrice)
+        //console.log('Custom Price 2: ', customPrice)
         //return customPrice
     }
 
@@ -924,7 +924,7 @@ export const getCustomPricing = (product: IProduct, sizeId: number, country: str
         customPrice = customPrice + deliveryFee
     }
         
-    console.log('Custom Price 3: ', customPrice)
+    //console.log('Custom Price 3: ', customPrice)
     return customPrice
     // const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
     
@@ -963,9 +963,9 @@ export const storeWishInfo = async (_action: string, clientInfo: IClientInfo, pr
                 method: "POST",
                 body: JSON.stringify(sheetInfo),
             });
-            console.log("Google Stream: ", res)
+            //console.log("Google Stream: ", res)
         } catch (error) {
-            console.log("Store Error: ", error)
+            //console.log("Store Error: ", error)
         }
     }
 }
@@ -994,9 +994,9 @@ export const storeCartInfo = async (_action: string, clientInfo: IClientInfo, pr
                 method: "POST",
                 body: JSON.stringify(sheetInfo),
             });
-            console.log("Google Stream: ", res)
+            //console.log("Google Stream: ", res)
         } catch (error) {
-            console.log("Store Error: ", error)
+            //console.log("Store Error: ", error)
         }
     }
 }
@@ -1094,9 +1094,9 @@ export const storeButtonInfo = async (info: IButtonResearch) => {
             method: "POST",
             body: JSON.stringify(sheetInfo),
         });
-        console.log("Google Stream: ", res)
+        //console.log("Google Stream: ", res)
     } catch (error) {
-        console.log("Store Error: ", error)
+        //console.log("Store Error: ", error)
     }
 }
 

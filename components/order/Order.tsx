@@ -1,427 +1,214 @@
-// "use client"
-// ///Order component
+"use client"
+///Orders component
 
-// ///Libraries -->
-// import styles from "./order.module.scss"
-// import React, { useState, useEffect, ChangeEvent } from "react"
-// import { setItem, getItem, notify } from '@/config/clientUtils';
-// import { cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, backend, userIdName } from "@/config/utils"
-// import { ICart, IClientInfo, ICountry, ICustomerSpec } from "@/config/interfaces";
-// import validator from "validator";
-// import { useOrderModalStore, useModalBackgroundStore, useClientInfoStore } from "@/config/store";
-// import { useRouter } from "next/navigation";
-// import Image from "next/image";
-// import { countryList } from "@/config/database";
-// import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-// import Loading from "../loadingCircle/Circle";
+///Libraries -->
+import styles from "./order.module.scss"
+import Image from 'next/image';
+import { notify, getItem } from "@/config/clientUtils";
+import { sortOrderOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName } from "@/config/utils"
+import { IAdmin, IModalBackgroundStore, IOrder, IPricing, IProduct } from "@/config/interfaces";
+import { useEffect, MouseEvent, FormEvent, useState, Fragment } from "react";
+import { useRouter } from "next/navigation";
+import Loading from "@/components/loadingCircle/Circle";
+import { SearchOutlined, Add, Tune, CategoryOutlined } from "@mui/icons-material";
+import AdminProductCard from "@/components/cards/adminProduct/AdminProductCard";
+import puppeteer from "puppeteer"
+import { useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
+import OrderCard from "@/components/cards/order/OrderCard";
 
-// ///Commencing the code 
-  
-// /**
-//  * @title Order Component
-//  * @returns The Order component
-//  */
-// const Order = () => {
-//     const cart_ = getItem(cartName)
-//     const [cart, setCart] = useState<ICart | null>(cart_)
-//     const clientInfo = useClientInfoStore(state => state.info)
-//     const [fullName, setFullName] = useState<string | undefined>("")
-//     const [phoneNumber1, setPhoneNumber1] = useState<string>("")
-//     const [phoneNumber2, setPhoneNumber2] = useState<string>("")
-//     const [emailAddress, setEmailAddress] = useState<string>("")
-//     const [country, setCountry] = useState<string>("")
-//     const [countryInfo, setCountryInfo] = useState<ICountry | undefined>()
-//     const [state, setState] = useState<string | undefined>("")
-//     const [postalCode, setPostalCode] = useState<string>("")
-//     const [deliveryAddress, setDeliveryAddress] = useState<string>("")
-//     const [countryCode1, setCountryCode1] = useState<ICountry>()
-//     const [countryCode2, setCountryCode2] = useState<ICountry>()
-//     const [dropList1, setDropList1] = useState(false)
-//     const [dropList2, setDropList2] = useState(false)
-//     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(0) //Unit is in USD
-//     const router = useRouter()
-//     const [isLoading, setIsLoading] = useState<boolean>(false)
-//     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
-//     const setOrderModal = useOrderModalStore(state => state.setOrderModal);
-//     console.log("Testing: ", countryInfo)
-
-//     //const country_ = countryList.find(country => country.name?.common === country)
+/**
+ * @title Order Component
+ * @returns The Order component
+ */
+const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
+    const [query, setQuery] = useState<string>("")
+    const router = useRouter()
+    const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
+    const [addProductIsLoading, setAddProductIsLoading] = useState<boolean>(false)
+    const [sort, setSort] = useState(false)
+    const [sortId, setSortId] = useState(1)
+    const [category, setCategory] = useState<boolean>(false)
+    const [categoryOptions, setCategoryOptions] = useState<Array<string>>([ "All", "Active", "Inactive" ])
+    const [orders, setOrders] = useState<Array<IOrder>>(orders_)
+    const [categoryId, setCategoryId] = useState<number>(0)
+    const [currentURL, setCurrentURL] = useState(window.location.href)
+    const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
     
-//     useEffect(() => {
-//         //getClientInfo()
+    // useEffect(() => {
+    //     const main = async () => {
+    //         const res = await fetch(`${backend}/scraper`)
+         
+    //         console.log("html scrap", await res.json())
+    //     }
+
+    //     console.log("testing api")
+    //    main()
+    // })
+
+    // useEffect(() => {
+    //     //main();
+
+    //     console.log("Title1: ", document.title)
+    //     if (!products) {
+    //         notify("info", "Product not found")
+    //     }
         
-//         if (clientInfo && clientInfo?.country) {
-//             //setCountryCode1(() => clientInfo.country)
-//             console.log("Loc: ", clientInfo)
-//             if (!countryCode1 && !countryCode2 && !country) {
-//                 setCountryCode1(() => clientInfo.country)
-//                 setCountryCode2(() => clientInfo.country)
-
-//                 const country = clientInfo.country.name?.common as unknown as string
-//                 setCountry(() => country)
-//                 const info = countryList.find(country => country.name?.common === clientInfo?.country?.name?.common)
-//                 console.log("Country: ", info)
-//                 setCountryInfo(() => info)
-
-//                 const state_ = findStateWithZeroExtraDeliveryPercent(info)
-//                 setState(() => state_?.name)
-//                 //setExtraDeliveryFee(() => state_?.extraDeliveryPercent as unknown as number)
-//             }
-//         }
-//     }, [clientInfo, countryInfo]);
-    
-//     ///This function is triggered when the form is submitted
-//     const processOrder = async (e: React.FormEvent<HTMLFormElement>) => {
-//         e.preventDefault()
-
-//         if (cart) {
-//             ///Validating the required args
-//             if (cart?.cart.length === 0) {
-//                 notify("error", "Cart is empty")
-//                 return
-//             } else if (!fullName) {
-//                 notify("error", "Fullname is required")
-//                 return
-//             } else if (!phoneNumber1) {
-//                 notify("error", "Phone number is required")
-//                 return
-//             } else if (!emailAddress) {
-//                 notify("error", "Email address is required")
-//                 return
-//             } else if (!validator.isEmail(emailAddress)) {
-//                 notify("error", "Email address is not valid")
-//                 return
-//             } else if (!country) {
-//                 notify("error", "Country address is required")
-//                 return
-//             } else if (!state) {
-//                 notify("error", "State is required")
-//                 return
-//             } else if (!postalCode) {
-//                 notify("error", "Postal code is required")
-//                 return
-//             } else if (!deliveryAddress) {
-//                 notify("error", "Delivery address is required")
-//                 return
-//             }
-
-//             //
-//             setIsLoading(() => true)
-
-//             //Send the order to the backend
-//             try {
-//                     //console.log('Clicked')
-//                     const customerSpec: ICustomerSpec = { userId: getItem(userIdName), fullName, email: emailAddress, phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], country, state, deliveryAddress, postalCode}
-//                     const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
-//                     cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
-//                     setCart(() => ({ ...cart }))
-//                     const productSpec: ICart = cart
-//                     const clientInfo_ = clientInfo as unknown as IClientInfo
-//                     const order = {customerSpec, productSpec, clientInfo_}
-//                     console.log("Order_: ", order)
-//                     const res = await fetch(`${backend}/order`, {
-//                         method: 'POST',
-//                         //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
-//                         body: JSON.stringify(order),
-//                         headers: {
-//                         'Content-Type': 'application/json',
-//                         },
-//                     });
-                    
-//                 const data = await res.json();
+    //     const intervalId = setInterval(() => {
+    //         if (currentURL === window.location.href) {
+    //             //console.log('not changed')
+    //             undefined
+    //         } else {
+    //             //console.log("changed")
+    //             clearInterval(intervalId)
+    //             setCurrentURL(window.location.href)
+    //            window.location.reload()
+    //         }
             
-//                 console.log("Data: ", data);
+    //     }, 1000);
 
-//                 if (res.ok) {
-//                     notify("success", `Your order was logged successfully`)
+    //     return () => clearInterval(intervalId);
+    // }, [currentURL]);
 
-//                     setModalBackground(true)
-//                     setOrderModal(true)
+    //This is triggered when the user searches for an order
+    const onSearch = async (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
+        e.preventDefault()
 
-//                     setIsLoading(() => false)
+        if (query && admin) {
+          //Setting the loading modal
+            setModalBackground(true)
+            setLoadingModal(true)
 
-//                     //Clear the cart
-//                     const _cart_: ICart = {
-//                         totalPrice: 0,
-//                         totalDiscount: 0,
-//                         totalHiddenDeliveryFee: 0,
-//                         totalWeight: 0,
-//                         deliveryFee: 0,
-//                         cart: []
-//                     }
+            console.log("searching: ", query)
+            router.push(`/admin/${admin._id}/orders?query=${query}`)
+        } 
+    }
 
-//                     setItem(cartName, _cart_)
-//                 } else {
-//                     //setModalState(() => false)
-//                     //notify("error", `Something went wrong`)
-//                     throw Error(`${data}`)
-//                 }
-                
-//                 //setItem(orderName, order)
+    //This is triggered when a category is clicked
+    const chooseCategory = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: number) => {
+        e.preventDefault()
+        setCategory(false)
+        setCategoryId(id)
+        let sortedProducts: Array<IProduct>
 
-//                 //Send the user an email
+        // if (id === 0) {
+        //     sortedProducts = sortProductByActiveStatus(products_, "All")!
+        //     setProducts(() => [...sortedProducts])
+        // } else if (id === 1) {
+        //     sortedProducts = sortProductByActiveStatus(products_, "Active")!
+        //     setProducts(() => [...sortedProducts])
+        // } else if (id === 2) {
+        //     sortedProducts = sortProductByActiveStatus(products_, "Inactive")!
+        //     setProducts(() => [...sortedProducts])
+        // }
+    }
 
-//                 //Setting the modal state to true
-//                 //setModalState(true)
-//             } catch (error) {
-//                 console.log("error: ", error)
-//                 notify("error", `${error}`)
-//             }
+    //This is triggered when a sort method is clicked
+    const filterProduct = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, sort: number) => {
+        e.preventDefault()
+        setSort(false)
+        setSortId(sort)
+        let sortedOrders: Array<IOrder>
 
-//             //setModalState(() => false)
-//             setIsLoading(() => false)
-//         } else {
-//             notify('error', "Cart is empty")
-//             return
-//         }
-//     }
+        //Sorting the orders
+        switch (sort) {
+            case 0:
+                sortedOrders = sortMongoQueryByTime(orders_, "latest")
+                setOrders(() => [...sortedOrders])
+                break
+            case 1:
+                sortedOrders = sortMongoQueryByTime(orders_, "oldest")
+                setOrders(() => [...sortedOrders])
+                break
+            default:
+                break
+        }
+    }
 
-//     useEffect(() => {
-//         let data
-//       }, []);
+    //This function is trigerred when an admin wants to add a new order
+    const addOrder = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
 
-//     //This handles the handle change effect
-//   const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
-//     e.preventDefault()
+        //Setting the loading modal
+        setModalBackground(true)
+        setLoadingModal(true)
 
-//     if (label === "country") {
-//         setCountry(e.target.value);
-
-//         const countryInfo_ = countryList.find(country => country.name?.common === country) as unknown as ICountry
-//         setCountryInfo(() => countryInfo_)
-//     } else if (label === "state") {
-//         if (cart && clientInfo?.country?.currency?.exchangeRate) {
-//             setState(e.target.value)
-//             const symbol = clientInfo.country.currency.symbol
-        
-//             //Checking if the state has extraDeliveryPercent and notifying the client
-//             const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
-            
-//             if (state_?.extraDeliveryPercent === 0) {
-//                     const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-//                     setExtraDeliveryFee(() => 0)
-//                     notify("info", `Your total order amount is ${symbol}${total}`)
-                
-                
-//             } else {
-//                 if (state_?.extraDeliveryPercent && cart?.deliveryFee) {
-//                     const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
-//                     setExtraDeliveryFee(() => extraDeliveryFee)
-//                     const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-//                     const total = round((cart.totalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")
-//                     notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
-//                 }
-//             }
-//         }
-//     }
-// };
-
-//   ///This function is triggered when the choose code is clicked
-//   const chooseCode = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, position: string | number, country: ICountry) => {
-//     e.preventDefault()
-
-//     console.log("Position: ", typeof position)
-//     if (position === "1") {
-//         setDropList1(() => false)
-//         //console.log("Country1: ", country)
-//         setCountryCode1(() => country)
-//         //console.log("Country code: ", countryCode1)
-//     } else if (position === "2") {
-//         setDropList2(() => false)
-//         //console.log("Country2: ", country)
-//         setCountryCode2(() => country)
-//         //console.log("Country code: ", countryCode2)
-//     }
-//   }
+        //Routing the admin to products page
+        router.push(`/#products`)
+    }
 
 
-//   ///This function is trigerred when the show drop down is clicked
-//   const showDropDown = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, position: string | number) => {
-//     e.preventDefault()
-
-//     if (position === "1") {
-//         setDropList1(!dropList1)
-//         //console.log("drop 1")
-//     } else if (position === "2") {
-//         //console.log("drop 2")
-//         setDropList2(!dropList2)
-//     }
-//   }
-
-//   //console.log("Coutries: ", CountryList.getAll())
-//     return (
-//         <main className={styles.main}>
-//                 <h3 className={styles.heading}>Delivery Form</h3>
-//                 <span className={styles.brief}><em><strong>Payment on Delivery;</strong><strong> We spend a lot of resources in getting your products delivered to you, we kindly request that you only place an order when you are fully physically and financially prepared to receive your delivery. Thank you for your cooperation.</strong></em></span>
-//                 <form className={styles.form} onSubmit={(e) => processOrder(e)}>
-//                     <label>Fullname</label>
-//                     <br />
-//                     <input
-//                         placeholder="Surname Firstname Othernames"
-//                         type="text"
-//                         onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
-//                         value={fullName}
-//                     />
-//                     <br />
-//                     <label>Phone Number</label> 
-//                     <br /> 
-//                     <div className={styles.number_form}>
-//                         <div className={styles.dial_code_container}>
-//                                 <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
-//                                 <Image 
-//                                     className={styles.img}
-//                                     src={countryCode1?.flag?.src as unknown as string}
-//                                     alt=""
-//                                     width={countryCode1?.flag?.width as unknown as number}
-//                                     height={countryCode1?.flag?.height as unknown as number}
-//                                 />
-//                                 <span>{countryCode1?.dial_code}</span>
-//                                 <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
-//                             </button>
-//                             <div className={`${styles.dial_code_option}`} style={{ display: dropList1 ? "flex" : "none"}}>
-//                                 {countryList.map((country, cid) => (
-//                                     <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>
-//                                         <Image
-//                                             className={styles.img} 
-//                                             src={country.flag?.src as unknown as string}
-//                                             alt=""
-//                                             width={country.flag?.width as unknown as number}
-//                                             height={country.flag?.height as unknown as number}
-//                                         />
-//                                         <span>{country.name?.common}</span>
-//                                         <span>{country.dial_code}</span>
-//                                     </button>
-//                                 ))}
-//                             </div>
-//                         </div>
-                        
-//                         <div className={styles.number_input}>
-//                             <input 
-//                                 placeholder="123456789"
-//                                 type="tel"
-//                                 onChange={(e) => setPhoneNumber1(e.target.value)}
-//                                 value={phoneNumber1}
-//                             />
-//                         </div>
-
-//                     </div>
-                    
-//                     <label>Other number (optional)</label>
-//                     <br />
-//                     <div className={styles.other_number_form}>
-//                         <div className={styles.dial_code_container}>
-//                             {countryCode2 ? (
-//                                 <button className={styles.dial_code} onClick={(e) => showDropDown(e, "2")}>
-//                                 <Image
-//                                     className={styles.img} 
-//                                     src={countryCode2.flag?.src as unknown as string}
-//                                     alt=""
-//                                     width={countryCode2.flag?.width as unknown as number}
-//                                     height={countryCode2.flag?.height as unknown as number}
-//                                 />
-//                                 <span>{countryCode2.dial_code}</span>
-//                                 <span className={`${styles.arrow} ${dropList2 ? styles.active_arrow : ""}`}>{">"}</span>
-//                             </button>
-//                             ) : (
-//                                 <></>
-//                             )}
-//                             <div className={`${styles.dial_code_option}`} style={{ display: dropList2 ? "flex" : "none"}}>
-//                                 {countryList.map((country, cid) => (
-//                                     <button key={cid} onClick={(e) => chooseCode(e, "2", country)}>
-//                                         <Image
-//                                             className={styles.img} 
-//                                             src={country.flag?.src as unknown as string}
-//                                             alt=""
-//                                             width={country.flag?.width as unknown as number}
-//                                             height={country.flag?.height as unknown as number}
-//                                         />
-//                                         <span>{country.name?.common}</span>
-//                                         <span>{country.dial_code}</span>
-//                                     </button>
-//                                 ))}
-//                             </div>
-//                         </div>
-                        
-//                         <div className={styles.number_input}>
-//                             <input 
-//                                 placeholder="123456789"
-//                                 type="tel"
-//                                 onChange={(e) => setPhoneNumber2(e.target.value)}
-//                                 value={phoneNumber2}
-//                             />
-//                         </div>
-//                     </div>
-//                     <label>Email Address</label>
-//                     <br />
-//                     <input
-//                         placeholder="example@mail.com"
-//                         type="email"
-//                         onChange={(e) => setEmailAddress(e.target.value)}
-//                         value={emailAddress}
-//                     />
-//                     <br />
-//                     <label>Country</label>
-//                     <br />
-//                     {countryCode1 ? (
-//                         <select value={country} onChange={(e) => onChange(e, "country")}>
-//                         {countryList.map((country, cid) => (
-//                             <option value={country.name?.common} key={cid}>{country.name?.common}</option>
-//                         ))}
-//                     </select>
-//                     ) : (
-//                         <></>
-//                     )}
-                    
-//                     <br />
-//                     <label>State</label>
-//                     <br />
-//                     {countryInfo && countryInfo.states ? (
-//                         <select value={state} onChange={(e) => onChange(e, "state")}>
-//                             {countryInfo.states.map((state, sid) => (
-//                                 <option value={state.name} key={sid}>{state.name}</option>
-//                             ))}
-//                         </select>
-//                     ) : (
-//                         <input
-//                             placeholder="State of residence"
-//                             type="text"
-//                             onChange={(e) => setState(capitalizeFirstLetter(e.target.value))}
-//                             value={state}
-//                         />
-//                     )}
-//                     <br />
-//                     <label>Postal Code</label>
-//                     <br />
-//                     <input
-//                         placeholder="Postal code"
-//                         type="text"
-//                         onChange={(e) => setPostalCode(e.target.value)}
-//                         value={postalCode}
-//                     />
-//                     <br />
-//                     <label>Delivery Address</label>
-//                     <br />
-//                     <input
-//                         placeholder="Address of delivery"
-//                         type="textarea"
-//                         onChange={(e) => setDeliveryAddress(e.target.value)}
-//                         value={deliveryAddress}
-//                     />
-//                     <br />
-                    
-//                     <button className={styles.order_button}>
-//                         {isLoading ? (
-//                             <Loading width="20px" height="20px" />
-//                         ) : (
-//                             <>
-//                                 <LocalShippingIcon className={styles.icon} />
-//                                 <span>Order Now</span>
-//                             </>
-//                         )}
-//                     </button>
-//                 </form>
-//             </main>
-//     );
-// };
+    return (
+        <main className={`${styles.main}`}>
+            {/* <div className={styles.div1}>
+                <form className={`${styles.search_form}`} onSubmit={(e) => {
+                    onSearch(e)
+                }}>
+                    <input 
+                        type="text" 
+                        placeholder="Search by id, recipient" 
+                        onChange={(e) => setQuery(e.target.value)}
+                        value={query}
+                    />
+                    <button>
+                        <SearchOutlined style={{ fontSize: "2rem" }} className={styles.icon} />
+                    </button>
+                </form>
+                <button className={styles.addButton} onClick={(e) => addOrder(e)}>
+                    <Add className={styles.icon} />
+                    <span>Add Order</span>
+                </button>
+            </div> */}
+            {/* <div className={styles.filters}>
+                <div className={styles.category}>
+                    <button className={styles.category_button} onClick={() => setCategory(() => !category)}>
+                        <CategoryOutlined />
+                    </button> 
+                    <div className={`${styles.category_option} ${!category ? styles.inactiveSort : ""}`}>
+                        {categoryOptions.map((category, _id) => (
+                            <button key={_id} className={categoryId === _id ? styles.activeSortButton : styles.inActiveSortButton} onClick={(e) => chooseCategory(e, _id)}>{category}</button>
+                        ))}
+                    </div>
+                </div>
+                <div className={`${styles.sort_section}`}>
+                    <button className={styles.sort_button} onClick={() => setSort(!sort)}>
+                        <Tune />
+                    </button> 
+                    <div className={`${styles.sort_option} ${!sort ? styles.inactiveSort : ""}`}>
+                        {sortOrderOptions.map((option, _id) => (
+                            <button key={_id} className={sortId === _id ? styles.activeSortButton : styles.inActiveSortButton} onClick={(e) => filterProduct(e, option.id)}>
+                                {option.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div> */}
+            <div className={styles.order_list}>
+                <div className={styles.order_header}>
+                    <span className={styles.span1}><strong>Orders</strong><span>({orders.length})</span></span>
+                    <span className={styles.span2}><strong>Price</strong></span>
+                    <span className={styles.span3}><strong>Payment</strong></span>
+                    <span className={styles.span4}><strong>Delivery</strong></span>
+                    {/* <span className={styles.span5}><strong>Action</strong></span> */}
+                </div>
+                <div className={styles.order_carousel}>
+                    {orders ? orders.map((order, _id) => (
+                        <OrderCard key={_id} order_={order} view={undefined} />
+                    )) : (<></>)}
+                </div>
+                {/* <div className={styles.pagination_section}>
+                        <button onClick={e => goPrev(e)}>
+                            <KeyboardArrowLeftIcon />
+                        </button>
+                        <span>{width <= 550 ? mobileCurrentIndex + 1 : pcCurrentIndex + 1} / {width <= 550 ? mobileTotalPage.length : pcTotalPage.length}</span>
+                        <button onClick={e => goNext(e)}>
+                            <KeyboardArrowRightIcon />
+                        </button>
+                    </div> */}
+            </div>
+        </main>
+    );
+};
   
-// export default Order;
+export default Order;

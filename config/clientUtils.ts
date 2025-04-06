@@ -215,8 +215,9 @@ export const getDevice = (): ClientDevice => {
 
 //This is a function that handles caching of data using local storage
 export const Cache = (key: string) => {
+    //console.log('cache key: ', key)
 
-    const get = () => {
+    const get = (): any | undefined => {
         try {
             const item = getItem(key) as unknown as { value: any, validPeriod: number, dateCreated: number }
             if (item) {
@@ -226,7 +227,9 @@ export const Cache = (key: string) => {
                     const currentTime = Date.now()
                     const timeDifference = (currentTime - item.dateCreated) / 1000;  // Converting ms to s
                     if (timeDifference > item.validPeriod) {
+                        //removeItem(key)
                         throw new Error("Data is expired")
+                        //window.location.reload()
                     } else {
                         return item.value
                     }

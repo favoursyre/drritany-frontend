@@ -94,8 +94,8 @@ export default async function ProductByIdPage({ params: { id } }: { params: { id
     <main className="product_info_page">
       <ProductInfo product_={product[0]} />
       {/* <HomeCampaignB /> */}
-      <SimilarProduct product_={sortProductsBySimilarity(products, product[0])} title_={titles1} view_={"infoSlide1"} />
-      <RecommendedProduct product_={products} title_={titles2} view_={"infoSlide2"} />
+      <SimilarProduct _product={product[0]} title_={titles1} view_={"infoSlide1"} />
+      <RecommendedProduct _product={product[0]} title_={titles2} view_={"infoSlide2"} />
     </main>
   )
 }

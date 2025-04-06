@@ -4,11 +4,13 @@
 ///Libraries -->
 import styles from "./cartProductModal.module.scss"
 import { useModalBackgroundStore, useCartItemDiscountModalStore, useClientInfoStore } from "@/config/store";
-import { MouseEvent, useState, FormEvent } from "react";
+import { MouseEvent, useState, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { round } from "@/config/utils";
 import { IClientInfo } from "@/config/interfaces";
+import { getItem } from "@/config/clientUtils";
+import { clientInfoName } from "@/config/utils";
 
 ///Commencing the code 
 
@@ -22,7 +24,34 @@ const CartProductDiscountModal = () => {
     const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal);
     const cartItem = useCartItemDiscountModalStore(state => state.cartItem);
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+  
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+  
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            //console.log("Client info detected")
+        }  
+  
+    }, [clientInfo])
 
     ///This function is triggered when the background of the modal is clicked
     const closeModal = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {

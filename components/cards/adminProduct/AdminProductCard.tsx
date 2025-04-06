@@ -7,7 +7,7 @@ import Image from "next/image";
 import { IProduct, IClientInfo, IAdmin } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { backend, routeStyle, round, adminName, domainName } from "@/config/utils";
+import { backend, routeStyle, round, adminName, domainName, clientInfoName } from "@/config/utils";
 import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore, useLoadingModalStore } from "@/config/store";
 import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt } from '@mui/icons-material';
 import { getItem, notify } from "@/config/clientUtils";
@@ -21,7 +21,9 @@ import Loading from "@/components/loadingCircle/Circle";
 const AdminProductCard = ({ products_, view }: { products_: IProduct, view: string | undefined }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [product, setProduct] = useState<IProduct>({...products_})
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const router = useRouter()
     const routerPath = usePathname();
     const [adminUser, setAdminUser] = useState<IAdmin | null>(getItem(adminName))
@@ -31,6 +33,33 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
+
+    //Updating client info
+    useEffect(() => {
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     useEffect(() => {
         //console.log("Loc: ", clientInfo)

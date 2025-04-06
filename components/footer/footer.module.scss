@@ -805,11 +805,11 @@
 }
 
 .orderPage {
-    top: 145%;
+    top: 100%;
     @extend %footer-layout;
 
     @include tabletPro {
-        top: 90%;
+        top: 80%;
         //border: 2px solid $error-color;
         //@include position($left: 0%, $top: 129px);
         z-index: 1;
@@ -822,7 +822,7 @@
     
     @include phonePro {
         //border: 2px solid $error-color;
-        top: 1000px;
+        top: 80%;
     } 
 
     @include phoneMini {

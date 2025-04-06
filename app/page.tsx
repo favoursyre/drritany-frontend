@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import Hero from '@/components/hero/Hero';
-import { backend, shuffleArray, sortProductByActiveStatus, sortMongoQueryByTime, sortProductByOrder, sortProductByRating } from '@/config/utils';
+import { backend, shuffleArray, sortProductByActiveStatus, sortMongoQueryByTime, sortProductByOrder, sortProductByRating, getProducts } from '@/config/utils';
 import Stats from "@/components/stats/Stats"
 import ProductGrid from '@/components/product/productGrid/ProductGrid';
 //import dynamic from "next/dynamic"
@@ -17,43 +17,43 @@ import HomeCampaignA from '@/components/campaigns/homeCampaignA/homeCampaignA';
 import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 
 ///Commencing the code
-export const dynamic = "force-dynamic"
+//export const dynamic = "force-dynamic"
 
 ///This function gets all the products
-async function getProducts() {
-  // try {
-  //   const response = await fetch(`${domainName}/api/product/`,
-  //       {
-  //         method: "GET",
-  //         cache: "no-store",
-  //       }
-  //     );
+// async function getProducts() {
+//   // try {
+//   //   const response = await fetch(`${domainName}/api/product/`,
+//   //       {
+//   //         method: "GET",
+//   //         cache: "no-store",
+//   //       }
+//   //     );
       
-  //       await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+//   //       await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
       
-  //       const products = await response.json();
-  //       console.log('Prod2: ', products)
-  //       return products;
-  // } catch (error) {
-  //     console.log(error);
-  // }
-  try {
-      const res = await fetch(`${backend}/product?action=latest`, {
-      method: "GET",
-      cache: "no-store",
-    })
+//   //       const products = await response.json();
+//   //       console.log('Prod2: ', products)
+//   //       return products;
+//   // } catch (error) {
+//   //     console.log(error);
+//   // }
+//   try {
+//       const res = await fetch(`${backend}/product?action=latest`, {
+//       method: "GET",
+//       cache: "no-store",
+//     })
 
-    if (res.ok) {
-      return res.json()
-    } else {
-      getProducts()
-    }
+//     if (res.ok) {
+//       return res.json()
+//     } else {
+//       getProducts()
+//     }
     
-  } catch (error) {
-    console.log(error);
-  }
+//   } catch (error) {
+//     console.log(error);
+//   }
   
-}
+// }
 
 //Changing this page to static
 // export async function getStaticProps(context) {
@@ -86,7 +86,8 @@ async function getProducts() {
  * @title Homepage
  */
 export default async function Home() {
-  const products = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
+  const start = performance.now()
+  //const products = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
   // const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
   // const newestArrivals = sortProductByLatest(products!)
   // const mostOrdered = sortProductByOrder(products!)
@@ -107,22 +108,19 @@ export default async function Home() {
     slideTitleId: 2,
     barTitleId: 2
   }
-  //console.log("Prod1: ", products)
-  //console.log("Prod2: ", newestArrivals)
-  //console.log("Prod3: ", mostOrdered)
-  //console.log("Prod4: ", mostRated)
-  // const quotes = shuffleArray(await getQuotes()) 
-  // const testimonials = shuffleArray(await getTestimonials())
+  
+  const end = performance.now()
+  console.log(`home page took ${end - start}ms`)
  
   return (
     <main className="home_page" >
       <Hero />
       <Stats />
-      <ProductSlide product_={products} title_={titles1} view_={"homeSlide1"}/>
+      <ProductSlide _product={undefined} title_={titles1} view_={"homeSlide1"}/>
       <CategorySlide />
-      <ProductSlide product_={products} title_={titles2} view_={"homeSlide2"}/>
+      <ProductSlide _product={undefined} title_={titles2} view_={"homeSlide2"}/>
       {/* <HomeCampaignA /> */}
-      <ProductSlide product_={products} title_={titles4} view_={"homeSlide3"}/>
+      <ProductSlide _product={undefined} title_={titles4} view_={"homeSlide3"}/>
       {/* <HomeCampaignB /> */}
       {/* <ProductSlide product_={productSlide} title_={titles4} view_={"homeSlide4"}/> */}
       {/* <Testimony />   */}

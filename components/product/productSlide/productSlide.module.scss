@@ -187,6 +187,12 @@
             top: -3%;
         }
 
+        .loading {
+            //border: 1px solid red;
+            position: relative;
+            left: -50%;
+        }
+
         .slider {
             //border: 1px solid red;
             @include flexBar($position: relative, $align: center, $flex_d: row, $justify: center, $gap: 0%);
