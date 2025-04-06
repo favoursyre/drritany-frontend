@@ -27,7 +27,7 @@ async function getOrders() {
     try {
       const res = await fetch(`${backend}/order`, {
         method: "GET",
-        cache: "no-store",
+        //cache: "no-store",
       })
   
       if (res.ok) {
