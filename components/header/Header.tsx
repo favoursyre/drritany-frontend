@@ -7,12 +7,11 @@ import { useState, useEffect, MouseEvent, FormEvent, useCallback } from 'react';
 import styles from "./header.module.scss"
 import { ICart, IProduct, IProductFilter, IButtonResearch, IClientInfo, IOrder } from '@/config/interfaces';
 import { getDevice, getItem, getOS, notify, setItem } from "@/config/clientUtils"
-import { routeStyle, cartName, wishListName, sleep, productFilterName, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle, userIdName, clientInfoName, orderName } from '@/config/utils'
+import { routeStyle, cartName, wishListName, sleep, productFilterName, getCurrentDate, getCurrentTime, storeButtonInfo, extractBaseTitle, userIdName, clientInfoName, orderName, backend, logo, getUserOrders } from '@/config/utils'
 import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingCartOutlined, FavoriteBorder, Search, Menu, ArrowBack, Close, AccountCircleOutlined, KeyboardArrowRight } from "@mui/icons-material";
 import Loading from "../loadingCircle/Circle";
 import { useModalBackgroundStore, useContactModalStore, useLoadingModalStore, useClientInfoStore } from "@/config/store";
-import { logo } from "@/config/utils";
 
 ///Commencing the code 
 /**
@@ -27,7 +26,7 @@ const Header = () => {
   const [cartIsLoading, setCartIsLoading] = useState<boolean>(false)
   const [wishIsLoading, setWishIsLoading] = useState<boolean>(false)
   const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
-  const [orders, setOrders] = useState<Array<IOrder>>(getItem(orderName))
+  const [orders, setOrders] = useState<Array<IOrder>>()
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
   //const clientInfo = useClientInfoStore(state => state.info)
@@ -41,9 +40,42 @@ const Header = () => {
   const _clientInfo = getItem(clientInfoName)
   const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
   const [accountModal, setAccountModal] = useState<boolean>(false)
+  const _userId = getItem(userIdName)
+  const [userId, setUserId] = useState<string>(_userId!)
+  const [mounted, setMounted] = useState(false);
+
+  //For client rendering
+  useEffect(() => {
+    setMounted(true);
+
+    // const getUserOrders = async (userId: string) => {
+    //     if (!userId) {
+    //       return
+    //     }
+    
+    //     try {
+    //       const res = await fetch(`${backend}/order?userId=${userId}`, {
+    //         method: "GET",
+    //         //cache: "no-store",
+    //       })
+      
+    //       if (res.ok) {
+    //         const data = await res.json()
+    //         console.log("data kk: ", data) 
+    //       } else {
+    //         getUserOrders(userId)
+    //       }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
+
+    // getUserOrders(userId)
+  }, []);
 
   //Updating client info
   useEffect(() => {
+    //console.log("Header")
       //console.log("Hero: ", _clientInfo, clientInfo)
 
       let _clientInfo_
@@ -203,7 +235,7 @@ const Header = () => {
   }
 
   //This function is trigerred when an account modal option is clicked
-  const chooseAccountModalOption = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: "wishlist" | "orders") => {
+  const chooseAccountModalOption = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: "wishlist" | "orders") => {
     e.preventDefault()
 
     setAccountModal(false)
@@ -218,13 +250,30 @@ const Header = () => {
         notify("info", "Wishlist is empty")
       }
     } else if (action === "orders") {
-      if (orders && orders.length > 0) {
+      // if (orders && orders.length > 0) {
+      //   setModalBackground(true)
+      //   setLoadingModal(true)
+
+      //   if (userId) {
+      //     router.push(`/order?userId=${userId}`)
+      //   } else {
+      //     notify("error", "User not detected")
+      //   }
+        
+      // } else {
+      //   notify("info", "You have no orders")
+      // }
+
+      if (userId) {
         setModalBackground(true)
         setLoadingModal(true)
 
-        router.push("/orders")
+        router.push(`/order?userId=${userId}`)
+
+        setModalBackground(false)
+        setLoadingModal(false)
       } else {
-        notify("info", "You have no orders")
+        notify("error", "User not detected")
       }
     }
   }
@@ -301,11 +350,11 @@ const Header = () => {
               <Loading width="10px" height="10px" />
             ) : (
               <button onClick={(e) => viewCart(e)}>
-                <div id={styles.cartIcon}>
+                <div className={styles.cartIcon}>
                     <ShoppingCartOutlined className={styles.cart} />
                 </div>
-                <div id={cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
-                  <span>{cart?.cart.length}</span>
+                <div className={mounted && cart && cart.cart.length > 0 ? styles.active_cart : styles.empty_cart}>
+                  <span>{mounted ? cart?.cart.length : ""}</span>
                 </div>
               </button>
             )}
@@ -317,10 +366,11 @@ const Header = () => {
             </button>
             <div className={`${styles.modal_option} ${!accountModal ? styles.inactiveAccountModal : ""}`}>
               <button className={styles.wish} onClick={(e) => chooseAccountModalOption(e, "wishlist")}>
-                <span>Wishlist ({wishList ? wishList.length : 0})</span>
+                <span>Wishlist ({mounted && wishList ? wishList.length : 0})</span>
               </button>
               <button className={styles.orders} onClick={(e) => chooseAccountModalOption(e, "orders")}>
-                <span>Orders ({orders ? orders.length : 0})</span>
+                <span>Orders</span>
+                {/* <span>Orders ({mounted && orders ? orders.length : 0})</span> */}
               </button>
             </div>
           </div>

@@ -62,8 +62,13 @@ export default async function AdminOrderPage(req: { params: Object, searchParams
     const orders = sortMongoQueryByTime(await getOrders(),"latest") as unknown as Array<IOrder>
     const { query } = req.searchParams
     console.log("Query: ", query)
-    console.log('testing why')
+    
     const queriedOrders = sortMongoQueryByTime(await getQueriedOrders(query), "latest") as unknown as Array<IOrder>
+    console.log('testing why: ', orders)
+
+    // if (!orders || !queriedOrders) {
+    //   return
+    // }
 
   return (
     <main className="admin_product">

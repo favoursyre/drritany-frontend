@@ -66,7 +66,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [isZoomed, setIsZoomed] = useState(false);
     const spec = product.specification
     const stars: Array<number> = [1, 2, 3, 4]
-    console.log("In Stock: ", product.pricing?.inStock)
+    //console.log("In Stock: ", product.pricing?.inStock)
 
     ///This contains the accordian details
     const questions = [
@@ -179,15 +179,15 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         method: "POST",
                         body: JSON.stringify(sheetInfo),
                     });
-                    console.log("Google Stream: ", res)
+                    //console.log("Google Stream: ", res)
                 } catch (error) {
-                    console.log("Store Error: ", error)
+                    //console.log("Store Error: ", error)
                 }
             }
 
             storeQuery()
         }
-    }, [product, clientInfo])
+    }, [clientInfo])
 
     useEffect(() => {
         //console.log("Client: ", clientInfo)
@@ -207,12 +207,12 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
         // Check if clientInfo is defined, if not, rerun the effect.
         if (clientInfo !== undefined) {
-            console.log("Client is defined");
+            //console.log("Client is defined");
 
             const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!);
             setCustomPrice(newPrice);
         } else {
-            console.log("Client is undefined");
+            //console.log("Client is undefined");
         }
         
     }, [clientInfo, customPrice, sizeId, product]);
@@ -220,7 +220,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     useEffect(() => {
         // This function will be called every time the component is mounted, and
         // whenever the `count` state variable changes
-        console.log('Index: ', imageIndex)
+        //console.log('Index: ', imageIndex)
         //console.log("Colors & Sizes: ", product.specification?.colors, product.specification?.sizes)
         //console.log("main: ", mainImage)
       }, [mainImage, mainImageId, imageIndex, videoIndex, view, activeInfoBtn]);
@@ -391,10 +391,10 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 let index!: number
                 
                 for (let i = 0; i < cart.cart.length; i++) {
-                    console.log("Testing 2: ", cart.cart[i].specs, cartSpecs)
+                    //console.log("Testing 2: ", cart.cart[i].specs, cartSpecs)
                     if (cart.cart[i]._id === p._id && areObjectsEqual(cart.cart[i].specs, cartSpecs)) {
                         index = i
-                        console.log("Testing: ", areObjectsEqual(cart.cart[i].specs, cartSpecs))
+                        //console.log("Testing: ", areObjectsEqual(cart.cart[i].specs, cartSpecs))
                         break;
                     }
                 }
@@ -440,9 +440,9 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
                 const car_ = localStorage.getItem(cartName)
                 const _car_= JSON.parse(car_ || "{}")
-                console.log("cart_: ", _car_)
+                //console.log("cart_: ", _car_)
             } else {
-                console.log("No cart: ", false)
+                //console.log("No cart: ", false)
 
                 const cart: ICart = {
                     grossTotalPrice: totalPrice,
@@ -573,7 +573,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const changePicture = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: string) => {
         e.preventDefault()
 
-        console.log("Arrow clicked")
+        //console.log("Arrow clicked")
         const imageLength = product.images.length
         let newIndex = imageIndex
 
@@ -613,7 +613,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         const posY = (offsetY / height) * 100;
 
         setTransformOrigin(`${posX}% ${posY}%`);
-        console.log("Dimension: ", `${posX}% ${posY}%`)
+        //console.log("Dimension: ", `${posX}% ${posY}%`)
     };
 
     // Handle mouse enter to enable zoom

@@ -9,7 +9,7 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName } from "@/config/utils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
@@ -46,6 +46,7 @@ const OrderModal = () => {
     const [paymentSuccess, setPaymentSuccess] = useState<"success" | "failed" | null>(null)
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+    const [orderSent, setOrderSent] = useState<boolean>(false)
 
     //Updating client info
     useEffect(() => {
@@ -77,31 +78,48 @@ const OrderModal = () => {
         if (e) {
             e.preventDefault()
         }
+
+        if (orderSent) {
+            console.log("order sent already")
+            return
+        }
         
-        setSubmit(true)
+        if (e) {
+            setSubmit(true)
+        }
 
         if (cart) {
-            setIsLoading(() => true)
+            //setIsLoading(() => true)
+
+            setModalBackground(true)
 
             //Send the order to the backend
             try {
+                console.log("Testing: ", )
+                const _deliveryFee = getItem("deliveryFee")
                 //console.log('Clicked')
                 //const newDeliveryFee = cart.deliveryFee + extraDeliveryFee
-                // cart.deliveryFee = Number(newDeliveryFee.toFixed(2))
-                // setCart(() => ({ ...cart }))
+                cart.deliveryFee = _deliveryFee
+                setCart(() => ({ ...cart }))
+                
                 const productSpec: ICart = cart
                 const clientInfo_ = clientInfo as unknown as IClientInfo
                 const customerSpec: ICustomerSpec = deliveryInfo as unknown as ICustomerSpec
+                customerSpec.userId = getItem(userIdName)
                 const deliverySpec: IDelivery = {
                     status: DeliveryStatus.PENDING
                 }
                 const paymentSpec: IPayment = {
+                    txId: getItem(transactionIdName),
                     status: PaymentStatus.SUCCESS,
                     exchangeRate: clientInfo_.country?.currency?.exchangeRate!
                 }
+                console.log("Testing: ", _deliveryFee, getItem(transactionIdName), getItem(userIdName))
                 const order: IOrder = { customerSpec, productSpec, deliverySpec, paymentSpec }
                 const orderSpec = { order, clientInfo_}
+                setModalBackground(true)
                 console.log("Order_: ", orderSpec)
+                //return
                 const res = await fetch(`${backend}/order`, {
                     method: 'POST',
                     //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
@@ -110,26 +128,33 @@ const OrderModal = () => {
                     'Content-Type': 'application/json',
                     },
                 });
+                setModalBackground(true)
                     
                 const data = await res.json();
             
                 console.log("Data: ", data);
 
                 if (res.ok) {
+                    setModalBackground(true)
+                    if (!orderSent) {
+                        notify("success", `Your order was logged successfully`)
+                    }
                     
-                    notify("success", `Your order was logged successfully`)
+                    setOrderSent(() => true)
 
                     //Deleting cart
                     removeItem(cartName)
+                    removeItem("deliveryFee")
+                    removeItem(transactionIdName)
 
                     //Adding this order to localstorage
-                    const _orders_ = getItem(orderName)
-                    if (_orders_) {
-                        const newOrders = [..._orders_, data]
-                        setItem(orderName, newOrders)
-                    } else {
-                        setItem(orderName, data)
-                    }
+                    // const _orders_ = getItem(orderName)
+                    // if (_orders_) {
+                    //     const newOrders = [..._orders_, data]
+                    //     setItem(orderName, newOrders)
+                    // } else {
+                    //     setItem(orderName, data)
+                    // }
 
                     setIsLoading(() => false)
 
@@ -156,14 +181,14 @@ const OrderModal = () => {
                 //Setting the modal state to true
                 //setModalState(true)
             } catch (error) {
-                console.log("error: ", error)
-                setModalBackground(false)
-                setOrderModal(false)
-                notify("error", `${error}`)
+                console.error("error: ", error)
+                //setModalBackground(false)
+                //setOrderModal(false)
+                //notify("error", `${error}`)
             }
 
             //setModalState(() => false)
-            setIsLoading(() => false)
+            //setIsLoading(() => false)
         } else {
             notify('error', "Cart is empty")
             return
@@ -195,9 +220,18 @@ const OrderModal = () => {
                     router.push("/cart")
                 } else if (status === 'paid') {
                     setPaymentStatus('success');
+                    setModalBackground(true)
                     await processOrder()
-                    setIsLoading(false)
-                    notify('success', "Payment was successful")
+                    setModalBackground(true)
+                    //setIsLoading(false)
+                    //notify('success', "Payment was successful")
+
+                    notify("info", "Redirecting you to orders")
+                    //await sleep(1)
+                    router.push(`/order?userId=${userId}`)
+
+                    setModalBackground(false)
+                    setOrderModal(false)
                 } else if (status === 'canceled') {
                     setPaymentStatus('fail');
                     setSubmit(false)
@@ -214,7 +248,7 @@ const OrderModal = () => {
         } else if (!sessionId || paymentStatus) {
             return
         }
-    }, [paymentStatus, router, searchParams, setOrderModal]);
+    }, [paymentStatus, router, searchParams]);
 
     useEffect(() => {
         //console.log("Client: ", clientInfo)
@@ -303,6 +337,7 @@ const OrderModal = () => {
 
           const amountInCents = Math.round(parseFloat(amount_) * 100);
           const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
+          setItem(transactionIdName, txId_)
     
           const response = await fetch(`${backend}/stripe-checkout`, {
             method: 'POST',
@@ -355,6 +390,9 @@ const OrderModal = () => {
 
         //Pass the route link here
         router.push(`/terms`)
+
+        setModalBackground(false)
+        setLoadingModal(false)
     }
 
   return (

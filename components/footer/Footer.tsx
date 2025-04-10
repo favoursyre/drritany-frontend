@@ -87,7 +87,7 @@ const Footer = () => {
       const _visitSocialLink = async (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>, social: string) => {
         e.preventDefault()
 
-        //Setting loading modal
+        //Setting on loading modal
         setModalBackground(true)
         setLoadingModal(true)
 
@@ -107,6 +107,10 @@ const Footer = () => {
         }
 
         await visitSocialLink(social, info)
+
+        //Setting off loading modal
+        setModalBackground(false)
+        setLoadingModal(false)
       }
 
       ///This function adds a new subscriber
@@ -124,7 +128,8 @@ const Footer = () => {
             return
         }
 
-        setIsLoading(() => true)
+        setModalBackground(true)
+        setLoadingModal(true)
         
         try {
             const subscriber = email
@@ -152,7 +157,8 @@ const Footer = () => {
             notify("error", `${error.message}`)
         }
 
-        setIsLoading(() => false)
+        setModalBackground(false)
+        setLoadingModal(false)
       }
 
     return (
@@ -223,11 +229,7 @@ const Footer = () => {
                             value={email}
                         />
                         <button>
-                            {isLoading ? (
-                                <Loading width='20px' height='20px' />
-                            ) : (
-                                <span>Submit</span>
-                            )}
+                            <span>Submit</span>
                         </button>
                     </form>
                 </div>

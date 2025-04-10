@@ -46,6 +46,12 @@ const Cart = () => {
     const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
     const searchParams = useSearchParams()
     const [taxAmount, setTaxAmount] = useState<number | undefined>(0);
+    const [mounted, setMounted] = useState(false);
+    
+    //For client rendering
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     //Updating the sales tax
     useEffect(() => {
@@ -87,30 +93,26 @@ const Cart = () => {
 
     //Updating client info
     useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
-
-        let _clientInfo_
-        
-        if (!clientInfo) {
-            //console.log("Client info not detected")
-            const interval = setInterval(() => {
-                _clientInfo_ = getItem(clientInfoName)
-                //console.log("Delivery Info: ", _deliveryInfo)
-                setClientInfo(_clientInfo_)
-            }, 100);
+        if (clientInfo) {
+            // Client info is already available
+            setModalBackground(false);
+            setLoadingModal(false);
+            return;
+        }
     
-            //console.log("Delivery Info: ", deliveryInfo)
-        
-            return () => {
-                clearInterval(interval);
-            };
-        } else {
-            setModalBackground(false)
-            setLoadingModal(false)
-            //console.log("Client info detected")
-        }  
-
-    }, [clientInfo])
+        // Start polling if clientInfo is not available
+        const interval = setInterval(() => {
+            const storedClientInfo = getItem(clientInfoName);
+            if (storedClientInfo) {
+                clearInterval(interval); // Stop polling as soon as we get the data
+                setClientInfo(storedClientInfo);
+            }
+        }, 1000);
+    
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
+    
+    }, [clientInfo]);
     
     //Checking the url to know if stripe payment session is active
     useEffect(() => {
@@ -354,6 +356,7 @@ const Cart = () => {
 
         //Updating cart with the new values
         if(cart) {
+            setItem("deliveryFee", getCartDeliveryFee())
             //cart.deliveryFee = getCartDeliveryFee()
             cart.totalDiscount = getCartDiscount()
             cart.tax = taxAmount
@@ -463,7 +466,7 @@ const Cart = () => {
   return (
     <>
         <main className={`${styles.main}`}>
-            {!cart || cart?.cart.length === 0 ? (
+            {mounted && (!cart || cart?.cart.length === 0) ? (
                 <div className={styles.empty_cart}>
                     <div className={styles.cart_icon}>
                         <ProductionQuantityLimits className={styles.icon} />
@@ -475,7 +478,7 @@ const Cart = () => {
                         <span>Start Shopping</span>
                     </button>
                 </div>
-            ) : (
+            ) : mounted ? (
                 <div className={styles.active_cart}>
                     <div className={styles.cart_list}>
                         <span className={styles.cart_list_title}>Checkout Summary</span>
@@ -594,7 +597,7 @@ const Cart = () => {
                     <div className={styles.order_price}>
                         <span className={styles.heading}>Delivery Information</span>
                         <div className={styles.delivery_info} onClick={(e) => editDeliveryInfo(e)}>
-                            {deliveryInfo ? (
+                            {mounted && deliveryInfo ? (
                                 <div className={styles.info}>
                                     <span className={styles.name}>{deliveryInfo.fullName}</span>
                                     <div className={styles.address}>
@@ -696,6 +699,8 @@ const Cart = () => {
                     </div>
                     
                 </div>
+            ) : (
+                <></>
             )}
         </main>
         <div className={`${styles.modal_container} ${deleteModal ? styles.activeModal : styles.inactiveModa}`}>

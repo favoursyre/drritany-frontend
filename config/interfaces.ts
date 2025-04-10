@@ -43,7 +43,7 @@ export interface IOrderModel extends Model<IOrder> {
   processOrder(order: IOrder): IOrder,
   getOrders(): Array<IOrder>,
   getOrderById(id: string): Array<IOrder>,
-  getOrderByAccountId(id: string): Array<IOrder>,
+  getOrderByAccountId(userId: string): Array<IOrder>,
   deleteOrder(id: string): IOrder,
   updateOrder(id: string, order: IOrder): IOrder
 }  
@@ -421,7 +421,7 @@ export interface IReturnPolicyModalStore {
 
 ///Declaring the interface for customer order
 export interface ICustomerSpec {
-  readonly userId?: string, //This is the default assigned chrome id
+  userId: string, //This is the default assigned chrome id
   readonly fullName: string,
   readonly email: string,
   readonly phoneNumbers: Array<string | undefined>,
@@ -448,6 +448,7 @@ export interface IDelivery {
  * @param exchangeRate The exchange rate as at the time of order
  */
 export interface IPayment {
+  readonly txId: string,
   status: PaymentStatus,
   readonly exchangeRate: number
 }

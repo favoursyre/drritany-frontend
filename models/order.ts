@@ -5,6 +5,7 @@
 import { Schema, model, Types, models } from "mongoose";
 import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem, DeliveryStatus, PaymentStatus } from "@/config/interfaces";
 import { Product } from "./product";
+import { trim } from "validator";
 
 ///Commencing the app
 const ADMINS = [process.env.ADMIN_EMAIL1!, process.env.ADMIN_EMAIL2!]
@@ -19,6 +20,7 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
     customerSpec: {
       userId: {
         type: String,
+        required: true,
         trim: true
       },
       fullName: {
@@ -61,7 +63,15 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
       },
     },
     productSpec: {
-        totalPrice: {
+        overallTotalPrice: {
+          type: Number,
+          required: true
+        },
+        tax: {
+          type: Number,
+          required: true
+        },
+        grossTotalPrice: {
           type: Number,
           required: true
         },
@@ -108,6 +118,12 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
       }] 
     },
     paymentSpec: {
+      txId: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
+      },
       status: {
         type: String,
         enum: PaymentStatus,
@@ -130,6 +146,14 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
 orderSchema.statics.processOrder = async function ( order: IOrder ) {
 
   //Create a new order
+  const foundOrder = await this.findOne({ "paymentSpec.txId": order.paymentSpec.txId })
+  console.log('Found Order: ', foundOrder)
+
+  if (foundOrder) {
+    throw new Error('Duplicate found')
+    return
+  } 
+
   const order_ = await this.create(order);
 
   return order_;
@@ -163,17 +187,20 @@ orderSchema.statics.getOrderById = async function (id: string) {
  * @param id of the order to be queried
  * @returns Order with the given user id
  */
-orderSchema.statics.getOrderByAccountId = async function (id: string) {
+orderSchema.statics.getOrderByAccountId = async function (userId: string) {
   //Validation of args
   // if (!Types.ObjectId.isValid(id)) {
   //   throw Error("Id is invalid");
   // }
 
   const orders = await this.find({}).sort({ createdAt: -1 });
-  const _orders = orders.find((order) => order.accountId === id || order.customerSpec.userId === id)
+  console.log("Orders server: ", orders.length)
 
-  //const order = await this.find({ _id: id })
-  return _orders;
+  //const orders_ = []
+  const orders_ = orders.filter((order) => order.accountId === userId || order.customerSpec.userId === userId)
+  console.log("Orders server 1: ", orders_)
+
+  return orders_;
 }
 
 /**

@@ -50,6 +50,12 @@ const OrderFormModal = () => {
     const [userId, setUserId] = useState<string | null>(getItem(userIdName))
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+    const [mounted, setMounted] = useState(false);
+    
+      //For client rendering
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     //Updating client info
     useEffect(() => {
@@ -264,6 +270,14 @@ const OrderFormModal = () => {
         } else if (!deliveryAddress) {
             notify("error", "Street address is required")
             return
+        } else if (!municipality) {
+            notify("error", "Municipality is required")
+            return
+        } else if (!userId) {
+            notify("error", "User not detected")
+            const userId_ = getItem(userIdName)
+            setUserId(userId_)
+            return
         }
 
         setIsLoading(() => true)
@@ -271,7 +285,7 @@ const OrderFormModal = () => {
         try {
             //Saving the data to local storage
             const customerSpec: ICustomerSpec = { 
-                userId: userId!, 
+                userId: getItem(userIdName), 
                 fullName, 
                 email: emailAddress, 
                 phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], 
@@ -384,7 +398,7 @@ const OrderFormModal = () => {
             setIsLoading(() => true)
             try {
                 //Verifying the postal code
-                const res = await fetch(`http://api.zippopotam.us/us/${_mainCode}`, {
+                const res = await fetch(`https://api.zippopotam.us/us/${_mainCode}`, {
                     method: 'GET', // HTTP method
                 });
 
@@ -393,10 +407,13 @@ const OrderFormModal = () => {
                     console.log('Zip code: ', zip, country, state)
                     setMunicipality(() => zip.places[0]["place name"])
 
-                    if (zip.country !== country || zip.places[0].state !== state) {
-                        notify("error", "Zip code doesn't match your address")
+                    if (zip.country !== country) {
+                        notify("error", "Zip code doesn't match your country")
                         throw Error
                         //return
+                    } else if (zip.places[0].state !== state) {
+                        notify("error", "Zip code doesn't match your state")
+                        throw Error
                     }
                     
                     //const placeName = zip.places[0]["place name"]
@@ -454,187 +471,191 @@ const OrderFormModal = () => {
                 <CloseIcon className={styles.icon} />
             </button>
         </div>
-        <form className={styles.form}>
-                    <label >
-                        Fullname
-                        <input placeholder="Surname Firstname Othernames" type="text" onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
-                            value={fullName}
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Phone Number
-                        <div className={styles.number_form}>
-                        <div className={styles.dial_code_container}>
-                                <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
-                                <Image 
-                                    className={styles.img}
-                                    src={countryCode1?.flag?.src as unknown as string}
-                                    alt=""
-                                    width={countryCode1?.flag?.width as unknown as number}
-                                    height={countryCode1?.flag?.height as unknown as number}
-                                />
-                                <span>{countryCode1?.dial_code}</span>
-                                <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
-                            </button>
-                            <div className={`${styles.dial_code_option}`} style={{ display: dropList1 ? "flex" : "none"}}>
-                                {countryList.map((country, cid) => (
-                                    <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>
-                                        <Image
-                                            className={styles.img} 
-                                            src={country.flag?.src as unknown as string}
-                                            alt=""
-                                            width={country.flag?.width as unknown as number}
-                                            height={country.flag?.height as unknown as number}
-                                        />
-                                        <span>{country.name?.common}</span>
-                                        <span>{country.dial_code}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        
-                        <div className={styles.number_input}>
-                            <input 
-                                placeholder="123456789"
-                                type="tel"
-                                onChange={(e) => setPhoneNumber1(e.target.value)}
-                                value={phoneNumber1}
+        {mounted ? (
+            <form className={styles.form}>
+                <label >
+                    Fullname
+                    <input placeholder="Surname Firstname Othernames" type="text" onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
+                        value={fullName}
+                    />
+                </label>
+                <br />
+                <label>
+                    Phone Number
+                    <div className={styles.number_form}>
+                    <div className={styles.dial_code_container}>
+                            <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
+                            <Image 
+                                className={styles.img}
+                                src={countryCode1?.flag?.src as unknown as string}
+                                alt=""
+                                width={countryCode1?.flag?.width as unknown as number}
+                                height={countryCode1?.flag?.height as unknown as number}
                             />
+                            <span>{countryCode1?.dial_code}</span>
+                            <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
+                        </button>
+                        <div className={`${styles.dial_code_option}`} style={{ display: dropList1 ? "flex" : "none"}}>
+                            {countryList.map((country, cid) => (
+                                <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>
+                                    <Image
+                                        className={styles.img} 
+                                        src={country.flag?.src as unknown as string}
+                                        alt=""
+                                        width={country.flag?.width as unknown as number}
+                                        height={country.flag?.height as unknown as number}
+                                    />
+                                    <span>{country.name?.common}</span>
+                                    <span>{country.dial_code}</span>
+                                </button>
+                            ))}
                         </div>
+                    </div>
+                    
+                    <div className={styles.number_input}>
+                        <input 
+                            placeholder="123456789"
+                            type="tel"
+                            onChange={(e) => setPhoneNumber1(e.target.value)}
+                            value={phoneNumber1}
+                        />
+                    </div>
 
-                    </div>
-                    </label> 
-                    {/* <br />  */}
-                    <label>
-                        Other number (optional)
-                        <div className={styles.other_number_form}>
-                        <div className={styles.dial_code_container}>
-                            {countryCode2 ? (
-                                <button className={styles.dial_code} onClick={(e) => showDropDown(e, "2")}>
-                                <Image
-                                    className={styles.img} 
-                                    src={countryCode2.flag?.src as unknown as string}
-                                    alt=""
-                                    width={countryCode2.flag?.width as unknown as number}
-                                    height={countryCode2.flag?.height as unknown as number}
-                                />
-                                <span>{countryCode2.dial_code}</span>
-                                <span className={`${styles.arrow} ${dropList2 ? styles.active_arrow : ""}`}>{">"}</span>
-                            </button>
-                            ) : (
-                                <></>
-                            )}
-                            <div className={`${styles.dial_code_option}`} style={{ display: dropList2 ? "flex" : "none"}}>
-                                {countryList.map((country, cid) => (
-                                    <button key={cid} onClick={(e) => chooseCode(e, "2", country)}>
-                                        <Image
-                                            className={styles.img} 
-                                            src={country.flag?.src as unknown as string}
-                                            alt=""
-                                            width={country.flag?.width as unknown as number}
-                                            height={country.flag?.height as unknown as number}
-                                        />
-                                        <span>{country.name?.common}</span>
-                                        <span>{country.dial_code}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        
-                        <div className={styles.number_input}>
-                            <input 
-                                placeholder="123456789"
-                                type="tel"
-                                onChange={(e) => setPhoneNumber2(e.target.value)}
-                                value={phoneNumber2}
+                </div>
+                </label> 
+                {/* <br />  */}
+                <label>
+                    Other number (optional)
+                    <div className={styles.other_number_form}>
+                    <div className={styles.dial_code_container}>
+                        {countryCode2 ? (
+                            <button className={styles.dial_code} onClick={(e) => showDropDown(e, "2")}>
+                            <Image
+                                className={styles.img} 
+                                src={countryCode2.flag?.src as unknown as string}
+                                alt=""
+                                width={countryCode2.flag?.width as unknown as number}
+                                height={countryCode2.flag?.height as unknown as number}
                             />
-                        </div>
-                    </div>
-                    </label>
-                    {/* <br /> */}
-                    <label>
-                        Email Address
-                        <input
-                            placeholder="example@mail.com"
-                            type="email"
-                            onChange={(e) => setEmailAddress(e.target.value)}
-                            value={emailAddress}
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Country
-                        {countryCode1 ? (
-                            <select value={country} onChange={(e) => onChange(e, "country")}>
-                                {countryList.map((country, cid) => (
-                                    <option value={country.name?.common} key={cid}>{country.name?.common}</option>
-                                ))}
-                            </select>
+                            <span>{countryCode2.dial_code}</span>
+                            <span className={`${styles.arrow} ${dropList2 ? styles.active_arrow : ""}`}>{">"}</span>
+                        </button>
                         ) : (
                             <></>
                         )}
-                    </label>
-                    <br />
-                    <label>
-                        State
-                        {countryInfo && countryInfo.states ? (
-                            <select value={state} onChange={(e) => onChange(e, "state")}>
-                                {countryInfo.states.map((state, sid) => (
-                                    <option value={state.name} key={sid}>{state.name}</option>
-                                ))}
-                            </select>
-                        ) : (
-                            <input
-                                placeholder="State of residence"
-                                type="text"
-                                onChange={(e) => setState(capitalizeFirstLetter(e.target.value))}
-                                value={state}
-                            />
-                        )}
-                    </label>
-                    <br />
-                    <label>
-                        {clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code
+                        <div className={`${styles.dial_code_option}`} style={{ display: dropList2 ? "flex" : "none"}}>
+                            {countryList.map((country, cid) => (
+                                <button key={cid} onClick={(e) => chooseCode(e, "2", country)}>
+                                    <Image
+                                        className={styles.img} 
+                                        src={country.flag?.src as unknown as string}
+                                        alt=""
+                                        width={country.flag?.width as unknown as number}
+                                        height={country.flag?.height as unknown as number}
+                                    />
+                                    <span>{country.name?.common}</span>
+                                    <span>{country.dial_code}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    <div className={styles.number_input}>
+                        <input 
+                            placeholder="123456789"
+                            type="tel"
+                            onChange={(e) => setPhoneNumber2(e.target.value)}
+                            value={phoneNumber2}
+                        />
+                    </div>
+                </div>
+                </label>
+                {/* <br /> */}
+                <label>
+                    Email Address
+                    <input
+                        placeholder="example@mail.com"
+                        type="email"
+                        onChange={(e) => setEmailAddress(e.target.value)}
+                        value={emailAddress}
+                    />
+                </label>
+                <br />
+                <label>
+                    Country
+                    {countryCode1 ? (
+                        <select value={country} onChange={(e) => onChange(e, "country")}>
+                            {countryList.map((country, cid) => (
+                                <option value={country.name?.common} key={cid}>{country.name?.common}</option>
+                            ))}
+                        </select>
+                    ) : (
+                        <></>
+                    )}
+                </label>
+                <br />
+                <label>
+                    State
+                    {countryInfo && countryInfo.states ? (
+                        <select value={state} onChange={(e) => onChange(e, "state")}>
+                            {countryInfo.states.map((state, sid) => (
+                                <option value={state.name} key={sid}>{state.name}</option>
+                            ))}
+                        </select>
+                    ) : (
                         <input
-                            placeholder={`${clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code`}
+                            placeholder="State of residence"
                             type="text"
-                            onChange={(e) => onChange(e, "postalCode")}//setPostalCode(e.target.value)}
-                            value={postalCode}
+                            onChange={(e) => setState(capitalizeFirstLetter(e.target.value))}
+                            value={state}
                         />
-                    </label>
-                    <br />
-                    <label>
-                        Municipality
-                        <input
-                            placeholder="City/Town/Village"
-                            type="text"
-                            //onChange={(e) => setMunicipality(e.target.value)}
-                            value={municipality}
-                            disabled
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Street Address
-                        <input
-                            placeholder="Street, house/apartment/unit*"
-                            type="textarea"
-                            onChange={(e) => setDeliveryAddress(e.target.value)}
-                            value={deliveryAddress}
-                        />
-                    </label>
-                    <br />
-                    <button className={styles.order_button} onClick={(e) => saveDeliveryInfo(e)}>
-                        {isLoading ? (
-                            <Loading width="20px" height="20px" />
-                        ) : (
-                            <>
-                                <span>Submit</span>
-                            </>
-                        )}
-                    </button>
-        </form>        
+                    )}
+                </label>
+                <br />
+                <label>
+                    {mounted && clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code
+                    <input
+                        placeholder={`${mounted && clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code`}
+                        type="text"
+                        onChange={(e) => onChange(e, "postalCode")}//setPostalCode(e.target.value)}
+                        value={postalCode}
+                    />
+                </label>
+                <br />
+                <label>
+                    Municipality
+                    <input
+                        placeholder="City/Town/Village"
+                        type="text"
+                        //onChange={(e) => setMunicipality(e.target.value)}
+                        value={municipality}
+                        disabled
+                    />
+                </label>
+                <br />
+                <label>
+                    Street Address
+                    <input
+                        placeholder="Street, house/apartment/unit*"
+                        type="textarea"
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        value={deliveryAddress}
+                    />
+                </label>
+                <br />
+                <button className={styles.order_button} onClick={(e) => saveDeliveryInfo(e)}>
+                    {isLoading ? (
+                        <Loading width="20px" height="20px" />
+                    ) : (
+                        <>
+                            <span>Submit</span>
+                        </>
+                    )}
+                </button>
+            </form> 
+        ) : (
+            <></>
+        )}       
     </div>
   );
 };

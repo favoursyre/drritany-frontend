@@ -24,6 +24,8 @@
     top: 0%;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
     //left: -36%;
+    overflow-x: auto;
+    overflow-y: none;
     //z-index: 50;
 
     @include tabletPro {
@@ -45,6 +47,7 @@
         //border: 1px solid green;
         @include flexBar ($position: relative, $display: flex, $wrap: none, $align: flex-start, $justify: flex-end, $gap: 1%, $flex_d: row, $flex: none, $bg-color: transparent);
         @include size(100%, auto);
+        //position: fixed;
   
         button {
           position: relative;
@@ -88,10 +91,11 @@
         //gap: 5%;
         //border: 2px solid red;
         @include text-layout($size: 14px, $color: $text-color-2, $l_height: 20px);
+        //overflow: auto;
     
         @include phonePro {
           width: 90%;
-          height: 90%;
+          height: 92%;
           //border: 2px solid green;
         }
     

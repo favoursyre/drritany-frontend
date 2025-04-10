@@ -3,11 +3,10 @@
 
 ///Libraries -->
 import styles from "./terms.module.scss"
-import { companyName, clientInfoName } from "@/config/utils";
+import { companyName } from "@/config/utils";
 import Image from "next/image";
 import { getItem } from "@/config/clientUtils";
 import { useLoadingModalStore, useModalBackgroundStore } from "@/config/store";
-import { IClientInfo } from "@/config/interfaces";
 import { useEffect, useState } from "react";
 
 ///Commencing the code 
@@ -17,37 +16,6 @@ import { useEffect, useState } from "react";
  * @returns The Terms component
  */
 const Terms = () => {
-    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
-    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
-    const _clientInfo = getItem(clientInfoName)
-    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
-
-    //Updating client info
-    useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
-
-        let _clientInfo_
-        
-        if (!clientInfo) {
-            //console.log("Client info not detected")
-            const interval = setInterval(() => {
-                _clientInfo_ = getItem(clientInfoName)
-                //console.log("Delivery Info: ", _deliveryInfo)
-                setClientInfo(_clientInfo_)
-            }, 200);
-    
-            //console.log("Delivery Info: ", deliveryInfo)
-        
-            return () => {
-                clearInterval(interval);
-            };
-        } else {
-            setModalBackground(false)
-            setLoadingModal(false)
-            //console.log("Client info detected")
-        }  
-
-    }, [clientInfo])
 
     //This was used to update all the products
     // useEffect(() => {

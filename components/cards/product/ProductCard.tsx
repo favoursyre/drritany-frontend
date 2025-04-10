@@ -75,7 +75,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
         let customPrice
         let newCustomPrice
         const clientCountry = countryList.find((c) => c.name?.common === clientInfo?.country?.name?.common)
-        const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common)
+        const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common || c.country === clientCountry?.name?.abbreviation)
         if (variant && clientCountry) {
             customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
         } else {

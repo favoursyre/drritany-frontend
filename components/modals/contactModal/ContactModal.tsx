@@ -81,7 +81,7 @@ const ContactModal = () => {
       if (res.ok) {
         notify("success", `Your message was sent successfully`)
         closeModal(e)
-        typeof window !== 'undefined' && window.location ? window.location.reload() : null
+        //typeof window !== 'undefined' && window.location ? window.location.reload() : null
       } else {
         throw Error(`${data.message}`)
       }

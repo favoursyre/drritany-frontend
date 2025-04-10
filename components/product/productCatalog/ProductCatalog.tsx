@@ -212,7 +212,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                     
                 </div>
                 {productList ? (
-                    <ProductGrid product_={productList} view_={undefined} query_={query} />
+                    <ProductGrid product_={productList} view_={undefined} query_={query_} />
                 ) : (
                     <>no product</>
                 )}

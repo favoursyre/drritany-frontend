@@ -8,7 +8,7 @@ import { useState, FormEvent, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import SearchIcon from '@mui/icons-material/Search';
 import Loading from "../loadingCircle/Circle"
-import { useClientInfoStore } from "@/config/store";
+import { useLoadingModalStore, useModalBackgroundStore } from "@/config/store";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
@@ -34,6 +34,8 @@ const Hero = () => {
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo ? _clientInfo : undefined)
     const swiperRef = useRef<SwiperCore>();
+    const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
+    const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     const [slides, setSlides] = useState<Array<IImage>>([
         {
             src: "https://drive.google.com/uc?export=download&id=1uy_xi_k3Nq1FLkSGP1FF9zr3P6cPf7xu",
@@ -60,15 +62,21 @@ const Hero = () => {
             height: 804
         }
     ])
+    const [mounted, setMounted] = useState(false);
+        
+    //For client rendering
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     //Updating client info
     useEffect(() => {
-        console.log("Hero: ", _clientInfo, clientInfo)
+        //console.log("Hero: ", _clientInfo, clientInfo)
 
         let _clientInfo_
         
         if (!clientInfo) {
-            console.log("Client info not detected")
+            //console.log("Client info not detected")
             const interval = setInterval(() => {
                 _clientInfo_ = getItem(clientInfoName)
                 //console.log("Delivery Info: ", _deliveryInfo)
@@ -81,7 +89,9 @@ const Hero = () => {
                 clearInterval(interval);
             };
         } else {
-            console.log("Client info detected")
+          setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
         }  
 
     }, [clientInfo])
@@ -134,9 +144,9 @@ const Hero = () => {
                         )}
                     </button>
                 </form>
-                {clientInfo ? (
+                {mounted && clientInfo ? (
                     <div className={styles.text}>
-                        <span><em>We deliver anywhere in {clientInfo?.country?.name?.common}</em></span>
+                        <span><em>We deliver anywhere in {clientInfo?.country?.name?.abbreviation === "US" ? "the" : ""} {clientInfo?.country?.name?.common}</em></span>
                         <Image 
                             className={styles.flag}
                             src={clientInfo?.country?.flag?.src as unknown as string}

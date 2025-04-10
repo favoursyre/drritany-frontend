@@ -412,7 +412,7 @@
                 left: 22%;
 
                 @include phonePro {
-                    left: 16%;
+                    left: 17%;
                 }
             }
 
@@ -423,7 +423,7 @@
                 left: 35%;
 
                 @include phonePro {
-                    left: 22%;
+                    left: 25%;
                 }
 
                 @include phoneMini {
@@ -436,7 +436,7 @@
                 left: 43%;
 
                 @include phonePro {
-                    left: 30%;
+                    left: 35%;
                 }
 
                 @include phoneMini {
@@ -464,6 +464,17 @@
             @include size(100%, 90%);
             overflow-y: auto;
             overflow-x: hidden;
+
+            .none {
+                position: relative;
+                top: 5%;
+                font-family: "Poppins";
+                @include text-layout($size: 15px, $color: $text-color-1, $l_height: 12px);
+
+                @include phonePro {
+                    font-size: 11px;
+                }
+            }
 
             @include tabletPro {
                 height: 50%;

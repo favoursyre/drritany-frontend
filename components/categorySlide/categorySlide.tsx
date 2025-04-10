@@ -39,6 +39,12 @@ const CategorySlide = () => {
     const [miniCategories, setMiniCategories] = useState(shuffleArray(categories.flatMap(category => category.minis)))
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
+    const [mounted, setMounted] = useState(false);
+        
+    //For client rendering
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     //console.log("Path: ", routerPath)
     //Updating client info
@@ -185,7 +191,7 @@ const CategorySlide = () => {
               spaceBetween={10}
               grabCursor={true}
               centeredSlides={false}
-              loop={true}
+              loop={false}
               autoplay={{ delay: 2000, disableOnInteraction: true, pauseOnMouseEnter: true }} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
               slidesPerView={'auto'}
               onBeforeInit={(swiper) => {
@@ -203,7 +209,7 @@ const CategorySlide = () => {
               modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
               className={styles.swipeContainer}
           >
-              {miniCategories?.map((category, id) => (
+              {mounted ? miniCategories?.map((category, id) => (
                   <SwiperSlide className={styles.slider} key={id} onClick={(e) => viewSubCategory(e, category.mini)}>
                       <div className={styles.image}>
                         <Image
@@ -216,7 +222,9 @@ const CategorySlide = () => {
                       </div>
                       <span>{category.mini}</span>
                   </SwiperSlide>
-              ))}
+              )) : (
+                <></>
+              )}
           </Swiper>
         </div>
       </main>

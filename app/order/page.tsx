@@ -4,7 +4,7 @@
 ///Libraries -->
 //import Order from "@/components/order/Order"
 import { Metadata } from "next"
-import { backend, sortMongoQueryByTime } from "@/config/utils"
+import { backend, sortMongoQueryByTime, getUserOrders } from "@/config/utils"
 import { IOrder, Props } from "@/config/interfaces"
 import Loading from "@/components/loadingCircle/Circle"
 import { Suspense } from "react"
@@ -27,35 +27,16 @@ function Fallback() {
   return <Loading width="20px" height="20px" />
 }
 
-///This fetches the products
-async function getUserOrders(userId: string) {
-  if (!userId) {
-    return
-  }
-
-    try {
-      const res = await fetch(`${backend}/order?userId=${userId}`, {
-        method: "GET",
-        //cache: "no-store",
-      })
-  
-      if (res.ok) {
-        return res.json()
-      } else {
-        getUserOrders(userId)
-      }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 /**
  * @title Order page
  */
 export default async function OrderPage({ searchParams }: Props) {
   const _userId = searchParams.userId as unknown as string
   console.log("User Id: ", _userId)
-  const orders = sortMongoQueryByTime(await getUserOrders(_userId), "latest") as unknown as Array<IOrder>
+  const _products = await getUserOrders(_userId)
+  console.log("Products Ser: ", _products)
+
+  const orders = sortMongoQueryByTime(_products, "latest") as unknown as Array<IOrder>
 
   return (
     <main>

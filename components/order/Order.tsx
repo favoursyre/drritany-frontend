@@ -38,19 +38,21 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
 
     useEffect(() => {
+        console.log("Orders_: ", orders_)
+
         if (typeof window !== "undefined") {
             setCurrentURL(() => window.location.href)
         }
 
-        if (!orders_ || orders.length === 0) {
-            notify("info", "No orders, redirecting you")
+        // if (!orders_ || orders_.length === 0) {
+        //     notify("info", "No orders, redirecting you")
 
-            //Setting loading
-            setModalBackground(true)
-            setLoadingModal(true)
+        //     //Setting loading
+        //     setModalBackground(true)
+        //     setLoadingModal(true)
 
-            router.push("/products")
-        }
+        //     router.push("/products")
+        // }
 
     }, [])
     
@@ -211,9 +213,11 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
                     {/* <span className={styles.span5}><strong>Action</strong></span> */}
                 </div>
                 <div className={styles.order_carousel}>
-                    {orders ? orders.map((order, _id) => (
+                    {orders && orders.length > 0 ? orders.map((order, _id) => (
                         <OrderCard key={_id} order_={order} view={undefined} />
-                    )) : (<></>)}
+                    )) : (
+                        <span className={styles.none} >No orders to view</span>
+                    )}
                 </div>
                 {/* <div className={styles.pagination_section}>
                         <button onClick={e => goPrev(e)}>

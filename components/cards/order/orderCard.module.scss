@@ -13,6 +13,10 @@
     @include size(95%, 60px);
     padding: 1% 2%;
     background-color: white;
+    
+    @include phonePro {
+        gap: 1%;
+    }
 
     @include phoneMini {
         height: 55px;
@@ -131,7 +135,7 @@
         }
 
         @include phonePro {
-            left: 17%;
+            left: 16%;
             width: auto;
         }
 

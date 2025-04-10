@@ -350,7 +350,7 @@
                     color: $primary-color;
                 }
 
-                #cartIcon {
+                .cartIcon {
                     //border: 1px solid red;
                     //transform: translateY(25%);
                     .cart {
@@ -359,7 +359,7 @@
                     }
                 }
 
-                #active_cart {
+                .active_cart {
                     display: flex;
                     position: absolute;
                     flex-direction: row;
@@ -390,7 +390,7 @@
                     // }
                 }
 
-                #empty_cart {
+                .empty_cart {
                     display: none;
                 }
             }

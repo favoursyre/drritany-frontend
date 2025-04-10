@@ -372,7 +372,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
     }
 
     //This function is trigerred when a next/prev button is clicked
-    const changeSlide = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: "prev" | "next") => {
+    const changeSlideByController = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, action: "prev" | "next") => {
       e.preventDefault()
 
       const _swiper = swiperRef.current
@@ -433,6 +433,58 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
       }
     }
 
+    //This function is trigerred when a user swipes to the extreme left/right of the slide
+    const changeSlideBySwipe = async (e: SwiperCore, action: "prev" | "next") => {
+
+      const _swiper = swiperRef.current
+      
+      if (action === "prev") {
+        if (_swiper && _swiper.touches.diff > 0) {
+          console.log("Slide has reached the beginning")
+
+          //Starting loading
+          setIsLoading(true)
+
+          const newBatch = currentBatch - 1
+          if (newBatch >= 1) { //Making sure the newBatch isn't below 1
+            setCurrentBatch(() => newBatch)
+            const start = (newBatch - 1) * limit;  // Calculate the start index for the previous batch (newBatch * limit)
+            const end = start + limit;
+            setViewProducts(() => products?.slice(start, end))
+            console.log('Slide len3: ', _swiper.slides.length)
+            //_swiper.update();
+            _swiper.slideTo(6)
+          }
+
+          //Ending loading
+          await sleep(0.3)
+          setIsLoading(false)
+        }
+        
+      } else if (action === "next") {
+        if (_swiper && _swiper.touches.diff < 0) {
+          console.log("Slide has reached the end")
+
+          //Starting loading
+          setIsLoading(true)
+
+          //console.log('Batch has ended, refreshing batch')
+          const newBatch = currentBatch + 1
+          if (newBatch <= totalBatch!) { //Making sure the new batch is never above the total batch
+            setCurrentBatch(() => newBatch)
+            const start = (newBatch - 1) * limit
+            const end = start + limit
+            setViewProducts(() => products?.slice(start, end))
+            _swiper.slideTo(0)
+          }
+
+          //Ending loading
+          await sleep(0.3)
+          setIsLoading(false)
+        }
+      }
+    }
+
     return (
         <main className={`${styles.main} ${getViewClass(view)} ${routeStyle(routerPath, styles)}`}>
             <div className={styles.heading}>
@@ -466,6 +518,8 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
                 depth: 100,
                 modifier: 2.5,
               }}
+              onReachBeginning={(e) => changeSlideBySwipe(e, "prev")}
+              onReachEnd={(e) => changeSlideBySwipe(e, "next")}
               //onSlideChange={handleSlideChange}
               fadeEffect={{ crossFade: true }}
               pagination={{ el: '.swiper-pagination', clickable: true }}
@@ -498,7 +552,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
         <div className={styles.controller}>
             <button 
               className={`arrow-left arrow ${styles.prev}`} 
-              onClick={(e) => changeSlide(e, "prev")}
+              onClick={(e) => changeSlideByController(e, "prev")}
               disabled={currentBatch === 1 ? currentIndex === 0 : undefined} // Disable on first page
             >
                 <KeyboardArrowLeftIcon className={styles.icon} />
@@ -506,7 +560,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
             {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
             <button 
               className={`arrow-right arrow ${styles.next}`} 
-              onClick={(e) => changeSlide(e, "next")}
+              onClick={(e) => changeSlideByController(e, "next")}
               disabled={currentBatch === totalBatch ? swiperRef.current?.isEnd : undefined} // Disable on last page
             >
                 <KeyboardArrowRightIcon className={styles.icon} />

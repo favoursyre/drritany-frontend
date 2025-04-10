@@ -62,7 +62,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
     }, [clientInfo])
 
     useEffect(() => {
-        console.log("cart: ", order)
+        console.log("cart: ", order_)
 
         const createdAt = order?.createdAt as unknown as string
         // Convert the string to a Date object
@@ -163,11 +163,11 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                     <span className={styles.title}><strong>Delivery Info</strong></span>
                     {order && order.customerSpec ? (
                         <>
-                            <span>{order.customerSpec.fullName}</span>
-                            <span>{order?.customerSpec.email}</span>
-                            <span>{order?.customerSpec.phoneNumbers[0]}</span>
-                            <span>{order?.customerSpec.deliveryAddress}</span>
-                            <span>{order?.customerSpec.municipality}, {order?.customerSpec.state}, {countryList.find((country) => country.name?.common === order?.customerSpec.country)?.name?.abbreviation}. {order.customerSpec.postalCode}</span>
+                            <span className={styles.span}>{order.customerSpec.fullName}</span>
+                            <span className={styles.span}>{order?.customerSpec.email}</span>
+                            <span className={styles.span}>{order?.customerSpec.phoneNumbers[0]}</span>
+                            <span className={styles.span}>{order?.customerSpec.deliveryAddress}</span>
+                            <span className={styles.span}>{order?.customerSpec.municipality}, {order?.customerSpec.state}, {countryList.find((country) => country.name?.common === order?.customerSpec.country)?.name?.abbreviation}. {order.customerSpec.postalCode}</span>
                         </>
                     ) : (
                         <></>

@@ -87,10 +87,14 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
         e.preventDefault()
 
         //Setting the loading modal
-        //setModalBackground(true)
-        //setLoadingModal(true)
+        setModalBackground(true)
+        setLoadingModal(true)
         
         router.push(`/order/receipt/${order._id}`);
+
+        //Setting the loading modal
+        setModalBackground(false)
+        setLoadingModal(false)
     }
 
     ///This handles on change

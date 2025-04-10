@@ -121,6 +121,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json( order_ , { status: 200 });
     } catch (error: any) {
         console.log("Error news: ", error.message)
+        if (error.code === 11000) {
+            console.log("duplicate error")
+            return NextResponse.json({ message: "order duplicate error" }, { status: 400 });
+        }
+        
         return NextResponse.json({ message: error?.message }, { status: 400 });
     }
     
@@ -131,13 +136,15 @@ export async function GET(request: NextRequest) {
     const userId = await request.nextUrl.searchParams.get("userId");
 
     try {
-        if (!userId) {
-            throw new Error("User Id not detected")
+        await connectMongoDB();
+        let orders
+        console.log("getting orders: ", userId)
+        if (userId) {
+            orders = await Order.getOrderByAccountId(userId)
+        } else {
+            orders = await Order.getOrders()
         }
 
-        await connectMongoDB();
-        //console.log("getting")
-        const orders = await Order.getOrderByAccountId(userId!)
         console.log("Sub: ", orders)
         return NextResponse.json( orders , { status: 200 });
     } catch (error: any) {

@@ -127,6 +127,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //Updating client info
     useEffect(() => {
         //console.log("Hero: ", _clientInfo, clientInfo)
+        //console.log("testing")
 
         let _clientInfo_
         
@@ -136,7 +137,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 _clientInfo_ = getItem(clientInfoName)
                 //console.log("Delivery Info: ", _deliveryInfo)
                 setClientInfo(_clientInfo_)
-            }, 100);
+            }, 1000);
     
             //console.log("Delivery Info: ", deliveryInfo)
         

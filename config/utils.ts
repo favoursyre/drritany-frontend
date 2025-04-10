@@ -91,6 +91,8 @@ export const userIdName: string = "idealPlugUserId"
 
 export const productsName: string = "idealPlugProducts"
 
+export const transactionIdName: string = "idealPlugTransactionId"
+
 //Order name
 export const orderName: string = "idealPlugOrders"
 
@@ -577,7 +579,12 @@ export const sortProductByRating = (products: Array<IProduct>): Array<IProduct> 
 export const sortMongoQueryByTime = <T extends { createdAt?: string }>(
     items: Array<T>, action: "latest" | "oldest"
 ): Array<T> => {
+
     if (items) {
+        if (!Array.isArray(items)) {
+            return [items]
+        }
+        
         // Create a copy to avoid mutating the original array
         const sortedItems = [...items].sort((a, b) => {
             // Handle cases where createdAt might be undefined or invalid
@@ -900,7 +907,7 @@ export const getCustomPricing = (product: IProduct, sizeId: number, country: str
     let customPrice
     //console.log("Customm P: ", product)
 
-    const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common)
+    const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common || c.country === clientCountry?.name?.abbreviation)
     //console.log("Variants: ", variant)
     if (variant && clientCountry) {
         customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
@@ -1117,6 +1124,28 @@ export const storeButtonInfo = async (info: IButtonResearch) => {
         //console.log("Google Stream: ", res)
     } catch (error) {
         //console.log("Store Error: ", error)
+    }
+}
+
+//This function helps fetch orders based on user id
+export const getUserOrders = async (userId: string) => {
+    if (!userId) {
+        return
+    }
+
+    try {
+      const res = await fetch(`${backend}/order?userId=${userId}`, {
+        method: "GET",
+        cache: "no-store",
+      })
+  
+      if (res.ok) {
+        return await res.json()
+      } else {
+        getUserOrders(userId)
+      }
+    } catch (error) {
+        console.error(error);
     }
 }
 

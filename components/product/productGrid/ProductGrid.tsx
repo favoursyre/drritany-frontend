@@ -87,6 +87,12 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
 
     // }, [productList, products])
 
+    //Updating query
+    useEffect(() => {
+        console.log("Query: ", query_, query)
+        setQuery(() => query_)
+    }, [product_])
+
     //Updating the product
     useEffect(() => {
         
@@ -154,9 +160,18 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
             if (productFilter.category) {
                 if (typeof productFilter.category !== "string") {
                     const filterCategory = productFilter.category as unknown as ICategory
-                    console.log("Filter Category: ", filterCategory)
-                    const newProducts = productList.filter((product) => product.category?.mini === filterCategory?.mini)
-                    setProducts(() => [...newProducts])
+                    //console.log("Filter Category: ", filterCategory)
+                    const start = (currentBatch - 1) * limit
+                    const end = start + limit
+                    const newProducts = product_.filter((product) => product.category?.mini === filterCategory?.mini)
+                    const product__ = newProducts.slice(0, end)
+
+                    setProductList(() => [...newProducts])
+                    setProducts(() => [...product__])
+
+                    const _possibleBatches = Math.ceil(newProducts.length / limit)
+                    //console.log("Total batch: ", _possibleBatches)
+                    setTotalBatch(() => _possibleBatches)
 
                     const _index = categories.findIndex((category) => category.macro === filterCategory.macro)
                     setMacroCategoryId(_index + 1);
@@ -165,7 +180,7 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
             }
             //removeItem(productFilterName)
         }
-    }, [productFilter])
+    }, [productFilter, products])
 
     // useEffect(() => {
     //     //Setting product filter
@@ -345,7 +360,8 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
         if (_id === 0) {
             setMiniCategory(() => undefined!)
             setCategory(() => false)
-            setProducts(() => [...productList])
+            setProductList(() => [...product_])
+            setProducts(() => [...product_])
             const _filterSettings: IProductFilter = getItem(productFilterName)
             const __filter: IProductFilter = {
                 filterId: _filterSettings.filterId,
@@ -366,7 +382,8 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
         if (typeof _category !== "string") {
             const miniCategory = _category.minis[_id].mini
             setMiniCategory(() => miniCategory)
-            const newProducts = productList.filter((product) => product.category?.mini === miniCategory)
+            const newProducts = product_.filter((product) => product.category?.mini === miniCategory)
+            setProductList(() => [...newProducts])
             setProducts(() => [...newProducts])
 
             const _filterSettings: IProductFilter = getItem(productFilterName)
