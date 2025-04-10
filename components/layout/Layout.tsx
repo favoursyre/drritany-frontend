@@ -254,59 +254,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       //console.log(`useEffect 2 took ${end - start}ms`)
     }, [clientInfo, trafficStore, setModalBackground, setLoadingModal, userId])
 
-    //Setting the products list in local storage for cache
-    useEffect(() => {
-      const start = performance.now()
-
-      //notify("info", `p stat: ${_products ? true : false}`)
-
-      if (!_products) {
-        //console.log("Products not detected")
-        // setModalBackground(true)
-        // setLoadingModal(true)
-
-        const interval = setInterval(() => {
-          const _getProducts = async () => {
-            const _p = await getProducts() as unknown as Array<IProduct>
-            //notify("info", `_P: ${_p ? true : false}`)
-            const products_ = sortProductByActiveStatus(_p, "Active") as unknown as Array<IProduct>
-            //notify("info", `P_: ${products_ ? true : false}`)
-            //console.log("Products: ", products_)
-            //setProducts(() => products_)
-            if (products_) {
-              const validPeriod = 3600 //1 hour
-              const _cache = Cache(productsName).set(products_, validPeriod)
-              //notify("info", `cache: ${_cache}`)
-              //console.log("Product cached: ", _cache)
-            }
-            
-          }
-          
-          _getProducts()
-        }, 100);
-
-        //console.log("Delivery Info: ", deliveryInfo)
-    
-        return () => {
-            clearInterval(interval);
-        };
-
-        //Caching products data
-        
-
-        //window.location.reload()
-
-      } else {
-        // setModalBackground(false)
-        // setLoadingModal(false)
-        //console.log("Products is active")
-      }
-
-      const end = performance.now()
-      //console.log(`useEffect 3 took ${end - start}ms`)
-
-    }, [_products])
-
     // useEffect(() => {
     //         //console.log("Hero: ", _clientInfo, clientInfo)
     

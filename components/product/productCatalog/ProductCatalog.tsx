@@ -5,7 +5,7 @@
 import styles from "./productCatalog.module.scss"
 import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/interfaces";
 import { useState, useEffect, MouseEvent, Fragment } from "react"
-import { sortProductByOrder, sortProductByPrice, sortMongoQueryByTime, getCurrentDate, getCurrentTime, statSheetId, backend, clientInfoName, productsName } from "@/config/utils";
+import { sortProductByOrder, sortProductByPrice, sortMongoQueryByTime, getCurrentDate, getCurrentTime, statSheetId, backend, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
 import { useRouter } from "next/navigation";
 import { getItem, Cache } from "@/config/clientUtils";
 import ErrorIcon from '@mui/icons-material/Error';
@@ -66,31 +66,20 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
         //Setting Product list
         if (query_) {
             setProductList(() => products_!)
+
         } else {
             const _products_ = Cache(productsName).get()
-            //console.log("Cache: ", _products_)
-            // if (!_products_) {
-            //     const interval = setInterval(() => {
-            //         const _products_ = Cache(productsName).get()
-            //           //console.log("Delivery Info: ", _deliveryInfo)
-            //           setProductList(_products_)
-            //     }, 500);
-        
-            //     //console.log("Delivery Info: ", deliveryInfo)
-            
-            //     return () => {
-            //         clearInterval(interval);
-            //     };
-            // } else {
-            //     setProductList(() => _products_)
-            // }
 
             if (_products_) {
-                setProductList(_products_);
+                setProductList(() => _products_);
+            } else {
+                setProductList(() => products_!)
+                const validPeriod = 3600 //1 hour
+                const _cache = Cache(productsName).set(products_, validPeriod)
             }
             //console.log("Products not seen in slides")  
         }
-    }, [productList, query_, products_])
+    }, [query_, products_])
 
     useEffect(() => {
 
@@ -169,7 +158,11 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                 //console.log("changed")
                 clearInterval(intervalId)
                 setCurrentURL(window.location.href)
-               window.location.reload()
+                //window.location.reload()
+
+                //Setting off the loading modal
+                setModalBackground(false)
+                setLoadingModal(false)
             }
             
         }, 1000);
@@ -219,7 +212,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                     
                 </div>
                 {productList ? (
-                    <ProductGrid product_={productList} view_={undefined} />
+                    <ProductGrid product_={productList} view_={undefined} query_={query} />
                 ) : (
                     <>no product</>
                 )}

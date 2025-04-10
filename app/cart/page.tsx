@@ -36,7 +36,7 @@ function Fallback() {
  * @title Homepage
  */
 export default async function CartPage() {
-  //const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
+  const products = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
   const titles1: ISlideTitle = {
     slideTitleId: 2,
     barTitleId: 2
@@ -47,7 +47,7 @@ export default async function CartPage() {
       <Suspense fallback={<Fallback />}>
           <Cart />
       </Suspense>
-      <ProductSlide _product={undefined} title_={titles1} view_={"cartSlide1"}/>
+      <ProductSlide _products={products} _product={undefined} title_={titles1} view_={"cartSlide1"}/>
     </main>
   )
 }

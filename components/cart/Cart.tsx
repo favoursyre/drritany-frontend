@@ -5,15 +5,17 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend } from '@/config/utils';
 import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useClientInfoStore, useOrderFormModalStore, useModalBackgroundStore, useOrderModalStore, useLoadingModalStore, useCartItemDiscountModalStore } from "@/config/store";
 import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote, DiscountOutlined, Payment } from '@mui/icons-material';
 import { countryList } from '@/config/database';
+import Taxjar from "taxjar"
 
 ///Commencing the code 
+
 /**
  * @title Cart Component
  * @returns The Cart component
@@ -43,6 +45,45 @@ const Cart = () => {
     const cartItemDiscountModal = useCartItemDiscountModalStore(state => state.modal)
     const setCartItemDiscount = useCartItemDiscountModalStore(state => state.setCartItemDiscount)
     const searchParams = useSearchParams()
+    const [taxAmount, setTaxAmount] = useState<number | undefined>(0);
+
+    //Updating the sales tax
+    useEffect(() => {
+        if (!deliveryInfo || !cart) {
+            return
+        }
+
+        const fetchTax = async () => {
+            const countryInfo = countryList.find((country) => country.name?.common === deliveryInfo.country)
+            const country = countryInfo?.name?.abbreviation
+            const state = countryInfo?.states?.find((state) => state.name === deliveryInfo.state)?.abbreviation //"DE" //clientInfo?.country?.states?.find((state) => state.name === deliveryInfo?.state)
+            const zip = deliveryInfo.postalCode //deliveryInfo?.postalCode
+            const amount = cart?.grossTotalPrice! - getCartDiscount() + getCartDeliveryFee()
+            const shipping = getCartDeliveryFee()
+            const data = { country, zip, state, amount, shipping }
+            console.log("Tax data: ", data)
+            try {
+                const res = await fetch(`${backend}/taxjar`, {
+                    method: 'POST', // HTTP method
+                    headers: {
+                        'Content-Type': 'application/json', // Make sure the server expects JSON
+                    },
+                    body: JSON.stringify(data), // Convert the JavaScript object into a JSON string
+                });
+
+                if (res.ok) {
+                    const tax = await res.json()
+                    console.log('tax fetch: ', tax)
+                }
+            } catch (error) {
+                console.log("Tax error: ", error)
+            }
+            
+            //setTaxAmount(tax); // Store it in state
+        };
+
+        //fetchTax();
+    }, []); // Only run once on component mount
 
     //Updating client info
     useEffect(() => {
@@ -238,6 +279,27 @@ const Cart = () => {
         return deliveryFee
     }
 
+    //This function calculates the tax for the cart
+    // const getCartTax = async (): Promise<number> => {
+    //     const _amount = cart?.grossTotalPrice! - getCartDiscount() + getCartDeliveryFee()
+    //     const _state = clientInfo?.country?.states?.find((state) => state.name === deliveryInfo?.state)
+        
+    //     try {
+    //         const res = await taxjarClient.taxForOrder({
+    //             to_country: "US",
+    //             to_zip: deliveryInfo?.postalCode,
+    //             to_state: _state?.abbreviation,
+    //             amount: _amount,
+    //             shipping: getCartDeliveryFee()
+    //         });
+    
+    //         return res.tax.amount_to_collect; // Return the amount_to_collect value
+    //     } catch (error) {
+    //         console.error("Error fetching tax:", error);
+    //         return 0; // Return undefined if there's an error
+    //     }
+    // }
+
     ///This function increases the amount of quantity
     const increaseQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, index: number): void => {
         e.preventDefault()
@@ -294,6 +356,7 @@ const Cart = () => {
         if(cart) {
             //cart.deliveryFee = getCartDeliveryFee()
             cart.totalDiscount = getCartDiscount()
+            cart.tax = taxAmount
             cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
             setItem(cartName, cart)
             setCart(() => ({ ...cart }))
@@ -475,7 +538,7 @@ const Cart = () => {
                                         <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.country?.currency?.symbol}</span>
                                         {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                             <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>
-                                                {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                                {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                             </span>
                                         ) : (
                                             <></>
@@ -535,7 +598,7 @@ const Cart = () => {
                                 <div className={styles.info}>
                                     <span className={styles.name}>{deliveryInfo.fullName}</span>
                                     <div className={styles.address}>
-                                        <span>{deliveryInfo.deliveryAddress}<br/>{deliveryInfo.state}, {deliveryInfo.country} </span>
+                                        <span>{deliveryInfo.deliveryAddress}<br/>{deliveryInfo.municipality}, {deliveryInfo.state}, {countryList.find((country) => country.name?.common === deliveryInfo.country)?.name?.abbreviation}. {deliveryInfo.postalCode}</span>
                                     </div>
                                     <span className={styles.mobile}>{deliveryInfo.phoneNumbers[0]}</span>
                                     <EditNote className={styles.editIcon} />
@@ -558,7 +621,7 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.grossTotalPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(cart.grossTotalPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -577,7 +640,7 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(getCartDiscount() * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(getCartDiscount() * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -591,7 +654,21 @@ const Cart = () => {
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(getCartDeliveryFee() * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round(getCartDeliveryFee() * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
+                            </div>
+                            <div className={styles.tax}>
+                                <span className={styles.title}>Tax</span>
+                                <div className={styles.amount}>
+                                    <Add className={styles.minus} style={{ fontSize: "1rem" }} />
+                                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round(taxAmount! * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -604,7 +681,7 @@ const Cart = () => {
                                     <span>{clientInfo?.country?.currency?.symbol}</span>
                                     {cart && clientInfo?.country?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                            {round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>

@@ -158,7 +158,7 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
                 )}
                 {clientInfo?.country?.currency?.exchangeRate ? (
                     <span>
-                        {product.pricing?.basePrice ? (round(product.pricing?.basePrice! * clientInfo.country?.currency?.exchangeRate, 1)).toLocaleString("en-US") : ""}
+                        {product.pricing?.basePrice ? (round(product.pricing?.basePrice! * clientInfo.country?.currency?.exchangeRate, 2)).toLocaleString("en-US") : ""}
                     </span>
                 ) : (
                     <></>

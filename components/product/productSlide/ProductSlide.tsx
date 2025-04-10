@@ -45,7 +45,7 @@ const barTitles: Array<string> = [
  * @title Product Slide Component
  * @returns The Product Slide component
  */
-const ProductSlide = ({ _product, title_, view_ }: { _product: IProduct | void, title_: ISlideTitle, view_: string | undefined }) => {
+const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array<IProduct> | void, _product: IProduct | void , title_: ISlideTitle, view_: string | undefined }) => {
     const routerPath = usePathname();
     const router = useRouter();
     //const [similarProducts, setSimilarProducts] = useState(sortProductByActiveStatus(view_ === "wishSlide1" ? getItem(wishListName) : product_, "Active"))
@@ -60,8 +60,8 @@ const ProductSlide = ({ _product, title_, view_ }: { _product: IProduct | void, 
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
-    const _products = Cache(productsName).get()
-    const [products, setProducts] = useState<Array<IProduct> | undefined>(_products!)
+    const __products = Cache(productsName).get()
+    const [products, setProducts] = useState<Array<IProduct> | undefined>(__products ? __products : _products)
     const [viewProducts, setViewProducts] = useState<Array<IProduct> | undefined>()
     const [p_, setP_] = useState<boolean>(false)
     const limit = 10; // Define how many products per page (controls payload size per "load")
@@ -120,29 +120,29 @@ const ProductSlide = ({ _product, title_, view_ }: { _product: IProduct | void, 
       //console.log("Products Cache: ", _products)
       if (!p_) {
         if (!products) {
-          notify("info", `no product found`)
+          //notify("info", `no product found`)
           //console.log("Products not seen in slides")
           const interval = setInterval(() => {
               const _products_ = Cache(productsName).get()
               
               //Checking if cache exist
               if (_products_) {
-                notify("info", `product found in cache`)
+                //notify("info", `product found in cache`)
                 setProducts(() => _products_)
               } else {
-                notify("info", `product not found in cache`)
+                //notify("info", `product not found in cache`)
                 const _getProducts = async () => {
                   const _p = await getProducts() as unknown as Array<IProduct>
-                  notify("info", `_P: ${_p ? true : false}`)
+                  //notify("info", `_P: ${_p ? true : false}`)
                   const products_ = sortProductByActiveStatus(_p, "Active") as unknown as Array<IProduct>
-                  notify("info", `P_: ${products_ ? true : false}`)
+                  //notify("info", `P_: ${products_ ? true : false}`)
                   //console.log("Products: ", products_)
                   //setProducts(() => products_)
                   if (products_) {
                     const validPeriod = 3600 //1 hour
                     const _cache = Cache(productsName).set(products_, validPeriod)
                     setProducts(() => products_)
-                    notify("info", `cache: ${_cache}`)
+                    //notify("info", `cache: ${_cache}`)
                     //console.log("Product cached: ", _cache)
                   }
                 
@@ -161,6 +161,10 @@ const ProductSlide = ({ _product, title_, view_ }: { _product: IProduct | void, 
           };
         } else {
           //console.log("Products seen in slides")
+          if (!__products) {
+            const validPeriod = 3600 //1 hour
+            const _cache = Cache(productsName).set(products, validPeriod)
+          }
 
           //let products_ = products //.slice(0, 10) //setProducts(paginateProducts(1))
           //console.log("Slice P: ", products_.length)
@@ -191,7 +195,7 @@ const ProductSlide = ({ _product, title_, view_ }: { _product: IProduct | void, 
           } else if (view === "infoSlide2") {
             if (_product) {
               const products_ = removeProductFromArray(_product, products)
-              newProducts = shuffleArray(sortProductsBySimilarity(products_, _product))
+              newProducts = shuffleArray(products_)
               setProducts(() => newProducts)
             }
           } else if (view === "wishSlide1") {

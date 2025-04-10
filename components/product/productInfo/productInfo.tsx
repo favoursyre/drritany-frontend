@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
-import React, { useState, useEffect, MouseEvent, Fragment, useRef } from "react"
+import React, { useState, useEffect, MouseEvent, Fragment, useRef, Suspense } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
@@ -784,26 +784,27 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 setView(() => image.type === "image" ? "image" : "video")
                                 setImageIndex(() => id)
                             }}>
-                                {image.type === "video" ? (
+                                {!image ? (
+                                    // You can add a fallback component or message here when `image` is falsy
+                                    <Loading width='20px' height='20px' />
+                                ) : image.type === "video" ? (
                                     <iframe
                                         className={styles.iframe}
                                         src={image.src}
                                         width={image.width}
                                         height={image.height}
-                                        //allow="autoplay"
                                         frameBorder={0}
                                         sandbox="allow-scripts allow-downloads allow-same-origin"
-                                        //sandbox="allow-forms"
-                                    >
-                                    </iframe>
+                                    />
                                 ) : (
                                     <Image
                                         className={styles.img}
                                         src={image.src}
-                                        alt=""
+                                        alt="Image"
                                         width={image.width}
                                         height={image.height}
-                                    /> 
+                                        //loading="lazy" // You can adjust the loading attribute as needed (e.g., "lazy", "eager")
+                                    />
                                 )}
                             </SwiperSlide>
                         ))}
@@ -865,7 +866,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 )}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {round(customPrice * clientInfo.country.currency.exchangeRate, 1).toLocaleString("en-US")}
+                                        {round(customPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
                                     </span> 
                                 ) : (
                                     <></>
@@ -875,7 +876,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
                                 {clientInfo?.country?.currency?.exchangeRate ? (
                                     <span>
-                                        {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 1).toLocaleString("en-US")}
+                                        {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
                                     </span>
                                 ) : (
                                     <></>

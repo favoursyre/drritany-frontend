@@ -205,7 +205,7 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
                 )}
                 {clientInfo?.country?.currency?.exchangeRate ? (
                     <span>
-                        {round(totalPrice! * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")}
+                        {round(totalPrice! * clientInfo?.country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                     </span>
                 ) : (
                     <></>

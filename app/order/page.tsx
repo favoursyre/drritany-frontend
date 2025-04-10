@@ -5,7 +5,7 @@
 //import Order from "@/components/order/Order"
 import { Metadata } from "next"
 import { backend, sortMongoQueryByTime } from "@/config/utils"
-import { IOrder } from "@/config/interfaces"
+import { IOrder, Props } from "@/config/interfaces"
 import Loading from "@/components/loadingCircle/Circle"
 import { Suspense } from "react"
 import dynamic from 'next/dynamic'
@@ -28,9 +28,13 @@ function Fallback() {
 }
 
 ///This fetches the products
-async function getOrders() {
+async function getUserOrders(userId: string) {
+  if (!userId) {
+    return
+  }
+
     try {
-      const res = await fetch(`${backend}/order`, {
+      const res = await fetch(`${backend}/order?userId=${userId}`, {
         method: "GET",
         //cache: "no-store",
       })
@@ -38,7 +42,7 @@ async function getOrders() {
       if (res.ok) {
         return res.json()
       } else {
-        getOrders()
+        getUserOrders(userId)
       }
     } catch (error) {
         console.error(error);
@@ -48,8 +52,10 @@ async function getOrders() {
 /**
  * @title Order page
  */
-export default async function OrderPage() {
-  const orders = sortMongoQueryByTime(await getOrders(),"latest") as unknown as Array<IOrder>
+export default async function OrderPage({ searchParams }: Props) {
+  const _userId = searchParams.userId as unknown as string
+  console.log("User Id: ", _userId)
+  const orders = sortMongoQueryByTime(await getUserOrders(_userId), "latest") as unknown as Array<IOrder>
 
   return (
     <main>

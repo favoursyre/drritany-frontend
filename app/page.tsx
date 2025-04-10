@@ -21,26 +21,10 @@ import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 
 ///This function gets all the products
 // async function getProducts() {
-//   // try {
-//   //   const response = await fetch(`${domainName}/api/product/`,
-//   //       {
-//   //         method: "GET",
-//   //         cache: "no-store",
-//   //       }
-//   //     );
-      
-//   //       await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-      
-//   //       const products = await response.json();
-//   //       console.log('Prod2: ', products)
-//   //       return products;
-//   // } catch (error) {
-//   //     console.log(error);
-//   // }
 //   try {
 //       const res = await fetch(`${backend}/product?action=latest`, {
 //       method: "GET",
-//       cache: "no-store",
+//       cache: "force-cache",
 //     })
 
 //     if (res.ok) {
@@ -87,7 +71,7 @@ import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
  */
 export default async function Home() {
   const start = performance.now()
-  //const products = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
+  const products = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
   // const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
   // const newestArrivals = sortProductByLatest(products!)
   // const mostOrdered = sortProductByOrder(products!)
@@ -116,11 +100,11 @@ export default async function Home() {
     <main className="home_page" >
       <Hero />
       <Stats />
-      <ProductSlide _product={undefined} title_={titles1} view_={"homeSlide1"}/>
+      <ProductSlide _products={products} _product={undefined} title_={titles1} view_={"homeSlide1"}/>
       <CategorySlide />
-      <ProductSlide _product={undefined} title_={titles2} view_={"homeSlide2"}/>
+      <ProductSlide _products={products} _product={undefined} title_={titles2} view_={"homeSlide2"}/>
       {/* <HomeCampaignA /> */}
-      <ProductSlide _product={undefined} title_={titles4} view_={"homeSlide3"}/>
+      <ProductSlide _products={products} _product={undefined} title_={titles4} view_={"homeSlide3"}/>
       {/* <HomeCampaignB /> */}
       {/* <ProductSlide product_={productSlide} title_={titles4} view_={"homeSlide4"}/> */}
       {/* <Testimony />   */}

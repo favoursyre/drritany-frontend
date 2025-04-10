@@ -43,6 +43,7 @@ export interface IOrderModel extends Model<IOrder> {
   processOrder(order: IOrder): IOrder,
   getOrders(): Array<IOrder>,
   getOrderById(id: string): Array<IOrder>,
+  getOrderByAccountId(id: string): Array<IOrder>,
   deleteOrder(id: string): IOrder,
   updateOrder(id: string, order: IOrder): IOrder
 }  
@@ -269,6 +270,7 @@ export interface ICartItem {
 ///Declaring the interface for the cart
 export interface ICart {
   overallTotalPrice?: number,
+  tax?: number,
   grossTotalPrice: number,
   totalDiscount: number,
   totalWeight: number,
@@ -419,12 +421,13 @@ export interface IReturnPolicyModalStore {
 
 ///Declaring the interface for customer order
 export interface ICustomerSpec {
-  readonly userId: string,
+  readonly userId?: string, //This is the default assigned chrome id
   readonly fullName: string,
   readonly email: string,
   readonly phoneNumbers: Array<string | undefined>,
   readonly country: string,
   readonly state: string,
+  readonly municipality?: string,
   readonly deliveryAddress: string,
   readonly postalCode: string
 }
@@ -456,6 +459,7 @@ export interface IPayment {
  */
 export interface IOrder {
   _id?: string,
+  accountId?: string,
   customerSpec: ICustomerSpec,
   productSpec: ICart,
   deliverySpec: IDelivery,

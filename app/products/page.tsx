@@ -65,15 +65,15 @@ async function getQueriedProducts(query: string | undefined) {
     }
     
     const queryProducts = sortProductByActiveStatus(await getQueriedProducts(query), "Active")
-    //const allProducts = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
+    const allProducts = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
     //const mostOrdered = sortProductByOrder(allProducts)
 
-    // let products
-    // if (query) {
-    //   products = queryProducts
-    // } else {
-    //   products = allProducts
-    // }
+    let products
+    if (query) {
+      products = queryProducts
+    } else {
+      products = allProducts
+    }
   
     // if (query) {
     //   return (
@@ -93,11 +93,11 @@ async function getQueriedProducts(query: string | undefined) {
 
     return (
       <main className="search_page">
-        <ProductCatalog query_={query} products_={queryProducts!} />
+        <ProductCatalog query_={query} products_={products!} />
         {query && (queryProducts === undefined || queryProducts.length === 0) ? (
-          <ProductSlide _product={undefined} title_={titles1} view_={"productSlide1"}/>
+          <ProductSlide _products={allProducts} _product={undefined} title_={titles1} view_={"productSlide1"}/>
         ) : (<></>)}
-        <ProductSlide _product={undefined} title_={titles2} view_={"productSlide2"}/>
+        <ProductSlide _products={allProducts} _product={undefined} title_={titles2} view_={"productSlide2"}/>
         {/* <HomeCampaignB /> */}
       </main>
     )

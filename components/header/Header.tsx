@@ -116,7 +116,10 @@ const Header = () => {
     setItem(productFilterName, filterSettings)
 
     if (query) {
-      setSearchIsLoading(() => true)
+      //setSearchIsLoading(() => true)
+      setModalBackground(true)
+      setLoadingModal(true)
+
       console.log("searching: ", query)
       router.push(`/products?query=${query}`)
       //window.location.reload()

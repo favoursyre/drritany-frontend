@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         const status = await sendOrderEmail(order_)
         console.log('Email: ', await status)
 
-        return NextResponse.json({ message: "Order Sent Successfully" }, { status: 200 });
+        return NextResponse.json( order_ , { status: 200 });
     } catch (error: any) {
         console.log("Error news: ", error.message)
         return NextResponse.json({ message: error?.message }, { status: 400 });
@@ -127,12 +127,17 @@ export async function POST(request: NextRequest) {
 }
 
 ///Getting all products
-export async function GET() {
+export async function GET(request: NextRequest) {
+    const userId = await request.nextUrl.searchParams.get("userId");
 
     try {
+        if (!userId) {
+            throw new Error("User Id not detected")
+        }
+
         await connectMongoDB();
         //console.log("getting")
-        const orders = await Order.getOrders();
+        const orders = await Order.getOrderByAccountId(userId!)
         console.log("Sub: ", orders)
         return NextResponse.json( orders , { status: 200 });
     } catch (error: any) {

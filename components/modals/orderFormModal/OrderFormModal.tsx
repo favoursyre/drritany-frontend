@@ -13,7 +13,7 @@ import { ICart, IClientInfo, ICountry, ICustomerSpec  } from "@/config/interface
 import { countryList } from "@/config/database";
 import { notify, setItem, getItem } from "@/config/clientUtils";
 import validator from "validator";
-import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash, userIdName, clientInfoName } from "@/config/utils"
+import { backend, cartName, deliveryName, capitalizeFirstLetter, findStateWithZeroExtraDeliveryPercent, round, sleep, extraDeliveryFeeName, extractDigitsAfterDash, userIdName, clientInfoName, extractMainZipCode } from "@/config/utils"
 
 ///Commencing the code 
 
@@ -37,6 +37,7 @@ const OrderFormModal = () => {
     const [country, setCountry] = useState<string>()
     const [countryInfo, setCountryInfo] = useState<ICountry | undefined>()
     const [state, setState] = useState<string | undefined>(deliveryInfo ? deliveryInfo.state : "")
+    const [municipality, setMunicipality] = useState<string | undefined>(deliveryInfo ? deliveryInfo.municipality : "")
     const [postalCode, setPostalCode] = useState<string>(deliveryInfo ? deliveryInfo.postalCode : "")
     const [deliveryAddress, setDeliveryAddress] = useState<string>(deliveryInfo ? deliveryInfo.deliveryAddress : "")
     const [countryCode1, setCountryCode1] = useState<ICountry>()
@@ -258,17 +259,28 @@ const OrderFormModal = () => {
             notify("error", "State is required")
             return
         } else if (!postalCode) {
-            notify("error", "Postal code is required")
+            notify("error", `${country === "United States" ? "Zip" : "Postal"} code is required`)
             return
         } else if (!deliveryAddress) {
-            notify("error", "Delivery address is required")
+            notify("error", "Street address is required")
             return
         }
 
         setIsLoading(() => true)
 
         try {
-            const customerSpec: ICustomerSpec = { userId: userId!, fullName, email: emailAddress, phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], country, state, deliveryAddress, postalCode}
+            //Saving the data to local storage
+            const customerSpec: ICustomerSpec = { 
+                userId: userId!, 
+                fullName, 
+                email: emailAddress, 
+                phoneNumbers: [`${countryCode1?.dial_code}-${phoneNumber1}`, `${countryCode2?.dial_code}-${phoneNumber2}`], 
+                country, 
+                state, 
+                municipality,
+                deliveryAddress, 
+                postalCode
+            }
             setItem(deliveryName, customerSpec)
             //router.refresh()
             await sleep(1.5)
@@ -278,6 +290,7 @@ const OrderFormModal = () => {
             setIsLoading(false)
             //window.location.reload()
         } catch (error) {
+            //notify("error", error as unknown as string)
             //console.log("Save Delivery Error: ", error)
             setIsLoading(false)
         }
@@ -289,16 +302,23 @@ const OrderFormModal = () => {
     // }
 
     //This handles the handle change effect
-  const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
+  const onChange = async (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>, label: string) => {
     e.preventDefault()
 
     //console.log("Select Val: ", e.target.value)
     //console.log("Label: ", label)
 
     if (label === "country") {
-        setCountry(e.target.value);
+        //Checking if the country is the US
+        const _country = e.target.value
+        if (_country !== "United States") {
+            notify("error", "Unfortunately, we only deliver to the US for the meantime")
+            return
+        }
 
-        const countryInfo_ = countryList.find(country => country.name?.common === e.target.value) as unknown as ICountry
+        setCountry(() => _country);
+
+        const countryInfo_ = countryList.find(country => country.name?.common === _country) as unknown as ICountry
         setCountryInfo(() => countryInfo_)
         setState(() => countryInfo_.states![0].name)
     } else if (label === "state") {
@@ -352,6 +372,46 @@ const OrderFormModal = () => {
                 const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 //notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
             }
+        }
+    } else if (label === "postalCode") {
+        const _code = e.target.value
+        console.log("Postal Code: ",  _code)
+        setPostalCode(() => _code)
+        const _mainCode = extractMainZipCode(_code)
+        if (_mainCode) {
+            console.log("Zip code is valid")
+            
+            setIsLoading(() => true)
+            try {
+                //Verifying the postal code
+                const res = await fetch(`http://api.zippopotam.us/us/${_mainCode}`, {
+                    method: 'GET', // HTTP method
+                });
+
+                if (res.ok) {
+                    const zip = await res.json()
+                    console.log('Zip code: ', zip, country, state)
+                    setMunicipality(() => zip.places[0]["place name"])
+
+                    if (zip.country !== country || zip.places[0].state !== state) {
+                        notify("error", "Zip code doesn't match your address")
+                        throw Error
+                        //return
+                    }
+                    
+                    //const placeName = zip.places[0]["place name"]
+                    setIsLoading(() => false)
+                } else {
+                    notify("error", "Invalid zip code")
+                    throw Error
+                    //return
+                    //throw new Error("Invalid zip code")
+                }
+            } catch (error) {
+                setIsLoading(() => false)
+            }
+        } else {
+            setMunicipality(() => "")
         }
     }
 };
@@ -507,10 +567,10 @@ const OrderFormModal = () => {
                         Country
                         {countryCode1 ? (
                             <select value={country} onChange={(e) => onChange(e, "country")}>
-                            {countryList.map((country, cid) => (
-                                <option value={country.name?.common} key={cid}>{country.name?.common}</option>
-                            ))}
-                        </select>
+                                {countryList.map((country, cid) => (
+                                    <option value={country.name?.common} key={cid}>{country.name?.common}</option>
+                                ))}
+                            </select>
                         ) : (
                             <></>
                         )}
@@ -535,19 +595,30 @@ const OrderFormModal = () => {
                     </label>
                     <br />
                     <label>
-                        Postal Code
+                        {clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code
                         <input
-                            placeholder="Postal code"
+                            placeholder={`${clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code`}
                             type="text"
-                            onChange={(e) => setPostalCode(e.target.value)}
+                            onChange={(e) => onChange(e, "postalCode")}//setPostalCode(e.target.value)}
                             value={postalCode}
                         />
                     </label>
                     <br />
                     <label>
-                        Delivery Address
+                        Municipality
                         <input
-                            placeholder="Address of delivery"
+                            placeholder="City/Town/Village"
+                            type="text"
+                            //onChange={(e) => setMunicipality(e.target.value)}
+                            value={municipality}
+                            disabled
+                        />
+                    </label>
+                    <br />
+                    <label>
+                        Street Address
+                        <input
+                            placeholder="Street, house/apartment/unit*"
                             type="textarea"
                             onChange={(e) => setDeliveryAddress(e.target.value)}
                             value={deliveryAddress}

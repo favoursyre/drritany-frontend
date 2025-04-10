@@ -24,7 +24,7 @@ import DisplayBar from '@/components/displayBar/DisplayBar';
  * @title Product Component
  * @returns The Product component
  */
-const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: string | undefined }) => {
+const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, view_: string | undefined, query_: string | undefined }) => {
     const routerPath = usePathname();
     const [productList, setProductList] = useState<Array<IProduct>>([])
     const [products, setProducts] = useState<Array<IProduct>>([])
@@ -52,10 +52,11 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     const productsPerLoad = 10;
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [dataIsLoading, setDataIsLoading] = useState<boolean>(false)
-    const limit = 12; // Define how many products per page (controls payload size per "load")
+    const limit = 18; // Define how many products per page (controls payload size per "load")
     const [currentBatch, setCurrentBatch] = useState<number>(1);
     const [currentIndex, setCurrentIndex] = useState<number>()
     const [totalBatch, setTotalBatch] = useState<number>()
+    const [query, setQuery] = useState<string | undefined>(query_)
 
     //Updating products
     // useEffect(() => {
@@ -86,6 +87,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     // }, [productList, products])
 
+    //Updating the product
     useEffect(() => {
         
         //console.log("Products Len: ", products.length)
@@ -96,7 +98,7 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
         if (product_ && product_.length > 0) {
             const product__ = product_.slice(0, end)
-            setProductList(product_);
+            setProductList(() => product_);
             setProducts(() => product__);
             console.log("Products 2: ", product__)
             const _possibleBatches = Math.ceil(product_.length / limit)
@@ -163,19 +165,19 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
             }
             //removeItem(productFilterName)
         }
-    }, [productFilter, productList, product_, products])
+    }, [productFilter])
 
-    useEffect(() => {
-        //Setting product filter
+    // useEffect(() => {
+    //     //Setting product filter
 
 
-        const intervalId = setInterval(() => {
-            //console.log("Effect: ", products)
-            setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
-        }, 1000);
+    //     const intervalId = setInterval(() => {
+    //         //console.log("Effect: ", products)
+    //         setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
+    //     }, 1000);
 
-        return () => clearInterval(intervalId);
-    }, [products, productList, product_]);
+    //     return () => clearInterval(intervalId);
+    // }, [products, productList, product_]);
 
     // useEffect(() => {
 
@@ -199,11 +201,11 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
 
     ///
 
-    useEffect(() => {
-        if (timeLeft === 0) {
-        setTimeLeft(86400);
-        }
-    }, [timeLeft]);
+    // useEffect(() => {
+    //     if (timeLeft === 0) {
+    //     setTimeLeft(86400);
+    //     }
+    // }, [timeLeft]);
 
     //This function is triggered when a user wants to make a custom request
     const customRequest = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -401,12 +403,12 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
     return (
         <main className={`${styles.main} ${routeStyle(routerPath, styles)}`} id="products">
             <div className={styles.header_section}>
-                <span className={styles.text}>{productList?.length} product{productList.length > 1 ? "s": ""} found</span>
+                <span className={styles.text}>{productList?.length} product{productList.length > 1 ? "s": ""} found {query ? `for "${query}"` : ""}</span>
             </div>
             <div className={styles.product_list}>
                 <div className={styles.filters}>
                     <div className={`${styles.sort_section}`}>
-                        <button className={styles.sort_button} onClick={() => setSort(!sort)}>
+                        <button className={styles.sort_button} onClick={() => setSort(() => !sort)}>
                             <Tune />
                         </button>
                         <span>Sort</span>
@@ -418,43 +420,47 @@ const ProductGrid = ({ product_, view_ }: { product_: Array<IProduct>, view_: st
                             ))}
                         </div>
                     </div>
-                    <div className={styles.category}>
-                        <span>Category</span>
-                        <button className={styles.category_button} onClick={() => setCategory(() => !category)}>
-                            <Category />
-                        </button>
-                        <div className={`${styles.category_option} ${!category ? styles.inactiveSort : ""}`}>
-                            {categoryOptions.map((category, id) => (
-                                <div key={id} className={`${styles.accordianItem} ${macroCategoryId === id ? styles.activeAccordian : styles.inactiveAccordian}`}>
-                                    <button
-                                        className={`${styles.question} ${macroCategoryId === id ? styles.activeQuestion : styles.inactiveQuestion}`}
-                                        onClick={(e) => selectMacroCategory(e, id)}
-                                    >
-                                        {typeof category === "string" ? category : category.macro}
+                    {query ? (
+                        <></>
+                    ) : (
+                        <div className={styles.category}>
+                            <span>Category</span>
+                            <button className={styles.category_button} onClick={() => setCategory(() => !category)}>
+                                <Category />
+                            </button>
+                            <div className={`${styles.category_option} ${!category ? styles.inactiveSort : ""}`}>
+                                {categoryOptions.map((category, id) => (
+                                    <div key={id} className={`${styles.accordianItem} ${macroCategoryId === id ? styles.activeAccordian : styles.inactiveAccordian}`}>
+                                        <button
+                                            className={`${styles.question} ${macroCategoryId === id ? styles.activeQuestion : styles.inactiveQuestion}`}
+                                            onClick={(e) => selectMacroCategory(e, id)}
+                                        >
+                                            {typeof category === "string" ? category : category.macro}
+                                            {typeof category === "string" ? (
+                                                <></>
+                                            ) : (
+                                                <Add className={`${macroCategoryId === id ? styles.activeSymbol : styles.inactiveSymbol}`} />
+                                            )}
+                                        </button>
                                         {typeof category === "string" ? (
                                             <></>
                                         ) : (
-                                            <Add className={`${macroCategoryId === id ? styles.activeSymbol : styles.inactiveSymbol}`} />
+                                            <div className={`${styles.answer} ${macroCategoryId === id ? styles.answerActive : ''}`}>
+                                                {category.minis.map((mini, m_id) => (
+                                                    <button className={`${styles.miniBtn} ${miniCategory === mini.mini ? styles.activeMiniBtn : ''}`} onClick={(e) => selectMiniCategory(e, m_id)} key={m_id}>
+                                                        {mini.mini}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         )}
-                                    </button>
-                                    {typeof category === "string" ? (
-                                        <></>
-                                    ) : (
-                                        <div className={`${styles.answer} ${macroCategoryId === id ? styles.answerActive : ''}`}>
-                                            {category.minis.map((mini, m_id) => (
-                                                <button className={`${styles.miniBtn} ${miniCategory === mini.mini ? styles.activeMiniBtn : ''}`} onClick={(e) => selectMiniCategory(e, m_id)} key={m_id}>
-                                                    {mini.mini}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                            {/* {categoryOptions.map((category, _id) => (
-                                <button key={_id} className={categoryId === _id ? styles.activeSortButton : styles.inActiveSortButton} onClick={(e) => chooseCategory(e, _id)}>{category}</button>
-                            ))} */}
+                                    </div>
+                                ))}
+                                {/* {categoryOptions.map((category, _id) => (
+                                    <button key={_id} className={categoryId === _id ? styles.activeSortButton : styles.inActiveSortButton} onClick={(e) => chooseCategory(e, _id)}>{category}</button>
+                                ))} */}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div 
                     className={styles.product_carousel}

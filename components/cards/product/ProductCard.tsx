@@ -5,7 +5,7 @@
 import styles from "./productCard.module.scss"
 import Image from "next/image";
 import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/interfaces";
-import { useState, MouseEvent, useEffect } from "react";
+import { useState, MouseEvent, useEffect, Suspense } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, productsName } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
@@ -205,6 +205,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                     alt=""
                     width={product.images[0].width}
                     height={product.images[0].height}
+                    //placeholder="blur"
                 />
             </div>
             <div className={styles.card_name}>
@@ -221,7 +222,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                             )}
                             {clientInfo?.country?.currency?.exchangeRate ? (
                                 <span>
-                                    {round(customPrice() * clientInfo.country?.currency?.exchangeRate, 1).toLocaleString("en-US")}
+                                    {round(customPrice() * clientInfo.country?.currency?.exchangeRate, 2).toLocaleString("en-US")}
                                 </span>
                             ) : (
                                 <></>
@@ -238,7 +239,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                         {clientInfo?.country?.currency?.exchangeRate ? (
                             <span>
                                 {product.pricing?.basePrice ? (
-                                    round(slashedPrice(customPrice() * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 1)).toLocaleString("en-US") 
+                                    round(slashedPrice(customPrice() * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 2)).toLocaleString("en-US") 
                                 : (
                                     <></>
                                 )}

@@ -694,17 +694,17 @@
             .price_items {
                 //border: 2px solid red;
                 //top: 2%;
-                @include size(100%, 35%);
+                @include size(100%, 40%);
                 @include flexBar($position: relative, $justify: space-between, $gap: 1%, $flex_d: column, $wrap: none, $align: flex-start, $flex: none);
 
                 @include phonePro {
-                    height: 40%;
+                    height: 45%;
                 }
 
-                .subtotal, .discount, .deliveryFee, .total {
+                .subtotal, .discount, .deliveryFee, .tax, .total {
                     //border: 1px solid red;
                     @include flexBar($position: relative, $justify: space-between, $display: flex, $align: center, $flex_d: row);
-                    @include size(100%, 23%);
+                    @include size(100%, 18%);
                     font-size: 14px;
 
                     @include tablet {
@@ -739,6 +739,7 @@
                 background: $primary-color;
                 @include size(100%, 10%);
                 //top: 15%;
+                //display: none;
                 color: $tertiary-color;
                 border-radius: 4px;
                 font-size: 14px;

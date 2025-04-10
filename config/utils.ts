@@ -139,8 +139,8 @@ export const routeStyle = (router: string, styles: { readonly [key: string]: str
                 return styles.adminPage
             } else if (router.includes("/products/")) {
                 return styles.productInfoPage
-            } else if (router.includes("/order/invoice")) {
-                return styles.orderInvoicePage
+            } else if (router.includes("/order/receipt")) {
+                return styles.orderReceiptPage
             } else {
                 return styles.others
             }
@@ -323,6 +323,25 @@ export const round = (value: number, precision: number): number => {
     return Math.round(value * multiplier) / multiplier;
 }
 
+//This function extracts main zip from a zip+4 code
+export const extractMainZipCode = (zipCode: string): string | null => {
+    // Check if the input is just a 5-digit ZIP code
+    if (/^\d{5}$/.test(zipCode)) {
+      return zipCode;  // Return the 5-digit ZIP code as it is
+    }
+  
+    // Regular expression to match the 9-digit ZIP+4 code
+    const match = zipCode.match(/^(\d{5})-\d{4}$/);
+    
+    if (match) {
+      // Return the main 5-digit ZIP code (first capture group)
+      return match[1];
+    } else {
+      // Return null if the input is not a valid ZIP or ZIP+4 code
+      return null;
+    }
+  }
+
 //This function calculates the delivery fee for a product in USD
 export const getDeliveryFee = (weight: number, country: string) => {
     
@@ -354,8 +373,9 @@ export const getDeliveryFee = (weight: number, country: string) => {
 export async function getProducts() {
 
     try {
-      const res = await fetch(`${backend}/product?action=order`, {
+      const res = await fetch(`${backend}/product?action=latest`, {
         method: "GET",
+        //cache: "force-cache"
       })
   
       if (res.ok) {
@@ -366,7 +386,7 @@ export async function getProducts() {
         getProducts()
       }
     } catch (error) {
-        //console.log('Products Error: ', error)
+        console.log('Products Error: ', error)
         console.error(error);
     }
   }

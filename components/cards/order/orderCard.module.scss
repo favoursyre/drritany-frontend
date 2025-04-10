@@ -5,12 +5,12 @@
 
 ///Commencing the code
 .main {
-    @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%);
+    @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 2%);
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
     padding: 1%;
     border-radius: 5px;
     border: 1px solid $primary-color-2;
-    @include size(96%, 60px);
+    @include size(95%, 60px);
     padding: 1% 2%;
     background-color: white;
 
@@ -19,7 +19,7 @@
     }
 
     .bio {
-        border: 1px solid green;
+        //border: 1px solid green;
         @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%, $flex_d: column);
         @include size(20%, 90%);
         overflow: hidden;
@@ -33,7 +33,7 @@
         }
 
         @include phonePro {
-            width: 30%;
+            width: 25%;
         }
     
         span {
@@ -47,7 +47,7 @@
     
             @include phonePro {
                 line-height: 17px;
-                font-size: 12px;
+                font-size: 10px;
             }
     
             @include phoneMini {
@@ -59,7 +59,7 @@
     }
 
     .price {
-        border: 1px solid blue;
+        //border: 1px solid blue;
         @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%);
         @include size(10%, 20%);
         left: 5%;
@@ -67,9 +67,9 @@
         font-family: "Inter";
 
         @include phonePro {
-            left: 2%;
+            left: 4%;
             width: auto;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         @include phoneMini {
@@ -89,8 +89,8 @@
         border-radius: 5px;
 
         @include phonePro {
-            left: 6%;
-            font-size: 12px;
+            left: 8%;
+            font-size: 10px;
             //width: 20%;
         }
 
@@ -108,7 +108,7 @@
         }
 
         @include phone {
-            left: 10%;
+            //left: 10%;
         }
     }
 
@@ -118,7 +118,7 @@
     }
 
     .actions_menu {
-        border: 1px solid red;
+        //border: 1px solid red;
         @include flexBar ($position: relative, $align: flex-start, $justify: flex-end, $gap: 1%);
         @include size(20%, 40px);
         left: 25%;
@@ -131,7 +131,7 @@
         }
 
         @include phonePro {
-            left: 15%;
+            left: 17%;
             width: auto;
         }
 

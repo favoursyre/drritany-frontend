@@ -211,7 +211,7 @@
     
             @include phonePro {
                 gap: 1%;
-                display: flex;
+                display: none;
                 @include size(100%, 45px);
                 //justify-content: space-between;
             }
@@ -233,6 +233,7 @@
                 @include phonePro {
                     width: 45px;
                     height: 55px;
+                    display: none;
                 }
 
                 @include phoneMini {

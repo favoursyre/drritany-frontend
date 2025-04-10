@@ -5,7 +5,6 @@
 import { Schema, model, Types, models } from "mongoose";
 import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem, DeliveryStatus, PaymentStatus } from "@/config/interfaces";
 import { Product } from "./product";
-//import { sendEmail } from "../utils/utils";
 
 ///Commencing the app
 const ADMINS = [process.env.ADMIN_EMAIL1!, process.env.ADMIN_EMAIL2!]
@@ -13,7 +12,15 @@ const ADMINS = [process.env.ADMIN_EMAIL1!, process.env.ADMIN_EMAIL2!]
 ///This is the schema for the order database
 const orderSchema = new Schema<IOrder, IOrderModel>(
   {
+    accountId: {
+      type: String,
+      trim: true
+    },
     customerSpec: {
+      userId: {
+        type: String,
+        trim: true
+      },
       fullName: {
         type: String,
         required: true,
@@ -35,6 +42,11 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
         trim: true
       },
       state: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      municipality: {
         type: String,
         required: true,
         trim: true
@@ -144,6 +156,24 @@ orderSchema.statics.getOrderById = async function (id: string) {
     }
     const order = await this.find({ _id: id })
     return order;
+}
+
+/**
+ * @notice Static get order by Id of the user method
+ * @param id of the order to be queried
+ * @returns Order with the given user id
+ */
+orderSchema.statics.getOrderByAccountId = async function (id: string) {
+  //Validation of args
+  // if (!Types.ObjectId.isValid(id)) {
+  //   throw Error("Id is invalid");
+  // }
+
+  const orders = await this.find({}).sort({ createdAt: -1 });
+  const _orders = orders.find((order) => order.accountId === id || order.customerSpec.userId === id)
+
+  //const order = await this.find({ _id: id })
+  return _orders;
 }
 
 /**

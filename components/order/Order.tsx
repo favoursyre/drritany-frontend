@@ -5,7 +5,7 @@
 import styles from "./order.module.scss"
 import Image from 'next/image';
 import { notify, getItem } from "@/config/clientUtils";
-import { sortOrderOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName } from "@/config/utils"
+import { sortOrderOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName, orderName } from "@/config/utils"
 import { IAdmin, IModalBackgroundStore, IOrder, IPricing, IProduct } from "@/config/interfaces";
 import { useEffect, MouseEvent, FormEvent, useState, Fragment } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,8 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
     const [sortId, setSortId] = useState(1)
     const [category, setCategory] = useState<boolean>(false)
     const [categoryOptions, setCategoryOptions] = useState<Array<string>>([ "All", "Active", "Inactive" ])
-    const [orders, setOrders] = useState<Array<IOrder>>(orders_)
+    //const orders_ = getItem(orderName)
+    const [orders, setOrders] = useState<Array<IOrder>>(orders_!)
     const [categoryId, setCategoryId] = useState<number>(0)
     const [currentURL, setCurrentURL] = useState<string>()
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
@@ -39,6 +40,16 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
     useEffect(() => {
         if (typeof window !== "undefined") {
             setCurrentURL(() => window.location.href)
+        }
+
+        if (!orders_ || orders.length === 0) {
+            notify("info", "No orders, redirecting you")
+
+            //Setting loading
+            setModalBackground(true)
+            setLoadingModal(true)
+
+            router.push("/products")
         }
 
     }, [])
@@ -193,7 +204,7 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
             </div> */}
             <div className={styles.order_list}>
                 <div className={styles.order_header}>
-                    <span className={styles.span1}><strong>Orders</strong><span>({orders.length})</span></span>
+                    <span className={styles.span1}><strong>Orders</strong><span>({orders ? orders.length : 0})</span></span>
                     <span className={styles.span2}><strong>Price</strong></span>
                     <span className={styles.span3}><strong>Payment</strong></span>
                     <span className={styles.span4}><strong>Delivery</strong></span>

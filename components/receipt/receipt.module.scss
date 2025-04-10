@@ -351,12 +351,13 @@
             .subTotal,
             .discount,
             .deliveryFee,
+            .tax,
             .total {
                 //border: 1px solid red;
                 //padding-top: 5px;
                 //padding-bottom: 5px;
                 border-bottom: 1px solid $text-color-3;
-                @include size(100%, 23%);
+                @include size(100%, 18%);
                 @include flexBar($position: relative, $align: center, $justify: space-between, $gap: 1%);
 
                 .amount {
@@ -371,9 +372,9 @@
             }
 
             .total {
-                border: none;
+                //border: none;
                 padding-top: 5px;
-                height: 25%;
+                height: 23%;
                 //padding-bottom: 15px;
             }
         }

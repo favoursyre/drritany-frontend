@@ -9,7 +9,7 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName } from "@/config/utils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
@@ -39,6 +39,8 @@ const OrderModal = () => {
     const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(deliveryInfo__)
     const searchParams = useSearchParams()
     //const clientInfo = useClientInfoStore(state => state.info)
+    const _userId = getItem(userIdName)
+    const [userId, setUserId] = useState<string | undefined>(_userId)
     const [txSessionId, setTxSessionId] = useState<string>("")
     const [paymentStatus, setPaymentStatus] = useState<string>("");
     const [paymentSuccess, setPaymentSuccess] = useState<"success" | "failed" | null>(null)
@@ -94,7 +96,7 @@ const OrderModal = () => {
                     status: DeliveryStatus.PENDING
                 }
                 const paymentSpec: IPayment = {
-                    status: PaymentStatus.PENDING,
+                    status: PaymentStatus.SUCCESS,
                     exchangeRate: clientInfo_.country?.currency?.exchangeRate!
                 }
                 const order: IOrder = { customerSpec, productSpec, deliverySpec, paymentSpec }
@@ -116,12 +118,18 @@ const OrderModal = () => {
                 if (res.ok) {
                     
                     notify("success", `Your order was logged successfully`)
-                    //setItem(cartName, undefined)
-                    //setItem(cartName, undefined)
+
+                    //Deleting cart
                     removeItem(cartName)
-                    //console.log("cleared cart")
-                    //setModalBackground(true)
-                    //setOrderModal(true)
+
+                    //Adding this order to localstorage
+                    const _orders_ = getItem(orderName)
+                    if (_orders_) {
+                        const newOrders = [..._orders_, data]
+                        setItem(orderName, newOrders)
+                    } else {
+                        setItem(orderName, data)
+                    }
 
                     setIsLoading(() => false)
 
@@ -187,7 +195,7 @@ const OrderModal = () => {
                     router.push("/cart")
                 } else if (status === 'paid') {
                     setPaymentStatus('success');
-                    //await processOrder()
+                    await processOrder()
                     setIsLoading(false)
                     notify('success', "Payment was successful")
                 } else if (status === 'canceled') {
@@ -261,8 +269,8 @@ const OrderModal = () => {
             await sleep(0.3)
             setLoadingModal(true)
 
-            notify("info", "Redirecting you to products page")
-            router.push("/products")
+            //notify("info", "Redirecting you to products page")
+            router.push(`/order?userId=${userId}`)
         }
         
         setModalBackground(false)
@@ -275,7 +283,7 @@ const OrderModal = () => {
 
         console.log("Processing the payment...")
         const productSpec: ICart = cart!
-        const amount_ = round(productSpec.overallTotalPrice!, 1).toString()
+        const amount_ = round(productSpec.overallTotalPrice!, 2).toString()
         const _amt = productSpec.grossTotalPrice - productSpec.totalDiscount + productSpec.deliveryFee
         //const _amt_ = round((productSpec.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo?.country?.currency?.exchangeRate!, 1)
         //cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()

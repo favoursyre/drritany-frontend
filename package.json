@@ -54,6 +54,7 @@
     "stripe": "^17.7.0",
     "swiper": "^11.1.4",
     "tailwindcss": "^3.3.1",
+    "taxjar": "^4.1.0",
     "typescript": "5.0.4",
     "typescript-plugin-css-modules": "^5.1.0",
     "typewriter-effect": "^2.21.0",

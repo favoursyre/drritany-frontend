@@ -7,7 +7,7 @@ import Image from "next/image";
 import { IProduct, IClientInfo, IAdmin, IOrder, ICountry, IEventStatus, PaymentStatus, DeliveryStatus } from "@/config/interfaces";
 import { useState, MouseEvent, useEffect, ChangeEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { backend, routeStyle, round, adminName, paymentStatuses, deliveryStatuses, clientInfoName } from "@/config/utils";
+import { backend, routeStyle, round, adminName, paymentStatuses, deliveryStatuses, clientInfoName, userIdName } from "@/config/utils";
 import { useClientInfoStore, useModalBackgroundStore, useConfirmationModalStore, useLoadingModalStore } from "@/config/store";
 import { MoreVert, DeleteOutlined, Edit, ThumbUpOffAlt, PreviewOutlined } from '@mui/icons-material';
 import { getItem, notify } from "@/config/clientUtils";
@@ -27,6 +27,8 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const router = useRouter()
     const routerPath = usePathname();
+    const _userId = getItem(userIdName)
+    const [userId, setUserId] = useState<string | undefined>(_userId!)
     const [deliveryStatus, setDeliveryStatus] = useState<IEventStatus>()
     const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
     const [adminUser, setAdminUser] = useState<IAdmin | null>(getItem(adminName))
@@ -36,7 +38,7 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
-    const [totalPrice, setTotalPrice] = useState<number>(order.productSpec.grossTotalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee)
+    const [totalPrice, setTotalPrice] = useState<number>(order.productSpec.overallTotalPrice!)
     const [clientCountry, setClientCountry] = useState<ICountry>(countryList.find((country) => country.name?.common === order.customerSpec.country)!)
     
     //Updating client info
@@ -81,12 +83,12 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
     }, [clientInfo, order, order_, confirmationModal, confirmationChoice]);
 
     ///This handles what happens when a product is clicked
-    const viewOrder = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, _id: string) => {
+    const viewOrder = (e: MouseEvent<HTMLElement | SVGSVGElement, globalThis.MouseEvent>, _id: string) => {
         e.preventDefault()
 
         //Setting the loading modal
-        setModalBackground(true)
-        setLoadingModal(true)
+        //setModalBackground(true)
+        //setLoadingModal(true)
         
         router.push(`/order/receipt/${order._id}`);
     }
@@ -205,7 +207,7 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
                 )}
                 {clientInfo?.country?.currency?.exchangeRate ? (
                     <span>
-                        {round(totalPrice! * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")}
+                        {round(totalPrice! * clientInfo?.country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                     </span>
                 ) : (
                     <></>
@@ -242,7 +244,7 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
                         {isLoading ? (
                             <Loading width="20px" height="20px" />
                         ) : (
-                            <PreviewOutlined className={styles.icon} onClick={(e) => previewOrder(e)} />
+                            <PreviewOutlined className={styles.icon} onClick={(e) => viewOrder(e, order._id!)} />
                         )}
                     </button>
                     {/* {!product.active ? (
