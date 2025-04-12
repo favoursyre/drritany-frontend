@@ -68,6 +68,28 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const stars: Array<number> = [1, 2, 3, 4]
     const [mounted, setMounted] = useState<boolean>(false)
     const [imageHasLoaded, setImageHasLoaded] = useState<boolean>(false)
+    const [sheetStored, setSheetStored] = useState<boolean>(false)
+    const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>(
+        Object.fromEntries(
+          (product.images || []).map((_, index) => [index, false])
+        )
+      );
+    
+      // Fallback: Mark as loaded after a timeout if onLoad doesn't fire
+      useEffect(() => {
+        const timers = product.images?.map((_, id) => {
+          return setTimeout(() => {
+            setLoadedImages(prev => ({
+              ...prev,
+              [id]: true,
+            }));
+          }, 5000); // Adjust timeout as needed
+        });
+    
+        return () => {
+          timers?.forEach(clearTimeout);
+        };
+      }, [product.images]);
 
     //For client rendering
     useEffect(() => {
@@ -227,13 +249,18 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         method: "POST",
                         body: JSON.stringify(sheetInfo),
                     });
+
+                    //Setting sheet to be stored
+                    setSheetStored(true)
                     //console.log("Google Stream: ", res)
                 } catch (error) {
                     //console.log("Store Error: ", error)
                 }
             }
 
-            storeQuery()
+            if (!sheetStored) {
+                storeQuery()
+            }
         }
     }, [clientInfo])
 
@@ -840,10 +867,14 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 className={styles.image_slide}
                             >
                                 {product.images?.map((image, id) => (
-                                    <SwiperSlide key={id} className={`${styles.image} ${id === imageIndex ? styles.activeImage : ""}`} onClick={() => {
-                                        setView(() => image.type === "image" ? "image" : "video")
-                                        setImageIndex(() => id)
-                                    }}>
+                                    <SwiperSlide 
+                                        key={id} 
+                                        className={`${styles.image} ${id === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                            setView(() => image.type === "image" ? "image" : "video")
+                                            setImageIndex(() => id)
+                                        }}
+                                    >
+                                        {!loadedImages[id] && <Loading width="20px" height="20px" />}
                                         {image.type === "video" ? (
                                             <iframe
                                                 className={styles.iframe}
@@ -852,18 +883,31 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                                 height={image.height}
                                                 frameBorder={0}
                                                 sandbox="allow-scripts allow-downloads allow-same-origin"
+                                                onLoad={() => 
+                                                    setLoadedImages((prev: Record<number, boolean>) => ({
+                                                        ...prev,
+                                                        [id]: true
+                                                      }))
+                                                }
                                             />
                                         ) : (
                                             <Image
-                                                className={styles.img}
+                                                className={`${styles.img} ${!loadedImages[id] ? styles.hiddenImg : ''}`}
                                                 src={image.src}
                                                 alt="Image"
                                                 width={image.width}
                                                 height={image.height}
-                                                //onLoadingComplete={() => setImageHasLoaded(true)}
+                                                onLoad={() => {
+                                                    console.log("Image: ", loadedImages, id)
+                                                    setLoadedImages((prev: Record<number, boolean>) => ({
+                                                        ...prev,
+                                                        [id]: true
+                                                    }))
+                                                }}
                                                 //loading="lazy" // You can adjust the loading attribute as needed (e.g., "lazy", "eager")
                                             />
                                         )}
+
                                     </SwiperSlide>
                                 ))}
                             </Swiper>

@@ -248,14 +248,16 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 )} */}
             </div>
             <div className={styles.card_image}>
+                {/* {!imageHasLoaded && <Loading width="20px" height="20px" />} */}
                 <Image
-                    className={styles.img} 
+                    //className={`${styles.img} ${!imageHasLoaded ? styles.hiddenImg : ''}`} 
+                    className={`${styles.img}`} 
                     src={product.images[0].src}
                     alt=""
                     width={product.images[0].width}
                     height={product.images[0].height}
                     priority={routerPath.includes("/products")}
-                    //onLoadingComplete={() => setImageHasLoaded(true)}
+                    //onLoad={() => setImageHasLoaded(true)}
                 />
             </div>
             <div className={styles.card_name}>

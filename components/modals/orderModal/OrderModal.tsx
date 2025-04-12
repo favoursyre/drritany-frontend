@@ -296,7 +296,7 @@ const OrderModal = () => {
 
         setOrderModal(false)
 
-        if (submit) {
+        if (submit && paymentStatus === "success") {
             //Setting loading modal
             //setModalBackground(true)
             

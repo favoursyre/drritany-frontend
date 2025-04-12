@@ -95,12 +95,13 @@ const Cart = () => {
 
     //Updating client info
     useEffect(() => {
+        console.log("running")
         if (clientInfo) {
             // Client info is already available
             if (orderModal === false) {
                 setModalBackground(false);
             }
-            
+            //setModalBackground(false);
             setLoadingModal(false);
             return;
         }
@@ -117,7 +118,7 @@ const Cart = () => {
         // Cleanup interval on unmount
         return () => clearInterval(interval);
     
-    }, [_clientInfo]);
+    }, [clientInfo]);
     
     //Checking the url to know if stripe payment session is active
     useEffect(() => {
@@ -127,7 +128,7 @@ const Cart = () => {
             setModalBackground(true)
             setOrderModal(true)
         }
-    }, [searchParams, setModalBackground, setOrderModal]);
+    }, [searchParams]);
 
     //Trying to refresh delivery info
     useEffect(() => {
@@ -414,6 +415,8 @@ const Cart = () => {
     ///This function is triggered when the user wants to input a delivery info
     const editDeliveryInfo = async (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
         e.preventDefault()
+
+        console.log('Opening: ', modalBackground, orderForm)
 
         setModalBackground(!modalBackground)
         await sleep(0.2)

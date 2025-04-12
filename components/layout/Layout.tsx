@@ -154,6 +154,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           if (orderModal === false) {
             setModalBackground(false)
           }
+          setModalBackground(false)
           
             setLoadingModal(false)
             //console.log("Client info detected")
@@ -256,6 +257,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           if (orderModal === false) {
             setModalBackground(false)
           }
+          //setModalBackground(false)
         setLoadingModal(false)
       } else {
         setModalBackground(true)
