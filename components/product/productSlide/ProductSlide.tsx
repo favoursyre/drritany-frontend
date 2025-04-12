@@ -436,10 +436,10 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
     //This function is trigerred when a user swipes to the extreme left/right of the slide
     const changeSlideBySwipe = async (e: SwiperCore, action: "prev" | "next") => {
 
-      const _swiper = swiperRef.current
+      const _swiper = swiperRef.current as unknown as SwiperCore
       
       if (action === "prev") {
-        if (_swiper && _swiper.touches.diff > 0) {
+        if (true) {
           console.log("Slide has reached the beginning")
 
           //Starting loading
@@ -518,8 +518,8 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
                 depth: 100,
                 modifier: 2.5,
               }}
-              onReachBeginning={(e) => changeSlideBySwipe(e, "prev")}
-              onReachEnd={(e) => changeSlideBySwipe(e, "next")}
+              //onReachBeginning={(e) => changeSlideBySwipe(e, "prev")}
+              //onReachEnd={(e) => changeSlideBySwipe(e, "next")}
               //onSlideChange={handleSlideChange}
               fadeEffect={{ crossFade: true }}
               pagination={{ el: '.swiper-pagination', clickable: true }}

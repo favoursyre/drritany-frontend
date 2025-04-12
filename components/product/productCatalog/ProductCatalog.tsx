@@ -4,9 +4,9 @@
 ///Libraries -->
 import styles from "./productCatalog.module.scss"
 import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/interfaces";
-import { useState, useEffect, MouseEvent, Fragment } from "react"
+import { useState, useEffect, MouseEvent, Fragment, useMemo } from "react"
 import { sortProductByOrder, sortProductByPrice, sortMongoQueryByTime, getCurrentDate, getCurrentTime, statSheetId, backend, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getItem, Cache } from "@/config/clientUtils";
 import ErrorIcon from '@mui/icons-material/Error';
 import ProductCard from "@/components/cards/product/ProductCard";
@@ -25,6 +25,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     const [productList, setProductList] = useState<Array<IProduct>>([])
     const [products, setProducts] = useState<Array<IProduct>>([])
     const router = useRouter()
+    const pathname = usePathname();
     const [currentURL, setCurrentURL] = useState(window.location.href)
     //const clientInfo = useClientInfoStore(state => state.info)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
@@ -34,52 +35,79 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
 
     //Updating client info
-    useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
+    // useEffect(() => {
+    //     //console.log("Hero: ", _clientInfo, clientInfo)
 
-        let _clientInfo_
+    //     let _clientInfo_
         
-        if (!clientInfo) {
-            //console.log("Client info not detected")
-            const interval = setInterval(() => {
-                _clientInfo_ = getItem(clientInfoName)
-                //console.log("Delivery Info: ", _deliveryInfo)
-                setClientInfo(_clientInfo_)
-            }, 100);
+    //     if (!clientInfo) {
+    //         //console.log("Client info not detected")
+    //         const interval = setInterval(() => {
+    //             _clientInfo_ = getItem(clientInfoName)
+    //             //console.log("Delivery Info: ", _deliveryInfo)
+    //             setClientInfo(_clientInfo_)
+    //         }, 100);
     
-            //console.log("Delivery Info: ", deliveryInfo)
+    //         //console.log("Delivery Info: ", deliveryInfo)
         
-            return () => {
-                clearInterval(interval);
-            };
-        } else {
-            setModalBackground(false)
-            setLoadingModal(false)
-            //console.log("Client info detected")
-        }  
+    //         return () => {
+    //             clearInterval(interval);
+    //         };
+    //     } else {
+    //         setModalBackground(false)
+    //         setLoadingModal(false)
+    //         //console.log("Client info detected")
+    //     }  
 
-    }, [clientInfo])
+    // }, [clientInfo])
+    useEffect(() => {
+        const _clientInfo = getItem(clientInfoName);
+        if (_clientInfo) {
+            setClientInfo(_clientInfo);
+            setModalBackground(false);
+            setLoadingModal(false);
+        }
+        // No polling needed unless clientInfo is expected to change dynamically
+    }, []);
 
     //Setting products
-    useEffect(() => {
-        //console.log("Product List C: ", productList)
-        //Setting Product list
-        if (query_) {
-            setProductList(() => products_!)
+    // useEffect(() => {
+    //     //console.log("Product List C: ", productList)
+    //     //Setting Product list
+    //     if (query_) {
+    //         setProductList(() => products_!)
 
-        } else {
-            const _products_ = Cache(productsName).get()
+    //     } else {
+    //         const _products_ = Cache(productsName).get()
 
-            if (_products_) {
-                setProductList(() => _products_);
-            } else {
-                setProductList(() => products_!)
-                const validPeriod = 3600 //1 hour
-                const _cache = Cache(productsName).set(products_, validPeriod)
-            }
-            //console.log("Products not seen in slides")  
+    //         if (_products_) {
+    //             setProductList(() => _products_);
+    //         } else {
+    //             setProductList(() => products_!)
+    //             const validPeriod = 3600 //1 hour
+    //             const _cache = Cache(productsName).set(products_, validPeriod)
+    //         }
+    //         //console.log("Products not seen in slides")  
+    //     }
+    // }, [query_, products_])
+
+    // Memoize productList to prevent unnecessary re-renders
+    const cachedProductList = useMemo(() => {
+        if (query_ && products_) return products_;
+        const cached = Cache(productsName).get();
+        if (cached) return cached;
+        if (products_) {
+            const validPeriod = 3600; // 1 hour
+            Cache(productsName).set(products_, validPeriod);
+            return products_;
         }
-    }, [query_, products_])
+        return [];
+    }, [query_, products_]);
+
+    // Set productList once based on memoized data
+    useEffect(() => {
+        setProductList(() => cachedProductList);
+    }, [cachedProductList]);
 
     useEffect(() => {
 
@@ -124,7 +152,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
             setModalBackground(false)
             setLoadingModal(false)
         }
-    }, [clientInfo, query, query_])
+    }, [clientInfo, query_])
 
     // useEffect(() => {
     //     //console.log("Query: ", query, productList)
@@ -137,38 +165,52 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     // }, [clientInfo]);
 
     ///This hook constantly checks for the screen's width
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-          if (screen.width <= 550) {
-            setLastIndex(6)
-          } else {
-            setLastIndex(12)
-          }
-        }, 100);
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {
+    //       if (screen.width <= 550) {
+    //         setLastIndex(6)
+    //       } else {
+    //         setLastIndex(12)
+    //       }
+    //     }, 100);
     
-        return () => clearInterval(intervalId);
-    }, [lastIndex]);
+    //     return () => clearInterval(intervalId);
+    // }, [lastIndex]);
+    useEffect(() => {
+        if (typeof window === "undefined") return
+
+        const updateIndex = () => setLastIndex(window.innerWidth <= 550 ? 6 : 12);
+        updateIndex(); // Set initial value
+        window.addEventListener('resize', updateIndex);
+        return () => window.removeEventListener('resize', updateIndex);
+    }, []);
+
+    //Checking if url has changed and then turning off loading modal
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {
+    //         if (currentURL === window.location.href) {
+    //             //console.log('not changed')
+    //             undefined
+    //         } else {
+    //             //console.log("changed")
+    //             clearInterval(intervalId)
+    //             setCurrentURL(window.location.href)
+    //             //window.location.reload()
+
+    //             //Setting off the loading modal
+    //             setModalBackground(false)
+    //             setLoadingModal(false)
+    //         }
+            
+    //     }, 1000);
+
+    //     return () => clearInterval(intervalId);
+    // }, [currentURL]);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (currentURL === window.location.href) {
-                //console.log('not changed')
-                undefined
-            } else {
-                //console.log("changed")
-                clearInterval(intervalId)
-                setCurrentURL(window.location.href)
-                //window.location.reload()
-
-                //Setting off the loading modal
-                setModalBackground(false)
-                setLoadingModal(false)
-            }
-            
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, [currentURL]);
+        setModalBackground(false);
+        setLoadingModal(false);
+    }, [pathname, setModalBackground, setLoadingModal]);
 
     //This function is triggered when a user wants to make a custom request
     const customRequest = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {

@@ -5,7 +5,8 @@
 import styles from "./productCard.module.scss"
 import Image from "next/image";
 import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/interfaces";
-import { useState, MouseEvent, useEffect, Suspense } from "react";
+import { useState, useEffect, useMemo } from "react";
+import type { MouseEvent, TouchEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, productsName } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
@@ -32,6 +33,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     //const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
+    const [imageHasLoaded, setImageHasLoaded] = useState<boolean>(false)
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo ? _clientInfo : undefined)
     //const _products = Cache(productsName).get()
@@ -41,64 +43,72 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     useEffect(() => {
         //console.log("View: ", view)
         setProduct(() => product_)
-    }, [product, product_]);
+    }, [product_]);
 
     //Updating client info
-    useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
+    // useEffect(() => {
+    //     //console.log("Hero: ", _clientInfo, clientInfo)
 
-        let _clientInfo_
+    //     let _clientInfo_
         
-        if (!clientInfo) {
-            //console.log("Client info not detected")
-            const interval = setInterval(() => {
-                _clientInfo_ = getItem(clientInfoName)
-                //console.log("Delivery Info: ", _deliveryInfo)
-                setClientInfo(_clientInfo_)
-            }, 100);
+    //     if (!clientInfo) {
+    //         //console.log("Client info not detected")
+    //         const interval = setInterval(() => {
+    //             _clientInfo_ = getItem(clientInfoName)
+    //             //console.log("Delivery Info: ", _deliveryInfo)
+    //             setClientInfo(_clientInfo_)
+    //         }, 100);
     
-            //console.log("Delivery Info: ", deliveryInfo)
+    //         //console.log("Delivery Info: ", deliveryInfo)
         
-            return () => {
-                clearInterval(interval);
-            };
-        } else {
-            setModalBackground(false)
-            setLoadingModal(false)
-            //console.log("Client info detected")
-        }  
+    //         return () => {
+    //             clearInterval(interval);
+    //         };
+    //     } else {
+    //         setModalBackground(false)
+    //         setLoadingModal(false)
+    //         //console.log("Client info detected")
+    //     }  
 
-    }, [clientInfo])
+    // }, [clientInfo])
+    useEffect(() => {
+        const info = getItem(clientInfoName);
+        if (info) {
+            setClientInfo(info);
+            setModalBackground(false);
+            setLoadingModal(false);
+        }
+    }, [setModalBackground, setLoadingModal]);
 
     //This displays the custom price based on the country if it exist
-    const customPrice = (): number => {
-        let customPrice
-        let newCustomPrice
-        const clientCountry = countryList.find((c) => c.name?.common === clientInfo?.country?.name?.common)
-        const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common || c.country === clientCountry?.name?.abbreviation)
-        if (variant && clientCountry) {
-            customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
-        } else {
-            customPrice = product.pricing?.basePrice!
-        }
+    // const customPrice = (): number => {
+    //     let customPrice
+    //     let newCustomPrice
+    //     const clientCountry = countryList.find((c) => c.name?.common === clientInfo?.country?.name?.common)
+    //     const variant = product.pricing?.variantPrices?.find((c) => c.country === clientCountry?.name?.common || c.country === clientCountry?.name?.abbreviation)
+    //     if (variant && clientCountry) {
+    //         customPrice = variant.amount! //* clientCountry?.currency?.exchangeRate!
+    //     } else {
+    //         customPrice = product.pricing?.basePrice!
+    //     }
 
-        //This calculates delivery fee
-        if (product.addDelivery === false && product.addDelivery !== undefined) {
-            newCustomPrice = customPrice
-        } else {
-            let deliveryFee = getDeliveryFee(product.specification?.weight!, clientCountry?.name?.common!)
-            newCustomPrice = customPrice + deliveryFee
-        }
+    //     //This calculates delivery fee
+    //     if (product.addDelivery === false && product.addDelivery !== undefined) {
+    //         newCustomPrice = customPrice
+    //     } else {
+    //         let deliveryFee = getDeliveryFee(product.specification?.weight!, clientCountry?.name?.common!)
+    //         newCustomPrice = customPrice + deliveryFee
+    //     }
         
-        // const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
-        // if (inflation === 0) {
-        //     customPrice = product.pricing?.basePrice!
-        // } else {
-        //     customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
-        // }
+    //     // const inflation = clientCountry?.priceInflation ? clientCountry.priceInflation : 0
+    //     // if (inflation === 0) {
+    //     //     customPrice = product.pricing?.basePrice!
+    //     // } else {
+    //     //     customPrice = ((inflation / 100) * product.pricing?.basePrice!) + product.pricing?.basePrice!
+    //     // }
 
-        return newCustomPrice
-    }
+    //     return newCustomPrice
+    // }
 
     ///This handles what happens when a product is clicked
     const viewProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: string) => {
@@ -109,6 +119,40 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
 
         router.push(`/products/${id}`);
     }
+
+    ///This handles what happens when a product is hovered on
+    const prefetchProduct = (e: MouseEvent<HTMLElement, globalThis.MouseEvent> | TouchEvent<HTMLElement>, id: string) => {
+        if (e instanceof MouseEvent) {
+            e.preventDefault(); // 👍 This won't break on touch
+        }
+
+        router.prefetch(`/products/${id}`);
+    }
+
+    // Memoize custom price calculation
+    const customPrice = useMemo(() => {
+        if (!clientInfo) return product_.pricing?.basePrice || 0;
+        const clientCountry = countryList.find(
+            (c) => c.name?.common === clientInfo.country?.name?.common
+        );
+        const variant = product_.pricing?.variantPrices?.find(
+            (v) => v.country === clientCountry?.name?.common || v.country === clientCountry?.name?.abbreviation
+        );
+        let basePrice = variant?.amount || product_.pricing?.basePrice || 0;
+
+        if (product_.addDelivery !== false) {
+            const deliveryFee = getDeliveryFee(product_.specification?.weight || 0, clientCountry?.name?.common || "");
+            basePrice += deliveryFee;
+        }
+
+        const exchangeRate = clientInfo.country?.currency?.exchangeRate || 1;
+        return round(basePrice * exchangeRate, 2);
+    }, [product_, clientInfo]);
+
+    // Memoize slashed price
+    const slashedCustomPrice = useMemo(() => {
+        return product_.pricing?.discount ? round(slashedPrice(customPrice, product_.pricing.discount), 2) : null;
+    }, [customPrice, product_.pricing?.discount]);
 
     ///This function opens discount modal
     // const openDiscountModal = (e: MouseEvent<SVGSVGElement, globalThis.MouseEvent>): void => {
@@ -174,7 +218,12 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     }
 
     return (
-        <main className={`${styles.main} ${getViewClass(view)}`} onClick={(e) => viewProduct(e, product._id!)}>
+        <main 
+            className={`${styles.main} ${getViewClass(view)}`} 
+            onClick={(e) => viewProduct(e, product._id!)}
+            onMouseEnter={(e) => prefetchProduct(e, product._id!)}
+            onTouchStart={(e) => prefetchProduct(e, product._id!)}
+        >
             <div className={styles.discounts}>
                 <div className={styles.percent}>
                     <span>-{product.pricing?.discount}%</span>
@@ -205,7 +254,8 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                     alt=""
                     width={product.images[0].width}
                     height={product.images[0].height}
-                    //placeholder="blur"
+                    priority={routerPath.includes("/products")}
+                    //onLoadingComplete={() => setImageHasLoaded(true)}
                 />
             </div>
             <div className={styles.card_name}>
@@ -222,7 +272,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                             )}
                             {clientInfo?.country?.currency?.exchangeRate ? (
                                 <span>
-                                    {round(customPrice() * clientInfo.country?.currency?.exchangeRate, 2).toLocaleString("en-US")}
+                                    {customPrice.toLocaleString("en-US")}
                                 </span>
                             ) : (
                                 <></>
@@ -238,11 +288,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                         )}
                         {clientInfo?.country?.currency?.exchangeRate ? (
                             <span>
-                                {product.pricing?.basePrice ? (
-                                    round(slashedPrice(customPrice() * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!), 2)).toLocaleString("en-US") 
-                                : (
-                                    <></>
-                                )}
+                                {slashedCustomPrice!.toLocaleString("en-US")}
                             </span>
                         ) : (
                             <></>

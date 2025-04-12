@@ -25,7 +25,8 @@ const Header = () => {
   const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
   const [cartIsLoading, setCartIsLoading] = useState<boolean>(false)
   const [wishIsLoading, setWishIsLoading] = useState<boolean>(false)
-  const [wishList, setWishList] = useState<Array<IProduct>>(getItem(wishListName))
+  const wishList__ = getItem(wishListName)
+  const [wishList, setWishList] = useState<Array<IProduct>>(wishList__)
   const [orders, setOrders] = useState<Array<IOrder>>()
   const cart__ = getItem(cartName) 
   const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
@@ -44,60 +45,17 @@ const Header = () => {
   const [userId, setUserId] = useState<string>(_userId!)
   const [mounted, setMounted] = useState(false);
 
-  //For client rendering
+  // Fetch initial data once on mount
   useEffect(() => {
     setMounted(true);
 
-    // const getUserOrders = async (userId: string) => {
-    //     if (!userId) {
-    //       return
-    //     }
+    if (typeof window === "undefined") return
     
-    //     try {
-    //       const res = await fetch(`${backend}/order?userId=${userId}`, {
-    //         method: "GET",
-    //         //cache: "no-store",
-    //       })
-      
-    //       if (res.ok) {
-    //         const data = await res.json()
-    //         console.log("data kk: ", data) 
-    //       } else {
-    //         getUserOrders(userId)
-    //       }
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-
-    // getUserOrders(userId)
+    const info = getItem(clientInfoName);
+    if (info) setClientInfo(info);
+    setCart(getItem(cartName));
+    setWishList(getItem(wishListName) || []);
   }, []);
-
-  //Updating client info
-  useEffect(() => {
-    //console.log("Header")
-      //console.log("Hero: ", _clientInfo, clientInfo)
-
-      let _clientInfo_
-      
-      if (!clientInfo) {
-          //console.log("Client info not detected")
-          const interval = setInterval(() => {
-              _clientInfo_ = getItem(clientInfoName)
-              //console.log("Delivery Info: ", _deliveryInfo)
-              setClientInfo(_clientInfo_)
-          }, 100);
-  
-          //console.log("Delivery Info: ", deliveryInfo)
-      
-          return () => {
-              clearInterval(interval);
-          };
-      } else {
-          //console.log("Client info detected")
-      }  
-
-  }, [clientInfo])
 
   useEffect(() => {
     const interval = setInterval(() => {

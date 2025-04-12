@@ -160,7 +160,7 @@ const CategorySlide = () => {
         }
       }
       setItem(productFilterName, productFilter)
-      console.log("Filter: ", productFilter)
+      //console.log("Filter: ", productFilter)
       router.push("/products")
     } 
 

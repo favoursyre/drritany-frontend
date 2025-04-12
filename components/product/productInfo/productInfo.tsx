@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import { toast } from 'react-toastify';
-import React, { useState, useEffect, MouseEvent, Fragment, useRef, Suspense } from "react"
+import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
@@ -41,8 +41,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [mainImage, setMainImage] = useState(product.images[0])
     const [mainImageId, setMainImageId] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [startDeliveryDate, setStartDeliveryDate] = useState<string>("")
-    const [endDeliveryDate, setEndDeliveryDate] = useState<string>("")
+    //const [startDeliveryDate, setStartDeliveryDate] = useState<string>("")
+    //const [endDeliveryDate, setEndDeliveryDate] = useState<string>("")
     const router = useRouter()
     const [colorId, setColorId] = useState<number>(0)
     //const [selectColor, setSelectColor] = useState<boolean>(false)
@@ -55,7 +55,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const routerPath = usePathname()
     const discountProduct = useDiscountModalStore(state => state.product);
-    const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
+    //const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     const [imageIndex, setImageIndex] = useState<number>(0)
     const [videoIndex, setVideoIndex] = useState<number>(0)
     const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
@@ -66,6 +66,13 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [isZoomed, setIsZoomed] = useState(false);
     const spec = product.specification
     const stars: Array<number> = [1, 2, 3, 4]
+    const [mounted, setMounted] = useState<boolean>(false)
+    const [imageHasLoaded, setImageHasLoaded] = useState<boolean>(false)
+
+    //For client rendering
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     //console.log("In Stock: ", product.pricing?.inStock)
 
     ///This contains the accordian details
@@ -98,60 +105,101 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
       ];
 
     //This contains the specifications of the products
-    const specs = [
-        `SKU: ${product._id}`,
+    // const specs = [
+    //     `SKU: ${product._id}`,
+    //     `Condition: Brand New`,
+    //     `Brand: ${spec?.brand}`,
+    //     spec?.modelNumber ? `Model Number: ${spec.modelNumber}` : undefined,
+    //     `Item Form: ${spec?.itemForm}`,
+    //     `Item Count: ${spec?.itemCount}`,
+    //     `Gender: ${spec?.gender}`,
+    //     `Age Range: ${spec?.userAgeRange}`,
+    //     spec?.ingredients && spec.ingredients.length > 1 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
+    //     spec?.power ? `Power: ${spec?.power}w` : undefined,
+    //     spec?.voltage ? `Voltage: ${spec?.voltage}v` : undefined,
+    //     spec?.horsePower ? `Horsepower: ${spec?.horsePower}hp` : undefined,
+    //     spec?.seaters ? `Seaters: ${spec?.seaters}` : undefined,
+    //     spec?.engineType ? `Engine: ${spec?.engineType}` : undefined,
+    //     spec?.transmissionType ? `Transmission: ${spec?.transmissionType}v` : undefined,
+    //     spec?.ramStorage ? `Storage(RAM): ${spec?.ramStorage}gb` : undefined,
+    //     spec?.romStorage ? `Storage(ROM): ${spec?.romStorage}gb` : undefined,
+    //     spec?.batteryCapacity ? `Battery: ${spec?.batteryCapacity}mAh` : undefined,
+    //     `Product Origin: ${spec?.productOrigin}`,
+    //     spec?.productLocation ? `Product Location: ${spec.productLocation}` : undefined,
+    //     `Weight: ${spec?.weight}kg`,
+    //     spec?.dimension?.height ? `Height: ${spec.dimension.height}inches` : undefined,
+    //     spec?.dimension?.width ? `Width: ${spec.dimension.width}inches` : undefined,
+    //     spec?.dimension?.length ? `Length: ${spec.dimension.length}inches` : undefined,
+    //     spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
+    // ]
+    // Memoized specs
+    const specs = useMemo(() => [
+        `SKU: ${product_._id}`,
         `Condition: Brand New`,
-        `Brand: ${spec?.brand}`,
-        spec?.modelNumber ? `Model Number: ${spec.modelNumber}` : undefined,
-        `Item Form: ${spec?.itemForm}`,
-        `Item Count: ${spec?.itemCount}`,
-        `Gender: ${spec?.gender}`,
-        `Age Range: ${spec?.userAgeRange}`,
-        spec?.ingredients && spec.ingredients.length > 1 ? `Ingredients: ${spec?.ingredients?.join(", ")}` : undefined,
-        spec?.power ? `Power: ${spec?.power}w` : undefined,
-        spec?.voltage ? `Voltage: ${spec?.voltage}v` : undefined,
-        spec?.horsePower ? `Horsepower: ${spec?.horsePower}hp` : undefined,
-        spec?.seaters ? `Seaters: ${spec?.seaters}` : undefined,
-        spec?.engineType ? `Engine: ${spec?.engineType}` : undefined,
-        spec?.transmissionType ? `Transmission: ${spec?.transmissionType}v` : undefined,
-        spec?.ramStorage ? `Storage(RAM): ${spec?.ramStorage}gb` : undefined,
-        spec?.romStorage ? `Storage(ROM): ${spec?.romStorage}gb` : undefined,
-        spec?.batteryCapacity ? `Battery: ${spec?.batteryCapacity}mAh` : undefined,
-        `Product Origin: ${spec?.productOrigin}`,
-        spec?.productLocation ? `Product Location: ${spec.productLocation}` : undefined,
-        `Weight: ${spec?.weight}kg`,
-        spec?.dimension?.height ? `Height: ${spec.dimension.height}inches` : undefined,
-        spec?.dimension?.width ? `Width: ${spec.dimension.width}inches` : undefined,
-        spec?.dimension?.length ? `Length: ${spec.dimension.length}inches` : undefined,
-        spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
-    ]
+        `Brand: ${product_.specification?.brand || ""}`,
+        product_.specification?.modelNumber ? `Model Number: ${product_.specification.modelNumber}` : undefined,
+        `Item Form: ${product_.specification?.itemForm || ""}`,
+        `Item Count: ${product_.specification?.itemCount || ""}`,
+        `Gender: ${product_.specification?.gender || ""}`,
+        `Age Range: ${product_.specification?.userAgeRange || ""}`,
+        product_.specification?.ingredients?.length ? `Ingredients: ${product_.specification.ingredients.join(", ")}` : undefined,
+        product_.specification?.power ? `Power: ${product_.specification.power}w` : undefined,
+        product_.specification?.voltage ? `Voltage: ${product_.specification.voltage}v` : undefined,
+        product_.specification?.horsePower ? `Horsepower: ${product_.specification.horsePower}hp` : undefined,
+        product_.specification?.seaters ? `Seaters: ${product_.specification.seaters}` : undefined,
+        product_.specification?.engineType ? `Engine: ${product_.specification.engineType}` : undefined,
+        product_.specification?.transmissionType ? `Transmission: ${product_.specification.transmissionType}` : undefined,
+        product_.specification?.ramStorage ? `Storage(RAM): ${product_.specification.ramStorage}gb` : undefined,
+        product_.specification?.romStorage ? `Storage(ROM): ${product_.specification.romStorage}gb` : undefined,
+        product_.specification?.batteryCapacity ? `Battery: ${product_.specification.batteryCapacity}mAh` : undefined,
+        `Product Origin: ${product_.specification?.productOrigin || ""}`,
+        product_.specification?.productLocation ? `Product Location: ${product_.specification.productLocation}` : undefined,
+        `Weight: ${product_.specification?.weight || 0}kg`,
+        product_.specification?.dimension?.height ? `Height: ${product_.specification.dimension.height}inches` : undefined,
+        product_.specification?.dimension?.width ? `Width: ${product_.specification.dimension.width}inches` : undefined,
+        product_.specification?.dimension?.length ? `Length: ${product_.specification.dimension.length}inches` : undefined,
+        product_.specification?.manufactureYear ? `Year: ${product_.specification.manufactureYear}` : undefined
+    ].filter(Boolean), [product_]);
 
     //Updating client info
-    useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
+    // useEffect(() => {
+    //     //console.log("Hero: ", _clientInfo, clientInfo)
 
-        let _clientInfo_
+    //     let _clientInfo_
         
-        if (!clientInfo) {
-            //console.log("Client info not detected")
-            const interval = setInterval(() => {
-                _clientInfo_ = getItem(clientInfoName)
-                //console.log("Delivery Info: ", _deliveryInfo)
-                setClientInfo(_clientInfo_)
-            }, 100);
+    //     if (!clientInfo) {
+    //         //console.log("Client info not detected")
+    //         const interval = setInterval(() => {
+    //             _clientInfo_ = getItem(clientInfoName)
+    //             //console.log("Delivery Info: ", _deliveryInfo)
+    //             setClientInfo(_clientInfo_)
+    //         }, 100);
     
-            //console.log("Delivery Info: ", deliveryInfo)
+    //         //console.log("Delivery Info: ", deliveryInfo)
         
-            return () => {
-                clearInterval(interval);
-            };
-        } else {
-            setModalBackground(false)
-            setLoadingModal(false)
-            //console.log("Client info detected")
-        }  
+    //         return () => {
+    //             clearInterval(interval);
+    //         };
+    //     } else {
+    //         setModalBackground(false)
+    //         setLoadingModal(false)
+    //         //console.log("Client info detected")
+    //     }  
 
-    }, [clientInfo])
+    // }, [clientInfo])
+    useEffect(() => {
+        const info = getItem(clientInfoName);
+        if (info) {
+            setClientInfo(info);
+            setModalBackground(false);
+            setLoadingModal(false);
+        }
+    }, [setModalBackground, setLoadingModal]);
+
+    // Memoize custom price
+    const customPrice = useMemo(() => {
+        return clientInfo ? getCustomPricing(product_, sizeId, clientInfo.country?.name?.common || "") : product_.pricing?.basePrice || 0;
+    }, [product_, sizeId, clientInfo]);
 
     //This stores the viewed peoduct in the sheet
     useEffect(() => {
@@ -189,41 +237,50 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         }
     }, [clientInfo])
 
-    useEffect(() => {
-        //console.log("Client: ", clientInfo)
-        // const interval = setInterval(() => {
-        //     if (clientInfo !== undefined) {
-        //         console.log("client is defined")
-        //         const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!)
-        //         setCustomPrice(() => newPrice)
-        //     } else {
-        //         console.log("Client is undefined")
-        //     }
-        // }, 100);
+    // useEffect(() => {
+    //     //console.log("Client: ", clientInfo)
+    //     // const interval = setInterval(() => {
+    //     //     if (clientInfo !== undefined) {
+    //     //         console.log("client is defined")
+    //     //         const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!)
+    //     //         setCustomPrice(() => newPrice)
+    //     //     } else {
+    //     //         console.log("Client is undefined")
+    //     //     }
+    //     // }, 100);
     
-        // return () => {
-        //     clearInterval(interval);
-        // };
+    //     // return () => {
+    //     //     clearInterval(interval);
+    //     // };
 
-        // Check if clientInfo is defined, if not, rerun the effect.
-        if (clientInfo !== undefined) {
-            //console.log("Client is defined");
+    //     // Check if clientInfo is defined, if not, rerun the effect.
+    //     if (clientInfo !== undefined) {
+    //         //console.log("Client is defined");
 
-            const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!);
-            setCustomPrice(newPrice);
-        } else {
-            //console.log("Client is undefined");
-        }
+    //         const newPrice = getCustomPricing(product, sizeId, clientInfo?.country?.name?.common!);
+    //         setCustomPrice(newPrice);
+    //     } else {
+    //         //console.log("Client is undefined");
+    //     }
         
-    }, [clientInfo, customPrice, sizeId, product]);
+    // }, [clientInfo, customPrice, sizeId, product]);
 
-    useEffect(() => {
-        // This function will be called every time the component is mounted, and
-        // whenever the `count` state variable changes
-        //console.log('Index: ', imageIndex)
-        //console.log("Colors & Sizes: ", product.specification?.colors, product.specification?.sizes)
-        //console.log("main: ", mainImage)
-      }, [mainImage, mainImageId, imageIndex, videoIndex, view, activeInfoBtn]);
+    // Memoize delivery dates
+    const [startDeliveryDate, endDeliveryDate] = useMemo(() => {
+        const currentDate = new Date();
+        const start = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days base
+        const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000); // Additional 7 days
+        const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+        return [start.toLocaleDateString('en-US', options), end.toLocaleDateString('en-US', options)];
+    }, []);
+
+    // useEffect(() => {
+    //     // This function will be called every time the component is mounted, and
+    //     // whenever the `count` state variable changes
+    //     //console.log('Index: ', imageIndex)
+    //     //console.log("Colors & Sizes: ", product.specification?.colors, product.specification?.sizes)
+    //     //console.log("main: ", mainImage)
+    //   }, [mainImage, mainImageId, imageIndex, videoIndex, view, activeInfoBtn]);
 
     //This gets the picked Color Name
     const getColorName = (): string | undefined => {
@@ -246,18 +303,18 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         return 
     }
 
-    useEffect(() => {
-        const currentDate = new Date();
-        const nextWeek = new Date(currentDate.getTime() + deliveryPeriod * 24 * 60 * 60 * 1000);
-        const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
-        const formattedDate = nextWeek.toLocaleDateString('en-US', options);
+    // useEffect(() => {
+    //     const currentDate = new Date();
+    //     const nextWeek = new Date(currentDate.getTime() + deliveryPeriod * 24 * 60 * 60 * 1000);
+    //     const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+    //     const formattedDate = nextWeek.toLocaleDateString('en-US', options);
 
-        nextWeek.setDate(nextWeek.getDate() + deliveryDuration);
-        const formattedDate_ = nextWeek.toLocaleDateString('en-US', options);
-        //console.log("One week from now: ", formattedDate);
-        setStartDeliveryDate(formattedDate)
-        setEndDeliveryDate(formattedDate_)
-    }, [startDeliveryDate, endDeliveryDate, addedToCart])
+    //     nextWeek.setDate(nextWeek.getDate() + deliveryDuration);
+    //     const formattedDate_ = nextWeek.toLocaleDateString('en-US', options);
+    //     //console.log("One week from now: ", formattedDate);
+    //     setStartDeliveryDate(formattedDate)
+    //     setEndDeliveryDate(formattedDate_)
+    // }, [startDeliveryDate, endDeliveryDate, addedToCart])
 
     //This function is used to view return policy
     const viewReturnPolicy = async (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
@@ -713,209 +770,59 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     )} */}
                 </div>
             </div>
-            <main className={`${styles.main}`}>
-                <div className={styles.left_section}>
-                    <div className={styles.profile_image}
-                        onMouseMove={(e) => handleMouseMove(e)}
-                        onMouseEnter={() => setTransformOrigin('center center')}
-                        onMouseLeave={() => setTransformOrigin('center center')}
-                    >
-                        {product.images && product.images[imageIndex].type === "video"  ? (
-                            <iframe
-                                className={styles.img}
-                                src={product.images[imageIndex]?.src}
-                                width={product.images[imageIndex]?.width}
-                                height={product.images[imageIndex].height}
-                                allow="autoplay"
-                                loading="lazy"
-                                frameBorder={0}
-                                sandbox="allow-scripts allow-downloads allow-same-origin"
-                                //sandbox="allow-same-origin allow-scripts"
+            {mounted ? (
+                <>
+                    <main className={`${styles.main}`}>
+                        <div className={styles.left_section}>
+                            <div className={styles.profile_image}
+                                onMouseMove={(e) => handleMouseMove(e)}
+                                onMouseEnter={() => setTransformOrigin('center center')}
+                                onMouseLeave={() => setTransformOrigin('center center')}
                             >
-                            </iframe>
-                        ) : (
-                            <Image
-                                className={styles.img}
-                                src={product.images[imageIndex].src}
-                                alt=""
-                                width={product.images[imageIndex].width}
-                                height={product.images[imageIndex].height}
-                                style={{
-                                    transformOrigin: transformOrigin,
-                                    transform: isZoomed ? 'scale(1.5)' : 'scale(1)'
-                                }}  
-                            />
-                        )}
-                    </div>
-                    <div className={styles.controller}>
-                        <button className={`arrow-left arrow ${styles.prev}`} onClick={(e) => changePicture(e,"left")}>
-                            <KeyboardArrowLeft />
-                        </button>
-                        {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
-                        <button className={`arrow-right arrow ${styles.next}`} onClick={(e) => changePicture(e,"right")}>
-                            <KeyboardArrowRight />
-                        </button>
-                    </div>
-                    <Swiper
-                        effect={'slide'}
-                        spaceBetween={8}
-                        grabCursor={true}
-                        centeredSlides={false}
-                        loop={false}
-                        autoplay={{ delay: 4000, pauseOnMouseEnter: true }} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-                        slidesPerView={'auto'}
-                        onBeforeInit={(swiper) => {
-                            swiperRef.current = swiper;
-                            }}
-                        coverflowEffect={{
-                            rotate: 0,
-                            stretch: 0,
-                            depth: 100,
-                            modifier: 2.5,
-                        }}
-                        fadeEffect={{ crossFade: true }}
-                        pagination={{ el: '.swiper-pagination', clickable: true }}
-                        //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
-                        modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
-                        className={styles.image_slide}
-                    >
-                        {product.images?.map((image, id) => (
-                            <SwiperSlide key={id} className={`${styles.image} ${id === imageIndex ? styles.activeImage : ""}`} onClick={() => {
-                                setView(() => image.type === "image" ? "image" : "video")
-                                setImageIndex(() => id)
-                            }}>
-                                {!image ? (
-                                    // You can add a fallback component or message here when `image` is falsy
-                                    <Loading width='20px' height='20px' />
-                                ) : image.type === "video" ? (
+                                {product.images && product.images[imageIndex].type === "video"  ? (
                                     <iframe
-                                        className={styles.iframe}
-                                        src={image.src}
-                                        width={image.width}
-                                        height={image.height}
+                                        className={styles.img}
+                                        src={product.images[imageIndex]?.src}
+                                        width={product.images[imageIndex]?.width}
+                                        height={product.images[imageIndex].height}
+                                        allow="autoplay"
+                                        loading="lazy"
                                         frameBorder={0}
                                         sandbox="allow-scripts allow-downloads allow-same-origin"
-                                    />
+                                        //sandbox="allow-same-origin allow-scripts"
+                                    >
+                                    </iframe>
                                 ) : (
                                     <Image
                                         className={styles.img}
-                                        src={image.src}
-                                        alt="Image"
-                                        width={image.width}
-                                        height={image.height}
-                                        //loading="lazy" // You can adjust the loading attribute as needed (e.g., "lazy", "eager")
+                                        src={product.images[imageIndex].src}
+                                        alt=""
+                                        width={product.images[imageIndex].width}
+                                        height={product.images[imageIndex].height}
+                                        style={{
+                                            transformOrigin: transformOrigin,
+                                            transform: isZoomed ? 'scale(1.5)' : 'scale(1)'
+                                        }}  
+                                        priority
                                     />
                                 )}
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                    <div className={styles.image_slide_}>
-                        {/* {product.images.map((image, imageId) => (
-                            <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
-                                setView(() => image.type === "image" ? "image" : "video")
-                                setImageIndex(() => imageId)
-                            }}>
-                                
-                                
                             </div>
-                        ))} */}
-                        {/* {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
-                            <div className={styles.image} key={videoId} onClick={() => {
-                                setView(() => "video")
-                                setVideoIndex(() => videoId)
-                            }}>
-                                <iframe
-                                    className={styles.iframe}
-                                    src={video.src}
-                                    width={video.width}
-                                    height={video.height}
-                                    //allow="autoplay"
-                                    frameBorder={0}
-                                    //sandbox="allow-forms"
-                                >
-                            </iframe>
-                        </div>
-                        )) : (
-                            <></>
-                        )} */}
-                    </div>
-                </div>
-                <div className={styles.right_section}>
-                    <h3>
-                        <strong>{product.name}</strong>
-                        {/* {checkExtraDiscountOffer(product) ? (
-                            // <Tooltip title="Discount Offer" placement='top'>
-                            //     <IconButton>
-                                <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
-                            //     </IconButton>
-                            // </Tooltip>
-                        ) : (
-                            <></>
-                        )} */}
-                    </h3>
-                    <span className={styles.product_about}>{product.description}</span>
-                    <div className={styles.product_price_orders_rating}>
-                        <div className={styles.price_orders}>
-                        <div className={styles.product_price}>
-                            <div className={styles.price}>
-                                {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
-                                {clientInfo ? (
-                                    <span>{clientInfo.country?.currency?.symbol}</span>
-                                ) : (
-                                    <></>
-                                )}
-                                {clientInfo?.country?.currency?.exchangeRate ? (
-                                    <span>
-                                        {round(customPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
-                                    </span> 
-                                ) : (
-                                    <></>
-                                )}
+                            <div className={styles.controller}>
+                                <button className={`arrow-left arrow ${styles.prev}`} onClick={(e) => changePicture(e,"left")}>
+                                    <KeyboardArrowLeft />
+                                </button>
+                                {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+                                <button className={`arrow-right arrow ${styles.next}`} onClick={(e) => changePicture(e,"right")}>
+                                    <KeyboardArrowRight />
+                                </button>
                             </div>
-                            <div className={styles.slashed_price}>
-                                {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
-                                {clientInfo?.country?.currency?.exchangeRate ? (
-                                    <span>
-                                        {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
-                                    </span>
-                                ) : (
-                                    <></>
-                                )}
-                            </div>
-                        </div>
-                        <div className={styles.product_orders}>
-                            <LocalShippingIcon className={styles.icon} />
-                            <span>{product.orders?.toLocaleString("en-US")} orders</span>
-                        </div>
-                        <div className={styles.percent}>
-                            <span>-{product.pricing?.discount}%</span>
-                        </div>
-                        </div>
-                        <div className={styles.rating}>
-                            <div className={styles.stars}>
-                                {stars.map((star, id) => (
-                                    <Star className={styles.star} key={id} />
-                                ))}
-                                <StarHalf className={styles.star} />
-                            </div>
-                            <span>{product.rating}</span>
-                        </div>
-                    </div>
-                    <button className={styles.return} onClick={(e) => viewReturnPolicy(e)}>
-                        <span>Return & Refund Policy</span>
-                        <Add style={{ fontSize: "1rem" }}/>
-                    </button>
-                    <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
-                    {product.specification?.colors && product.specification.colors[0] !== "" ? (
-                        <div className={styles.product_colors}>
-                            <span className={styles.span1}>Color: <span className={styles._span1}>{getColorName()}</span></span>
                             <Swiper
                                 effect={'slide'}
                                 spaceBetween={8}
                                 grabCursor={true}
                                 centeredSlides={false}
                                 loop={false}
-                                autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                                autoplay={{ delay: 4000, pauseOnMouseEnter: true }} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
                                 slidesPerView={'auto'}
                                 onBeforeInit={(swiper) => {
                                     swiperRef.current = swiper;
@@ -930,255 +837,410 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 pagination={{ el: '.swiper-pagination', clickable: true }}
                                 //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
                                 modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
-                                className={styles.colorContainer}
+                                className={styles.image_slide}
                             >
-                                {product.specification?.colors?.map((color, id) => (
-                                    <SwiperSlide className={`${styles.slider} ${colorId === id ? styles.activeColorBtn : styles.inActiveColorBtn}`} key={id} onClick={(e) => chooseColor(e, id)}>
-                                        {typeof color === "string" ? (
-                                            <div className={styles.color} style={{ backgroundColor: `${color}`, borderColor: `${color}` }}></div>
+                                {product.images?.map((image, id) => (
+                                    <SwiperSlide key={id} className={`${styles.image} ${id === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                        setView(() => image.type === "image" ? "image" : "video")
+                                        setImageIndex(() => id)
+                                    }}>
+                                        {image.type === "video" ? (
+                                            <iframe
+                                                className={styles.iframe}
+                                                src={image.src}
+                                                width={image.width}
+                                                height={image.height}
+                                                frameBorder={0}
+                                                sandbox="allow-scripts allow-downloads allow-same-origin"
+                                            />
                                         ) : (
-                                            <div className={styles.image}>
-                                                <Image
-                                                    className={styles.img}
-                                                    src={color.src!}
-                                                    alt=""
-                                                    width={color.width!}
-                                                    height={color.height!}
-                                                /> 
-                                            </div>
+                                            <Image
+                                                className={styles.img}
+                                                src={image.src}
+                                                alt="Image"
+                                                width={image.width}
+                                                height={image.height}
+                                                //onLoadingComplete={() => setImageHasLoaded(true)}
+                                                //loading="lazy" // You can adjust the loading attribute as needed (e.g., "lazy", "eager")
+                                            />
                                         )}
                                     </SwiperSlide>
                                 ))}
                             </Swiper>
-                        </div>
-                    ) : (<></>)}
-                    {product.specification?.sizes && product.specification!.sizes[0] !== "" && product.specification!.sizes.length !== 0 ? (
-                        <div className={styles.product_sizes}>
-                            <span className={styles.span1}>Size</span>
-                            <Swiper
-                                effect={'slide'}
-                                spaceBetween={10}
-                                grabCursor={true}
-                                centeredSlides={false}
-                                loop={false}
-                                autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-                                slidesPerView={'auto'}
-                                onBeforeInit={(swiper) => {
-                                    swiperRef.current = swiper;
-                                    }}
-                                coverflowEffect={{
-                                    rotate: 0,
-                                    stretch: 0,
-                                    depth: 100,
-                                    modifier: 2.5,
-                                }}
-                                fadeEffect={{ crossFade: true }}
-                                pagination={{ el: '.swiper-pagination', clickable: true }}
-                                //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
-                                modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
-                                className={styles.sizeContainer}
-                            >
-                                {product.specification?.sizes?.map((size, id) => (
-                                    <SwiperSlide className={`${styles.slider} ${sizeId === id ? styles.activeSizeBtn : styles.inActiveSizeBtn}`} key={id} onClick={(e) => chooseSize(e, id)}>
-                                        <span>{typeof size === "string" ? size : size.size }</span>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
-                            <div className={styles.controller}>
-                                <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
-                                    <KeyboardArrowLeft />
-                                </button>
-                                {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
-                                <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
-                                    <KeyboardArrowRight />
-                                </button>
+                            <div className={styles.image_slide_}>
+                                {/* {product.images.map((image, imageId) => (
+                                    <div key={imageId} className={`${styles.image} ${imageId === imageIndex ? styles.activeImage : ""}`} onClick={() => {
+                                        setView(() => image.type === "image" ? "image" : "video")
+                                        setImageIndex(() => imageId)
+                                    }}>
+                                        
+                                        
+                                    </div>
+                                ))} */}
+                                {/* {p.videos && p.videos.length > 0 && p.videos[0].src ? p.videos.map((video, videoId) => (
+                                    <div className={styles.image} key={videoId} onClick={() => {
+                                        setView(() => "video")
+                                        setVideoIndex(() => videoId)
+                                    }}>
+                                        <iframe
+                                            className={styles.iframe}
+                                            src={video.src}
+                                            width={video.width}
+                                            height={video.height}
+                                            //allow="autoplay"
+                                            frameBorder={0}
+                                            //sandbox="allow-forms"
+                                        >
+                                    </iframe>
+                                </div>
+                                )) : (
+                                    <></>
+                                )} */}
                             </div>
                         </div>
-                    ) : (<></>)}
-                    <div className={styles.buttons}>
-                        <div className={styles.product_quantity}>
-                            <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
-                                <Remove style={{ fontSize: "1rem" }} />
-                            </button>
-                            <span>{quantity}</span>
-                            <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
-                                <Add style={{ fontSize: "1rem" }} />
-                            </button>
-                        </div>
-                        {addedToCart ? (
-                            <button className={styles.cart_button} onClick={(e) => orderNow(e)}>
-                                {checkoutIsLoading ? (
-                                    <Loading width="20px" height="20px" />
+                        <div className={styles.right_section}>
+                            <h3>
+                                <strong>{product.name}</strong>
+                                {/* {checkExtraDiscountOffer(product) ? (
+                                    // <Tooltip title="Discount Offer" placement='top'>
+                                    //     <IconButton>
+                                        <Discount className={styles.icon} onClick={(e) => openDiscountModal(e)} />
+                                    //     </IconButton>
+                                    // </Tooltip>
                                 ) : (
-                                    <>
-                                        <ShoppingCartCheckout className={styles.icon} />
-                                        <span>Checkout</span>
-                                    </>
-                                )}
-                            </button>
-                        ) : (
-                            <button className={styles.cart_button} onClick={(e) => addToCart(e, false)}>
-                                {addToCartIsLoading ? (
-                                    <Loading width="20px" height="20px" />
-                                ) : (
-                                    <>
-                                        <AddShoppingCart className={styles.icon} />
-                                        <span>Add to Cart</span>
-                                    </>
-                                )}
-                            </button>
-                        )}
-                        <button className={styles.wish_button} onClick={(e) => wishProduct(e)}>
-                            <FavoriteBorder className={styles.icon} />
-                        </button>
-                    </div>
-                    {/* <div className={styles.product_specs}>
-                            {p.specification?.colors && p.specification?.colors.length > 1 ? (
-                                <div className={styles.colors}>
-                                    <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
-                                        <div className={styles.circle} style={{ backgroundColor: `${p.specification?.colors[colorId]}`, borderColor: p.specification?.colors[colorId] === "white" ? "black": `${p.specification?.colors[colorId]}`}}></div>
-                                        <span>{capitalizeFirstLetter(p.specification?.colors[colorId])}</span>
-                                        <span className={`${selectColor ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
-                                    </button>
-                                    <div className={`${styles.color_option}`} style={{ display: selectColor ? "flex" : "none"}}>
-                                        {p.specification.colors.map((color, _id) => (
-                                            <button key={_id} className={colorId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseColor(e, _id)}>
-                                                <div className={styles.circle} style={{ backgroundColor: `${color}`, borderColor: color === "white" ? "black": `${color}` }}></div>
-                                                <span>{capitalizeFirstLetter(color)}</span>
-                                            </button>
-                                        ))}
+                                    <></>
+                                )} */}
+                            </h3>
+                            <span className={styles.product_about}>{product.description}</span>
+                            <div className={styles.product_price_orders_rating}>
+                                <div className={styles.price_orders}>
+                                <div className={styles.product_price}>
+                                    <div className={styles.price}>
+                                        {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                                        {clientInfo ? (
+                                            <span>{clientInfo.country?.currency?.symbol}</span>
+                                        ) : (
+                                            <></>
+                                        )}
+                                        {clientInfo?.country?.currency?.exchangeRate ? (
+                                            <span>
+                                                {round(customPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            </span> 
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </div>
+                                    <div className={styles.slashed_price}>
+                                        {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
+                                        {clientInfo?.country?.currency?.exchangeRate ? (
+                                            <span>
+                                                {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
+                                            </span>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                 </div>
-                            ) : (<></>)}
-                            {p.specification?.sizes && p.specification?.sizes.length > 1 ? (
-                                <div className={styles.sizes}>
-                                    <button className={styles.selectedSize} onClick={() => setSelectSize(!selectSize)}>
-                                        <span>{p.specification?.sizes[sizeId]}</span>
-                                        <span className={`${selectSize ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
-                                    </button>
-                                    <div className={`${styles.size_option}`} style={{ display: selectSize ? "flex" : "none"}}>
-                                        {p.specification?.sizes.map((size, _id) => (
-                                            <button key={_id} className={sizeId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseSize(e, _id)}>
-                                                {size}
-                                            </button>
-                                        ))}
-                                    </div>
+                                <div className={styles.product_orders}>
+                                    <LocalShippingIcon className={styles.icon} />
+                                    <span>{product.orders?.toLocaleString("en-US")} orders</span>
                                 </div>
-                            ) : (<></>)}
-                    </div> */}
-                    {/* <div className={styles.product_quantity_specs}>
-                        <div className={styles.product_quantity}>
-                            <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
-                                <RemoveIcon style={{ fontSize: "1rem" }} />
+                                <div className={styles.percent}>
+                                    <span>-{product.pricing?.discount}%</span>
+                                </div>
+                                </div>
+                                <div className={styles.rating}>
+                                    <div className={styles.stars}>
+                                        {stars.map((star, id) => (
+                                            <Star className={styles.star} key={id} />
+                                        ))}
+                                        <StarHalf className={styles.star} />
+                                    </div>
+                                    <span>{product.rating}</span>
+                                </div>
+                            </div>
+                            <button className={styles.return} onClick={(e) => viewReturnPolicy(e)}>
+                                <span>Return & Refund Policy</span>
+                                <Add style={{ fontSize: "1rem" }}/>
                             </button>
-                            <span>{quantity}</span>
-                            <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
-                                <AddIcon style={{ fontSize: "1rem" }} />
-                            </button>
-                        </div>
-                    </div> */}
-
-                    {/* <div className={styles.product_cart_order}>
-                        <button className={styles.order_button} onClick={(e) => orderNow(e)}>
-                            <ShoppingCartCheckout className={styles.icon} />
-                            <span>Checkout</span>
-                        </button>
-                        <button className={styles.cart_button} onClick={e => {
-                            addToCart(e, false)
-                        }}>
-                            <AddShoppingCart className={styles.icon} />
-                            <span>Add to Cart</span>
-                        </button>
-                    </div> */}
-                    {/* <div className={styles.product_accordian}>
-                        {questions.map((q, index) => (
-                            <div key={index}>
-                                <button
-                                    className={`${styles.question} ${activeHeading === index ? styles.activeQuestion : styles.inactiveQuestion}`}
-                                    onClick={() => handleHeadingClick(index)}
-                                >
-                                    {q.question}
-                                    <span className={`${activeHeading === index ? styles.activeSymbol : styles.inactiveSymbol}`}>
-                                        {"+"}
-                                    </span>
-                                </button>
-                                <div
-                                    className={`${styles.answer} ${
-                                        activeHeading === index ? styles.answerActive : ''
-                                    }`}
-                                >
-                                    <ul >
-                                        {questions[index].answer?.map((a, a_id) => (
-                                            <Fragment key={a_id}>
-                                                {a ? (
-                                                    <li>{a}</li>
+                            <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
+                            {product.specification?.colors && product.specification.colors[0] !== "" ? (
+                                <div className={styles.product_colors}>
+                                    <span className={styles.span1}>Color: <span className={styles._span1}>{getColorName()}</span></span>
+                                    <Swiper
+                                        effect={'slide'}
+                                        spaceBetween={8}
+                                        grabCursor={true}
+                                        centeredSlides={false}
+                                        loop={false}
+                                        autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                                        slidesPerView={'auto'}
+                                        onBeforeInit={(swiper) => {
+                                            swiperRef.current = swiper;
+                                            }}
+                                        coverflowEffect={{
+                                            rotate: 0,
+                                            stretch: 0,
+                                            depth: 100,
+                                            modifier: 2.5,
+                                        }}
+                                        fadeEffect={{ crossFade: true }}
+                                        pagination={{ el: '.swiper-pagination', clickable: true }}
+                                        //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+                                        modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+                                        className={styles.colorContainer}
+                                    >
+                                        {product.specification?.colors?.map((color, id) => (
+                                            <SwiperSlide className={`${styles.slider} ${colorId === id ? styles.activeColorBtn : styles.inActiveColorBtn}`} key={id} onClick={(e) => chooseColor(e, id)}>
+                                                {typeof color === "string" ? (
+                                                    <div className={styles.color} style={{ backgroundColor: `${color}`, borderColor: `${color}` }}></div>
                                                 ) : (
-                                                    <></>
+                                                    <div className={styles.image}>
+                                                        <Image
+                                                            className={styles.img}
+                                                            src={color.src!}
+                                                            alt=""
+                                                            width={color.width!}
+                                                            height={color.height!}
+                                                        /> 
+                                                    </div>
                                                 )}
-                                            </Fragment>
+                                            </SwiperSlide>
                                         ))}
-                                    </ul>
-
+                                    </Swiper>
                                 </div>
+                            ) : (<></>)}
+                            {product.specification?.sizes && product.specification!.sizes[0] !== "" && product.specification!.sizes.length !== 0 ? (
+                                <div className={styles.product_sizes}>
+                                    <span className={styles.span1}>Size</span>
+                                    <Swiper
+                                        effect={'slide'}
+                                        spaceBetween={10}
+                                        grabCursor={true}
+                                        centeredSlides={false}
+                                        loop={false}
+                                        autoplay={false} //{{ delay: 7000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                                        slidesPerView={'auto'}
+                                        onBeforeInit={(swiper) => {
+                                            swiperRef.current = swiper;
+                                            }}
+                                        coverflowEffect={{
+                                            rotate: 0,
+                                            stretch: 0,
+                                            depth: 100,
+                                            modifier: 2.5,
+                                        }}
+                                        fadeEffect={{ crossFade: true }}
+                                        pagination={{ el: '.swiper-pagination', clickable: true }}
+                                        //navigation={{ nextEl: nextRef.current, prevEl: prevRef.current }}
+                                        modules={[ EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade ]}
+                                        className={styles.sizeContainer}
+                                    >
+                                        {product.specification?.sizes?.map((size, id) => (
+                                            <SwiperSlide className={`${styles.slider} ${sizeId === id ? styles.activeSizeBtn : styles.inActiveSizeBtn}`} key={id} onClick={(e) => chooseSize(e, id)}>
+                                                <span>{typeof size === "string" ? size : size.size }</span>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                    <div className={styles.controller}>
+                                        <button className={`arrow-left arrow ${styles.prev}`} onClick={() => swiperRef.current?.slidePrev()}>
+                                            <KeyboardArrowLeft />
+                                        </button>
+                                        {/* <div className={`swiper-pagination ${styles.pagination}`}></div> */}
+                                        <button className={`arrow-right arrow ${styles.next}`} onClick={() => swiperRef.current?.slideNext()}>
+                                            <KeyboardArrowRight />
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (<></>)}
+                            <div className={styles.buttons}>
+                                <div className={styles.product_quantity}>
+                                    <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
+                                        <Remove style={{ fontSize: "1rem" }} />
+                                    </button>
+                                    <span>{quantity}</span>
+                                    <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
+                                        <Add style={{ fontSize: "1rem" }} />
+                                    </button>
+                                </div>
+                                {addedToCart ? (
+                                    <button className={styles.cart_button} onClick={(e) => orderNow(e)}>
+                                        {checkoutIsLoading ? (
+                                            <Loading width="20px" height="20px" />
+                                        ) : (
+                                            <>
+                                                <ShoppingCartCheckout className={styles.icon} />
+                                                <span>Checkout</span>
+                                            </>
+                                        )}
+                                    </button>
+                                ) : (
+                                    <button className={styles.cart_button} onClick={(e) => addToCart(e, false)}>
+                                        {addToCartIsLoading ? (
+                                            <Loading width="20px" height="20px" />
+                                        ) : (
+                                            <>
+                                                <AddShoppingCart className={styles.icon} />
+                                                <span>Add to Cart</span>
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+                                <button className={styles.wish_button} onClick={(e) => wishProduct(e)}>
+                                    <FavoriteBorder className={styles.icon} />
+                                </button>
                             </div>
-                        ))}
-                    </div> */}
+                            {/* <div className={styles.product_specs}>
+                                    {p.specification?.colors && p.specification?.colors.length > 1 ? (
+                                        <div className={styles.colors}>
+                                            <button className={styles.selectedColor} onClick={() => setSelectColor(!selectColor)}>
+                                                <div className={styles.circle} style={{ backgroundColor: `${p.specification?.colors[colorId]}`, borderColor: p.specification?.colors[colorId] === "white" ? "black": `${p.specification?.colors[colorId]}`}}></div>
+                                                <span>{capitalizeFirstLetter(p.specification?.colors[colorId])}</span>
+                                                <span className={`${selectColor ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
+                                            </button>
+                                            <div className={`${styles.color_option}`} style={{ display: selectColor ? "flex" : "none"}}>
+                                                {p.specification.colors.map((color, _id) => (
+                                                    <button key={_id} className={colorId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseColor(e, _id)}>
+                                                        <div className={styles.circle} style={{ backgroundColor: `${color}`, borderColor: color === "white" ? "black": `${color}` }}></div>
+                                                        <span>{capitalizeFirstLetter(color)}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (<></>)}
+                                    {p.specification?.sizes && p.specification?.sizes.length > 1 ? (
+                                        <div className={styles.sizes}>
+                                            <button className={styles.selectedSize} onClick={() => setSelectSize(!selectSize)}>
+                                                <span>{p.specification?.sizes[sizeId]}</span>
+                                                <span className={`${selectSize ? styles.activeArrow : styles.inactiveArrow}`}>{">"}</span>
+                                            </button>
+                                            <div className={`${styles.size_option}`} style={{ display: selectSize ? "flex" : "none"}}>
+                                                {p.specification?.sizes.map((size, _id) => (
+                                                    <button key={_id} className={sizeId === _id ? styles.activeButton : styles.inActiveButton} onClick={(e) => chooseSize(e, _id)}>
+                                                        {size}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (<></>)}
+                            </div> */}
+                            {/* <div className={styles.product_quantity_specs}>
+                                <div className={styles.product_quantity}>
+                                    <button className={styles.minus_button} onClick={e => reduceQuantity(e)}>
+                                        <RemoveIcon style={{ fontSize: "1rem" }} />
+                                    </button>
+                                    <span>{quantity}</span>
+                                    <button className={styles.plus_button} onClick={e => increaseQuantity(e)}>
+                                        <AddIcon style={{ fontSize: "1rem" }} />
+                                    </button>
+                                </div>
+                            </div> */}
+
+                            {/* <div className={styles.product_cart_order}>
+                                <button className={styles.order_button} onClick={(e) => orderNow(e)}>
+                                    <ShoppingCartCheckout className={styles.icon} />
+                                    <span>Checkout</span>
+                                </button>
+                                <button className={styles.cart_button} onClick={e => {
+                                    addToCart(e, false)
+                                }}>
+                                    <AddShoppingCart className={styles.icon} />
+                                    <span>Add to Cart</span>
+                                </button>
+                            </div> */}
+                            {/* <div className={styles.product_accordian}>
+                                {questions.map((q, index) => (
+                                    <div key={index}>
+                                        <button
+                                            className={`${styles.question} ${activeHeading === index ? styles.activeQuestion : styles.inactiveQuestion}`}
+                                            onClick={() => handleHeadingClick(index)}
+                                        >
+                                            {q.question}
+                                            <span className={`${activeHeading === index ? styles.activeSymbol : styles.inactiveSymbol}`}>
+                                                {"+"}
+                                            </span>
+                                        </button>
+                                        <div
+                                            className={`${styles.answer} ${
+                                                activeHeading === index ? styles.answerActive : ''
+                                            }`}
+                                        >
+                                            <ul >
+                                                {questions[index].answer?.map((a, a_id) => (
+                                                    <Fragment key={a_id}>
+                                                        {a ? (
+                                                            <li>{a}</li>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </Fragment>
+                                                ))}
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                ))}
+                            </div> */}
+                        </div>
+                    </main>
+                    <div className={styles.extraInfo}>
+                        <div className={styles.buttons}>
+                            <button className={activeInfoBtn === 0 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 0)}>Description</button>
+                            <button className={activeInfoBtn === 1 ? styles.activeInfoBtn: ""} onClick={(e) => clickInfoBtn(e, 1)}>Specifications</button>
+                            {/* <button className={activeInfoBtn === 2 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 2)}>Reviews</button> */}
+                        </div>
+                        <div className={styles.infoBody}>
+                            {activeInfoBtn === 0 ? (
+                                <Fragment>
+                                    <span className={styles.span_d1}>
+                                        <strong>Description</strong> <br />
+                                        <span>{product.description}</span>
+                                    </span>
+                                    <span className={styles.span_d2}>
+                                        <strong>Customer Benefits</strong>
+                                        <ul>
+                                            {product.specification?.benefits?.map((benefit, id) => (
+                                                <li key={id}>{benefit}</li>
+                                            ))}
+                                        </ul>
+                                    </span>
+                                    <span className={styles.span_d3}>
+                                        <strong>How to use</strong>
+                                        <ul>
+                                            {product.specification?.prescription?.map((step, id) => (
+                                                <li key={id}>{step}</li>
+                                            ))}
+                                        </ul>
+                                    </span>
+                                </Fragment>
+                            ) : activeInfoBtn === 1 ? (
+                                <Fragment>
+                                    <span className={styles.span_s1}>
+                                        <strong>Specifications</strong>
+                                        <ul>
+                                            {specs?.map((spec, id) => (
+                                                <>
+                                                    {spec ? (
+                                                        <li key={id}>{spec}</li>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </>
+                                            ))}
+                                        </ul>
+                                    </span>
+                                </Fragment>
+                            ) : activeInfoBtn === 2 ? (
+                                <></>
+                            ) : (
+                                <></>
+                            )}
+                        </div>
                     </div>
-            </main>
-            <div className={styles.extraInfo}>
-                <div className={styles.buttons}>
-                    <button className={activeInfoBtn === 0 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 0)}>Description</button>
-                    <button className={activeInfoBtn === 1 ? styles.activeInfoBtn: ""} onClick={(e) => clickInfoBtn(e, 1)}>Specifications</button>
-                    {/* <button className={activeInfoBtn === 2 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 2)}>Reviews</button> */}
-                </div>
-                <div className={styles.infoBody}>
-                    {activeInfoBtn === 0 ? (
-                        <Fragment>
-                            <span className={styles.span_d1}>
-                                <strong>Description</strong> <br />
-                                <span>{product.description}</span>
-                            </span>
-                            <span className={styles.span_d2}>
-                                <strong>Customer Benefits</strong>
-                                <ul>
-                                    {product.specification?.benefits?.map((benefit, id) => (
-                                        <li key={id}>{benefit}</li>
-                                    ))}
-                                </ul>
-                            </span>
-                            <span className={styles.span_d3}>
-                                <strong>How to use</strong>
-                                <ul>
-                                    {product.specification?.prescription?.map((step, id) => (
-                                        <li key={id}>{step}</li>
-                                    ))}
-                                </ul>
-                            </span>
-                        </Fragment>
-                    ) : activeInfoBtn === 1 ? (
-                        <Fragment>
-                            <span className={styles.span_s1}>
-                                <strong>Specifications</strong>
-                                <ul>
-                                    {specs?.map((spec, id) => (
-                                        <>
-                                            {spec ? (
-                                                <li key={id}>{spec}</li>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
-                                    ))}
-                                </ul>
-                            </span>
-                        </Fragment>
-                    ) : activeInfoBtn === 2 ? (
-                        <></>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-            </div>
+                </>
+            ) : (
+                <></>
+            )}
         </>
     );
 };

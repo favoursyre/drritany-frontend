@@ -21,7 +21,8 @@ import Taxjar from "taxjar"
  * @returns The Cart component
  */
 const Cart = () => {
-    const [cart, setCart] = useState<ICart | null>(getItem(cartName))
+    const cart_ = getItem(cartName)
+    const [cart, setCart] = useState<ICart | null>(cart_)
     const extraDeliveryFee__ = getItem(extraDeliveryFeeName)
     const [extraDeliveryFee, setExtraDeliveryFee] = useState<number>(extraDeliveryFee__ ? extraDeliveryFee__ : 0)
     const [deliveryInfo, setDeliveryInfo] = useState<ICustomerSpec | undefined>(getItem(deliveryName))
@@ -38,6 +39,7 @@ const Cart = () => {
     const orderForm = useOrderFormModalStore(state => state.modal)
     const setOrderForm = useOrderFormModalStore(state => state.setOrderFormModal)
     const setOrderModal = useOrderModalStore(state => state.setOrderModal)
+    const orderModal = useOrderModalStore(state => state.modal)
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const modalBackground = useModalBackgroundStore(state => state.modal);
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
@@ -95,7 +97,10 @@ const Cart = () => {
     useEffect(() => {
         if (clientInfo) {
             // Client info is already available
-            setModalBackground(false);
+            if (orderModal === false) {
+                setModalBackground(false);
+            }
+            
             setLoadingModal(false);
             return;
         }
@@ -112,7 +117,7 @@ const Cart = () => {
         // Cleanup interval on unmount
         return () => clearInterval(interval);
     
-    }, [clientInfo]);
+    }, [_clientInfo]);
     
     //Checking the url to know if stripe payment session is active
     useEffect(() => {

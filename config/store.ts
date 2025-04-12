@@ -10,7 +10,7 @@ import { clientInfoName } from "./utils";
 
 //Modal Background state store
 export const useModalBackgroundStore = create<IModalBackgroundStore>((set) => ({
-    modal: true,
+    modal: false,
     setModalBackground: (status) => set(() => ({ modal: status }))
 }))
 
@@ -36,7 +36,7 @@ export const useReturnPolicyModalStore = create<IReturnPolicyModalStore>((set) =
 
 //Loading Modal state store
 export const useLoadingModalStore = create<ILoadingModalStore>((set) => ({
-    modal: true,
+    modal: false,
     setLoadingModal: (status) => set(() => ({ modal: status }))
 }))
 

@@ -2,10 +2,10 @@
 ///Footer component
 
 ///Libraries -->
-import { getDevice, getItem, notify, visitSocialLink, getOS } from '@/config/clientUtils';
+import { getDevice, getItem, notify, visitSocialLink, getOS, setItem } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend, companyName, logo, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName } from '@/config/utils'
-import { IContact, INews, IOrderSheet, IButtonResearch } from "@/config/interfaces";
+import { routeStyle, backend, companyName, logo, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, productFilterName } from '@/config/utils'
+import { IContact, INews, IProductFilter, IButtonResearch } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";
 import validator from "validator";
@@ -79,6 +79,15 @@ const Footer = () => {
             Device: getDevice()
         }
         storeButtonInfo(info)
+
+        if (nav === "products") {
+
+            const filterSettings: IProductFilter = {
+                filterId: 0,
+                category: "All"
+            }
+            setItem(productFilterName, filterSettings)
+        }
 
         router.push(`/${nav}`)
       }

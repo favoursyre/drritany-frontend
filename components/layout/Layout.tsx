@@ -11,7 +11,7 @@ import Footer from "@/components/footer/Footer";
 import { ToastContainer } from 'react-toastify';
 import Modal from "@/components/modals/modalBackground/Modal";
 import 'react-toastify/dist/ReactToastify.css';
-import { useClientInfoStore, useLoadingModalStore, useModalBackgroundStore } from "@/config/store";
+import { useClientInfoStore, useLoadingModalStore, useModalBackgroundStore, useOrderModalStore } from "@/config/store";
 import { IClientInfo, ITrafficResearch, ISheetInfo, IProduct } from "@/config/interfaces";
 import { countryList } from "@/config/database";
 import GoogleTagManager from "@/config/GoogleTagManager";
@@ -83,6 +83,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const [trafficStore, setTrafficStore] = useState<boolean>(false)
     const _products = Cache(productsName).get()
+    const orderModal = useOrderModalStore(state => state.modal)
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
     //Fetching client info
@@ -130,8 +131,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         //console.log("testing")
 
         let _clientInfo_
+        //let interval: NodeJS.Timer
         
         if (!clientInfo) {
+          setModalBackground(true)
+          setLoadingModal(true)
+
             //console.log("Client info not detected")
             const interval = setInterval(() => {
                 _clientInfo_ = getItem(clientInfoName)
@@ -142,15 +147,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             //console.log("Delivery Info: ", deliveryInfo)
         
             return () => {
-                clearInterval(interval);
+                clearInterval(interval );
             };
         } else {
-          setModalBackground(false)
+          //clearInterval(interval)
+          if (orderModal === false) {
+            setModalBackground(false)
+          }
+          
             setLoadingModal(false)
             //console.log("Client info detected")
         }  
 
-    }, [clientInfo])
+    }, [_clientInfo])
 
     //Setting the client user details
     useEffect(() => {
@@ -244,7 +253,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }
           
 
-        setModalBackground(false)
+          if (orderModal === false) {
+            setModalBackground(false)
+          }
         setLoadingModal(false)
       } else {
         setModalBackground(true)

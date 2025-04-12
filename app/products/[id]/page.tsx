@@ -17,7 +17,7 @@ async function getProduct(id: string) {
   try {
     const res = await fetch(`${backend}/product/${id}`, {
       method: "GET",
-      //cache: "force-cache",
+      cache: "force-cache",
       //next: { revalidate: 120 },
     })
 

@@ -87,14 +87,10 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
 
     // }, [productList, products])
 
-    //Updating query
+    //Updating the product and query
     useEffect(() => {
         console.log("Query: ", query_, query)
         setQuery(() => query_)
-    }, [product_])
-
-    //Updating the product
-    useEffect(() => {
         
         //console.log("Products Len: ", products.length)
         const start = (currentBatch - 1) * limit
@@ -106,13 +102,13 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
             const product__ = product_.slice(0, end)
             setProductList(() => product_);
             setProducts(() => product__);
-            console.log("Products 2: ", product__)
+            //console.log("Products 2: ", product__)
             const _possibleBatches = Math.ceil(product_.length / limit)
             //console.log("Total batch: ", _possibleBatches)
             setTotalBatch(() => _possibleBatches)
         }
 
-        console.log("Products 5: ", products)
+        //console.log("Products 5: ", products)
         //notify("info", `Len ${products.length}`)
         //setViewProducts(() => newProducts.slice(start, end))
     }, [product_]);
@@ -180,7 +176,7 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
             }
             //removeItem(productFilterName)
         }
-    }, [productFilter, products])
+    }, [productFilter, product_])
 
     // useEffect(() => {
     //     //Setting product filter
