@@ -375,7 +375,6 @@ const Cart = () => {
             return
         }
 
-        setModalBackground(true)
         if (deliveryInfo) {
             //Validating if the user is from the USA, we only serve US clients for the meantime
             const usCountryInfo = countryList.find((country) => country.name?.abbreviation === "US")
@@ -384,6 +383,7 @@ const Cart = () => {
                 return
             }
 
+            setModalBackground(true)
             setOrderModal(true)
             //removeItem_(cartName)
             // console.log("deleted")
@@ -391,6 +391,8 @@ const Cart = () => {
         } else {
             notify("error", "Delivery Info is required")
             await sleep(0.3)
+            
+            setModalBackground(true)
             setOrderForm(true)
             //window.location.reload()
         }

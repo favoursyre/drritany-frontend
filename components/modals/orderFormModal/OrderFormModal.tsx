@@ -408,11 +408,11 @@ const OrderFormModal = () => {
                     setMunicipality(() => zip.places[0]["place name"])
 
                     if (zip.country !== country) {
-                        notify("error", "Zip code doesn't match your country")
+                        notify("error", `Zip code doesn't match ${country}`)
                         throw Error
                         //return
                     } else if (zip.places[0].state !== state) {
-                        notify("error", "Zip code doesn't match your state")
+                        notify("error", `Zip code doesn't match ${state}`)
                         throw Error
                     }
                     

@@ -1310,11 +1310,11 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "When should I expect my delivery?",
-        answer: `Deliveries are usually within ${deliveryPeriod} - ${deliveryDuration + deliveryPeriod} business days, be rest assured that we would do everything to deliver your products to you as soon as possible.`
+        answer: `Deliveries are usually within ${deliveryPeriod} - ${deliveryDuration + deliveryPeriod} business days depending on where we're shipping from and to, be rest assured that we would do everything to deliver your products to you as soon as possible.`
     },
     {
         question: "How can I track my order?",
-        answer: "You will receive an order invoice slip via email once you place an order, you can always use the invoice slip to track your order status."
+        answer: "You can always use the delivery status on your order receipt slip to track your order status."
     },
     {
         question: "How do I pay for my order?",
@@ -1334,7 +1334,7 @@ export const faqs: Array<IFAQState> = [
     },
     {
         question: "What is your return policy?",
-        answer: "Damaged or wrong products should be returned within 7 days of purchase. To be eligible, items must be unused and in original packaging/condition and we'd refund you accordingly, contact our support team for more info."
+        answer: "Damaged or wrong products should be returned within 10 days of purchase. To be eligible, items must be unused and in original packaging/condition and we'd refund you accordingly, contact our support team for more info."
     },
     {
         question: "Can I change or cancel my order?",

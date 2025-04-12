@@ -409,7 +409,7 @@
 
             .span2 {
                 position: relative;
-                left: 22%;
+                left: 23%;
 
                 @include phonePro {
                     left: 17%;
@@ -420,10 +420,10 @@
                 // padding: 20%;
                 // margin: 20%;
                 position: relative;
-                left: 35%;
+                left: 37%;
 
                 @include phonePro {
-                    left: 25%;
+                    left: 27%;
                 }
 
                 @include phoneMini {
@@ -433,7 +433,7 @@
 
             .span4 {
                 position: relative;
-                left: 43%;
+                left: 45%;
 
                 @include phonePro {
                     left: 35%;
