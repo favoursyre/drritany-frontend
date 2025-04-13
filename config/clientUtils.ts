@@ -238,7 +238,7 @@ export const Cache = (key: string) => {
                 throw new Error("Data doesn't exist, crosscheck key")
             }
         } catch (error) {
-            console.log('Error in getting cache: ', error)
+            //console.log('Error in getting cache: ', error)
             return undefined
         }
     }
@@ -258,7 +258,7 @@ export const Cache = (key: string) => {
             setItem(key, data)
             return true
         } catch (error) {
-            console.log('Error in setting cache: ', error)
+            //console.log('Error in setting cache: ', error)
             return false
         }
     }

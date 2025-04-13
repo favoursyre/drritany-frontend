@@ -4,8 +4,8 @@
 ///Libraries -->
 import { getDevice, getItem, notify, visitSocialLink, getOS, setItem } from '@/config/clientUtils';
 import styles from "./footer.module.scss"
-import { routeStyle, backend, companyName, logo, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, productFilterName } from '@/config/utils'
-import { IContact, INews, IProductFilter, IButtonResearch } from "@/config/interfaces";
+import { routeStyle, backend, companyName, logo, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, productFilterName, clientInfoName } from '@/config/utils'
+import { IClientInfo, INews, IProductFilter, IButtonResearch } from "@/config/interfaces";
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, FormEvent, MouseEvent } from "react";
 import validator from "validator";
@@ -27,7 +27,9 @@ const Footer = () => {
     const routerPath = usePathname();
     const [email, setEmail] = useState<string>("")
     const router = useRouter()
-    const clientInfo = useClientInfoStore(state => state.info)
+    //const clientInfo = useClientInfoStore(state => state.info)
+    const _clientInfo = getItem(clientInfoName)
+    const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
 
@@ -67,7 +69,7 @@ const Footer = () => {
         //Storing this info in button research
         const info: IButtonResearch = {
             ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
+            IP: clientInfo?.ip ? clientInfo?.ip : "undefined",
             Country: clientInfo?.country?.name?.common!,
             Button_Name: "viewFooterNav()",
             Button_Info: `Clicked ${nav} in footer`,
@@ -78,6 +80,7 @@ const Footer = () => {
             OS: getOS(),
             Device: getDevice()
         }
+
         storeButtonInfo(info)
 
         if (nav === "products") {

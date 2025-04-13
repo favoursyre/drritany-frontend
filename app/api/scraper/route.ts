@@ -52,9 +52,16 @@ function extractAliexpressProductInfo($: cheerio.CheerioAPI) {
         discount: $('.price--discount--Y9uG2LK').text().trim(),
         videos: [$('source').attr('src')],
         images: [] as Array<string>,
-        description: $('.description--origin-part--rWy05pE p').first().text().trim(),
+        description: $('.detail-desc-decorate-richtext').first().text().trim(),
         origin: 'China',
         specifications: {},
+        // Extract shipping
+        // const shipping = {
+        //     cost: cleanText($('.dynamic-shipping-titleLayout strong').first().text()) || 'N/A',
+        //     to: cleanText($('.delivery-v2--to--Mtweg7y').text()) || 'N/A',
+        //     from: cleanText($('.dynamic-shipping span:contains("Ships from")').next().text()) || 'N/A',
+        //     delivery: cleanText($('.dynamic-shipping-contentLayout strong').text()) || 'N/A',
+        // };
         reviews: {
             rating: $('.reviewer--wrap--vGS7G6P img').attr('src'),
             soldCount: $('.reviewer--sold--ytPeoEy').first().text().trim()
@@ -62,8 +69,9 @@ function extractAliexpressProductInfo($: cheerio.CheerioAPI) {
     };
 
     // Extract image URLs
-    $('.slider--item--FefNjlj img').each((i, el) => {
+    $('.slider--item--RpyeewA img').each((i, el) => {
         const src = $(el).attr('src');
+        console.log("Image src: ", i, src)
         if (src) { // Ensures src exists before pushing
             productInfo.images.push(formatAliexpressImageUrl(src));
         }
@@ -107,6 +115,7 @@ export async function POST(request: NextRequest) {
         }
 
         //Saving all the downloaded image file paths
+        console.log("Info Server: ", info)
         const filePaths: Array<string | undefined> = [...info.videos!]
 
         // Loop through each URL
