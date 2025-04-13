@@ -58,9 +58,10 @@ async function getQueriedOrders(query: string | string[] | undefined) {
 /**
  * @title Admin Orders page
  */
-export default async function AdminOrderPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
+export default async function AdminOrderPage({ searchParams }: Props) {
     const orders = sortMongoQueryByTime(await getOrders(),"latest") as unknown as Array<IOrder>
-    const { query } = req.searchParams
+    const query = searchParams.query as unknown as string
+    //const { query } = req.searchParams
     console.log("Query: ", query)
     
     const queriedOrders = sortMongoQueryByTime(await getQueriedOrders(query), "latest") as unknown as Array<IOrder>
