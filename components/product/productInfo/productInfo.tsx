@@ -1008,7 +1008,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 <Add style={{ fontSize: "1rem" }}/>
                             </button>
                             <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
-                            {product.specification?.colors && product.specification.colors[0] !== "" ? (
+                            {product.specification?.colors && product.specification.colors[0] !== "" && product.specification!.colors.length !== 0 ? (
                                 <div className={styles.product_colors}>
                                     <span className={styles.span1}>Color: <span className={styles._span1}>{getColorName()}</span></span>
                                     <Swiper
