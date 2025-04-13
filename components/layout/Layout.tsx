@@ -14,11 +14,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore, useLoadingModalStore, useModalBackgroundStore, useOrderModalStore } from "@/config/store";
 import { IClientInfo, ITrafficResearch, ISheetInfo, IProduct } from "@/config/interfaces";
 import { countryList } from "@/config/database";
-import GoogleTagManager from "@/config/GoogleTagManager";
+//import GoogleTagManager from "@/config/GoogleTagManager";
 import GoogleAnalytics from '@/config/GoogleAnalytics';
 import { useRouter, usePathname } from "next/navigation";
 import Head from "next/head";
 import { v4 as uuid } from 'uuid';
+import { GoogleTagManager } from "@next/third-parties/google"
 import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
 import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clientUtils";
 
@@ -84,6 +85,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const [trafficStore, setTrafficStore] = useState<boolean>(false)
     const _products = Cache(productsName).get()
     const orderModal = useOrderModalStore(state => state.modal)
+    const containerId =  "GTM-55DBL8LN" //process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
     //Fetching client info
@@ -128,7 +130,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //Updating client info
     useEffect(() => {
         //console.log("Hero: ", _clientInfo, clientInfo)
-        //console.log("testing")
+        console.log("Container: ", containerId)
 
         let _clientInfo_
         //let interval: NodeJS.Timer
@@ -297,10 +299,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" className={styles.html}>
        <Head>
-        <GoogleTagManager />
-        <GoogleAnalytics />
+        <GoogleTagManager gtmId={containerId} />
+        {/* <GoogleAnalytics /> */}
       </Head>
       <body suppressHydrationWarning={true} className={styles.body}>
+        {/* Add GTM noscript */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${containerId}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          ></iframe>
+        </noscript>
        <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />
         <Header />
         <Modal />

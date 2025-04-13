@@ -3,14 +3,14 @@
 
 ///Libraries -->
 //import Cart from "@/components/cart/Cart"
-import HomeCampaignB from "@/components/campaigns/homeCampaignB/homeCampaignB";
+//import HomeCampaignB from "@/components/campaigns/homeCampaignB/homeCampaignB";
 import ProductSlide from "@/components/product/productSlide/ProductSlide"
 import { IProduct, ISlideTitle } from "@/config/interfaces";
 import { backend, shuffleArray, sortProductByActiveStatus, getProducts } from "@/config/utils";
 import { Metadata } from "next";
-import dynamicImport from "next/dynamic";
-const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
-import { Suspense } from "react";
+//import dynamicImport from "next/dynamic";
+//const Cart = dynamicImport(() => import("@/components/cart/Cart"), { ssr: false })
+//import { Suspense } from "react";
 
 ///Commencing the code
 export const metadata: Metadata = {

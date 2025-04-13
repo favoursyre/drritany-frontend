@@ -2,17 +2,17 @@
 ///This handles the terms of order page
 
 ///Libraries -->
-//import Order from "@/components/order/Order"
+import Order from "@/components/order/Order"
 import { Metadata } from "next"
 import { backend, sortMongoQueryByTime, getUserOrders } from "@/config/utils"
 import { IOrder, Props } from "@/config/interfaces"
 import Loading from "@/components/loadingCircle/Circle"
 import { Suspense } from "react"
 import dynamic from 'next/dynamic'
-const Order = dynamic(
-  () => import('@/components/order/Order'),
-  { ssr: false }
-)
+//const Order = dynamic(
+//   () => import('@/components/order/Order'),
+//   { ssr: false }
+// )
 
 ///Commencing the code
 export const metadata: Metadata = {
@@ -21,10 +21,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `/order`
   }
-}
-
-function Fallback() {
-  return <Loading width="20px" height="20px" />
 }
 
 /**
@@ -40,7 +36,7 @@ export default async function OrderPage({ searchParams }: Props) {
 
   return (
     <main>
-      <Suspense fallback={<Fallback />}>
+      <Suspense fallback={<Loading width="20px" height="20px" />}>
         <Order orders_={orders} />
       </Suspense>
     </main>
