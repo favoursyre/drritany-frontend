@@ -23,7 +23,7 @@ import { GoogleTagManager } from "@next/third-parties/google"
 import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
 import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clientUtils";
 
-///Commencing the code 
+///Commencing the code
 ///This function get client's info
 // async function getClientInfo(clientInfo: IClientInfo | undefined, setClientInfo: (info: IClientInfo) => void, _userId: string) {
 //     try {
@@ -34,7 +34,7 @@ import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clie
 //             //     cache: "default",
 //             // })
 //             // console.log("IP red: ", res)
-        
+
 //             // if (res.ok) {
 //             //     const info_ = await res.json()
 //             //     console.log('Info res: ', info_)
@@ -65,7 +65,7 @@ import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clie
 //         }
 //     } catch (error) {
 //       //console.log(error);
-//     } 
+//     }
 // }
 
 /**
@@ -91,7 +91,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     //Fetching client info
     // useEffect(() => {
-      
+
 
     //   //I want to fetch the products and set them in cache ------------------------->
     //   const _getProducts = async () => {
@@ -106,16 +106,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //         console.log("setting...")
     //         Cache(productsName).set(products, 300)
     //       }
-          
+
     //     }
 
     //     console.log('Cache products2: ', Cache(productsName).get())
     //   }
-      
+
     //   _getProducts()
     //   //Decided to test something here ------------------------->
 
-    //   //Setting the client info 
+    //   //Setting the client info
     //   // if (!getItem(clientInfoName)) {
     //   //   //Setting the client info
     //   //   const info : IClientInfo = {
@@ -141,7 +141,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
         let _clientInfo_
         //let interval: NodeJS.Timer
-        
+
         if (!clientInfo) {
           setModalBackground(true)
           setLoadingModal(true)
@@ -152,9 +152,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 //console.log("Delivery Info: ", _deliveryInfo)
                 setClientInfo(_clientInfo_)
             }, 1000);
-    
+
             //console.log("Delivery Info: ", deliveryInfo)
-        
+
             return () => {
                 clearInterval(interval );
             };
@@ -165,10 +165,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             console.log("setting off modal background 3")
           }
           //setModalBackground(false)
-          
+
             setLoadingModal(false)
             //console.log("Client info detected")
-        }  
+        }
 
     }, [_clientInfo])
 
@@ -185,7 +185,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         } else {
           //console.log("User id is active")
         }
-  
+
         // ---> For USA only <---
         const info : IClientInfo = {
           _id: userId,
@@ -205,7 +205,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       //console.log(`useEffect 1 took ${end - start}ms`)
       //getClientInfo(clientInfo, setClientInfo, userId)
     }, [userId])
-    
+
     //Keeping track of visitors
     useEffect(() => {
       const start = performance.now()
@@ -221,7 +221,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             //console.log("Sending traffic")
             const storeTraffic = async () => {
                 try {
-                    
+
                     //Arranging the query research info
                     const trafficInfo: ITrafficResearch = {
                         ID: userId,
@@ -240,7 +240,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         sheetRange: "Traffic!A:I",
                         data: trafficInfo
                     }
-            
+
                     const res = await fetch(`${backend}/sheet`, {
                         method: "POST",
                         body: JSON.stringify(sheetInfo),
@@ -256,13 +256,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     //console.log("Store Error: ", error)
                 }
             }
-            
+
             storeTraffic()
-            
+
           } else {
             //console.log("Traffic has been sent already")
           }
-          
+
 
           if (orderModal === false) {
             setModalBackground(false)
@@ -281,9 +281,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     // useEffect(() => {
     //         //console.log("Hero: ", _clientInfo, clientInfo)
-    
+
     //         let _clientInfo_
-            
+
     //         if (!clientInfo) {
     //             //console.log("Client info not detected")
     //             const interval = setInterval(() => {
@@ -291,9 +291,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //                 //console.log("Delivery Info: ", _deliveryInfo)
     //                 setClientInfo(_clientInfo_)
     //             }, 100);
-        
+
     //             //console.log("Delivery Info: ", deliveryInfo)
-            
+
     //             return () => {
     //                 clearInterval(interval);
     //             };
@@ -301,32 +301,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //             setModalBackground(false)
     //             setLoadingModal(false)
     //             //console.log("Client info detected")
-    //         }  
-    
+    //         }
+
     //     }, [clientInfo])
 
   return (
     <html lang="en" className={styles.html}>
        {/* <Head>
-        
+
         <GoogleAnalytics />
       </Head> */}
       <body suppressHydrationWarning={true} className={styles.body}>
         {/* Add GTM noscript */}
-        <noscript>
+        {/* <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${containerId}`}
             height="0"
             width="0"
             style={{ display: 'none', visibility: 'hidden' }}
           ></iframe>
-        </noscript>
+        </noscript> */}
        {mounted && <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />}
         <Header />
         <Modal />
           <main className='container'>{children}</main>
         <Footer />
-      </body> 
+      </body>
       <GoogleTagManager gtmId={containerId} />
     </html>
   );
