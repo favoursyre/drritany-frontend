@@ -475,7 +475,7 @@ const OrderFormModal = () => {
             <form className={styles.form}>
                 <label >
                     Fullname
-                    <input placeholder="Surname Firstname Othernames" type="text" onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
+                    <input placeholder="Firstname Lastname" type="text" onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
                         value={fullName}
                     />
                 </label>
