@@ -307,10 +307,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html lang="en" className={styles.html}>
-       <Head>
-          <GoogleTagManager gtmId={containerId} />
+       {/* <Head> */}
+          
           {/* <GoogleAnalytics /> */}
-      </Head>
+      {/* </Head> */}
+      <GoogleTagManager gtmId={containerId} />
       <body suppressHydrationWarning={true} className={styles.body}>
         {/* Add GTM noscript */}
         {/* <noscript>
