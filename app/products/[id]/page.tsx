@@ -57,7 +57,9 @@ async function getProduct(id: string) {
 
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product: Array<IProduct> | undefined = await getProduct(params.id)
+  const { id } = await params
+  const product: Array<IProduct> | undefined = await getProduct(id)
+
   if (!product || product?.length === 0) {
     return {
       title: "Product not found",
@@ -68,7 +70,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${product[0].name}`,
       description: `${product[0].description}`,
       alternates: {
-        canonical: `/products/${params.id}`
+        canonical: `/products/${id}`
       }
     }
   }
@@ -77,7 +79,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * @title Product info page
  */
-export default async function ProductByIdPage({ params: { id } }: { params: { id: string }}) {
+export default async function ProductByIdPage({ params }: Props) {
+  const { id } = await params
+  console.log('ID from page: ', id)
   const product = await getProduct(id) as unknown as Array<IProduct>
   const products_ = sortProductByActiveStatus(await getProducts(), "Active") as unknown as Array<IProduct>
   const products = shuffleArray(removeProductFromArray(product[0], products_))

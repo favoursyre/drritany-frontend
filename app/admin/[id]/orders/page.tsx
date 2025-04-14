@@ -8,11 +8,13 @@ import { IOrder, Props } from "@/config/interfaces";
 
 ///Commencing the code
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { query } = await searchParams
+
     return {
       title: `Orders`,
       description: `View Orders`,
       alternates: {
-        canonical: searchParams.query ? `/orders?query=${searchParams.query}` : `/orders`
+        canonical: query ? `/orders?query=${query}` : `/orders`
       }
     } as Metadata
   }
@@ -60,8 +62,8 @@ async function getQueriedOrders(query: string | string[] | undefined) {
  */
 export default async function AdminOrderPage({ searchParams }: Props) {
     const orders = sortMongoQueryByTime(await getOrders(),"latest") as unknown as Array<IOrder>
-    const query = searchParams.query as unknown as string
-    //const { query } = req.searchParams
+    //const query = searchParams.query as unknown as string
+    const { query } = await searchParams
     console.log("Query: ", query)
     
     const queriedOrders = sortMongoQueryByTime(await getQueriedOrders(query), "latest") as unknown as Array<IOrder>

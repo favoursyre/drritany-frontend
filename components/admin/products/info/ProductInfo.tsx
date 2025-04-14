@@ -981,7 +981,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             >
                                 {categories.map((category, sid) => (
                                     <Fragment key={sid}>
-                                        <option value="" disabled selected hidden>Choose a category</option>
+                                        <option value="" disabled hidden>Choose a category</option>
                                         <option value={category.macro} key={sid}>{category.macro}</option>
                                     </Fragment>
                                 ))}
@@ -995,7 +995,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             disabled={setTagVisibility()}>
                                 {categories.find((c) => c.macro === macroCategory)?.minis.map((mini, m_id) => (
                                     <Fragment key={m_id}>
-                                        <option value="" disabled selected hidden>Choose a category</option>
+                                        <option value="" disabled hidden>Choose a category</option>
                                         <option value={mini.mini} key={m_id}>{mini.mini}</option>
                                     </Fragment>
                                 ))}
@@ -1009,7 +1009,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             disabled={setTagVisibility()}>
                                 {categories.find((c) => c.macro === macroCategory)?.minis.find((m) => m.mini === miniCategory)?.micros.map((micro, m_id) => (
                                     <Fragment key={m_id}>
-                                        <option value="" disabled selected hidden>Choose a category</option>
+                                        <option value="" disabled hidden>Choose a category</option>
                                         <option value={micro.micro} key={m_id}>{micro.micro}</option>
                                     </Fragment>
                                 ))}
@@ -1023,7 +1023,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             disabled={setTagVisibility()}>
                                 {categories.find((c) => c.macro === macroCategory)?.minis.find((m) => m.mini === miniCategory)?.micros.find((m) => m.micro === microCategory)?.nanos.map((nano, n_id) => (
                                     <Fragment key={n_id}>
-                                        <option value="" disabled selected hidden>Choose a category</option>
+                                        <option value="" disabled hidden>Choose a category</option>
                                         <option value={nano} key={n_id}>{nano}</option>
                                     </Fragment>
                                 ))}
@@ -1084,7 +1084,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 onChange={(e) => editProductInfo(e, "inStockOption")}
                                 disabled={setTagVisibility()}
                             >
-                                <option value="" disabled selected hidden>Choose an option</option>
+                                <option value="" disabled hidden>Choose an option</option>
                                 <option value={"True"}>{"True"}</option>
                                 <option value={"False"}>{"False"}</option>
                             </select>
@@ -1134,7 +1134,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                             >
                                 {ratings.map((rating, _id) => (
                                     <Fragment key={_id}>
-                                        <option value="" disabled selected hidden>Choose rating</option>
+                                        <option value="" disabled hidden>Choose rating</option>
                                         <option value={rating} key={_id}>{rating}</option>
                                     </Fragment>
                                 ))}
@@ -1358,7 +1358,7 @@ const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined 
                                 onChange={(e) => editProductInfo(e, "productGender")}
                                 disabled={setTagVisibility()}
                             >
-                                <option value="" disabled selected hidden>Choose gender</option>
+                                <option value="" disabled hidden>Choose gender</option>
                                 <option value={"Male"}>{"Male"}</option>
                                 <option value={"Feale"}>{"Female"}</option>
                                 <option value={"Unisex"}>{"Unisex"}</option>

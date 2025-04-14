@@ -12,12 +12,14 @@ import HomeCampaignA from '@/components/campaigns/homeCampaignA/homeCampaignA';
 
 ///Commencing the code
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  if (searchParams.query) {
+  const { query } = await searchParams
+
+  if (query) {
     return {
-      title: `${searchParams.query}`,
+      title: `${query}`,
       description: `Search our range of products.`,
       alternates: {
-        canonical: `/products?query=${searchParams.query}`
+        canonical: `/products?query=${query}`
       }
     } as Metadata
   } else {
@@ -53,8 +55,8 @@ async function getQueriedProducts(query: string | undefined) {
 /**
  * @title Product query page
  */
- export default async function ProductPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
-    const { query } = req.searchParams
+ export default async function ProductPage({ searchParams }: Props) {
+    const { query } = await searchParams
     const titles1: ISlideTitle = {
       slideTitleId: 4,
       barTitleId: 0
@@ -64,7 +66,7 @@ async function getQueriedProducts(query: string | undefined) {
       barTitleId: 2
     }
     
-    const queryProducts = sortProductByActiveStatus(await getQueriedProducts(query), "Active")
+    const queryProducts = sortProductByActiveStatus(await getQueriedProducts(query as unknown as string), "Active")
     const allProducts = sortProductByActiveStatus(shuffleArray(await getProducts()), "Active") as unknown as Array<IProduct>
     //const mostOrdered = sortProductByOrder(allProducts)
 
@@ -93,7 +95,7 @@ async function getQueriedProducts(query: string | undefined) {
 
     return (
       <main className="search_page">
-        <ProductCatalog query_={query} products_={products!} />
+        <ProductCatalog query_={query as unknown as string} products_={products!} />
         {query && (queryProducts === undefined || queryProducts.length === 0) ? (
           <ProductSlide _products={allProducts} _product={undefined} title_={titles1} view_={"productSlide1"}/>
         ) : (<></>)}

@@ -91,6 +91,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
             };
         } else {
           setModalBackground(false)
+          console.log("setting off modal background 2")
             setLoadingModal(false)
             //console.log("Client info detected")
         }  

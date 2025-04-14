@@ -16,25 +16,25 @@ export const notify = (type: string, message: string): void => {
     switch (type) {
         case "info":
             toast.info(message, {
-                position: toast.POSITION.TOP_CENTER,
+                position: "top-center",
                 style: { backgroundColor: 'white', color: '#1170FF' },
             });
             break
         case "error":
             toast.error(message, {
-                position: toast.POSITION.TOP_CENTER,
+                position: "top-center",
                 style: { backgroundColor: 'white', color: '#1170FF' },
             });
             break
         case "success":
             toast.success(message, {
-                position: toast.POSITION.TOP_CENTER,
+                position: "top-center",
                 style: { backgroundColor: 'white', color: '#1170FF' },
             }); 
             break
         case "warn":
             toast.warn(message, {
-                position: toast.POSITION.TOP_CENTER,
+                position: "top-center",
                 style: { backgroundColor: 'white', color: '#1170FF' },
             }); 
             break

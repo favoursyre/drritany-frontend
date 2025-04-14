@@ -33,6 +33,7 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
     const setContactModal = useContactModalStore(state => state.setContactModal);
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
+    const [sheetStored, setSheetStored] = useState<boolean>(false)
 
     //Updating client info
     // useEffect(() => {
@@ -140,12 +141,16 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                         body: JSON.stringify(sheetInfo),
                     });
                     //console.log("Google Stream: ", res)
+
+                    if (res.ok) {
+                        setSheetStored(true)
+                    }
                 } catch (error) {
                     //console.log("Store Error: ", error)
                 }
             }
             
-            if (query_) {
+            if (query_ && !sheetStored) {
                 storeQuery()
             }
         } else {

@@ -27,9 +27,9 @@ export const metadata: Metadata = {
  * @title Order page
  */
 export default async function OrderPage({ searchParams }: Props) {
-  const _userId = searchParams.userId as unknown as string
-  console.log("User Id: ", _userId)
-  const _products = await getUserOrders(_userId)
+  const { userId } = await searchParams
+  console.log("User Id: ", userId)
+  const _products = await getUserOrders(userId as unknown as string)
   console.log("Products Ser: ", _products)
 
   const orders = sortMongoQueryByTime(_products, "latest") as unknown as Array<IOrder>

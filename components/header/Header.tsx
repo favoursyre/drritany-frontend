@@ -228,8 +228,9 @@ const Header = () => {
 
         router.push(`/order?userId=${userId}`)
 
-        setModalBackground(false)
-        setLoadingModal(false)
+        //setModalBackground(false)
+        console.log("setting off modal background 4")
+        //setLoadingModal(false)
       } else {
         notify("error", "User not detected")
       }

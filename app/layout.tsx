@@ -17,10 +17,19 @@ export const metadata = {
     template: `%s | ${companyName}`
   },
   icons: {
-    icon: 'favicon.ico',
+    icon: '/favicon.ico',
   },
   description: 'We pride ourselves in offering a diverse range of items at the best prices, from everyday essentials to unique finds, ensuring that each customer finds something special. Our commitment to quality and customer satisfaction drives everything we do.',
-  keywords: "products, commerce, plug, ideal, buy, online, drug, health, pharmacy, detox, toxin, shop, store, tea, pad, commerce, ecommerce, natural"
+  keywords: [
+    'idealplug',
+    'ecommerce',
+    'online store',
+    'natural products',
+    'plug',
+    'ideal',
+    'shop',
+    'buy online',
+  ],
 }
 
 

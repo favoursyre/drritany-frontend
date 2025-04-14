@@ -317,7 +317,7 @@ productSchema.statics.getProductByLatest = async function () {
  * @returns The product with the given id
  */
 productSchema.statics.getProductById = async function (id: string) {
-  console.log("Id: ", id)
+  console.log("Id schema: ", id)
 
     //Validation of args
   if (!Types.ObjectId.isValid(id)) {

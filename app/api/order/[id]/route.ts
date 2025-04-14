@@ -4,14 +4,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
-import { IResponse, IOrder } from "@/config/interfaces";
+import { IResponse, IOrder, Props } from "@/config/interfaces";
 
 ///Commecing code
 //Patching details in a order
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: Props) {
 
     try {
-        const { id } = params;
+        const { id } = await params;
         const order: IOrder = await request.json();
         await connectMongoDB();
         const product_ = await Order.updateOrder(id, order)
@@ -25,8 +25,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 //Get details of an order
-export async function GET(request: NextRequest, response: IResponse) {
-    const id: string = response.params?.id as unknown as string;
+export async function GET(request: NextRequest, { params }: Props) {
+    const { id } = await params;
     //const action = request.nextUrl.searchParams.get("action");
     console.log("id: ", id)
     //const id = "661b8d1edaefd8de4812c8b1"
@@ -48,8 +48,8 @@ export async function GET(request: NextRequest, response: IResponse) {
 }
 
 ///Delete an account
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function DELETE(request: NextRequest, { params }: Props) {
+    const { id } = await params;
     //console.log("ID: ", id)
 
     try {

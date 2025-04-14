@@ -8,11 +8,13 @@ import { IProduct, Props } from "@/config/interfaces";
 
 ///Commencing the code
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { query } = await searchParams
+
     return {
       title: `Products`,
       description: `View Products`,
       alternates: {
-        canonical: searchParams.query ? `/products?query=${searchParams.query}` : `/products`
+        canonical: query ? `/products?query=${query}` : `/products`
       }
     } as Metadata
   }
@@ -58,9 +60,9 @@ async function getQueriedProducts(query: string | string[] | undefined) {
 /**
  * @title Admin Products page
  */
-export default async function AdminProductPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
+export default async function AdminProductPage({ searchParams }: Props) {
     const products = sortMongoQueryByTime(await getProducts(), "latest") as unknown as Array<IProduct>
-    const { query } = req.searchParams
+    const { query } = await searchParams
     console.log("Query: ", query)
     console.log('testing why')
     const queriedProducts = sortMongoQueryByTime(await getQueriedProducts(query), "latest") as unknown as Array<IProduct>

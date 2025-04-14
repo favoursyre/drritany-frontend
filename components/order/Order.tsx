@@ -13,7 +13,7 @@ import Loading from "@/components/loadingCircle/Circle";
 import { SearchOutlined, Add, Tune, CategoryOutlined } from "@mui/icons-material";
 import AdminProductCard from "@/components/cards/adminProduct/AdminProductCard";
 import puppeteer from "puppeteer"
-import { useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
+import { useModalBackgroundStore, useLoadingModalStore, useOrderModalStore } from "@/config/store";
 import OrderCard from "@/components/cards/order/OrderCard";
 
 /**
@@ -35,14 +35,21 @@ const Order = ({ orders_ }: { orders_: Array<IOrder> }) => {
     const [currentURL, setCurrentURL] = useState<string>()
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
+    const modalBackground = useModalBackgroundStore(state => state.modal)
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal);
+    const setOrderModal = useOrderModalStore(state => state.setOrderModal)
+    const orderModal = useOrderModalStore(state => state.modal)
 
     useEffect(() => {
         console.log("Orders_: ", orders_)
 
-        if (typeof window !== "undefined") {
-            setCurrentURL(() => window.location.href)
+        if (orderModal) {
+            setOrderModal(false)
         }
+
+        // if (typeof window !== "undefined") {
+        //     setCurrentURL(() => window.location.href)
+        // }
 
         // if (!orders_ || orders_.length === 0) {
         //     notify("info", "No orders, redirecting you")

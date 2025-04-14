@@ -12,7 +12,7 @@ import { IProduct, Props } from '@/config/interfaces';
 
 
 ///Declaring the metadata
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Product`,
     description: `Add Product`,
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * @title Product info page
  */
-export default async function AddProductPage({ params: { p_id } }: { params: { p_id: string }}) {
+export default async function AddProductPage() {
   //const product = await getProduct(p_id) as unknown as Array<IProduct>
   console.log("admin product info &")
   //const products_ = await getProducts() as unknown as Array<IProduct>

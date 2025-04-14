@@ -10,7 +10,9 @@ import { backend } from '@/config/utils';
 ///Commencing the code
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const order: Array<IOrder> | undefined = await getCart(params.id)
+  const { id } = await params
+  const order: Array<IOrder> | undefined = await getCart(id)
+
   if (!order) {
     return {
       title: "Not found",
@@ -21,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `Receipt`,
       description: `Dear ${order[0].customerSpec.fullName}, view your receipt`,
       alternates: {
-        canonical: `/order/receipt/${params.id}`
+        canonical: `/order/receipt/${id}`
       }
     }
   }
@@ -53,7 +55,8 @@ async function getCart(id: string) {
 /**
  * @title Product info page
  */
-export default async function CartOrderByIdPage({ params: { id } }: { params: { id: string }}) {
+export default async function CartOrderByIdPage({ params }: Props) {
+  const { id } = await params
   //console.log("ID: ", id)
     const cart = await getCart(id) as unknown as Array<IOrder>
     //console.log("Cart: ", cart)

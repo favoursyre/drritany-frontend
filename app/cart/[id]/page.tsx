@@ -3,7 +3,7 @@
 
 ///Libraries -->
 import CartReceipt from '@/components/receipt/Receipt';
-//import { IProduct } from '@/config/interfaces';
+import { Props } from '@/config/interfaces';
 import { backend, shuffleArray, deleteItemByKey } from '@/config/utils';
 
 ///Commencing the code
@@ -33,7 +33,8 @@ async function getCart(id: string) {
 /**
  * @title Product info page
  */
-export default async function CartOrderByIdPage({ params: { id } }: { params: { id: string }}) {
+export default async function CartOrderByIdPage({ params }: Props) {
+  const { id } = await params
     const cart = await getCart(id)
 
   return (

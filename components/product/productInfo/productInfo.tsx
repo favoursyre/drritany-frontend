@@ -2,7 +2,6 @@
 ///Product Info component
 
 ///Libraries -->
-import { toast } from 'react-toastify';
 import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
@@ -388,10 +387,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const reduceQuantity = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void => {
         e.preventDefault()
         if (quantity === 1) {
-            toast.info('1 is the minimum quantity you can order', {
-                position: toast.POSITION.TOP_CENTER,
-                style: { backgroundColor: 'white', color: '#1170FF' },
-              });
+            notify("info", "1 is the minimum quantity you can order")
         } else {
             let quantity_: number = quantity - 1
             setQuantity(quantity_)

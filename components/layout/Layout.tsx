@@ -86,6 +86,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const _products = Cache(productsName).get()
     const orderModal = useOrderModalStore(state => state.modal)
     const containerId =  "GTM-55DBL8LN" //process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
+    const [mounted, setMounted] = useState<boolean>(false)
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
     //Fetching client info
@@ -127,10 +128,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //   // }
     // }, []);
 
+    // Fetch initial data once on mount
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
     //Updating client info
     useEffect(() => {
         //console.log("Hero: ", _clientInfo, clientInfo)
         console.log("Container: ", containerId)
+        console.log('ToastContainer:', ToastContainer)
 
         let _clientInfo_
         //let interval: NodeJS.Timer
@@ -155,8 +162,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           //clearInterval(interval)
           if (orderModal === false) {
             setModalBackground(false)
+            console.log("setting off modal background 3")
           }
-          setModalBackground(false)
+          //setModalBackground(false)
           
             setLoadingModal(false)
             //console.log("Client info detected")
@@ -258,6 +266,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           if (orderModal === false) {
             setModalBackground(false)
+            console.log("setting off modal background 1")
           }
           //setModalBackground(false)
         setLoadingModal(false)
@@ -312,7 +321,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             style={{ display: 'none', visibility: 'hidden' }}
           ></iframe>
         </noscript>
-       <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />
+       {mounted && <ToastContainer autoClose={8000} limit={5} newestOnTop={true} />}
         <Header />
         <Modal />
           <main className='container'>{children}</main>

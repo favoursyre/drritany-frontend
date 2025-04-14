@@ -227,11 +227,11 @@ const OrderModal = () => {
                     //notify('success', "Payment was successful")
 
                     notify("info", "Redirecting you to orders")
-                    //await sleep(1)
+                    await sleep(2)
                     router.push(`/order?userId=${userId}`)
-
-                    setModalBackground(false)
-                    setOrderModal(false)
+                    
+                    // setModalBackground(false)
+                    // setOrderModal(false)
                 } else if (status === 'canceled') {
                     setPaymentStatus('fail');
                     setSubmit(false)
@@ -299,9 +299,9 @@ const OrderModal = () => {
         if (submit && paymentStatus === "success") {
             //Setting loading modal
             //setModalBackground(true)
+            setLoadingModal(true)
             
             await sleep(0.3)
-            setLoadingModal(true)
 
             //notify("info", "Redirecting you to products page")
             router.push(`/order?userId=${userId}`)

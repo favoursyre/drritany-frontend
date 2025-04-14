@@ -4,7 +4,7 @@
 import connectMongoDB from "@/config/mongodb";
 import { Inquiry } from "@/models/inquiry";
 import { NextResponse, NextRequest } from "next/server";
-import { INewsModel } from "@/config/interfaces";
+import { INewsModel, Props } from "@/config/interfaces";
 
 ///Commecing code
 //const NewsModel: INewsModel = News
@@ -34,8 +34,8 @@ import { INewsModel } from "@/config/interfaces";
 // }
 
 ///Delete an acocunt
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function DELETE(request: NextRequest, { params }: Props) {
+    const { id } = await params;
     //console.log("ID: ", id)
 
     try {

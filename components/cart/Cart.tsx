@@ -100,6 +100,7 @@ const Cart = () => {
             // Client info is already available
             if (orderModal === false) {
                 setModalBackground(false);
+                console.log("setting off modal background 5")
             }
             //setModalBackground(false);
             setLoadingModal(false);
@@ -208,7 +209,7 @@ const Cart = () => {
             clearInterval(interval);
         };
         
-    }, [deleteIndex, cart, orderForm, extraDeliveryFee, deliveryInfo, cartInitialRender, clientInfo]);
+    }, [deleteIndex, orderForm, deliveryInfo, cartInitialRender, clientInfo]);
 
     //This function calculates the cart discount
     //Generic is for all everyday users while special is for students, military, etc.
@@ -361,19 +362,25 @@ const Cart = () => {
         e.preventDefault()  
 
         //Updating cart with the new values
-        if(cart) {
-            setItem("deliveryFee", getCartDeliveryFee())
-            //cart.deliveryFee = getCartDeliveryFee()
-            cart.totalDiscount = getCartDiscount()
-            cart.tax = taxAmount
-            cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
-            setItem(cartName, cart)
-            setCart(() => ({ ...cart }))
-            console.log('Cart: ', cart)
-        } else {
+        if (!cart) {
             notify('error', "Cart is empty")
             return
         }
+
+        setModalBackground(true)
+        setLoadingModal(true)
+        await sleep(0.2)
+        
+        setItem("deliveryFee", getCartDeliveryFee())
+        //cart.deliveryFee = getCartDeliveryFee()
+        cart.totalDiscount = getCartDiscount()
+        cart.tax = taxAmount
+        cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
+        setItem(cartName, cart)
+        setCart(() => ({ ...cart }))
+        //console.log('Cart: ', cart)
+
+        setLoadingModal(false)
 
         if (deliveryInfo) {
             //Validating if the user is from the USA, we only serve US clients for the meantime

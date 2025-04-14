@@ -33,11 +33,13 @@ async function getProduct(id: string) {
 
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+
   return {
     title: `Product`,
     description: `Edit/View Product`,
     alternates: {
-      canonical: `/products/${params.id}`
+      canonical: `/products/${id}`
     }
   }
 }
@@ -64,8 +66,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * @title Product info page
  */
-export default async function ProductByIdPage({ params: { p_id } }: { params: { p_id: string }}) {
-  const product = await getProduct(p_id) as unknown as Array<IProduct>
+export default async function ProductByIdPage({ params }: Props) {
+  const { id } = await params
+  //const _id = await params.id
+  const product = await getProduct(id) as unknown as Array<IProduct>
   //console.log("admin product info &")
   //const products_ = await getProducts() as unknown as Array<IProduct>
   //const products = shuffleArray(removeProductFromArray(product[0], products_))

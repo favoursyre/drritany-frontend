@@ -35,7 +35,9 @@ async function getProduct(id: string) {
 
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product: Array<IProduct> | undefined = await getProduct(params.id)
+  const { id } = await params
+  const product: Array<IProduct> | undefined = await getProduct(id)
+
   if (!product || product?.length === 0) {
     return {
       title: "Not found",
@@ -46,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${product[0].name}`,
       description: `${product[0].description}`,
       alternates: {
-        canonical: `/products/${params.id}`
+        canonical: `/products/${id}`
       }
     }
   }
@@ -55,8 +57,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * @title Product preview page
  */
-export default async function ProductPreviewPage({ params: { p_id } }: { params: { p_id: string }}) {
-  const product = await getProduct(p_id) as unknown as Array<IProduct>
+export default async function ProductPreviewPage({ params }: Props) {
+  const { id } = await params
+  const product = await getProduct(id) as unknown as Array<IProduct>
   console.log('Producthhs: ', product)
 
   return (

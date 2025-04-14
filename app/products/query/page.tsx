@@ -8,44 +8,11 @@ import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import { IProduct, Props } from '@/config/interfaces';
 
 ///Commencing the code
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  return {
-    title: `${searchParams.query}`,
-    description: `Search our range of top quality products.`,
-    alternates: {
-      canonical: `/products/search`
-    }
-  } as Metadata
-}
-
-///This function searches for passed in query
-async function getQueriedProducts(query: string | string[] | undefined) {
-    try {
-      const res = await fetch(`${backend}/product?action=search&query=${query}`, {
-       // method: "GET",
-        //cache: "no-store",
-      });
-      
-      if (res.ok) {
-        return res.json()
-      } else {
-        //getQueriedProducts(query)
-        console.log("request not ok")
-      }
-  } catch (error) {
-      console.error(error);
-  }
-}
 
 /**
  * @title Product query page
  */
- export default async function ProductPage(req: { params: Object, searchParams: { query: string}}, res: NextApiResponse) {
-    const { query } = req.searchParams
-    //const { query: query_ } = req
-    //console.log("Query: ", query )
-    const queryProducts = await getQueriedProducts(query)
-    const products = shuffleArray(await getProducts()) as unknown as Array<IProduct>
+ export default async function ProductPage() {
   
     return (
       <main className="search_page">
