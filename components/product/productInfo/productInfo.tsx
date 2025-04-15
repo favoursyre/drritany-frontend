@@ -20,6 +20,7 @@ import 'swiper/css/navigation';
 import { Swiper as SwiperCore } from 'swiper/types';
 import Loading from "@/components/loadingCircle/Circle";
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
+import { sendGTMEvent } from '@next/third-parties/google';
 
 ///Commencing the code
 /**
@@ -93,6 +94,20 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //For client rendering
     useEffect(() => {
         setMounted(true);
+
+        //Sending a gtm view_content event
+        sendGTMEvent({
+            event: 'view_content',
+            ecommerce: {
+              content_type: 'product',
+              content_id: product._id,
+              content_name: product.name,
+              value: customPrice,
+              currency: 'USD',
+              content_category: product.category || 'general',
+            },
+        })
+        console.log('Sent view-content event')
     }, []);
     //console.log("In Stock: ", product.pricing?.inStock)
 
