@@ -1041,7 +1041,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                                 width={image.width}
                                                 height={image.height}
                                                 onLoad={() => {
-                                                    console.log("Image: ", loadedImages, id)
+                                                    //console.log("Image: ", loadedImages, id)
                                                     setLoadedImages((prev: Record<number, boolean>) => ({
                                                         ...prev,
                                                         [id]: true

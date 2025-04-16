@@ -13,7 +13,7 @@ const accessToken = process.env.META_ACCESS_TOKEN!
 
 export async function POST(req: NextRequest) {
   try {
-    const { eventData } = await req.json()
+    const eventData = await req.json()
 
     //Verifying the env variables
     if (!apiVersion) {
@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
     } else if (!accessToken) {
         throw new Error("Access token is undefined")
     }
+
+    //console.log("Testing: ", apiVersion, pixelId, accessToken)
+    //console.log("Test Event data: ", eventData, JSON.stringify(eventData))
 
     const url = `https://graph.facebook.com/${apiVersion}/${pixelId}/events?access_token=${accessToken}`;
   

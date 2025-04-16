@@ -109,7 +109,7 @@ const Hero = () => {
 
         if (query) {
           setSearchIsLoading(() => true)
-          console.log("searching: ", query)
+          //console.log("searching: ", query)
           router.push(`/products?query=${query}`)
         } 
 

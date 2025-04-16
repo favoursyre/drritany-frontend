@@ -143,7 +143,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   
           if (res.ok) {
               const info_ = await res.json()
-              console.log('Info res: ', info_)
+              //console.log('Info res: ', info_)
 
             //Setting the user id
             if (!_userId) {
@@ -169,7 +169,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             setClientInfo(() => info)
           } 
         } catch (error) {
-          console.log('Error: ', error)
+          console.error('Error: ', error)
         }
       }
 
@@ -178,9 +178,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     //Updating client info
     useEffect(() => {
-        console.log("Hero: ", _clientInfo, clientInfo)
-        console.log("Container: ", containerId)
-        console.log('ToastContainer:', ToastContainer)
+        //console.log("Hero: ", _clientInfo, clientInfo)
+        //console.log("Container: ", containerId)
+        //console.log('ToastContainer:', ToastContainer)
 
         let _clientInfo_
         //let interval: NodeJS.Timer
@@ -205,7 +205,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           //clearInterval(interval)
           if (orderModal === false) {
             setModalBackground(false)
-            console.log("setting off modal background 3")
+            //console.log("setting off modal background 3")
           }
           //setModalBackground(false)
 
@@ -369,7 +369,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           if (orderModal === false) {
             setModalBackground(false)
-            console.log("setting off modal background 1")
+            //console.log("setting off modal background 1")
           }
           //setModalBackground(false)
         setLoadingModal(false)
