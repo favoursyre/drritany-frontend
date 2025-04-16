@@ -9,11 +9,12 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits } from "@/config/utils";
-import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
-import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits, sendMetaCapi } from "@/config/utils";
+import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from "@/config/interfaces";
+import { getItem, notify, removeItem, setItem, getFacebookCookies } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
 import { useSearchParams } from 'next/navigation';
+import { v4 as uuid } from "uuid";
 import { countryList } from "@/config/database";
 import { sendGTMEvent } from "@next/third-parties/google";
 
@@ -228,35 +229,52 @@ const OrderModal = () => {
                     setModalBackground(true)
 
                     //Sending a purchase event
-                    const countryInfo_ = countryList.find((country) => country.name?.common === deliveryInfo?.country)
-                    const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
-                    sendGTMEvent({
-                        event: 'purchase',
-                        ecommerce: {
-                            content_type: 'product',
-                            content_ids: cart?.cart.map((item) => item._id),
-                            content_name: extractBaseTitle(document.title),
-                            value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
-                            order_id: getItem("orderId"),
-                            currency: countryInfo_?.currency?.abbreviation,
-                            contents: cart?.cart.map((item) => ({
-                                id: item._id,
-                                name: item.name,
-                                quantity: item.quantity,
-                                item_price: item.subTotalPrice,
-                            }))
-                        },
-                        clientInfo: {
-                            id: hashValue(clientInfo?._id!),
-                            ip: clientInfo?.ipData?.ip!,
-                            city: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
-                            region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                            country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
-                            email: hashValue(deliveryInfo?.email.trim().toLowerCase()!),
-                            phoneNumber: hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim()),
-                            zipCode: hashValue(deliveryInfo?.postalCode?.trim()!)
-                        }
-                    })
+                    const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+                    const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+                    const eventTime = Math.round(new Date().getTime() / 1000)
+                    const eventId = uuid()
+                    const userAgent = navigator.userAgent
+                    const { fbp, fbc } = getFacebookCookies();
+                    const eventData: IMetaWebEvent = {
+                        data: [
+                            {
+                                event_name: MetaStandardEvent.Purchase,
+                                event_time: eventTime,
+                                event_id: eventId,
+                                action_source: MetaActionSource.website,
+                                custom_data: {
+                                    content_name: extractBaseTitle(document.title),
+                                    content_ids:  cart?.cart.map((item) => item._id),
+                                    content_type: cart?.cart.length === 1 ? "product" : "product_group",
+                                    value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
+                                    currency: countryInfo_?.currency?.abbreviation,
+                                    order_id: getItem("orderId"),
+                                    contents: cart?.cart.map((item) => ({
+                                        id: item._id,
+                                        name: item.name,
+                                        quantity: item.quantity,
+                                        item_price: item.subTotalPrice,
+                                    }))
+                                },
+                                user_data: {
+                                    client_user_agent: userAgent,
+                                    client_ip_address: clientInfo?.ipData?.ip!,
+                                    external_id: hashValue(clientInfo?._id!),
+                                    fbc: fbc!,
+                                    fbp: fbp!,
+                                    ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                                    st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
+                                    em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
+                                    ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
+                                    zp: hashValue(deliveryInfo?.postalCode?.trim()!)
+                                }
+                            }
+                        ]
+                    } 
+                    sendGTMEvent(eventData.data[0])
+                    sendMetaCapi(eventData)
+
                     //setIsLoading(false)
                     //notify('success', "Payment was successful")
 
@@ -367,35 +385,51 @@ const OrderModal = () => {
         setIsLoading(true)
 
         //Sending an initiate checkout event
-        const countryInfo_ = countryList.find((country) => country.name?.common === deliveryInfo?.country)
-        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
-        sendGTMEvent({
-            event: 'initiate_checkout',
-            ecommerce: {
-                content_type: 'product',
-                content_ids: productSpec.cart.map((item) => item._id),
-                content_name: extractBaseTitle(document.title),
-                value: round((productSpec.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
-                currency: countryInfo_?.currency?.abbreviation,
-                num_items: productSpec.cart.reduce((total, item) => total + item.quantity, 0),
-                contents: productSpec.cart.map((item) => ({
-                    id: item._id,
-                    name: item.name,
-                    quantity: item.quantity,
-                    item_price: item.subTotalPrice,
-                }))
-            },
-            clientInfo: {
-                id: hashValue(clientInfo?._id!),
-                ip: clientInfo?.ipData?.ip!,
-                city: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
-                region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
-                email: hashValue(deliveryInfo?.email.trim().toLowerCase()!),
-                phoneNumber: hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim()),
-                zipCode: hashValue(deliveryInfo?.postalCode?.trim()!)
-            }
-        })
+        const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+        const eventTime = Math.round(new Date().getTime() / 1000)
+        const eventId = uuid()
+        const userAgent = navigator.userAgent
+        const { fbp, fbc } = getFacebookCookies();
+        const eventData: IMetaWebEvent = {
+            data: [
+                {
+                    event_name: MetaStandardEvent.InitiateCheckout,
+                    event_time: eventTime,
+                    event_id: eventId,
+                    action_source: MetaActionSource.website,
+                    custom_data: {
+                        content_name: extractBaseTitle(document.title),
+                        content_ids:  cart?.cart.map((item) => item._id),
+                        content_type: cart?.cart.length === 1 ? "product" : "product_group",
+                        value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
+                        currency: countryInfo_?.currency?.abbreviation,
+                        num_items: productSpec.cart.reduce((total, item) => total + item.quantity, 0).toString(),
+                        contents: productSpec.cart.map((item) => ({
+                            id: item._id,
+                            name: item.name,
+                            quantity: item.quantity,
+                            item_price: item.subTotalPrice,
+                        }))
+                    },
+                    user_data: {
+                        client_user_agent: userAgent,
+                        client_ip_address: clientInfo?.ipData?.ip!,
+                        external_id: hashValue(clientInfo?._id!),
+                        fbc: fbc!,
+                        fbp: fbp!,
+                        ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                        st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
+                        em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
+                        ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
+                        zp: hashValue(deliveryInfo?.postalCode?.trim()!)
+                    }
+                }
+            ]
+        } 
+        sendGTMEvent(eventData.data[0])
+        sendMetaCapi(eventData)
 
         try {
           const stripe = await stripePromise;

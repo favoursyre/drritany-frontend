@@ -118,8 +118,8 @@ const OrderFormModal = () => {
             //setCountryCode1(() => clientInfo.country)
             //console.log("Loc: ", clientInfo)
             if (!countryCode1 && !countryCode2 && !country) {
-                setCountryCode1(() => clientInfo.countryInfo)
-                setCountryCode2(() => clientInfo.countryInfo)
+                setCountryCode1(() => clientInfo.countryInfo!)
+                setCountryCode2(() => clientInfo.countryInfo!)
 
                 const country_ = clientInfo.countryInfo.name?.common as unknown as string
                 setCountry(() => country_)

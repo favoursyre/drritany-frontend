@@ -736,3 +736,73 @@ export interface IEventStatus {
     background?: string
   }
 }
+
+//The enum for meta events
+export enum MetaStandardEvent {
+  AddToCart = "AddToCart",
+  AddToWishlist = "AddToWishlist",
+  AddPaymentInfo = "AddPaymentInfo",
+  Purchase = "Purchase",
+  PageView = "PageView",
+  ViewContent = "ViewContent",
+  InitiateCheckout = "InitiateCheckout",
+  Search = "Search",
+  CompleteRegistration = "CompleteRegistration"
+}
+
+//The enum for meta action source
+export enum MetaActionSource {
+  app = "app",
+  chat = "chat",
+  email = "email",
+  other = "other",
+  phone_call = "phone_call",
+  physical_store = "physical_store",
+  system_generated = "system_generated",
+  website = "website",
+}
+
+//Meta event parameters
+export interface IMetaWebEvent {
+  data: Array<{
+      event_name: MetaStandardEvent | string,
+      event_time: number,
+      event_id: string,
+      action_source: MetaActionSource,
+      user_data?: {
+          client_user_agent: string,
+          client_ip_address: string,
+          external_id: string, //A unique id for the user and should be returned using SHA256
+          fbc: string, //This is click id
+          fbp: string, //This is browser id
+          fn?: string, //This is first name and should be returned using SHA256
+          ln?: string, //This is last name and should be returned using SHA256
+          ge?: string, //This is gender (m/f) and should be returned using SHA256
+          db?: string, //This is date of birth (YYYYMMDD) and should be returned using SHA256
+          em?: Array<string>, //This is email and should be returned using SHA256
+          ph?: Array<string>, //This is phone number and should be returned using SHA256
+          ct?: string, //This is city in lowercase and should be returned using SHA256
+          st?: string, //This is state in lowercase 2-letter-code and should be returned using SHA256
+          country?: string, //This is country in lowercase 2-letter-code and should be returned using SHA256
+          zp?: string, //This is zip code in 5digits and should be returned using SHA256
+      },
+      custom_data?: {
+          content_name: string, //Name of the product or page
+          content_category?: string,
+          content_ids?: Array<string>,
+          content_type?: "product" | "product_group",
+          contents?: Array<Object>,
+          currency?: string, //"USD",
+          value?: number, //142.52
+          num_items?: string, //Only used with initiated checkout event 
+          order_id?: string,
+      },
+      attribution_data?: {
+        attribution_share: string
+      },
+      original_event_data?: {
+          event_name?: string,
+          event_time?: number
+      }
+  }>
+}

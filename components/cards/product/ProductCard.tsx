@@ -72,14 +72,33 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     //     }  
 
     // }, [clientInfo])
+    
+    //Updating client info
     useEffect(() => {
-        const info = getItem(clientInfoName);
-        if (info) {
-            setClientInfo(info);
-            setModalBackground(false);
-            setLoadingModal(false);
-        }
-    }, [setModalBackground, setLoadingModal]);
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+            setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     //This displays the custom price based on the country if it exist
     // const customPrice = (): number => {

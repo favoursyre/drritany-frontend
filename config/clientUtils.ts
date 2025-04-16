@@ -269,4 +269,24 @@ export const Cache = (key: string) => {
     };
 }
 
-//const test = cache
+/**
+ * Retrieves _fbc and _fbp cookies from the browser.
+ * Returns null for each if the cookie is not found or if running server-side.
+ */
+export function getFacebookCookies(): { fbp?: string, fbc?: string } {
+    // Ensure client-side execution
+    if (typeof window === 'undefined') {
+      return { fbp: undefined, fbc: undefined };
+    }
+  
+    // Function to get a cookie by name
+    const getCookie = (name: string): string | undefined => {
+      const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+      return match ? match[2] : undefined;
+    };
+  
+    return {
+      fbp: getCookie('_fbp'),
+      fbc: getCookie('_fbc'),
+    };
+  }

@@ -4,9 +4,9 @@
 ///Libraries -->
 import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } from "react"
 import styles from "./productInfo.module.scss"
-import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
-import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, hashValue } from '@/config/utils'
+import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from '@/config/interfaces';
+import { setItem, notify, getItem, getOS, getDevice, getFacebookCookies } from '@/config/clientUtils';
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, clientInfoName, hashValue, sendMetaCapi } from '@/config/utils'
 import { countryList } from "@/config/database";
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -22,6 +22,7 @@ import { Swiper as SwiperCore } from 'swiper/types';
 import Loading from "@/components/loadingCircle/Circle";
 import { EffectCoverflow, Pagination, Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import { sendGTMEvent } from '@next/third-parties/google';
+import { v4 as uuid } from 'uuid';
 
 ///Commencing the code
 /**
@@ -185,39 +186,31 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     ].filter(Boolean), [product_]);
 
     //Updating client info
-    // useEffect(() => {
-    //     //console.log("Hero: ", _clientInfo, clientInfo)
-
-    //     let _clientInfo_
-        
-    //     if (!clientInfo) {
-    //         //console.log("Client info not detected")
-    //         const interval = setInterval(() => {
-    //             _clientInfo_ = getItem(clientInfoName)
-    //             //console.log("Delivery Info: ", _deliveryInfo)
-    //             setClientInfo(_clientInfo_)
-    //         }, 100);
-    
-    //         //console.log("Delivery Info: ", deliveryInfo)
-        
-    //         return () => {
-    //             clearInterval(interval);
-    //         };
-    //     } else {
-    //         setModalBackground(false)
-    //         setLoadingModal(false)
-    //         //console.log("Client info detected")
-    //     }  
-
-    // }, [clientInfo])
     useEffect(() => {
-        const info = getItem(clientInfoName);
-        if (info) {
-            setClientInfo(info);
-            setModalBackground(false);
-            setLoadingModal(false);
-        }
-    }, [setModalBackground, setLoadingModal]);
+        //console.log("Hero: ", _clientInfo, clientInfo)
+
+        let _clientInfo_
+        
+        if (!clientInfo) {
+            //console.log("Client info not detected")
+            const interval = setInterval(() => {
+                _clientInfo_ = getItem(clientInfoName)
+                //console.log("Delivery Info: ", _deliveryInfo)
+                setClientInfo(_clientInfo_)
+            }, 100);
+    
+            //console.log("Delivery Info: ", deliveryInfo)
+        
+            return () => {
+                clearInterval(interval);
+            };
+        } else {
+          setModalBackground(false)
+            setLoadingModal(false)
+            //console.log("Client info detected")
+        }  
+
+    }, [clientInfo])
 
     // Memoize custom price
     const customPrice = useMemo(() => {
@@ -267,27 +260,43 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             if (!sheetStored) {
                 storeQuery()
 
-                //Sending a gtm view_content event
+                //Sending page view event to gtm
                 const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
                 const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
-                sendGTMEvent({
-                    event: 'view_content',
-                    ecommerce: {
-                        content_type: 'product',
-                        content_ids: [product._id],
-                        content_name: product.name,
-                        value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
-                        currency: countryInfo_?.currency?.abbreviation,
-                        content_category: product.category?.micro,
-                    },
-                    clientInfo: {
-                        id: hashValue(clientInfo?._id!),
-                        ip: clientInfo?.ipData?.ip!,
-                        city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                        region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-                    }
-                })
+                const eventTime = Math.round(new Date().getTime() / 1000)
+                const eventId = uuid()
+                const userAgent = navigator.userAgent
+                const { fbp, fbc } = getFacebookCookies();
+                const eventData: IMetaWebEvent = {
+                    data: [
+                        {
+                            event_name: MetaStandardEvent.ViewContent,
+                            event_time: eventTime,
+                            event_id: eventId,
+                            action_source: MetaActionSource.website,
+                            custom_data: {
+                                content_name: extractBaseTitle(document.title),
+                                content_ids: [product._id!],
+                                content_type: "product",
+                                value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                                currency: countryInfo_?.currency?.abbreviation,
+                                content_category: product.category?.micro,
+                            },
+                            user_data: {
+                                client_user_agent: userAgent,
+                                client_ip_address: clientInfo?.ipData?.ip!,
+                                external_id: hashValue(clientInfo?._id!),
+                                fbc: fbc!,
+                                fbp: fbp!,
+                                ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                                st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                                country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                            }
+                        }
+                    ]
+                } 
+                sendGTMEvent(eventData.data[0])
+                sendMetaCapi(eventData)
             }
         }
     }, [clientInfo])
@@ -429,6 +438,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const addToCart = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): Promise<void> => {
         e.preventDefault()
         const p = product
+        let storeCartEvent: boolean = false
 
         if (p.pricing?.inStock === false) {
             notify("info", "This product is currently out of stock, check back later!")
@@ -527,34 +537,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setItem(cartName, cart)
                     if (!order) {
                         notify('success', "Product has been added to cart")
+                        storeCartEvent = true
 
-                        //Storing cart infos and events
-                        await storeCartInfo("Added", clientInfo!, product.name!)
-                        
-                        sendGTMEvent({
-                            event: 'add_to_cart',
-                            ecommerce: {
-                                content_type: 'product',
-                                content_ids: cart.cart.map((item) => item._id),
-                                content_name: extractBaseTitle(document.title),
-                                value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
-                                currency: countryInfo_?.currency?.abbreviation,
-                                content_category: product.category?.micro,
-                                contents: cart.cart.map((item) => ({
-                                    id: item._id,
-                                    name: item.name,
-                                    quantity: item.quantity,
-                                    item_price: item.subTotalPrice,
-                                }))
-                            },
-                            clientInfo: {
-                                id: hashValue(clientInfo?._id!),
-                                ip: clientInfo?.ipData?.ip!,
-                                city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                                region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                                country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-                            }
-                        })
                     }
                 } else {
                     if (quantity === cart.cart[index].quantity) {
@@ -576,34 +560,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         setItem(cartName, cart)
                         if (!order) {
                             notify('success', "Product has been updated to cart")
-
-                            //Storing cart infos and events
-                            await storeCartInfo("Added", clientInfo!, product.name!)
-                            
-                            sendGTMEvent({
-                                event: 'add_to_cart',
-                                ecommerce: {
-                                    content_type: 'product',
-                                    content_ids: cart.cart.map((item) => item._id),
-                                    content_name: extractBaseTitle(document.title),
-                                    value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
-                                    currency: countryInfo_?.currency?.abbreviation,
-                                    content_category: product.category?.micro,
-                                    contents: cart.cart.map((item) => ({
-                                        id: item._id,
-                                        name: item.name,
-                                        quantity: item.quantity,
-                                        item_price: item.subTotalPrice,
-                                    }))
-                                },
-                                clientInfo: {
-                                    id: hashValue(clientInfo?._id!),
-                                    ip: clientInfo?.ipData?.ip!,
-                                    city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                                    region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-                                }
-                            })
+                            storeCartEvent = true
                         }
                     }
                 }
@@ -656,6 +613,55 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             }
             storeButtonInfo(info)
         } 
+
+        if (storeCartEvent) {
+            //Storing cart infos and events
+            await storeCartInfo("Added", clientInfo!, product.name!)
+
+            //Sending page view event to gtm
+            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+            const eventTime = Math.round(new Date().getTime() / 1000)
+            const eventId = uuid()
+            const userAgent = navigator.userAgent
+            const { fbp, fbc } = getFacebookCookies();
+            const eventData: IMetaWebEvent = {
+                data: [
+                    {
+                        event_name: MetaStandardEvent.AddToCart,
+                        event_time: eventTime,
+                        event_id: eventId,
+                        action_source: MetaActionSource.website,
+                        custom_data: {
+                            content_name: extractBaseTitle(document.title),
+                            content_ids:  cart?.cart.map((item) => item._id),
+                            content_type: cart?.cart.length === 1 ? "product" : "product_group",
+                            value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                            currency: countryInfo_?.currency?.abbreviation,
+                            content_category: product.category?.micro,
+                            contents: cart?.cart.map((item) => ({
+                                id: item._id,
+                                name: item.name,
+                                quantity: item.quantity,
+                                item_price: item.subTotalPrice,
+                            }))
+                        },
+                        user_data: {
+                            client_user_agent: userAgent,
+                            client_ip_address: clientInfo?.ipData?.ip!,
+                            external_id: hashValue(clientInfo?._id!),
+                            fbc: fbc!,
+                            fbp: fbp!,
+                            ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                            st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                            country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                        }
+                    }
+                ]
+            } 
+            sendGTMEvent(eventData.data[0])
+            sendMetaCapi(eventData)
+        }
     }
 
     // //This stores data in wishinfo
@@ -853,33 +859,50 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             }
             storeButtonInfo(info)
 
+            //Sending page view event to gtm
             const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
             const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+            const eventTime = Math.round(new Date().getTime() / 1000)
+            const eventId = uuid()
             const wishList__ = getItem(wishListName) as unknown as Array<IProduct>
-            sendGTMEvent({
-                event: 'add_to_wishlist',
-                ecommerce: {
-                    content_type: 'product',
-                    content_ids: wishList__.map((item) => item._id),
-                    content_name: extractBaseTitle(document.title),
-                    value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
-                    currency: countryInfo_?.currency?.abbreviation,
-                    content_category: product.category?.micro,
-                    contents: wishList__.map((item) => ({
-                        id: item._id,
-                        name: item.name,
-                        quantity: 1,
-                        item_price: getCustomPricing(item, 0, countryInfo_?.name?.common!),
-                    }))
-                },
-                clientInfo: {
-                    id: hashValue(clientInfo?._id!),
-                    ip: clientInfo?.ipData?.ip!,
-                    city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                    region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-                }
-            })
+            const userAgent = navigator.userAgent
+            const { fbp, fbc } = getFacebookCookies();
+            const eventData: IMetaWebEvent = {
+                data: [
+                    {
+                        event_name: MetaStandardEvent.AddToWishlist,
+                        event_time: eventTime,
+                        event_id: eventId,
+                        action_source: MetaActionSource.website,
+                        custom_data: {
+                            content_name: extractBaseTitle(document.title),
+                            content_ids:  wishList__.map((item) => item._id!),
+                            content_type: wishList__.length === 1 ? "product" : "product_group",
+                            value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                            currency: countryInfo_?.currency?.abbreviation,
+                            content_category: product.category?.micro,
+                            contents: wishList__.map((item) => ({
+                                id: item._id,
+                                name: item.name,
+                                quantity: 1,
+                                item_price: getCustomPricing(item, 0, countryInfo_?.name?.common!),
+                            }))
+                        },
+                        user_data: {
+                            client_user_agent: userAgent,
+                            client_ip_address: clientInfo?.ipData?.ip!,
+                            external_id: hashValue(clientInfo?._id!),
+                            fbc: fbc!,
+                            fbp: fbp!,
+                            ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                            st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                            country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                        }
+                    }
+                ]
+            } 
+            sendGTMEvent(eventData.data[0])
+            sendMetaCapi(eventData)
         }
     }
 

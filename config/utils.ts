@@ -3,7 +3,7 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount, IMetaWebEvent } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
 import { countryList } from './database';
@@ -18,6 +18,7 @@ import { createHash } from 'crypto';
 import { IncomingMessage } from 'http';
 import { getOS, getDevice } from './clientUtils';
 import { companyName as _companyName, deliveryPeriod as _deliveryPeriod, deliveryDuration as _deliveryDuration } from './sharedUtils';
+import { json } from 'stream/consumers';
 
 ///Commencing the code
 export const companyName: string = _companyName
@@ -971,6 +972,19 @@ export const getCustomPricing = (product: IProduct, sizeId: number, country: str
     
 
     
+}
+
+//This function sends event data to meta-capi api 
+export const sendMetaCapi = async (eventData: IMetaWebEvent): Promise<any> => {
+    try {
+        const res = await axios.post(`${backend}/meta-capi`, eventData, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+        return res.data
+    } catch (error) {
+        console.log("Meta CAPI Error: ", error)
+        return error
+    }
 }
 
 //This function keeps track of what product is added/deleted to cart

@@ -12,7 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import Modal from "@/components/modals/modalBackground/Modal";
 import 'react-toastify/dist/ReactToastify.css';
 import { useClientInfoStore, useLoadingModalStore, useModalBackgroundStore, useOrderModalStore } from "@/config/store";
-import { IClientInfo, ITrafficResearch, ISheetInfo, IProduct } from "@/config/interfaces";
+import { IClientInfo, ITrafficResearch, ISheetInfo, IProduct, IMetaWebEvent, MetaStandardEvent, MetaActionSource } from "@/config/interfaces";
 import { countryList } from "@/config/database";
 //import GoogleTagManager from "@/config/GoogleTagManager";
 import GoogleAnalytics from '@/config/GoogleAnalytics';
@@ -20,8 +20,8 @@ import { useRouter, usePathname } from "next/navigation";
 import Head from "next/head";
 import { v4 as uuid } from 'uuid';
 import { GoogleTagManager, sendGTMEvent } from "@next/third-parties/google"
-import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus, hashValue } from "@/config/utils";
-import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clientUtils";
+import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus, hashValue, sendMetaCapi } from "@/config/utils";
+import { getDevice, getItem, getOS, setItem, Cache, notify, getFacebookCookies } from "@/config/clientUtils";
 
 ///Commencing the code
 ///This function get client's info
@@ -85,7 +85,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const [trafficStore, setTrafficStore] = useState<boolean>(false)
     const _products = Cache(productsName).get()
     const orderModal = useOrderModalStore(state => state.modal)
-    const containerId =  "GTM-M32RVSJB" //"GTM-55DBL8LN" //process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
+    const containerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
     const [mounted, setMounted] = useState<boolean>(false)
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
@@ -332,19 +332,35 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             //Sending page view event to gtm
             const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
             const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
-            sendGTMEvent({
-              event: 'page_view',
-              ecommerce: {
-                content_name: extractBaseTitle(document.title),
-              },
-              clientInfo: {
-                  id: hashValue(clientInfo?._id!),
-                  ip: clientInfo?.ipData?.ip!,
-                  city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                  region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                  country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-              }
-            })
+            const eventTime = Math.round(new Date().getTime() / 1000)
+            const eventId = uuid()
+            const userAgent = navigator.userAgent
+            const { fbp, fbc } = getFacebookCookies();
+            const eventData: IMetaWebEvent = {
+              data: [
+                {
+                  event_name: MetaStandardEvent.PageView,
+                  event_time: eventTime,
+                  event_id: eventId,
+                  action_source: MetaActionSource.website,
+                  custom_data: {
+                    content_name: extractBaseTitle(document.title),
+                  },
+                  user_data: {
+                    client_user_agent: userAgent,
+                    client_ip_address: clientInfo?.ipData?.ip!,
+                    external_id: hashValue(clientInfo?._id!),
+                    fbc: fbc!,
+                    fbp: fbp!,
+                    ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                    st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                  }
+                }
+              ]
+            } 
+            sendGTMEvent(eventData.data[0])
+            sendMetaCapi(eventData)
 
           } else {
             //console.log("Traffic has been sent already")
