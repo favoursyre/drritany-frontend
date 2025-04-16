@@ -744,7 +744,7 @@ export enum MetaStandardEvent {
   AddPaymentInfo = "AddPaymentInfo",
   Purchase = "Purchase",
   PageView = "PageView",
-  ViewContent = "ViewContent",
+  ViewContent = "view_content", //"ViewContent",
   InitiateCheckout = "InitiateCheckout",
   Search = "Search",
   CompleteRegistration = "CompleteRegistration"
