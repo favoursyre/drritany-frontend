@@ -152,13 +152,13 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
             </div>
             <div className={styles.price} onClick={(e) => viewProduct(e, product._id!)}>
                 {clientInfo ? (
-                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                    <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
                 ) : (
                     <></>
                 )}
-                {clientInfo?.country?.currency?.exchangeRate ? (
+                {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                     <span>
-                        {product.pricing?.basePrice ? (round(product.pricing?.basePrice! * clientInfo.country?.currency?.exchangeRate, 2)).toLocaleString("en-US") : ""}
+                        {product.pricing?.basePrice ? (round(product.pricing?.basePrice! * clientInfo.countryInfo?.currency?.exchangeRate, 2)).toLocaleString("en-US") : ""}
                     </span>
                 ) : (
                     <></>

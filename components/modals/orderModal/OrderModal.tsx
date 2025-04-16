@@ -9,11 +9,13 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName } from "@/config/utils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
 import { useSearchParams } from 'next/navigation';
+import { countryList } from "@/config/database";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 ///Commencing the code
 const stripePromise = loadStripe(
@@ -112,7 +114,7 @@ const OrderModal = () => {
                 const paymentSpec: IPayment = {
                     txId: getItem(transactionIdName),
                     status: PaymentStatus.SUCCESS,
-                    exchangeRate: clientInfo_.country?.currency?.exchangeRate!
+                    exchangeRate: clientInfo_.countryInfo?.currency?.exchangeRate!
                 }
                 console.log("Testing: ", _deliveryFee, getItem(transactionIdName), getItem(userIdName))
                 const order: IOrder = { customerSpec, productSpec, deliverySpec, paymentSpec }
@@ -135,6 +137,7 @@ const OrderModal = () => {
                 console.log("Data: ", data);
 
                 if (res.ok) {
+                    setItem("orderId", data._id)
                     setModalBackground(true)
                     if (!orderSent) {
                         notify("success", `Your order was logged successfully`)
@@ -223,10 +226,42 @@ const OrderModal = () => {
                     setModalBackground(true)
                     await processOrder()
                     setModalBackground(true)
+
+                    //Sending a purchase event
+                    const countryInfo_ = countryList.find((country) => country.name?.common === deliveryInfo?.country)
+                    const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
+                    sendGTMEvent({
+                        event: 'purchase',
+                        ecommerce: {
+                            content_type: 'product',
+                            content_ids: cart?.cart.map((item) => item._id),
+                            content_name: extractBaseTitle(document.title),
+                            value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
+                            order_id: getItem("orderId"),
+                            currency: countryInfo_?.currency?.abbreviation,
+                            contents: cart?.cart.map((item) => ({
+                                id: item._id,
+                                name: item.name,
+                                quantity: item.quantity,
+                                item_price: item.subTotalPrice,
+                            }))
+                        },
+                        clientInfo: {
+                            id: hashValue(clientInfo?._id!),
+                            ip: clientInfo?.ipData?.ip!,
+                            city: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
+                            region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                            country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
+                            email: hashValue(deliveryInfo?.email.trim().toLowerCase()!),
+                            phoneNumber: hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim()),
+                            zipCode: hashValue(deliveryInfo?.postalCode?.trim()!)
+                        }
+                    })
                     //setIsLoading(false)
                     //notify('success', "Payment was successful")
 
                     notify("info", "Redirecting you to orders")
+                    removeItem("orderId")
                     await sleep(2)
                     router.push(`/order?userId=${userId}`)
                     
@@ -330,6 +365,37 @@ const OrderModal = () => {
         //return
         setSubmit(true)
         setIsLoading(true)
+
+        //Sending an initiate checkout event
+        const countryInfo_ = countryList.find((country) => country.name?.common === deliveryInfo?.country)
+        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
+        sendGTMEvent({
+            event: 'initiate_checkout',
+            ecommerce: {
+                content_type: 'product',
+                content_ids: productSpec.cart.map((item) => item._id),
+                content_name: extractBaseTitle(document.title),
+                value: round((productSpec.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
+                currency: countryInfo_?.currency?.abbreviation,
+                num_items: productSpec.cart.reduce((total, item) => total + item.quantity, 0),
+                contents: productSpec.cart.map((item) => ({
+                    id: item._id,
+                    name: item.name,
+                    quantity: item.quantity,
+                    item_price: item.subTotalPrice,
+                }))
+            },
+            clientInfo: {
+                id: hashValue(clientInfo?._id!),
+                ip: clientInfo?.ipData?.ip!,
+                city: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
+                region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
+                email: hashValue(deliveryInfo?.email.trim().toLowerCase()!),
+                phoneNumber: hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim()),
+                zipCode: hashValue(deliveryInfo?.postalCode?.trim()!)
+            }
+        })
 
         try {
           const stripe = await stripePromise;

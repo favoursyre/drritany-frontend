@@ -90,14 +90,14 @@ const StatCard = ({ product_, view }: { product_: IProduct, view: string | undef
                     <div className={styles.price_1}>
                         <strong>
                             {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
-                            {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
-                            {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.pricing?.basePrice ? (Math.round(product.pricing?.basePrice* clientInfo.country?.currency?.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
+                            {clientInfo ? <span>{clientInfo?.countryInfo?.currency?.symbol}</span> : <></>}
+                            {clientInfo && clientInfo.countryInfo?.currency && clientInfo.countryInfo?.currency?.exchangeRate ? <span>{product.pricing?.basePrice ? (Math.round(product.pricing?.basePrice* clientInfo.countryInfo?.currency?.exchangeRate)).toLocaleString("en-US") : ""}</span> : <></>}
                         </strong>
                     </div>
                     <div className={styles.price_2}>
                         {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
-                        {clientInfo ? <span>{clientInfo?.country?.currency?.symbol}</span> : <></>}
-                        {clientInfo && clientInfo.country?.currency && clientInfo.country?.currency?.exchangeRate ? <span>{product.pricing?.basePrice ? (Math.round(slashedPrice(product.pricing?.basePrice * clientInfo.country?.currency?.exchangeRate, product.pricing?.discount!))).toLocaleString("en-US") : (<></>)}</span> : <></>}
+                        {clientInfo ? <span>{clientInfo?.countryInfo?.currency?.symbol}</span> : <></>}
+                        {clientInfo && clientInfo.countryInfo?.currency && clientInfo.countryInfo?.currency?.exchangeRate ? <span>{product.pricing?.basePrice ? (Math.round(slashedPrice(product.pricing?.basePrice * clientInfo.countryInfo?.currency?.exchangeRate, product.pricing?.discount!))).toLocaleString("en-US") : (<></>)}</span> : <></>}
                     </div>
                 </div>
         </main>

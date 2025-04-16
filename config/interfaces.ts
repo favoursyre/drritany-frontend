@@ -184,9 +184,14 @@ export interface ICartItemDiscountModalStore {
  */
 export interface IClientInfo {
   _id?: string,
-  ip?: string,
+  ipData?: {
+    ip?: string,
+    city?: string,
+    region?: string,
+    country?: string
+  },
   groupTest?: string,
-  country?: ICountry
+  countryInfo?: ICountry
 }
 
 /**This is the interface for product category/filter settings
@@ -545,26 +550,38 @@ export interface ISheetInfo {
 
 //This is the interface for query research
 export interface IQueryResearch {
+  ID: string,
   IP: string,
+  City: string,
+  Region: string,
   Country: string,
   Query: string,
   Date: string,
-  Time: string
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
 }
 
 //This is the interface for product view research
 export interface IProductViewResearch {
+  ID: string,
   IP: string,
+  City: string,
+  Region: string,
   Country: string,
-  Product: string,
+  Product_Name: string,
   Date: string,
-  Time: string
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
 }
 
 //This is the interface for traffic research
 export interface ITrafficResearch {
   ID: string,
   IP: string,
+  City: string,
+  Region: string,
   Country: string,
   Page_Title: string,
   Page_URL: string,
@@ -578,6 +595,8 @@ export interface ITrafficResearch {
 export interface IButtonResearch {
   ID: string,
   IP: string,
+  City: string,
+  Region: string,
   Country: string,
   Button_Name: string,
   Button_Info: string,
@@ -591,12 +610,17 @@ export interface IButtonResearch {
 
 //This is the interface for wishlist research
 export interface IWishlistResearch {
+  ID: string,
   IP: string,
+  City: string,
+  Region: string,
   Country: string,
-  Product: string,
+  Product_Name: string,
   Action: string,
   Date: string,
-  Time: string
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
 }
 
 ///This is the interface for params

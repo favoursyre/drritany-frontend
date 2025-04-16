@@ -14,7 +14,9 @@ import { drive_v3 } from "googleapis";
 import https from "https"
 import path from "path";
 //import sharp from 'sharp';
+import { createHash } from 'crypto';
 import { IncomingMessage } from 'http';
+import { getOS, getDevice } from './clientUtils';
 import { companyName as _companyName, deliveryPeriod as _deliveryPeriod, deliveryDuration as _deliveryDuration } from './sharedUtils';
 
 ///Commencing the code
@@ -402,6 +404,11 @@ export const extractDigitsAfterDash = (phoneNumber: string): string => {
     // If a match is found, return the captured digits; otherwise, return an empty string
     return match ? match[1] : '';
 }
+
+//This function returns only a digit after a dash i.e. `+1-292019` => `1292019`
+export const extractOnlyDigits = (phoneNumber: string): string => {
+    return phoneNumber.replace(/\D/g, '');
+};
 
 //This function checks if for a state that has 0 extraDeliveryPercent
 export const findStateWithZeroExtraDeliveryPercent = (country: ICountry | undefined) => {
@@ -972,17 +979,22 @@ export const storeWishInfo = async (_action: string, clientInfo: IClientInfo, pr
         try {
             //Arranging the query research info
             const wishListInfo: IWishlistResearch = {
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
-                Product: product.name!,
+                ID: clientInfo._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.ipData?.country!,
+                Product_Name: product.name!,
                 Action: _action,
                 Date: getCurrentDate(),
-                Time: getCurrentTime()
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
             }
 
             const sheetInfo: ISheetInfo = {
                 sheetId: statSheetId,
-                sheetRange: "Wishlist!A:F",
+                sheetRange: "Wishlist!A:K",
                 data: wishListInfo
             }
     
@@ -1003,17 +1015,22 @@ export const storeCartInfo = async (_action: string, clientInfo: IClientInfo, pr
         try {
             //Arranging the query research info
             const cartInfo: IWishlistResearch = {
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
-                Product: productName,
+                ID: clientInfo._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.ipData?.country!,
+                Product_Name: productName,
                 Action: _action,
                 Date: getCurrentDate(),
-                Time: getCurrentTime()
+                Time: getCurrentTime(),
+                OS: getOS(),
+                Device: getDevice()
             }
 
             const sheetInfo: ISheetInfo = {
                 sheetId: statSheetId,
-                sheetRange: "Cart!A:F",
+                sheetRange: "Cart!A:K",
                 data: cartInfo
             }
     
@@ -1026,6 +1043,16 @@ export const storeCartInfo = async (_action: string, clientInfo: IClientInfo, pr
             //console.log("Store Error: ", error)
         }
     }
+}
+
+//This function is used to hash a value
+export function hashValue(value: string, algorithm: 'sha256' | 'sha512' | 'md5' = 'sha256'): string {
+    if (!value || typeof value !== 'string') {
+        console.log("Non hashable value")
+        return value;
+    }
+
+    return createHash(algorithm).update(value, 'utf8').digest('hex');
 }
 
 //Convert the file to a buffer and then to a stream
@@ -1113,7 +1140,7 @@ export const storeButtonInfo = async (info: IButtonResearch) => {
     try {
         const sheetInfo: ISheetInfo = {
             sheetId: statSheetId,
-            sheetRange: "Button!A:K",
+            sheetRange: "Button!A:M",
             data: info
         }
 

@@ -8,13 +8,14 @@ import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo } from "@/config/i
 import { useState, useEffect, useMemo } from "react";
 import type { MouseEvent, TouchEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, productsName } from "@/config/utils";
+import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, extractBaseTitle, hashValue } from "@/config/utils";
 import { getItem, notify, setItem } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline } from '@mui/icons-material';
 import Loading from "@/components/loadingCircle/Circle";
 import { countryList } from "@/config/database";
 import { Cache } from "@/config/clientUtils";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 ///Commencing the code 
 /**
@@ -133,7 +134,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const customPrice = useMemo(() => {
         if (!clientInfo) return product_.pricing?.basePrice || 0;
         const clientCountry = countryList.find(
-            (c) => c.name?.common === clientInfo.country?.name?.common
+            (c) => c.name?.common === clientInfo.countryInfo?.name?.common
         );
         const variant = product_.pricing?.variantPrices?.find(
             (v) => v.country === clientCountry?.name?.common || v.country === clientCountry?.name?.abbreviation
@@ -145,7 +146,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
             basePrice += deliveryFee;
         }
 
-        const exchangeRate = clientInfo.country?.currency?.exchangeRate || 1;
+        const exchangeRate = clientInfo.countryInfo?.currency?.exchangeRate || 1;
         return round(basePrice * exchangeRate, 2);
     }, [product_, clientInfo]);
 
@@ -196,6 +197,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
             }
 
         } else {
+            let wishListAdded: boolean = false
             //This adds a product to the wish list
             if (wishList_) {
                 const exists = wishList_.some((p) => p._id === product._id);
@@ -206,14 +208,46 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                     setItem(wishListName, newWishList)
                     storeWishInfo("Added", clientInfo!, product)
                     notify("success", "Product added to wish list")
+                    wishListAdded = true
                 }
             } else {
                 const newWishList: Array<IProduct> = [ product ]
                 setItem(wishListName, newWishList)
                 storeWishInfo("Added", clientInfo!, product)
                 notify("success", "Product added to wish list")
+                wishListAdded = true
             }
             
+            //Sending a gtm add to wishlist event
+            if (wishListAdded) {
+                const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+                const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+                const wishList__ = getItem(wishListName) as unknown as Array<IProduct>
+                sendGTMEvent({
+                    event: 'add_to_wishlist',
+                    ecommerce: {
+                        content_type: 'product',
+                        content_ids: wishList__.map((item) => item._id),
+                        content_name: extractBaseTitle(document.title),
+                        value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                        currency: countryInfo_?.currency?.abbreviation,
+                        content_category: product.category?.micro,
+                        contents: wishList__.map((item) => ({
+                            id: item._id,
+                            name: item.name,
+                            quantity: 1,
+                            item_price: getCustomPricing(item, 0, countryInfo_?.name?.common!),
+                        }))
+                    },
+                    clientInfo: {
+                        id: hashValue(clientInfo?._id!),
+                        ip: clientInfo?.ipData?.ip!,
+                        city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                        region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                    }
+                })
+            }
         }
     }
 
@@ -268,11 +302,11 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                         <strong>
                             {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
                             {clientInfo ? (
-                                <span>{clientInfo?.country?.currency?.symbol}</span>
+                                <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
                             ) : (
                                 <></>
                             )}
-                            {clientInfo?.country?.currency?.exchangeRate ? (
+                            {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                 <span>
                                     {customPrice.toLocaleString("en-US")}
                                 </span>
@@ -284,11 +318,11 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                     <div className={styles.price_2}>
                         {/* {clientInfo ? (<span dangerouslySetInnerHTML={{ __html: decodedString(getCurrencySymbol(clientInfo)) }} />) : (<></>)} */}
                         {clientInfo ? (
-                            <span>{clientInfo?.country?.currency?.symbol}</span>
+                            <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
                         ) : (
                             <></>
                         )}
-                        {clientInfo?.country?.currency?.exchangeRate ? (
+                        {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                             <span>
                                 {slashedCustomPrice!.toLocaleString("en-US")}
                             </span>

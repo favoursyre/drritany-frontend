@@ -205,13 +205,13 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
             </div>
             <div className={styles.price} onClick={(e) => viewOrder(e, order._id!)}>
                 {clientInfo ? (
-                    <span>{clientInfo?.country?.currency?.symbol}</span>
+                    <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
                 ) : (
                     <></>
                 )}
-                {clientInfo?.country?.currency?.exchangeRate ? (
+                {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                     <span>
-                        {round(totalPrice! * clientInfo?.country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
+                        {round(totalPrice! * clientInfo?.countryInfo?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                     </span>
                 ) : (
                     <></>

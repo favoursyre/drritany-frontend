@@ -354,9 +354,11 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
 
       //Storing this info in button research
       const info: IButtonResearch = {
-        ID: getItem(userIdName),
-        IP: clientInfo?.ip!,
-        Country: clientInfo?.country?.name?.common!,
+        ID: clientInfo?._id!,
+        IP: clientInfo?.ipData?.ip!,
+        City: clientInfo?.ipData?.city!,
+        Region: clientInfo?.ipData?.region!,
+        Country: clientInfo?.ipData?.country!,
         Button_Name: "seeMoreProduct()",
         Button_Info: `Clicked ${title} product slide`,
         Page_Title: extractBaseTitle(document.title),

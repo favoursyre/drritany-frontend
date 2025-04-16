@@ -19,8 +19,8 @@ import GoogleAnalytics from '@/config/GoogleAnalytics';
 import { useRouter, usePathname } from "next/navigation";
 import Head from "next/head";
 import { v4 as uuid } from 'uuid';
-import { GoogleTagManager } from "@next/third-parties/google"
-import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
+import { GoogleTagManager, sendGTMEvent } from "@next/third-parties/google"
+import { getCurrentDate, getCurrentTime, backend, statSheetId, extractBaseTitle, userIdName, clientInfoName, productsName, getProducts, sortProductByActiveStatus, hashValue } from "@/config/utils";
 import { getDevice, getItem, getOS, setItem, Cache, notify } from "@/config/clientUtils";
 
 ///Commencing the code
@@ -127,10 +127,25 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     //   //   setClientInfo(info)
     //   // }
     // }, []);
+    //This is a simple function that gets the ip of a client
 
     // Fetch initial data once on mount
     useEffect(() => {
       setMounted(true);
+
+      sendGTMEvent({
+          event: 'page_view',
+          ecommerce: {
+            content_name: extractBaseTitle(document.title),
+          },
+          clientInfo: {
+              id: clientInfo?._id!,
+              ip: clientInfo?.ipData?.ip!,
+              city: clientInfo?.ipData?.city!,
+              region: clientInfo?.ipData?.region!,
+              country: clientInfo?.ipData?.country
+          }
+      })
     }, []);
 
     //Updating client info
@@ -179,23 +194,48 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       if (!_clientInfo) {
         //console.log('Client is not active')
 
-        //Setting the user id
-        if (!_userId) {
-          setItem(userIdName, userId)
-        } else {
-          //console.log("User id is active")
+        //Setting client infos 
+        const getClientInfo = async () => {
+          try {
+            const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
+                method: "GET",
+                cache: "default",
+            })
+            //console.log("IP red: ", res)
+    
+            if (res.ok) {
+                const info_ = await res.json()
+                console.log('Info res: ', info_)
+
+              //Setting the user id
+              if (!_userId) {
+                setItem(userIdName, userId)
+              } else {
+                //console.log("User id is active")
+              }
+
+              // ---> For USA only <---
+              const info : IClientInfo = {
+                _id: userId,
+                ipData: {
+                  ip: info_.ip,
+                  city: info_.city,
+                  region: info_.region,
+                  country: info_.country_name
+                },
+                countryInfo: countryList.find(country => country.name?.abbreviation === "US")
+              }
+              //console.log("setting")
+              //setClientInfo(info)
+              setItem(clientInfoName, info)
+              setClientInfo(() => info)
+            } 
+          } catch (error) {
+            console.log('Error: ', error)
+          }
         }
 
-        // ---> For USA only <---
-        const info : IClientInfo = {
-          _id: userId,
-          ip: "xxxxxx",
-          country: countryList.find(country => country.name?.abbreviation === "US")
-        }
-        //console.log("setting")
-        //setClientInfo(info)
-        setItem(clientInfoName, info)
-        setClientInfo(() => info)
+        getClientInfo()
       } else {
         //console.log('Client is active')
       }
@@ -224,9 +264,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
                     //Arranging the query research info
                     const trafficInfo: ITrafficResearch = {
-                        ID: userId,
-                        IP: clientInfo?.ip!,
-                        Country: clientInfo?.country?.name?.common!,
+                        ID: clientInfo?._id!,
+                        IP: clientInfo?.ipData?.ip!,
+                        City: clientInfo?.ipData?.city!,
+                        Region: clientInfo?.ipData?.region!,
+                        Country: clientInfo?.ipData?.country!,
                         Page_Title: extractBaseTitle(document.title),
                         Page_URL: routerPath,
                         Date: getCurrentDate(),
@@ -237,7 +279,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
                     const sheetInfo: ISheetInfo = {
                         sheetId: statSheetId,
-                        sheetRange: "Traffic!A:I",
+                        sheetRange: "Traffic!A:K",
                         data: trafficInfo
                     }
 
@@ -258,6 +300,23 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             }
 
             storeTraffic()
+
+            //Sending page view event to gtm
+            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
+            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
+            sendGTMEvent({
+              event: 'page_view',
+              ecommerce: {
+                content_name: extractBaseTitle(document.title),
+              },
+              clientInfo: {
+                  id: hashValue(clientInfo?._id!),
+                  ip: clientInfo?.ipData?.ip!,
+                  city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                  region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                  country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+              }
+            })
 
           } else {
             //console.log("Traffic has been sent already")

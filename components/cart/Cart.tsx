@@ -161,11 +161,11 @@ const Cart = () => {
 
             const refreshCart = () => {
                 //console.log("the cart is running")
-                if (cart && clientInfo?.country?.name?.common) {
+                if (cart && clientInfo?.countryInfo?.name?.common) {
                     cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                     cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
-                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common)).toFixed(2))
+                    cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common)).toFixed(2))
                     setItem(cartName, cart)
                     const updatedCart = cart
                     setCart(() => ({ ...updatedCart }))
@@ -185,7 +185,7 @@ const Cart = () => {
                 //Checking if the state has extraDeliveryPercent and notifying the client
                 //console.log("Test: ", deliveryInfo.state)
                 
-                const state_ = clientInfo?.country?.states?.find(states => states.name === deliveryInfo.state)
+                const state_ = clientInfo?.countryInfo?.states?.find(states => states.name === deliveryInfo.state)
                 //console.log("Test 2: ", clientInfo)
 
                 if (state_?.extraDeliveryPercent === 0) {
@@ -258,9 +258,11 @@ const Cart = () => {
 
         //Storing this info in button research
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "viewCartItemDiscount()",
             Button_Info: `Clicked discount icon in cart`,
             Page_Title: extractBaseTitle(document.title),
@@ -322,7 +324,7 @@ const Cart = () => {
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
             cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
             setCart(() => ({ ...cart }))
             setItem(cartName, cart)
         }
@@ -348,7 +350,7 @@ const Cart = () => {
                 cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                 cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
                 cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
-                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
+                cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
                 setItem(cartName, cart)
                 setCart(() => ({ ...cart }))
                 //console.log("after: ", cart)
@@ -406,9 +408,11 @@ const Cart = () => {
         
         //Storing this info in button research
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "checkoutOrder()",
             Button_Info: `Clicked "pay" in cart`,
             Page_Title: extractBaseTitle(document.title),
@@ -456,7 +460,7 @@ const Cart = () => {
             cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
             cart.totalWeight= Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2));
             cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
-            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
+            cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
             //console.log("Updated Cart: ", cart)
             setItem(cartName, cart)
             setCart(() => ({ ...cart }))
@@ -555,10 +559,10 @@ const Cart = () => {
                                         </button>
                                     </div>
                                     <div className={styles.list_subtotal} onClick={(e) => viewCartItemDiscount(e, cid)}>
-                                        <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.country?.currency?.symbol}</span>
-                                        {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                        <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                        {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                             <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>
-                                                {round(c.subTotalPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                                {round(c.subTotalPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                             </span>
                                         ) : (
                                             <></>
@@ -634,14 +638,14 @@ const Cart = () => {
                             <div className={styles.subtotal}>
                                 <span className={styles.title}>Gross Total</span>
                                 <div className={styles.amount}>
-                                    {clientInfo?.country?.currency?.symbol ? (
-                                        <span>{clientInfo?.country?.currency?.symbol}</span>
+                                    {clientInfo?.countryInfo?.currency?.symbol ? (
+                                        <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
                                     ) : (
                                         <></>
                                     )}
-                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.grossTotalPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(cart.grossTotalPrice * clientInfo?.countryInfo?.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -653,14 +657,14 @@ const Cart = () => {
                                 <span className={styles.title}>Total Discount</span>
                                 <div className={styles.amount}>
                                     <Remove className={styles.minus} style={{ fontSize: "1rem" }} />
-                                    {clientInfo?.country?.currency?.symbol ? (
-                                        <span>{clientInfo.country?.currency?.symbol}</span>
+                                    {clientInfo?.countryInfo?.currency?.symbol ? (
+                                        <span>{clientInfo.countryInfo?.currency?.symbol}</span>
                                     ) : (
                                         <></>
                                     )}
-                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(getCartDiscount() * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(getCartDiscount() * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -671,10 +675,10 @@ const Cart = () => {
                                 <span className={styles.title}>Delivery Fee</span>
                                 <div className={styles.amount}>
                                     <Add className={styles.minus} style={{ fontSize: "1rem" }} />
-                                    <span>{clientInfo?.country?.currency?.symbol}</span>
-                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                    <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(getCartDeliveryFee() * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(getCartDeliveryFee() * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -685,10 +689,10 @@ const Cart = () => {
                                 <span className={styles.title}>Tax</span>
                                 <div className={styles.amount}>
                                     <Add className={styles.minus} style={{ fontSize: "1rem" }} />
-                                    <span>{clientInfo?.country?.currency?.symbol}</span>
-                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                    <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(taxAmount! * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(taxAmount! * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -698,10 +702,10 @@ const Cart = () => {
                             <div className={styles.total}>
                                 <span className={styles.title}>Overall Total</span>
                                 <div className={styles.amount}>
-                                    <span>{clientInfo?.country?.currency?.symbol}</span>
-                                    {cart && clientInfo?.country?.currency?.exchangeRate ? (
+                                    <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>

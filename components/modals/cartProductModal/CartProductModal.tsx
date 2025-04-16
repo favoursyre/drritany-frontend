@@ -88,9 +88,9 @@ const CartProductDiscountModal = () => {
                 {clientInfo && cartItem ? (
                     <ul>
                         <li>Extra {round(cartItem.newXtraDiscount, 1).toLocaleString("en-US")}% discount</li>
-                        <li>You save {clientInfo.country?.currency?.symbol}{round(cartItem.discountedPrice * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
-                        <li>Old Price: {clientInfo.country?.currency?.symbol}{round(cartItem.oldPrice * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
-                        <li>New Price: {clientInfo.country?.currency?.symbol}{round(cartItem.newPrice * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
+                        <li>You save {clientInfo.countryInfo?.currency?.symbol}{round(cartItem.discountedPrice * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
+                        <li>Old Price: {clientInfo.countryInfo?.currency?.symbol}{round(cartItem.oldPrice * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
+                        <li>New Price: {clientInfo.countryInfo?.currency?.symbol}{round(cartItem.newPrice * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")}</li>
                     </ul>
                 ) : (
                     <></>

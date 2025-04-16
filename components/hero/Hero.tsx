@@ -146,13 +146,13 @@ const Hero = () => {
                 </form>
                 {mounted && clientInfo ? (
                     <div className={styles.text}>
-                        <span><em>We deliver anywhere in {clientInfo?.country?.name?.abbreviation === "US" ? "the" : ""} {clientInfo?.country?.name?.common}</em></span>
+                        <span><em>We deliver anywhere in {clientInfo?.countryInfo?.name?.abbreviation === "US" ? "the" : ""} {clientInfo?.countryInfo?.name?.common}</em></span>
                         <Image 
                             className={styles.flag}
-                            src={clientInfo?.country?.flag?.src as unknown as string}
+                            src={clientInfo?.countryInfo?.flag?.src as unknown as string}
                             alt=""
-                            width={clientInfo?.country?.flag?.width}
-                            height={clientInfo?.country?.flag?.height}
+                            width={clientInfo?.countryInfo?.flag?.width}
+                            height={clientInfo?.countryInfo?.flag?.height}
                         />
                     </div>
                 ) : (

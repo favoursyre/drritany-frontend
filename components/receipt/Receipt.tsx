@@ -106,9 +106,11 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
 
         //Storing this info in button research
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "viewCartItemDiscount()",
             Button_Info: `Clicked discount icon in invoice`,
             Page_Title: extractBaseTitle(document.title),

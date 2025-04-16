@@ -114,16 +114,16 @@ const OrderFormModal = () => {
     useEffect(() => {
         //getClientInfo()
         
-        if (clientInfo && clientInfo?.country) {
+        if (clientInfo && clientInfo?.countryInfo) {
             //setCountryCode1(() => clientInfo.country)
             //console.log("Loc: ", clientInfo)
             if (!countryCode1 && !countryCode2 && !country) {
-                setCountryCode1(() => clientInfo.country)
-                setCountryCode2(() => clientInfo.country)
+                setCountryCode1(() => clientInfo.countryInfo)
+                setCountryCode2(() => clientInfo.countryInfo)
 
-                const country_ = clientInfo.country.name?.common as unknown as string
+                const country_ = clientInfo.countryInfo.name?.common as unknown as string
                 setCountry(() => country_)
-                const info = countryList.find(country => country.name?.common === clientInfo?.country?.name?.common)
+                const info = countryList.find(country => country.name?.common === clientInfo?.countryInfo?.name?.common)
                 //console.log("Country: ", info)
                 setCountryInfo(() => info)
 
@@ -367,13 +367,13 @@ const OrderFormModal = () => {
         setState(() => e.target.value)
             //console.log("State: ", state)
 
-        const symbol = clientInfo?.country?.currency?.symbol!
+        const symbol = clientInfo?.countryInfo?.currency?.symbol!
     
         //Checking if the state has extraDeliveryPercent and notifying the client
         const state_ = countryInfo?.states?.find(states => states.name === e.target.value)
         
         if (state_?.extraDeliveryPercent === 0) {
-                const total = round((cart?.grossTotalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const total = round((cart?.grossTotalPrice! - cart?.totalDiscount! + cart?.deliveryFee!) * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 //notify("info", `Your total order amount is ${symbol}${total}`)
                 setItem(extraDeliveryFeeName, 0)
             
@@ -382,8 +382,8 @@ const OrderFormModal = () => {
                 const extraDeliveryFee = (state_?.extraDeliveryPercent / 100) * cart?.deliveryFee
                 setExtraDeliveryFee(() => extraDeliveryFee)
                 setItem(extraDeliveryFeeName, extraDeliveryFee)
-                const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
-                const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.country?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const formatExtraDeliveryFee = round(extraDeliveryFee * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")
+                const total = round((cart.grossTotalPrice - cart.totalDiscount + cart.deliveryFee + extraDeliveryFee) * clientInfo?.countryInfo?.currency?.exchangeRate!, 1).toLocaleString("en-US")
                 //notify("info", `Delivery to ${e.target.value} gets an additional delivery charge of ${symbol}${formatExtraDeliveryFee}. Your total order amount is ${symbol}${total}`)
             }
         }
@@ -613,9 +613,9 @@ const OrderFormModal = () => {
                 </label>
                 <br />
                 <label>
-                    {mounted && clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code
+                    {mounted && clientInfo?.countryInfo?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code
                     <input
-                        placeholder={`${mounted && clientInfo?.country?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code`}
+                        placeholder={`${mounted && clientInfo?.countryInfo?.name?.abbreviation === "US" ? "Zip" : "Postal"} Code`}
                         type="text"
                         onChange={(e) => onChange(e, "postalCode")}//setPostalCode(e.target.value)}
                         value={postalCode}

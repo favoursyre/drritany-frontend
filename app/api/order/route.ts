@@ -7,7 +7,7 @@ import { Product } from "@/models/product";
 import { NextResponse, NextRequest } from "next/server";
 import { sendOrderEmail } from "@/config/email";
 import { ICartItem, IClientInfo, IOrder, IOrderSheet, IProduct } from "@/config/interfaces";
-import { orderSheetId, getCurrentTime, getCurrentDate } from "@/config/utils";
+import { orderSheetId, getCurrentTime, getCurrentDate, round } from "@/config/utils";
 import { GoogleSheetStore } from "@/config/serverUtils";
 
 ///Commencing the code
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         //Adding the order to Google sheet
         const { customerSpec: customer, productSpec: cart } = order_
         const client: IClientInfo = clientInfo_ as unknown as IClientInfo
-        const currencySymbol = client.country?.currency?.symbol
+        const currencySymbol = client.countryInfo?.currency?.symbol
         console.log('Clientinfo: ', clientInfo_)
 
         const items = order_.productSpec.cart
@@ -73,13 +73,13 @@ export async function POST(request: NextRequest) {
         }
 
         const orderData: Array<IOrderSheet> = []
-        if (client.country?.currency?.exchangeRate && client.country?.currency?.symbol) {
-            const overallTotal = Number(((order.productSpec.totalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee) * order.paymentSpec.exchangeRate).toFixed(2)).toLocaleString("en-US")
+        if (client.countryInfo?.currency?.exchangeRate && client.countryInfo?.currency?.symbol) {
+            const overallTotal = round(order.productSpec.overallTotalPrice! * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")
             for (let i = 0; i < cart.cart.length; i++) {
                 const cart_: ICartItem = cart.cart[i]
-                const unitPrice = Number((cart_.unitPrice * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
-                const totalPrice = Number(((cart_.subTotalPrice - cart_.subTotalDiscount) * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
-                const deliveryFee = Number((cart.deliveryFee * client?.country?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                const unitPrice = Number((cart_.unitPrice * client?.countryInfo?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                const totalPrice = Number(((cart_.subTotalPrice - cart_.subTotalDiscount) * client?.countryInfo?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
+                const deliveryFee = Number((cart.deliveryFee * client?.countryInfo?.currency?.exchangeRate).toFixed(2)).toLocaleString("en-US")
                 
                 orderData.push({
                     UserId: customer.userId,

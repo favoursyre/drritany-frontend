@@ -163,9 +163,11 @@ const Header = () => {
 
     //Storing this info in button research
     const info: IButtonResearch = {
-      ID: getItem(userIdName),
-      IP: clientInfo?.ip!,
-      Country: clientInfo?.country?.name?.common!,
+      ID: clientInfo?._id!,
+      IP: clientInfo?.ipData?.ip!,
+      City: clientInfo?.ipData?.city!,
+      Region: clientInfo?.ipData?.region!,
+      Country: clientInfo?.ipData?.country!,
       Button_Name: "viewNavBar()",
       Button_Info: `Clicked ${nav} in header`,
       Page_Title: extractBaseTitle(document.title),

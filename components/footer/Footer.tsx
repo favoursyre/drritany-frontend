@@ -68,9 +68,11 @@ const Footer = () => {
 
         //Storing this info in button research
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip ? clientInfo?.ip : "undefined",
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "viewFooterNav()",
             Button_Info: `Clicked ${nav} in footer`,
             Page_Title: extractBaseTitle(document.title),
@@ -105,9 +107,11 @@ const Footer = () => {
 
         //Arranging button research info
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "visitSocialLink()",
             Button_Info: `Clicked ${social} in footer`,
             Page_Title: extractBaseTitle(document.title),

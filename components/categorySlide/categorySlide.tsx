@@ -135,9 +135,11 @@ const CategorySlide = () => {
 
       //Storing this info in button research
       const info: IButtonResearch = {
-        ID: getItem(userIdName),
-        IP: clientInfo?.ip!,
-        Country: clientInfo?.country?.name?.common!,
+        ID: clientInfo?._id!,
+        IP: clientInfo?.ipData?.ip!,
+        City: clientInfo?.ipData?.city!,
+        Region: clientInfo?.ipData?.region!,
+        Country: clientInfo?.ipData?.country!,
         Button_Name: "viewSubCategory()",
         Button_Info: `Clicked ${miniCategory}`,
         Page_Title: extractBaseTitle(document.title),

@@ -6,7 +6,8 @@ import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } fro
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName, clientInfoName } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, hashValue } from '@/config/utils'
+import { countryList } from "@/config/database";
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -94,20 +95,6 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //For client rendering
     useEffect(() => {
         setMounted(true);
-
-        //Sending a gtm view_content event
-        sendGTMEvent({
-            event: 'view_content',
-            ecommerce: {
-              content_type: 'product',
-              content_id: product._id,
-              content_name: product.name,
-              value: customPrice,
-              currency: 'USD',
-              content_category: product.category || 'general',
-            },
-        })
-        console.log('Sent view-content event')
     }, []);
     //console.log("In Stock: ", product.pricing?.inStock)
 
@@ -234,7 +221,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
     // Memoize custom price
     const customPrice = useMemo(() => {
-        return clientInfo ? getCustomPricing(product_, sizeId, clientInfo.country?.name?.common || "") : product_.pricing?.basePrice || 0;
+        return clientInfo ? getCustomPricing(product_, sizeId, clientInfo.countryInfo?.name?.common || "") : product_.pricing?.basePrice || 0;
     }, [product_, sizeId, clientInfo]);
 
     //This stores the viewed peoduct in the sheet
@@ -246,16 +233,21 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 try {
                     //Arranging the query research info
                     const queryInfo: IProductViewResearch = {
-                        IP: clientInfo?.ip!,
-                        Country: clientInfo?.country?.name?.common!,
-                        Product: product.name!,
+                        ID: clientInfo?._id!,
+                        IP: clientInfo?.ipData?.ip!,
+                        City: clientInfo.ipData?.city!,
+                        Region: clientInfo.ipData?.region!,
+                        Country: clientInfo?.ipData?.country!,
+                        Product_Name: product.name!,
                         Date: getCurrentDate(),
-                        Time: getCurrentTime()
+                        Time: getCurrentTime(),
+                        OS: getOS(),
+                        Device: getDevice()
                     }
 
                     const sheetInfo: ISheetInfo = {
                         sheetId: statSheetId,
-                        sheetRange: "ProductView!A:E",
+                        sheetRange: "ProductView!A:J",
                         data: queryInfo
                     }
             
@@ -274,6 +266,28 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
             if (!sheetStored) {
                 storeQuery()
+
+                //Sending a gtm view_content event
+                const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
+                const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
+                sendGTMEvent({
+                    event: 'view_content',
+                    ecommerce: {
+                        content_type: 'product',
+                        content_ids: [product._id],
+                        content_name: product.name,
+                        value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                        currency: countryInfo_?.currency?.abbreviation,
+                        content_category: product.category?.micro,
+                    },
+                    clientInfo: {
+                        id: hashValue(clientInfo?._id!),
+                        ip: clientInfo?.ipData?.ip!,
+                        city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                        region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                    }
+                })
             }
         }
     }, [clientInfo])
@@ -367,9 +381,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
         //Storing this info in button research
         const info: IButtonResearch = {
-            ID: getItem(userIdName),
-            IP: clientInfo?.ip!,
-            Country: clientInfo?.country?.name?.common!,
+            ID: clientInfo?._id!,
+            IP: clientInfo?.ipData?.ip!,
+            City: clientInfo?.ipData?.city!,
+            Region: clientInfo?.ipData?.region!,
+            Country: clientInfo?.ipData?.country!,
             Button_Name: "viewReturnPolicy()",
             Button_Info: `Clicked "return policy" in product info`,
             Page_Title: extractBaseTitle(document.title),
@@ -419,9 +435,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
             //Storing this info in button research
             const info: IButtonResearch = {
-                ID: getItem(userIdName),
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
+                ID: clientInfo?._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.ipData?.country!,
                 Button_Name: "addToCart()",
                 Button_Info: `Tried adding "${p.name}" to cart in product info but its out of stock`,
                 Page_Title: extractBaseTitle(document.title),
@@ -443,7 +461,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
             })
             //const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
-            const deliveryFee_ = getDeliveryFee(pWeight, clientInfo?.country?.name?.common!)
+            const deliveryFee_ = getDeliveryFee(pWeight, clientInfo?.countryInfo?.name?.common!)
 
             //Arranging the cart details
             const cartItem: ICartItem = {
@@ -474,7 +492,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
             }
             const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
             const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
-            const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.country?.name?.common!)
+            const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.countryInfo?.name?.common!)
             const totalHiddenDeliveryFee = Number(cartItem.subTotalHiddenDeliveryFee.toFixed(2))
 
             // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
@@ -494,6 +512,9 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     }
                 }
 
+                const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+                const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+
                 //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
                 if (index === undefined) {
                     cart.grossTotalPrice = Number((cart.grossTotalPrice + totalPrice).toFixed(2))
@@ -505,8 +526,35 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setCart(() => cart)
                     setItem(cartName, cart)
                     if (!order) {
-                        await storeCartInfo("Added", clientInfo!, product.name!)
                         notify('success', "Product has been added to cart")
+
+                        //Storing cart infos and events
+                        await storeCartInfo("Added", clientInfo!, product.name!)
+                        
+                        sendGTMEvent({
+                            event: 'add_to_cart',
+                            ecommerce: {
+                                content_type: 'product',
+                                content_ids: cart.cart.map((item) => item._id),
+                                content_name: extractBaseTitle(document.title),
+                                value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                                currency: countryInfo_?.currency?.abbreviation,
+                                content_category: product.category?.micro,
+                                contents: cart.cart.map((item) => ({
+                                    id: item._id,
+                                    name: item.name,
+                                    quantity: item.quantity,
+                                    item_price: item.subTotalPrice,
+                                }))
+                            },
+                            clientInfo: {
+                                id: hashValue(clientInfo?._id!),
+                                ip: clientInfo?.ipData?.ip!,
+                                city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                                region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                                country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                            }
+                        })
                     }
                 } else {
                     if (quantity === cart.cart[index].quantity) {
@@ -523,19 +571,46 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
                         cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
                         cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
-                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.country?.name?.common!)).toFixed(2))
+                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
                         setCart(() => cart)
                         setItem(cartName, cart)
                         if (!order) {
-                            await storeCartInfo("Added", clientInfo!, product.name!)
                             notify('success', "Product has been updated to cart")
+
+                            //Storing cart infos and events
+                            await storeCartInfo("Added", clientInfo!, product.name!)
+                            
+                            sendGTMEvent({
+                                event: 'add_to_cart',
+                                ecommerce: {
+                                    content_type: 'product',
+                                    content_ids: cart.cart.map((item) => item._id),
+                                    content_name: extractBaseTitle(document.title),
+                                    value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                                    currency: countryInfo_?.currency?.abbreviation,
+                                    content_category: product.category?.micro,
+                                    contents: cart.cart.map((item) => ({
+                                        id: item._id,
+                                        name: item.name,
+                                        quantity: item.quantity,
+                                        item_price: item.subTotalPrice,
+                                    }))
+                                },
+                                clientInfo: {
+                                    id: hashValue(clientInfo?._id!),
+                                    ip: clientInfo?.ipData?.ip!,
+                                    city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                                    region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                                }
+                            })
                         }
                     }
                 }
 
-                const car_ = localStorage.getItem(cartName)
-                const _car_= JSON.parse(car_ || "{}")
-                //console.log("cart_: ", _car_)
+                // const car_ = localStorage.getItem(cartName)
+                // const _car_= JSON.parse(car_ || "{}")
+                // //console.log("cart_: ", _car_)
             } else {
                 //console.log("No cart: ", false)
 
@@ -565,9 +640,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
             //Storing this info in button research
             const info: IButtonResearch = {
-                ID: getItem(userIdName),
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
+                ID: clientInfo?._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.ipData?.country!,
                 Button_Name: "addToCart()",
                 Button_Info: `Added "${cartItem.name}" to cart in product info`,
                 Page_Title: extractBaseTitle(document.title),
@@ -639,9 +716,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
 
             //Storing this info in button research
             const info: IButtonResearch = {
-                ID: getItem(userIdName),
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
+                ID: clientInfo?._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.countryInfo?.name?.common!,
                 Button_Name: "orderNow()",
                 Button_Info: `Clicked "checkout" in product info`,
                 Page_Title: extractBaseTitle(document.title),
@@ -758,9 +837,11 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         if (addToWishList) {
             //Storing this info in button research
             const info: IButtonResearch = {
-                ID: getItem(userIdName),
-                IP: clientInfo?.ip!,
-                Country: clientInfo?.country?.name?.common!,
+                ID: clientInfo?._id!,
+                IP: clientInfo?.ipData?.ip!,
+                City: clientInfo?.ipData?.city!,
+                Region: clientInfo?.ipData?.region!,
+                Country: clientInfo?.ipData?.country!,
                 Button_Name: "wishProduct()",
                 Button_Info: `Added "${product.name}" to wish list in product info`,
                 Page_Title: extractBaseTitle(document.title),
@@ -771,6 +852,34 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 Device: getDevice()
             }
             storeButtonInfo(info)
+
+            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+            const wishList__ = getItem(wishListName) as unknown as Array<IProduct>
+            sendGTMEvent({
+                event: 'add_to_wishlist',
+                ecommerce: {
+                    content_type: 'product',
+                    content_ids: wishList__.map((item) => item._id),
+                    content_name: extractBaseTitle(document.title),
+                    value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                    currency: countryInfo_?.currency?.abbreviation,
+                    content_category: product.category?.micro,
+                    contents: wishList__.map((item) => ({
+                        id: item._id,
+                        name: item.name,
+                        quantity: 1,
+                        item_price: getCustomPricing(item, 0, countryInfo_?.name?.common!),
+                    }))
+                },
+                clientInfo: {
+                    id: hashValue(clientInfo?._id!),
+                    ip: clientInfo?.ipData?.ip!,
+                    city: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                    region: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                }
+            })
         }
     }
 
@@ -973,23 +1082,23 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                     <div className={styles.price}>
                                         {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
                                         {clientInfo ? (
-                                            <span>{clientInfo.country?.currency?.symbol}</span>
+                                            <span>{clientInfo.countryInfo?.currency?.symbol}</span>
                                         ) : (
                                             <></>
                                         )}
-                                        {clientInfo?.country?.currency?.exchangeRate ? (
+                                        {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                             <span>
-                                                {round(customPrice * clientInfo.country.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                                {round(customPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                             </span> 
                                         ) : (
                                             <></>
                                         )}
                                     </div>
                                     <div className={styles.slashed_price}>
-                                        {clientInfo ? <span>{clientInfo.country?.currency?.symbol}</span> : <></>}
-                                        {clientInfo?.country?.currency?.exchangeRate ? (
+                                        {clientInfo ? <span>{clientInfo.countryInfo?.currency?.symbol}</span> : <></>}
+                                        {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                             <span>
-                                                {round(slashedPrice(customPrice * clientInfo.country.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
+                                                {round(slashedPrice(customPrice * clientInfo.countryInfo.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
                                             </span>
                                         ) : (
                                             <></>

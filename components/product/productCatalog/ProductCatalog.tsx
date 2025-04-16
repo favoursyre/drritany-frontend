@@ -7,7 +7,7 @@ import { IProduct, IClientInfo, ISheetInfo, IQueryResearch } from "@/config/inte
 import { useState, useEffect, MouseEvent, Fragment, useMemo } from "react"
 import { sortProductByOrder, sortProductByPrice, sortMongoQueryByTime, getCurrentDate, getCurrentTime, statSheetId, backend, clientInfoName, productsName, getProducts, sortProductByActiveStatus } from "@/config/utils";
 import { useRouter, usePathname } from "next/navigation";
-import { getItem, Cache } from "@/config/clientUtils";
+import { getItem, Cache, getOS, getDevice } from "@/config/clientUtils";
 import ErrorIcon from '@mui/icons-material/Error';
 import ProductCard from "@/components/cards/product/ProductCard";
 import ProductGrid from "../productGrid/ProductGrid";
@@ -123,16 +123,21 @@ const ProductCatalog = ({ query_, products_ }: { query_: string | undefined, pro
                 try {
                     //Arranging the query research info
                     const queryInfo: IQueryResearch = {
-                        IP: clientInfo?.ip!,
-                        Country: clientInfo?.country?.name?.common!,
+                        ID: clientInfo._id!,
+                        IP: clientInfo?.ipData?.ip!,
+                        City: clientInfo.ipData?.city!,
+                        Region: clientInfo.ipData?.region!,
+                        Country: clientInfo?.ipData?.country!,
                         Query: query!,
                         Date: getCurrentDate(),
-                        Time: getCurrentTime()
+                        Time: getCurrentTime(),
+                        OS: getOS(),
+                        Device: getDevice()
                     }
 
                     const sheetInfo: ISheetInfo = {
                         sheetId: statSheetId,
-                        sheetRange: "ProductQuery!A:E",
+                        sheetRange: "ProductQuery!A:J",
                         data: queryInfo
                     }
             
