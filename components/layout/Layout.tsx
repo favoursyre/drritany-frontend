@@ -85,7 +85,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const [trafficStore, setTrafficStore] = useState<boolean>(false)
     const _products = Cache(productsName).get()
     const orderModal = useOrderModalStore(state => state.modal)
-    const containerId =  "GTM-55DBL8LN" //process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
+    const containerId =  "GTM-M32RVSJB" //"GTM-55DBL8LN" //process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
     const [mounted, setMounted] = useState<boolean>(false)
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
@@ -133,24 +133,52 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
       setMounted(true);
 
-      sendGTMEvent({
-          event: 'page_view',
-          ecommerce: {
-            content_name: extractBaseTitle(document.title),
-          },
-          clientInfo: {
-              id: clientInfo?._id!,
-              ip: clientInfo?.ipData?.ip!,
-              city: clientInfo?.ipData?.city!,
-              region: clientInfo?.ipData?.region!,
-              country: clientInfo?.ipData?.country
-          }
-      })
+      const getClientInfo = async () => {
+        try {
+          const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
+              method: "GET",
+              cache: "default",
+          })
+          //console.log("IP red: ", res)
+  
+          if (res.ok) {
+              const info_ = await res.json()
+              console.log('Info res: ', info_)
+
+            //Setting the user id
+            if (!_userId) {
+              setItem(userIdName, userId)
+            } else {
+              //console.log("User id is active")
+            }
+
+            // ---> For USA only <---
+            const info : IClientInfo = {
+              _id: userId,
+              ipData: {
+                ip: info_.ip,
+                city: info_.city,
+                region: info_.region,
+                country: info_.country_name
+              },
+              countryInfo: countryList.find(country => country.name?.abbreviation === "US")
+            }
+            //console.log("setting")
+            //setClientInfo(info)
+            setItem(clientInfoName, info)
+            setClientInfo(() => info)
+          } 
+        } catch (error) {
+          console.log('Error: ', error)
+        }
+      }
+
+      getClientInfo()
     }, []);
 
     //Updating client info
     useEffect(() => {
-        //console.log("Hero: ", _clientInfo, clientInfo)
+        console.log("Hero: ", _clientInfo, clientInfo)
         console.log("Container: ", containerId)
         console.log('ToastContainer:', ToastContainer)
 
@@ -188,63 +216,63 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }, [_clientInfo])
 
     //Setting the client user details
-    useEffect(() => {
-      const start = performance.now()
-      //Setting the clientInfo
-      if (!_clientInfo) {
-        //console.log('Client is not active')
+    // useEffect(() => {
+    //   const start = performance.now()
+    //   //Setting the clientInfo
+    //   if (!_clientInfo) {
+    //     //console.log('Client is not active')
 
-        //Setting client infos 
-        const getClientInfo = async () => {
-          try {
-            const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
-                method: "GET",
-                cache: "default",
-            })
-            //console.log("IP red: ", res)
+    //     //Setting client infos 
+    //     const getClientInfo = async () => {
+    //       try {
+    //         const res = await fetch(`https://api.ipdata.co?api-key=0c7caa0f346c2f6850c0b2e749ff04b3829f4a7229c88389b3160641`, {
+    //             method: "GET",
+    //             cache: "default",
+    //         })
+    //         //console.log("IP red: ", res)
     
-            if (res.ok) {
-                const info_ = await res.json()
-                console.log('Info res: ', info_)
+    //         if (res.ok) {
+    //             const info_ = await res.json()
+    //             console.log('Info res: ', info_)
 
-              //Setting the user id
-              if (!_userId) {
-                setItem(userIdName, userId)
-              } else {
-                //console.log("User id is active")
-              }
+    //           //Setting the user id
+    //           if (!_userId) {
+    //             setItem(userIdName, userId)
+    //           } else {
+    //             //console.log("User id is active")
+    //           }
 
-              // ---> For USA only <---
-              const info : IClientInfo = {
-                _id: userId,
-                ipData: {
-                  ip: info_.ip,
-                  city: info_.city,
-                  region: info_.region,
-                  country: info_.country_name
-                },
-                countryInfo: countryList.find(country => country.name?.abbreviation === "US")
-              }
-              //console.log("setting")
-              //setClientInfo(info)
-              setItem(clientInfoName, info)
-              setClientInfo(() => info)
-            } 
-          } catch (error) {
-            console.log('Error: ', error)
-          }
-        }
+    //           // ---> For USA only <---
+    //           const info : IClientInfo = {
+    //             _id: userId,
+    //             ipData: {
+    //               ip: info_.ip,
+    //               city: info_.city,
+    //               region: info_.region,
+    //               country: info_.country_name
+    //             },
+    //             countryInfo: countryList.find(country => country.name?.abbreviation === "US")
+    //           }
+    //           //console.log("setting")
+    //           //setClientInfo(info)
+    //           setItem(clientInfoName, info)
+    //           setClientInfo(() => info)
+    //         } 
+    //       } catch (error) {
+    //         console.log('Error: ', error)
+    //       }
+    //     }
 
-        getClientInfo()
-      } else {
-        //console.log('Client is active')
-      }
+    //     getClientInfo()
+    //   } else {
+    //     //console.log('Client is active')
+    //   }
 
-      //console.log("client info store: ", clientInfo)
-      const end = performance.now()
-      //console.log(`useEffect 1 took ${end - start}ms`)
-      //getClientInfo(clientInfo, setClientInfo, userId)
-    }, [userId])
+    //   //console.log("client info store: ", clientInfo)
+    //   const end = performance.now()
+    //   //console.log(`useEffect 1 took ${end - start}ms`)
+    //   //getClientInfo(clientInfo, setClientInfo, userId)
+    // }, [userId])
 
     //Keeping track of visitors
     useEffect(() => {
