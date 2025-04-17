@@ -272,7 +272,7 @@ const OrderModal = () => {
                             }
                         ]
                     } 
-                    sendGTMEvent(eventData.data[0])
+                    sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
                     sendMetaCapi(eventData)
 
                     //setIsLoading(false)
@@ -428,7 +428,7 @@ const OrderModal = () => {
                 }
             ]
         } 
-        sendGTMEvent(eventData.data[0])
+        sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
         sendMetaCapi(eventData)
 
         try {
