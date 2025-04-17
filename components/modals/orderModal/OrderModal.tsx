@@ -251,7 +251,7 @@ const OrderModal = () => {
                                     order_id: getItem("orderId"),
                                     contents: cart?.cart.map((item) => ({
                                         id: item._id,
-                                        name: item.name,
+                                        //name: item.name,
                                         quantity: item.quantity,
                                         item_price: item.subTotalPrice,
                                     }))
@@ -407,7 +407,7 @@ const OrderModal = () => {
                         num_items: productSpec.cart.reduce((total, item) => total + item.quantity, 0).toString(),
                         contents: productSpec.cart.map((item) => ({
                             id: item._id,
-                            name: item.name,
+                            //name: item.name,
                             quantity: item.quantity,
                             item_price: item.subTotalPrice,
                         }))

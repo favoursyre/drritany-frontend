@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
         throw new Error("Access token is undefined")
     }
 
-    //console.log("Testing: ", apiVersion, pixelId, accessToken)
-    //console.log("Test Event data: ", eventData, JSON.stringify(eventData))
+    console.log("Testing: ", apiVersion, pixelId, accessToken)
+    console.log("Test Event data: ", eventData, JSON.stringify(eventData))
 
     const url = `https://graph.facebook.com/${apiVersion}/${pixelId}/events?access_token=${accessToken}`;
   
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ data: res.data }, { status: 200 });
   } catch (error) {
-    console.error('Error sending meta capi: ', error);
+    console.error('Error sending meta capi_: ', JSON.stringify(error));
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

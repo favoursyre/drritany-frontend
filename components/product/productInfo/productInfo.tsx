@@ -641,7 +641,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             content_category: product.category?.micro,
                             contents: cart?.cart.map((item) => ({
                                 id: item._id,
-                                name: item.name,
+                                //name: item.name,
                                 quantity: item.quantity,
                                 item_price: item.subTotalPrice,
                             }))
@@ -883,7 +883,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             content_category: product.category?.micro,
                             contents: wishList__.map((item) => ({
                                 id: item._id,
-                                name: item.name,
+                                //name: item.name,
                                 quantity: 1,
                                 item_price: getCustomPricing(item, 0, countryInfo_?.name?.common!),
                             }))
