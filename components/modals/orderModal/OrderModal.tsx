@@ -19,10 +19,6 @@ import { countryList } from "@/config/database";
 import { sendGTMEvent } from "@next/third-parties/google";
 
 ///Commencing the code
-const stripePromise = loadStripe(
-    stripePublishableKey as string
-); 
-
 /**
  * @title Order Modal Component
  * @returns The Order Modal component
@@ -43,6 +39,7 @@ const OrderModal = () => {
     const searchParams = useSearchParams()
     //const clientInfo = useClientInfoStore(state => state.info)
     const _userId = getItem(userIdName)
+    const stripePromise = loadStripe(stripePublishableKey as string); 
     const [userId, setUserId] = useState<string | undefined>(_userId)
     const [txSessionId, setTxSessionId] = useState<string>("")
     const [paymentStatus, setPaymentStatus] = useState<string>("");
