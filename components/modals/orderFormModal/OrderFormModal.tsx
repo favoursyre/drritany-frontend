@@ -485,16 +485,16 @@ const OrderFormModal = () => {
                     <div className={styles.number_form}>
                     <div className={styles.dial_code_container}>
                             <button className={styles.dial_code} onClick={(e) => showDropDown(e, "1")}>
-                            <Image 
-                                className={styles.img}
-                                src={countryCode1?.flag?.src as unknown as string}
-                                alt=""
-                                width={countryCode1?.flag?.width as unknown as number}
-                                height={countryCode1?.flag?.height as unknown as number}
-                            />
-                            <span>{countryCode1?.dial_code}</span>
-                            <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
-                        </button>
+                                <Image 
+                                    className={styles.img}
+                                    src={countryCode1?.flag?.src as unknown as string}
+                                    alt=""
+                                    width={countryCode1?.flag?.width as unknown as number}
+                                    height={countryCode1?.flag?.height as unknown as number}
+                                />
+                                <span>{countryCode1?.dial_code}</span>
+                                <span className={`${styles.arrow} ${dropList1 ? styles.active_arrow : ""}`}>{">"}</span>
+                            </button>
                         <div className={`${styles.dial_code_option}`} style={{ display: dropList1 ? "flex" : "none"}}>
                             {countryList.map((country, cid) => (
                                 <button key={cid} onClick={(e) => chooseCode(e, "1", country)}>

@@ -280,7 +280,7 @@ const OrderModal = () => {
 
                     notify("info", "Redirecting you to orders")
                     removeItem("orderId")
-                    await sleep(2)
+                    await sleep(3)
                     router.push(`/order?userId=${userId}`)
                     
                     // setModalBackground(false)

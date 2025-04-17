@@ -87,6 +87,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const orderModal = useOrderModalStore(state => state.modal)
     const containerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
     const [mounted, setMounted] = useState<boolean>(false)
+    const [currentURL, setCurrentURL] = useState(typeof window !== "undefined" ? window.location.href : undefined)
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
     //Fetching client info
@@ -275,112 +276,212 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     // }, [userId])
 
     //Keeping track of visitors
+    // useEffect(() => {
+    //   const start = performance.now()
+
+    //   //getClientInfo(clientInfo, setClientInfo, userId)
+
+    //   //console.log("Client Info Layout: ", clientInfo)
+    //   //Storing the keyword in an excel sheet for research purposes
+    //   if (clientInfo) {
+
+    //       //Checking if the traffic has been stored
+    //       // if (!trafficStore) {
+    //       //   //console.log("Sending traffic")
+    //       //   const storeTraffic = async () => {
+    //       //       try {
+
+    //       //           //Arranging the query research info
+    //       //           const trafficInfo: ITrafficResearch = {
+    //       //               ID: clientInfo?._id!,
+    //       //               IP: clientInfo?.ipData?.ip!,
+    //       //               City: clientInfo?.ipData?.city!,
+    //       //               Region: clientInfo?.ipData?.region!,
+    //       //               Country: clientInfo?.ipData?.country!,
+    //       //               Page_Title: extractBaseTitle(document.title),
+    //       //               Page_URL: routerPath,
+    //       //               Date: getCurrentDate(),
+    //       //               Time: getCurrentTime(),
+    //       //               OS: getOS(),
+    //       //               Device: getDevice()
+    //       //           }
+
+    //       //           const sheetInfo: ISheetInfo = {
+    //       //               sheetId: statSheetId,
+    //       //               sheetRange: "Traffic!A:K",
+    //       //               data: trafficInfo
+    //       //           }
+
+    //       //           const res = await fetch(`${backend}/sheet`, {
+    //       //               method: "POST",
+    //       //               body: JSON.stringify(sheetInfo),
+    //       //           });
+
+    //       //           if (res.ok) {
+    //       //             setTrafficStore(true)
+    //       //           } else {
+    //       //             storeTraffic()
+    //       //           }
+    //       //           //console.log("Google Stream: ", res)
+    //       //       } catch (error) {
+    //       //           //console.log("Store Error: ", error)
+    //       //       }
+    //       //   }
+
+    //       //   storeTraffic()
+
+    //       //   //Sending page view event to gtm
+    //       //   const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
+    //       //   const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
+    //       //   const eventTime = Math.round(new Date().getTime() / 1000)
+    //       //   const eventId = uuid()
+    //       //   const userAgent = navigator.userAgent
+    //       //   const { fbp, fbc } = getFacebookCookies();
+    //       //   const eventData: IMetaWebEvent = {
+    //       //     data: [
+    //       //       {
+    //       //         event_name: MetaStandardEvent.PageView,
+    //       //         event_time: eventTime,
+    //       //         event_id: eventId,
+    //       //         action_source: MetaActionSource.website,
+    //       //         custom_data: {
+    //       //           content_name: extractBaseTitle(document.title),
+    //       //         },
+    //       //         user_data: {
+    //       //           client_user_agent: userAgent,
+    //       //           client_ip_address: clientInfo?.ipData?.ip!,
+    //       //           external_id: hashValue(clientInfo?._id!),
+    //       //           fbc: fbc!,
+    //       //           fbp: fbp!,
+    //       //           ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+    //       //           st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+    //       //           country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+    //       //         }
+    //       //       }
+    //       //     ]
+    //       //   } 
+    //       //   sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
+    //       //   sendMetaCapi(eventData)
+
+    //       // } else {
+    //       //   //console.log("Traffic has been sent already")
+    //       // }
+
+
+    //       if (orderModal === false) {
+    //         setModalBackground(false)
+    //         //console.log("setting off modal background 1")
+    //       }
+    //       //setModalBackground(false)
+    //     setLoadingModal(false)
+    //   } else {
+    //     setModalBackground(true)
+    //     setLoadingModal(true)
+    //   }
+
+    //   const end = performance.now()
+    //   //console.log(`useEffect 2 took ${end - start}ms`)
+    // }, [routerPath, clientInfo, trafficStore])
+
+    //Checking if url has changed and updating page view event
     useEffect(() => {
-      const start = performance.now()
+        const intervalId = setInterval(() => {
+            if (currentURL === window.location.href) {
+                //console.log('not changed')
+                undefined
+            } else {
+              console.log("url changed")
 
-      //getClientInfo(clientInfo, setClientInfo, userId)
+              if (!clientInfo) {
+                console.log("client not detected")
+                return
+              }
+                //console.log("changed")
+                clearInterval(intervalId)
+                setCurrentURL(window.location.href)
+                //window.location.reload()
 
-      //console.log("Client Info Layout: ", clientInfo)
-      //Storing the keyword in an excel sheet for research purposes
-      if (clientInfo) {
-
-          //Checking if the traffic has been stored
-          if (!trafficStore) {
-            //console.log("Sending traffic")
-            const storeTraffic = async () => {
-                try {
-
-                    //Arranging the query research info
-                    const trafficInfo: ITrafficResearch = {
-                        ID: clientInfo?._id!,
-                        IP: clientInfo?.ipData?.ip!,
-                        City: clientInfo?.ipData?.city!,
-                        Region: clientInfo?.ipData?.region!,
-                        Country: clientInfo?.ipData?.country!,
-                        Page_Title: extractBaseTitle(document.title),
-                        Page_URL: routerPath,
-                        Date: getCurrentDate(),
-                        Time: getCurrentTime(),
-                        OS: getOS(),
-                        Device: getDevice()
-                    }
-
-                    const sheetInfo: ISheetInfo = {
-                        sheetId: statSheetId,
-                        sheetRange: "Traffic!A:K",
-                        data: trafficInfo
-                    }
-
-                    const res = await fetch(`${backend}/sheet`, {
-                        method: "POST",
-                        body: JSON.stringify(sheetInfo),
-                    });
-
-                    if (res.ok) {
-                      setTrafficStore(true)
-                    } else {
-                      storeTraffic()
-                    }
-                    //console.log("Google Stream: ", res)
-                } catch (error) {
-                    //console.log("Store Error: ", error)
-                }
-            }
-
-            storeTraffic()
-
-            //Sending page view event to gtm
-            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo.ipData?.country)
-            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo.ipData?.region)
-            const eventTime = Math.round(new Date().getTime() / 1000)
-            const eventId = uuid()
-            const userAgent = navigator.userAgent
-            const { fbp, fbc } = getFacebookCookies();
-            const eventData: IMetaWebEvent = {
-              data: [
-                {
-                  event_name: MetaStandardEvent.PageView,
-                  event_time: eventTime,
-                  event_id: eventId,
-                  action_source: MetaActionSource.website,
-                  custom_data: {
-                    content_name: extractBaseTitle(document.title),
-                  },
-                  user_data: {
-                    client_user_agent: userAgent,
-                    client_ip_address: clientInfo?.ipData?.ip!,
-                    external_id: hashValue(clientInfo?._id!),
-                    fbc: fbc!,
-                    fbp: fbp!,
-                    ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                    st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                    country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                const storeTraffic = async () => {
+                  try {
+  
+                      //Arranging the query research info
+                      const trafficInfo: ITrafficResearch = {
+                          ID: clientInfo?._id!,
+                          IP: clientInfo?.ipData?.ip!,
+                          City: clientInfo?.ipData?.city!,
+                          Region: clientInfo?.ipData?.region!,
+                          Country: clientInfo?.ipData?.country!,
+                          Page_Title: extractBaseTitle(document.title),
+                          Page_URL: routerPath,
+                          Date: getCurrentDate(),
+                          Time: getCurrentTime(),
+                          OS: getOS(),
+                          Device: getDevice()
+                      }
+  
+                      const sheetInfo: ISheetInfo = {
+                          sheetId: statSheetId,
+                          sheetRange: "Traffic!A:K",
+                          data: trafficInfo
+                      }
+  
+                      const res = await fetch(`${backend}/sheet`, {
+                          method: "POST",
+                          body: JSON.stringify(sheetInfo),
+                      });
+  
+                      if (res.ok) {
+                        setTrafficStore(true)
+                      } else {
+                        storeTraffic()
+                      }
+                      //console.log("Google Stream: ", res)
+                  } catch (error) {
+                      //console.log("Store Error: ", error)
                   }
-                }
-              ]
-            } 
-            sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-            sendMetaCapi(eventData)
+              }
+  
+              storeTraffic()
+  
+              //Sending page view event to gtm
+              const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+              const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+              const eventTime = Math.round(new Date().getTime() / 1000)
+              const eventId = uuid()
+              const userAgent = navigator.userAgent
+              const { fbp, fbc } = getFacebookCookies();
+              const eventData: IMetaWebEvent = {
+                data: [
+                  {
+                    event_name: MetaStandardEvent.PageView,
+                    event_time: eventTime,
+                    event_id: eventId,
+                    action_source: MetaActionSource.website,
+                    custom_data: {
+                      content_name: extractBaseTitle(document.title),
+                    },
+                    user_data: {
+                      client_user_agent: userAgent,
+                      client_ip_address: clientInfo?.ipData?.ip!,
+                      external_id: hashValue(clientInfo?._id!),
+                      fbc: fbc!,
+                      fbp: fbp!,
+                      ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                      st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                      country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                    }
+                  }
+                ]
+              } 
+              sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
+              sendMetaCapi(eventData)
+                
+            }
+            
+        }, 1000);
 
-          } else {
-            //console.log("Traffic has been sent already")
-          }
-
-
-          if (orderModal === false) {
-            setModalBackground(false)
-            //console.log("setting off modal background 1")
-          }
-          //setModalBackground(false)
-        setLoadingModal(false)
-      } else {
-        setModalBackground(true)
-        setLoadingModal(true)
-      }
-
-      const end = performance.now()
-      //console.log(`useEffect 2 took ${end - start}ms`)
-    }, [clientInfo, trafficStore, setModalBackground, setLoadingModal, userId])
+        return () => clearInterval(intervalId);
+    }, [currentURL]);
 
     // useEffect(() => {
     //         //console.log("Hero: ", _clientInfo, clientInfo)
