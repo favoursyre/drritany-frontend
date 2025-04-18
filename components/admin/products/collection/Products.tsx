@@ -5,9 +5,9 @@
 import styles from "./products.module.scss"
 import Image from 'next/image';
 import { notify, getItem } from "@/config/clientUtils";
-import { sortProductOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName, sortProductByRating } from "@/config/utils"
+import { sortProductOptions, backend, sortMongoQueryByTime, sortProductByPrice, sortProductByOrder, sortProductByActiveStatus, adminName, sortProductByRating, sleep } from "@/config/utils"
 import { IAdmin, IPricing, IProduct } from "@/config/interfaces";
-import { useEffect, MouseEvent, FormEvent, useState, Fragment } from "react";
+import { useEffect, MouseEvent, FormEvent, useState, Fragment, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/loadingCircle/Circle";
 import { SearchOutlined, Add, Tune, CategoryOutlined } from "@mui/icons-material";
@@ -19,8 +19,11 @@ import puppeteer from "puppeteer"
  * @returns The Admin Product component
  */
 const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
+    //console.log('Products 1: ', products_)
     const [query, setQuery] = useState<string>("")
     const router = useRouter()
+    const [productList, setProductList] = useState<Array<IProduct>>([])
+    const [products, setProducts] = useState<Array<IProduct>>([])
     const [searchIsLoading, setSearchIsLoading] = useState<boolean>(false)
     const [addProductIsLoading, setAddProductIsLoading] = useState<boolean>(false)
     const [sort, setSort] = useState(false)
@@ -28,10 +31,17 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
     const [category, setCategory] = useState<boolean>(false)
     const [sortOptions, setSortOptions] = useState<Array<{ id: number, name: string}>>([...sortProductOptions, { id: 5, name: "Oldest"}])
     const [categoryOptions, setCategoryOptions] = useState<Array<string>>([ "All", "Active", "Inactive" ])
-    const [products, setProducts] = useState<Array<IProduct>>(products_)
+    //const [products, setProducts] = useState<Array<IProduct>>(products_)
+    //console.log('Products 2: ', products_)
     const [categoryId, setCategoryId] = useState<number>(0)
-    const [currentURL, setCurrentURL] = useState(window.location.href)
+    const [currentURL, setCurrentURL] = useState(typeof window !== "undefined" ? window.location.href : "")
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [dataIsLoading, setDataIsLoading] = useState<boolean>(false)
+    const limit = 18; // Define how many products per page (controls payload size per "load")
+    const [currentBatch, setCurrentBatch] = useState<number>(1);
+    //const [currentIndex, setCurrentIndex] = useState<number>()
+    const [totalBatch, setTotalBatch] = useState<number>()
     
     // useEffect(() => {
     //     const main = async () => {
@@ -44,10 +54,31 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
     //    main()
     // })
 
+     //Updating the product and query
     useEffect(() => {
-        //main();
+        //console.log("Products Len: ", products.length)
+        const start = (currentBatch - 1) * limit
+        const end = start + limit
 
-        console.log("Title1: ", document.title)
+        //console.log("Product data:", product_);
+
+        if (products_ && products_.length > 0) {
+            const product__ = products_.slice(0, end)
+            setProductList(() => products_);
+            setProducts(() => product__);
+            //console.log("Products 2: ", product__)
+            const _possibleBatches = Math.ceil(products_.length / limit)
+            //console.log("Total batch: ", _possibleBatches)
+            setTotalBatch(() => _possibleBatches)
+        }
+
+        //console.log("Products 5: ", products)
+        //notify("info", `Len ${products.length}`)
+        //setViewProducts(() => newProducts.slice(start, end))
+    }, [products_]);
+
+    useEffect(() => {
+        //console.log("Title1: ", document.title)
         if (!products) {
             notify("info", "Product not found")
         }
@@ -60,7 +91,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
                 //console.log("changed")
                 clearInterval(intervalId)
                 setCurrentURL(window.location.href)
-               window.location.reload()
+                //window.location.reload()
             }
             
         }, 1000);
@@ -143,6 +174,45 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
                 break;
         }
     }
+
+    // Check if we've reached the bottom of the div
+        const handleScroll = async () => {
+            if (containerRef.current) {  // Make sure the ref is not null
+            const { scrollTop, scrollHeight, clientHeight } = containerRef.current;  // Get scroll information
+            //notify("info", `testing`)
+    
+            // If the user has scrolled to the bottom of the container
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                    console.log("Batch: ", currentBatch, totalBatch)
+                    //notify("info", `data: ${dataIsLoading}, ${currentBatch}, ${totalBatch}`)
+    
+                if (!dataIsLoading && currentBatch < totalBatch!) {  // Only load more if it's not currently loading and there are more products
+                    console.log("It has reached the bottom")
+                    //notify("info", `bottom reached`)
+    
+                    setDataIsLoading(() => true)
+    
+                    const newBatch = currentBatch + 1
+                    setCurrentBatch(() => newBatch)
+                    const start = (newBatch - 1) * limit
+                    const end = start + limit
+                    console.log("SE: ", start, end)
+                    const newProducts = productList?.slice(start, end)
+                    //products.push(...newProducts)
+                    //const _products = [...products, ...newProducts]
+                    setProducts((prevProducts) => [...prevProducts, ...newProducts])
+    
+                    console.log("Products Len: ", products.length)
+    
+                    await sleep(1)
+                    setDataIsLoading(() => false)
+                    //setLoading(true);  // Set loading to true to display the loading message
+                    //loadMoreProducts();  // Load more products
+                    //setLoading(false);  // Set loading to false once loading is complete
+                }
+            }
+            }
+        }
 
     //This is triggered when add product is clicked
     const addProduct = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -242,13 +312,17 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
             </div>
             <div className={styles.product_list}>
                 <div className={styles.product_header}>
-                    <span className={styles.span1}><strong>Product</strong><span>({products.length})</span></span>
+                    <span className={styles.span1}><strong>Product</strong><span>({productList.length})</span></span>
                     <span className={styles.span2}><strong>Price</strong></span>
                     <span className={styles.span3}><strong>Status</strong></span>
                     <span className={styles.span4}><strong>Action</strong></span>
                 </div>
-                <div className={styles.product_carousel}>
-                    {products ? products.map((product, _id) => (
+                <div 
+                    className={styles.product_carousel}
+                    ref={containerRef}
+                    onScroll={handleScroll}
+                >
+                    {products && products.length !== 0 ? products.map((product, _id) => (
                         <AdminProductCard key={_id} products_={product} view={undefined} />
                     )) : (<></>)}
                 </div>

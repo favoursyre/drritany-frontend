@@ -660,7 +660,7 @@ export interface IOrderSheet {
 
 ///Type for metadata arg props
 export type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ [key: string]: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 

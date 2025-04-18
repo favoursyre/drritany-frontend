@@ -24,6 +24,7 @@ import { drive_v3 } from "googleapis";
  * @returns The Admin Product Info component
  */
 const AdminProductInfo = ({ product_ }: { product_: Array<IProduct> | undefined }) => {
+    console.log("Product Info: ", product_)
     const [adminUser, setAdminUser] = useState<IAdmin | undefined>(getItem(adminName))
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [productDraft, setProductDraft] = useState<IProduct | null>(getItem(productInfoName))

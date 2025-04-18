@@ -144,7 +144,7 @@
 .main {
     @include flexBar($position: absolute, $justify: center, $gap: 0%, $flex_d: column, $align: center);
     @include size(100%, 170%, 100%, 400%);
-    @include position($left: 0%, $top: 90%);
+    @include position($left: 0%, $top: 92%);
     //border: 2px solid $primary-color;
     @include text-layout($size: 16px, $color: text-color-1, $l_height: 35px);
     //padding: 2% 10%;

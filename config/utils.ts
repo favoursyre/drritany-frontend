@@ -906,6 +906,29 @@ export const convertToNodeReadableStream = (webStream: ReadableStream<Uint8Array
     return stream;
 }
 
+//This fetches a product by id
+export const getProduct = async (id: string) => {
+    try {
+      const res = await fetch(`${backend}/product/${id}`, {
+        method: "GET",
+        cache: "no-store",
+        //next: { revalidate: 120 },
+      })
+  
+      if (res.ok) {
+        const data = await res.json()
+        //console.log("Product: ", data)
+        return data
+      } else {
+        console.log("not refetching")
+        //getProduct(id)
+      }
+      
+    } catch (error) {
+        console.error(error);
+    }
+  }
+
 //This function helps get custom based pricing
 export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
     //console.log("custom pricing...")

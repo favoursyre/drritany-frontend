@@ -63,7 +63,7 @@ async function getQueriedProducts(query: string | string[] | undefined) {
 export default async function AdminProductPage({ searchParams }: Props) {
     const products = sortMongoQueryByTime(await getProducts(), "latest") as unknown as Array<IProduct>
     const { query } = await searchParams
-    console.log("Query: ", query)
+    //console.log("Query: ", query, products)
     console.log('testing why')
     const queriedProducts = sortMongoQueryByTime(await getQueriedProducts(query), "latest") as unknown as Array<IProduct>
 

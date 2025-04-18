@@ -19,8 +19,10 @@ import Loading from "@/components/loadingCircle/Circle";
  * @returns The Admin Product Card component
  */
 const AdminProductCard = ({ products_, view }: { products_: IProduct, view: string | undefined }) => {
+    //console.log("Product 3: ", products_)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [product, setProduct] = useState<IProduct>({...products_})
+    const [product, setProduct] = useState<IProduct>(products_)
+    //console.log("Product 4: ", product)
     //const clientInfo = useClientInfoStore(state => state.info)
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
@@ -140,13 +142,17 @@ const AdminProductCard = ({ products_, view }: { products_: IProduct, view: stri
         <main className={`${styles.main} ${getViewClass(view)}`}>
             <div className={styles.product} onClick={(e) => viewProduct(e, product._id!)}>
                 <div className={styles.image}>
-                    <Image 
-                        className={styles.img}
-                        src={product.images[0].src}
-                        alt=""
-                        width={product.images[0].width}
-                        height={product.images[0].height}
-                    />
+                    {product && product.images[0] ? (
+                        <Image 
+                            className={styles.img}
+                            src={product.images[0].src!}
+                            alt=""
+                            width={product.images[0].width}
+                            height={product.images[0].height}
+                        />
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <div className={styles.name}><span>{product.name}</span></div>
             </div>

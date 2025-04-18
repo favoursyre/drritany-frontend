@@ -59,7 +59,7 @@ const ReturnModal = () => {
                 <ul>
                     <li>Refund if items arrived damaged, damaged goods should be reported & returned within 10days of receipt</li>
                     <li>Refund for packages lost in transit</li>
-                    <li>Refund if not delivered and with no tracking updates within 45 days</li>
+                    <li>Refund if not delivered and with no tracking updates within 30 days</li>
                     {/* <li>Refund if not delivered in 90 days</li> */}
                     <li>To learn more, check our <span className={styles.spanLink} onClick={(e) => viewLink(e, "terms")}>Terms</span> or <span className={styles.spanLink} onClick={(e) => viewLink(e, "contact")} >Contact</span> us</li>
                 </ul>

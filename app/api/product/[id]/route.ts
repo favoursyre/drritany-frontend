@@ -36,6 +36,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     try {
         await connectMongoDB();
         const product = await Product.getProductById(id)
+        console.log("Product get: ", product)
 
         return NextResponse.json(product, { status: 200 });
     } catch (error: any) {

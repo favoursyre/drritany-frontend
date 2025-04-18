@@ -4,42 +4,23 @@
 import AdminProductInfo from '@/components/admin/products/info/ProductInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
+import { getProduct } from '@/config/utils';
 import { Metadata } from 'next';
 import { IProduct, Props } from '@/config/interfaces';
+import { dataflow } from 'googleapis/build/src/apis/dataflow';
 
-///Commencing the code -->
-
-///This fetches the product info page
-async function getProduct(id: string) {
-  try {
-    const res = await fetch(`${backend}/product/${id}`, {
-      method: "GET",
-      cache: "no-store",
-    })
-
-    if (res.ok) {
-      return res.json()
-    } else {
-      console.log("not refetching")
-      //getProduct(id)
-    }
-    
-  } catch (error) {
-      console.error(error);
-  }
-}
+///Commencing the code 
 
 
 ///Declaring the metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params
+  const { p_id } = await params
 
   return {
     title: `Product`,
     description: `Edit/View Product`,
     alternates: {
-      canonical: `/products/${id}`
+      canonical: `/products/${p_id}`
     }
   }
 }
@@ -67,10 +48,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * @title Product info page
  */
 export default async function ProductByIdPage({ params }: Props) {
-  const { id } = await params
+  //console.log("Params: ", params)
+  const { p_id } = await params
   //const _id = await params.id
-  const product = await getProduct(id) as unknown as Array<IProduct>
-  //console.log("admin product info &")
+  const product = await getProduct(p_id) as unknown as Array<IProduct>
+  console.log("admin product info: ", product)
   //const products_ = await getProducts() as unknown as Array<IProduct>
   //const products = shuffleArray(removeProductFromArray(product[0], products_))
 

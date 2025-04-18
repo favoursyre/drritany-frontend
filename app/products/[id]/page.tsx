@@ -6,34 +6,13 @@ import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import HomeCampaignB from '@/components/campaigns/homeCampaignB/homeCampaignB';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity, getProducts, sortProductByActiveStatus } from '@/config/utils';
+import { shuffleArray, backend, removeProductFromArray, getProduct, getProducts, sortProductByActiveStatus } from '@/config/utils';
 import { Metadata } from 'next';
 import { IProduct, Props, ISlideTitle, IResponse } from '@/config/interfaces';
 
 ///Commencing the code -->
 
 ///This fetches the product info page
-async function getProduct(id: string) {
-  try {
-    const res = await fetch(`${backend}/product/${id}`, {
-      method: "GET",
-      cache: "no-store",
-      //next: { revalidate: 120 },
-    })
-
-    if (res.ok) {
-      const data = await res.json()
-      //console.log("Product: ", data)
-      return data
-    } else {
-      console.log("not refetching")
-      //getProduct(id)
-    }
-    
-  } catch (error) {
-      console.error(error);
-  }
-}
 
 // Pre-render known product pages at build time
 // export async function generateStaticParams(): Promise<Array<{ id?: string }>> {

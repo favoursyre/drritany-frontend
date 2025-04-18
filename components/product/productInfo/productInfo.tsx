@@ -332,8 +332,8 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     // Memoize delivery dates
     const [startDeliveryDate, endDeliveryDate] = useMemo(() => {
         const currentDate = new Date();
-        const start = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days base
-        const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000); // Additional 7 days
+        const start = new Date(currentDate.getTime() + deliveryPeriod * 24 * 60 * 60 * 1000); // 7 days base
+        const end = new Date(start.getTime() + deliveryDuration * 24 * 60 * 60 * 1000); // Additional 7 days
         const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
         return [start.toLocaleDateString('en-US', options), end.toLocaleDateString('en-US', options)];
     }, []);
