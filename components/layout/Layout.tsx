@@ -87,7 +87,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const orderModal = useOrderModalStore(state => state.modal)
     const containerId = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID!
     const [mounted, setMounted] = useState<boolean>(false)
-    const [currentURL, setCurrentURL] = useState(typeof window !== "undefined" ? window.location.href : undefined)
+    const [currentURL, setCurrentURL] = useState<string>()
     //const [products, setProducts] = useState<Array<IProduct> | undefined>(_products?.value!)
 
     //Fetching client info
@@ -387,7 +387,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             if (currentURL === window.location.href) {
-                //console.log('not changed')
                 undefined
             } else {
               console.log("url changed")
