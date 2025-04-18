@@ -1223,7 +1223,7 @@ export const countryList: Array<ICountry> = [
         ],
         delivery: {
             feePerKg: 1,
-            baseNumber: 2.9
+            baseNumber: 1.9
         },
         flag: {
             src: 'https://flagcdn.com/w320/us.png',

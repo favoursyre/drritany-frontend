@@ -91,6 +91,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
                 //console.log("changed")
                 clearInterval(intervalId)
                 setCurrentURL(window.location.href)
+                setSearchIsLoading(false)
                 //window.location.reload()
             }
             
