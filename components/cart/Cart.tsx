@@ -264,7 +264,7 @@ const Cart = () => {
             Region: clientInfo?.ipData?.region!,
             Country: clientInfo?.ipData?.country!,
             Button_Name: "viewCartItemDiscount()",
-            Button_Info: `Clicked discount icon in cart`,
+            Button_Info: `${deliveryInfo?.email} - Clicked discount icon in cart`,
             Page_Title: extractBaseTitle(document.title),
             Page_URL: routerPath,
             Date: getCurrentDate(),
