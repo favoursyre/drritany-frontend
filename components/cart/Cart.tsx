@@ -414,7 +414,7 @@ const Cart = () => {
             Region: clientInfo?.ipData?.region!,
             Country: clientInfo?.ipData?.country!,
             Button_Name: "checkoutOrder()",
-            Button_Info: `Clicked "pay" in cart`,
+            Button_Info: `${deliveryInfo?.fullName}, ${deliveryInfo?.email} - Clicked "pay" in cart`,
             Page_Title: extractBaseTitle(document.title),
             Page_URL: routerPath,
             Date: getCurrentDate(),
