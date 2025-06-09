@@ -701,7 +701,7 @@
                     height: 45%;
                 }
 
-                .subtotal, .discount, .deliveryFee, .tax, .total {
+                .grosstotal, .discount, .deliveryFee, .tax, .total {
                     //border: 1px solid red;
                     @include flexBar($position: relative, $justify: space-between, $display: flex, $align: center, $flex_d: row);
                     @include size(100%, 18%);
@@ -738,7 +738,7 @@
                 border: 1px solid $primary-color;
                 background: $primary-color;
                 @include size(100%, 10%);
-                //top: 15%;
+                //top: 8%;
                 //display: none;
                 color: $tertiary-color;
                 border-radius: 4px;

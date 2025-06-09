@@ -5,9 +5,9 @@
 import ProductInfo from '@/components/product/productInfo/productInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity } from '@/config/utils';
+import { shuffleArray, backend, removeProductFromArray, sortProductsBySimilarity, getProductReviewsByProductId } from '@/config/utils';
 import { Metadata } from 'next';
-import { IProduct, Props } from '@/config/interfaces';
+import { IProduct, Props, IProductReview } from '@/config/interfaces';
 
 ///Commencing the code -->
 
@@ -60,11 +60,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPreviewPage({ params }: Props) {
   const { p_id } = await params
   const product = await getProduct(p_id) as unknown as Array<IProduct>
+  const productReviews = await getProductReviewsByProductId(p_id) as unknown as Array<IProductReview>
   console.log('Producthhs: ', product)
 
   return (
     <main className="product_info_page">
-      <ProductInfo product_={product[0]} />
+      <ProductInfo product_={product[0]} reviews_={productReviews} />
       {/* <RecommendedProduct product_={products} titleId_={2} /> */}
     </main>
   )

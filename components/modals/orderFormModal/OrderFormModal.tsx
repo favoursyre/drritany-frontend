@@ -595,7 +595,7 @@ const OrderFormModal = () => {
                 </label>
                 <br />
                 <label>
-                    State
+                    {countryInfo && countryInfo.stateTitle ? countryInfo.stateTitle : "State"}
                     {countryInfo && countryInfo.states ? (
                         <select value={state} onChange={(e) => onChange(e, "state")}>
                             {countryInfo.states.map((state, sid) => (

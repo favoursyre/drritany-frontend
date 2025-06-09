@@ -3,22 +3,20 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount, IMetaWebEvent } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount, IMetaWebEvent, IEventResearch, ClientOS, ClientDevice, ICartItem, IProductReview } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
 import { countryList } from './database';
 import axios from 'axios';
 import fs from "fs"
-import FormData from 'form-data';
-import { drive_v3 } from "googleapis";
 import https from "https"
 import path from "path";
 //import sharp from 'sharp';
 import { createHash } from 'crypto';
 import { IncomingMessage } from 'http';
 import { getOS, getDevice } from './clientUtils';
+import md5 from 'md5'
 import { companyName as _companyName, deliveryPeriod as _deliveryPeriod, deliveryDuration as _deliveryDuration } from './sharedUtils';
-import { json } from 'stream/consumers';
 
 ///Commencing the code
 export const companyName: string = _companyName
@@ -215,6 +213,25 @@ export const checkExtraDiscountOffer = (product: IProduct): boolean => {
     }
 }
 
+//This function gets a gravatar image from a text
+export const getGravatarImg = (text: string): IImage => {
+  const normalizedText = text.toLowerCase().trim();
+  const hash = hashValue(normalizedText, "md5");
+  const img: IImage = {
+    src: `https://www.gravatar.com/avatar/${hash}?d=identicon`,
+    alt: "gravatar",
+    width: 80,      
+    height: 80,
+    type: "image"
+  }
+  return img;
+};
+
+//This function gets a random number between a given range
+export const getRandomNumber = (min: number, max: number): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 ///This function exports a array shuffler function
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     if (array) {
@@ -275,7 +292,12 @@ export const isVideo = (url: string | undefined): boolean => {
 export const deleteFile = async (filePath: string): Promise<void> => {
     try {
         // Resolve the full path
-        const absolutePath = path.resolve(filePath);
+        let absolutePath: string;
+        if (domainName.includes("localhost")) {
+            absolutePath = path.resolve(filePath);
+        } else {
+            absolutePath = path.join(process.cwd(), filePath);
+        }
 
         // Check if file exists
         if (!fs.existsSync(absolutePath)) {
@@ -395,6 +417,28 @@ export async function getProducts() {
         console.error(error);
     }
   }
+
+///This fetches a list of all reviews
+export async function getProductReviews() {
+
+    try {
+      const res = await fetch(`${backend}/product-review`, {
+        method: "GET",
+        //cache: "force-cache"
+      })
+  
+      if (res.ok) {
+        const data = await res.json()
+        //console.log("Products: ", data)
+        return data
+      } else {
+        getProductReviews()
+      }
+    } catch (error) {
+        console.log('Product Reviews Error: ', error)
+        console.error(error);
+    }
+}
 
 //This function returns only a digit after a dash i.e. `+1-292019` => `292019`
 export const extractDigitsAfterDash = (phoneNumber: string): string => {
@@ -521,7 +565,7 @@ export const extractMainPageTitle = (title: string): string => {
 //     }
 //   }
 
-  ///This format mongo db time
+///This format mongo db time
 export const formatDateMongo = (dateString: string): string => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -534,9 +578,25 @@ export const formatDateMongo = (dateString: string): string => {
     const formattedDate = date.toLocaleDateString(undefined, options);
   
     return `${formattedDate}`;
+};
+
+//This function masks a string with asterisks
+export const maskString = (input: string): string => {
+  // Remove any surrounding whitespace and convert to lowercase
+  const cleanInput = input.trim().toLowerCase();
+
+  // If input is too short, return masked version accordingly
+  if (cleanInput.length <= 4) {
+    return cleanInput[0] + '**' + cleanInput[cleanInput.length - 1];
   }
 
-    ///This function deletes an item by the key from an array
+  const start = cleanInput.slice(0, 2);
+  const end = cleanInput.slice(-2);
+
+  return `${start}***${end}`;
+}
+
+///This function deletes an item by the key from an array
 export const deleteItemByKey = (array: Array<any>, key: string, value: string): Array<any> => {
     return array.filter((arr) => arr[key] !== value);
   }
@@ -545,6 +605,19 @@ export const deleteItemByKey = (array: Array<any>, key: string, value: string): 
 export const slashedPrice = (price: number, discount: number): number => {
     return (price * 100) / (100 - discount)
 }
+
+//This function calculates the total slashed price of a cart
+export const calculateTotalSlashedPrice = (cart: ICart): number => {
+  return cart.cart.reduce((total: number, item: ICartItem): number => {
+    // If discountPercent is undefined or 0, slashed price equals subTotalPrice
+    if (!item.discountPercent || item.discountPercent === 0) {
+      return total + item.subTotalPrice;
+    }
+    // Calculate slashed price using subTotalPrice and discountPercent
+    const slashedPriceForItem = slashedPrice(item.subTotalPrice, item.discountPercent);
+    return total + slashedPriceForItem;
+  }, 0);
+};
 
 ///The function delays the code
 export const sleep = (seconds: number): Promise<void> => {
@@ -570,6 +643,16 @@ export const sortProductByOrder = (products: Array<IProduct>): Array<IProduct> =
     });
     return sortedProducts
 }
+
+// Format the time in HH:mm:ss format
+export const formatTime = (timeInMilliseconds: number): string => {
+    const totalSeconds = Math.floor(timeInMilliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
 
 //This sorts products by rating from high to low
 export const sortProductByRating = (products: Array<IProduct>): Array<IProduct> => {
@@ -874,12 +957,19 @@ export const sortProductsBySimilarity = (products: Array<IProduct>, targetProduc
 };
 
 //This function is used to sort products based on active or inactive
-export const sortProductByActiveStatus = (products: Array<IProduct>, label: "All" | "Active" | "Inactive"): Array<IProduct> | undefined => {
+export const sortProductByActiveStatus = (products: Array<IProduct>, label: "All" | "Active" | "Inactive", stock: "unshow" | void): Array<IProduct> | undefined => {
     if (products) {
         if (label === "All") {
             return products
         } else if (label === "Active") {
-            let products_ = products.filter((product) => product.active === true)
+            let products_
+            if (stock === "unshow") {
+                // Filter products that are active 
+                products_ = products.filter((product) => product.active === true)
+            } else {
+                // Filter products that are active and in stock
+                products_ = products.filter((product) => product.active === true && product.pricing?.inStock === true)
+            }
             return products_ 
         } else if (label === "Inactive") {
             let products_ = products.filter((product) => product.active === undefined || product.active === false)
@@ -927,7 +1017,85 @@ export const getProduct = async (id: string) => {
     } catch (error) {
         console.error(error);
     }
+}
+
+//This fetches all reviews by the product id
+export const getProductReviewsByProductId = async (id: string) => {
+    try {
+      const res = await fetch(`${backend}/product-review/${id}?src=productId`, {
+        method: "GET",
+        cache: "no-store",
+        //next: { revalidate: 120 },
+      })
+  
+      if (res.ok) {
+        const data = await res.json()
+        console.log("Product Reviews: ", data)
+        return data
+      } else {
+        console.log("not refetching")
+        //getProduct(id)
+      }
+      
+    } catch (error) {
+        console.error("Product Reviews: ", error);
+    }
+}
+
+//Calculate the mean rating of a product reviews
+export const calculateMeanRating = (reviews: Array<IProductReview>): number => {
+  // Filter out reviews with undefined or null ratings
+  const validRatings = reviews
+    .filter(review => typeof review.rating === 'number')
+    .map(review => review.rating!);
+
+  // If no valid ratings, return 0
+  if (validRatings.length === 0) {
+    return 0;
   }
+
+  // Calculate mean and round to 1 decimal place
+  const sum = validRatings.reduce((acc, rating) => acc + rating, 0);
+  const mean = sum / validRatings.length;
+  return Number(mean.toFixed(1));
+}
+
+//This checks if a checks if a country exists and then returns the country object
+export const getCountryInfo = (countryName: string): ICountry | undefined => {
+    // Find the country in the countryList
+    const country = countryList.find((c) => c.name?.common === countryName || c.name?.abbreviation === countryName);
+    
+    // If the country is found, return it; otherwise, return undefined
+    return country;
+}
+
+//This function converts an amount in whatever currency it is to cents
+export const convertUnitAmountToCent = (unitAmount: number, currency: string, exchangeRate: number): number => {
+    if (currency === "USD") {
+        return unitAmount
+    } else {
+        // Convert from smallest unit to major unit (e.g. Kobo to Naira)
+        const amountMajorUnit = unitAmount / 100;
+
+        // Convert to USD using the exchange rate
+        const amountInUsd = amountMajorUnit / exchangeRate;
+
+        // Convert to USD cents and round
+        const amount = Math.round(amountInUsd * 100);
+        return amount
+    }
+}
+
+//This function gets the min stripe amount depending on the currency
+export const getMinimumStripeAmount = (currency: string, exchangeRate: number): number => {
+    let minimumAmount = 0.5
+    if (currency === "USD") {
+        return minimumAmount
+    } else {
+        const newAmount = minimumAmount * exchangeRate
+        return newAmount
+    }
+} 
 
 //This function helps get custom based pricing
 export const getCustomPricing = (product: IProduct, sizeId: number, country: string): number => {
@@ -998,15 +1166,31 @@ export const getCustomPricing = (product: IProduct, sizeId: number, country: str
 }
 
 //This function sends event data to meta-capi api 
-export const sendMetaCapi = async (eventData: IMetaWebEvent): Promise<any> => {
+export const sendMetaCapi = async (eventData: IMetaWebEvent, userId: string, OS: ClientOS, Device: ClientDevice) => {
     try {
         const res = await axios.post(`${backend}/meta-capi`, eventData, {
             headers: { 'Content-Type': 'application/json' },
         });
-        return res.data
+        console.log("Meta Response: ", res.data)
     } catch (error) {
-        console.log("Meta CAPI Error: ", error)
-        return error
+        console.log("Error Meta CAPI: ", error)
+    }
+    
+    try {
+        //Sending data to my excel sheet
+        const data = eventData.data[0]
+        const info: IEventResearch = {
+            ID: userId,
+            EventName: data.event_name,
+            Data: JSON.stringify(data),
+            Date: getCurrentDate(),
+            Time: getCurrentTime(),
+            OS: OS,
+            Device: Device
+        }
+        await storeEventInfo(info) 
+    } catch (error) {
+        console.log("Error Excel Event Store: ", error)
     }
 }
 
@@ -1044,6 +1228,20 @@ export const storeWishInfo = async (_action: string, clientInfo: IClientInfo, pr
             //console.log("Store Error: ", error)
         }
     }
+}
+
+//This function is used to extract JSON data from a markdown string
+export const extractJsonFromMarkdown = (markdownString: string): any => {
+    // Use a regular expression to extract the JSON content
+    const jsonMatch = markdownString.match(/```json\s*([\s\S]*?)\s*```/);
+
+    if (!jsonMatch || !jsonMatch[1]) {
+        throw new Error('No valid JSON found in the Markdown string');
+    }
+
+    // Parse the extracted JSON string into an object
+    const parsedJson = JSON.parse(jsonMatch[1])
+    return parsedJson;
 }
 
 //This function keeps track of what product is added/deleted to cart
@@ -1172,12 +1370,42 @@ export const getRating = () => {
     return numbers[randomIndex];
 }
 
+//This function gets a random item e.g ["a", "b", "c"] => "a"
+export const getRandomItem = <T>(items: Array<T>): T => {
+    if (items.length === 0) {
+        throw new Error("Array is empty");
+    }
+    const randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+}
+
 //This function keeps track of clicked buttons
 export const storeButtonInfo = async (info: IButtonResearch) => {
     try {
         const sheetInfo: ISheetInfo = {
             sheetId: statSheetId,
             sheetRange: "Button!A:M",
+            data: info
+        }
+
+        const res = await fetch(`${backend}/sheet`, {
+            method: "POST",
+            body: JSON.stringify(sheetInfo),
+        });
+        //console.log("Google Stream: ", res)
+    } catch (error) {
+        console.log("Store Error: ", error)
+    }
+}
+
+//This function keeps track of events
+export const storeEventInfo = async (info: IEventResearch) => {
+    console.log("Event Info: ", info)
+
+    try {
+        const sheetInfo: ISheetInfo = {
+            sheetId: statSheetId,
+            sheetRange: "Events!A:G",
             data: info
         }
 
@@ -1232,6 +1460,8 @@ export const getEachCartItemDiscount = (cart: ICart, cartId: number) => {
 
 //This function downloads the image using the src url
 export const downloadImageURL = async (url: string): Promise<string> => {
+    //const domainName = process.env.NEXT_PUBLIC_DOMAIN_NAME
+
     return new Promise((resolve, reject) => {
         // Generate filename from URL or timestamp
         const urlObj = new URL(url);
@@ -1248,7 +1478,13 @@ export const downloadImageURL = async (url: string): Promise<string> => {
                 return;
             }
 
-            const filePath = path.resolve(__dirname, filename);
+            let filePath: string
+            if (domainName?.includes("http://localhost")) {
+                filePath = path.resolve(__dirname, filename);
+            } else {
+                filePath = path.join("/tmp", filename); // Use /tmp for temporary storage in production
+            }
+            
             const fileStream = fs.createWriteStream(filePath);
             
             response.pipe(fileStream);

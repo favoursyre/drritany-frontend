@@ -125,7 +125,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
                 setProducts(() => [...sortedProducts])
                 break
             case 1:
-                sortedProducts = sortProductByActiveStatus(products_, "Active")!
+                sortedProducts = sortProductByActiveStatus(products_, "Active", "unshow")!
                 setProducts(() => [...sortedProducts])
                 break
             case 2:
@@ -313,7 +313,7 @@ const AdminProduct = ({ products_ }: { products_: Array<IProduct> }) => {
             </div>
             <div className={styles.product_list}>
                 <div className={styles.product_header}>
-                    <span className={styles.span1}><strong>Product</strong><span>({productList.length})</span></span>
+                    <span className={styles.span1}><strong>Product</strong><span>({products.length})</span></span>
                     <span className={styles.span2}><strong>Price</strong></span>
                     <span className={styles.span3}><strong>Status</strong></span>
                     <span className={styles.span4}><strong>Action</strong></span>

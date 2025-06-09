@@ -7,7 +7,7 @@ import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
 import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus, IButtonResearch, ICartItemDiscount, IClientInfo } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName, clientInfoName } from '@/config/utils';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName, clientInfoName, calculateTotalSlashedPrice } from '@/config/utils';
 import { useClientInfoStore, useModalBackgroundStore, useCartItemDiscountModalStore } from "@/config/store";
 import { Remove, Add, DiscountOutlined } from '@mui/icons-material';
 import { countryList } from '@/config/database';
@@ -254,7 +254,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.grossTotalPrice * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(calculateTotalSlashedPrice(order.productSpec) * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>

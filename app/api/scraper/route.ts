@@ -10,7 +10,7 @@ import { google } from "googleapis";
 import OpenAI from "openai";
 import puppeteer from "puppeteer";
 import * as cheerio from "cheerio"
-import { formatAliexpressImageUrl, backend, getGDriveDirectLink, isImage, extractNum, categories, downloadImageURL, deleteFile, getRating } from "@/config/utils";
+import { formatAliexpressImageUrl, backend, getGDriveDirectLink, isImage, extractNum, categories, downloadImageURL, deleteFile, getRating, extractJsonFromMarkdown, getRandomNumber } from "@/config/utils";
 import { processImage } from '@/config/serverUtils';
 
 ///Commencing the code
@@ -53,7 +53,7 @@ function extractAliexpressProductInfo($: cheerio.CheerioAPI) {
         videos: [$('source').attr('src')],
         images: [] as Array<string>,
         description: $('.detail-desc-decorate-richtext').first().text().trim(),
-        origin: 'China',
+        origin: 'China (Mainland)',
         specifications: {},
         // Extract shipping
         // const shipping = {
@@ -78,18 +78,6 @@ function extractAliexpressProductInfo($: cheerio.CheerioAPI) {
     });
 
     return productInfo;
-}
-
-function extractJsonFromMarkdown(markdownString: string) {
-    // Use a regular expression to extract the JSON content
-    const jsonMatch = markdownString.match(/```json\s*([\s\S]*?)\s*```/);
-
-    if (!jsonMatch || !jsonMatch[1]) {
-        throw new Error('No valid JSON found in the Markdown string');
-    }
-
-    // Parse the extracted JSON string into an object
-    return JSON.parse(jsonMatch[1]);
 }
 
 ///Post request for scrape function
@@ -155,7 +143,7 @@ export async function POST(request: NextRequest) {
         }
 
         //Next is to use AI to brush up the product info
-        const blueZetsu = await BlueZetsu(`
+        const aiPrompt = `
 Given the product name "${info.name}", I need the following product informations for my ecommerce store returned strictly in just json format and arranged using this interface 
 "export interface IProduct {
     description: string,
@@ -165,7 +153,8 @@ Given the product name "${info.name}", I need the following product informations
 Note:
 - Make a easy-to-understand but well detailed description of the product and assign it to "description"
 - State 3 short benefits of the product and assign it to "benefits"
-        `);
+        `
+        const blueZetsu = await BlueZetsu(aiPrompt);
         
         console.log("Blue Zetsu: ", blueZetsu)
         const _aiInfo = blueZetsu.choices[0].message.content
@@ -184,6 +173,8 @@ Note:
         }
 
         //Next step is to arrange all the infos in product info
+        const newOrders = getRandomNumber(227, 753)
+        const productStock = getRandomNumber(4, 30)
         const productData: IProduct = {
             addedBy: adminId,
             url: data.url,
@@ -204,10 +195,11 @@ Note:
                 micro: categories[0].minis[0].micros[0].micro,
                 nano: categories[0].minis[0].micros[0].nanos[0]
             },
+            stock: productStock,
             rating: getRating(),
             description: _info?.description,
             addDelivery: true,
-            orders: 0,
+            orders: newOrders,
             specification: {
                 brand: "Others",
                 itemForm: "Undefined",
@@ -226,6 +218,16 @@ Note:
 
         //Next is to add the arranged product info to the database
         const res = await axios.post(`${backend}/product`, productData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const resProduct = res.data.product;
+
+        console.log("Product Response: ", resProduct)
+
+        //Next is to add the arranged product info to the database
+        const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
             headers: {
                 'Content-Type': 'application/json',
             },

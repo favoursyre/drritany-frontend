@@ -146,7 +146,7 @@ const Hero = () => {
                 </form>
                 {mounted && clientInfo ? (
                     <div className={styles.text}>
-                        <span><em>We deliver anywhere in {clientInfo?.countryInfo?.name?.abbreviation === "US" ? "the" : ""} {clientInfo?.countryInfo?.name?.common}</em></span>
+                        <span><em>We deliver anywhere in {clientInfo?.countryInfo?.name?.abbreviation === "US" || "UK" ? "the" : ""} {clientInfo?.countryInfo?.name?.common}</em></span>
                         <Image 
                             className={styles.flag}
                             src={clientInfo?.countryInfo?.flag?.src as unknown as string}

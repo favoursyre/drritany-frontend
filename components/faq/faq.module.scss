@@ -153,7 +153,7 @@
     //background-image: linear-gradient(to bottom, transparent, transparent, $primary-color);
 
     @include tabletPro {
-        top: 50%;
+        top: 55%;
         //height: 1550px;
         //border: 1px solid green;
     }
@@ -327,7 +327,9 @@
         }
 
         @include tabletMini {
-            top: -9%;
+            flex-direction: column;
+            height: 10%;
+            //top: -9%;
         }
 
         @include phonePro {
@@ -360,6 +362,10 @@
             @include size(20%, 70%);
             background-color: $primary-color;
             border: none;
+
+            @include tabletMini {
+                @include size(90%, 40%);
+            }
 
             @include phonePro {
                 top: -4%;

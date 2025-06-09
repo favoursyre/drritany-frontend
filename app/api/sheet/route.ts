@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ sheet, message: "Sheet Added Successful" }, { status: 200 });
     } catch (error: any) {
-        console.log("Error news: ", error.message)
+        console.log("Error news: ", error)
         return NextResponse.json({ message: error?.message }, { status: 400 });
     } 
 }

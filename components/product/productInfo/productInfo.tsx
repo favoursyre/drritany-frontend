@@ -4,14 +4,14 @@
 ///Libraries -->
 import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } from "react"
 import styles from "./productInfo.module.scss"
-import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from '@/config/interfaces';
+import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch, IMetaWebEvent, MetaActionSource, MetaStandardEvent, IProductReview } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice, getFacebookCookies } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, clientInfoName, hashValue, sendMetaCapi } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, clientInfoName, hashValue, sendMetaCapi, formatTime, formatDateMongo, maskString, sortMongoQueryByTime, getRandomNumber, getCountryInfo, calculateMeanRating } from '@/config/utils'
 import { countryList } from "@/config/database";
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout, KeyboardArrowLeft, KeyboardArrowRight, Add, Remove, FavoriteBorder } from '@mui/icons-material';
+import { Star, AddShoppingCart, StarHalf, Discount, ShoppingCartCheckout, KeyboardArrowLeft, KeyboardArrowRight, Add, Remove, FavoriteBorder, Schedule, Verified, PostAdd, AccountCircle, StarOutline, Whatshot, Visibility } from '@mui/icons-material';
 import { useModalBackgroundStore, useDiscountModalStore, useReturnPolicyModalStore, useLoadingModalStore } from '@/config/store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -29,10 +29,11 @@ import { v4 as uuid } from 'uuid';
  * @title Product Info Component
  * @returns The Product Info component
  */
-const ProductInfo = ({ product_ }: { product_: IProduct }) => {
+const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Array<IProductReview> }) => {
     //console.log('Products_: ', product_)
     const [cart, setCart] = useState<ICart | null>(getItem(cartName))
     const [product, setProduct] = useState(product_)
+    const [reviews, setReviews] = useState(reviews_)
     //const [checkoutIsLoading]
     const swiperRef = useRef<SwiperCore>();
     const [activeHeading, setActiveHeading] = useState(0);
@@ -59,6 +60,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const discountProduct = useDiscountModalStore(state => state.product);
     //const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     const [imageIndex, setImageIndex] = useState<number>(0)
+    const [timeLeft, setTimeLeft] = useState<number>(74500000)//(71319000);
     const [videoIndex, setVideoIndex] = useState<number>(0)
     const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
     const [addedToCart, setAddedToCart] = useState<boolean>(false)
@@ -71,11 +73,99 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     const [mounted, setMounted] = useState<boolean>(false)
     const [imageHasLoaded, setImageHasLoaded] = useState<boolean>(false)
     const [sheetStored, setSheetStored] = useState<boolean>(false)
+    //const [showStockLeft, setShowStockLeft] = useState<boolean>(product.stock && product.stock <= 20 ? true : false)
+    const showStockLeft = product.stock && product.stock <= 20
     const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>(
         Object.fromEntries(
           (product.images || []).map((_, index) => [index, false])
         )
       );
+    const [viewerCount, setViewerCount] = useState<number>(() => getRandomNumber(17, 97));
+
+    //This updates the viewer count every 30secs
+    useEffect(() => {
+        const interval = setInterval(() => {
+        setViewerCount(getRandomNumber(17, 97));
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(interval); // cleanup on unmount
+    }, []);
+
+    //console.log("Reviews: ", reviews)
+
+    const productReviews: Array<IProductReview> = [
+        {
+            _id: "1",
+            productId: product._id!,
+            userId: "1",
+            // image: {
+            //     src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
+            //     alt: "User 1",
+            //     width: 80,
+            //     height: 80,
+            //     type: "image",
+            // },
+            name: "John Doe",
+            rating: 4,
+            specs: {
+                color: "",   
+                size: "XL"   
+            },
+            review: "Great product, highly recommend! dkkjjddjd djdkdndd dbbdbdd djdjdjdjdjdjdjdjdjdj dhhdhdh dhdhdhh dhdh hdhdhd dhdhdhdh hddhdh s hsnsnssdh hsbsoens uuwsnosnnsobd usnownddbisosww swsonsdo-pff ueeiforw0iife dpibdepwd wdndw-if iebfefnfo f iepnpif fnindnwpi idnei0np4 inllnpwnd004i d4indpw-04 innsmspn4indp iwns-n4bsssb4n4 inwwonwo4 iwnw94nonwuee iweoneo4nwwenee wnep3nnep3nn3[n3[", 
+            createdAt: "2025-04-15T11:23:45.228+00:00",
+            __v: 0,
+        },
+        {
+            _id: "2",
+            productId: product._id!,
+            userId: "2",
+            image: {
+                src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
+                alt: "User 2",
+                width: 80,
+                height: 80,
+                type: "image",
+            },
+            rating: 5,
+            specs: {
+                color: "Red",  
+            },
+            name: "Jane Smith",
+            review: "Excellent quality and fast shipping.",
+            createdAt: "2025-05-02T14:45:30.228+00:00",
+            __v: 0,
+        },
+        {
+            _id: "3",
+            productId: product._id!,
+            userId: "3",
+            name: "Alice Johnson",
+            rating: 3,
+            specs: { 
+                size: "XL"   
+            },
+            image: {
+                src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
+                alt: "User 3",
+                width: 80,
+                height: 80,
+                type: "image",
+            },
+            review: "Good value for the price.",
+            createdAt: "2025-06-12T13:17:40.228+00:00",
+            __v: 0,
+        },
+        {
+            _id: "4",
+            productId: product._id!,
+            userId: "3",
+            name: "Alice Jada",
+            rating: 5,
+            review: "Good value for the price.",
+            createdAt: "2025-05-20T16:30:00.228+00:00",
+            __v: 0,
+        }
+    ]
     
       // Fallback: Mark as loaded after a timeout if onLoad doesn't fire
       useEffect(() => {
@@ -96,6 +186,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //For client rendering
     useEffect(() => {
         setMounted(true);
+        console.log("Product: ", product)
     }, []);
     //console.log("In Stock: ", product.pricing?.inStock)
 
@@ -156,6 +247,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
     //     spec?.dimension?.length ? `Length: ${spec.dimension.length}inches` : undefined,
     //     spec?.manufactureYear ? `Year: ${spec.manufactureYear}` : undefined
     // ]
+
     // Memoized specs
     const specs = useMemo(() => [
         `SKU: ${product_._id}`,
@@ -217,7 +309,21 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         return clientInfo ? getCustomPricing(product_, sizeId, clientInfo.countryInfo?.name?.common || "") : product_.pricing?.basePrice || 0;
     }, [product_, sizeId, clientInfo]);
 
-    //This stores the viewed peoduct in the sheet
+    //This time left
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTimeLeft((prevTimeLeft) => {
+                if (prevTimeLeft <= 1000) {
+                    return 74500000; // Optional: Reset to 1 day
+                }
+                return prevTimeLeft - 1000;
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    //This stores the viewed product in the sheet
     useEffect(() => {
 
         //Storing the product name in an excel sheet for research purposes
@@ -291,12 +397,16 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                 ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
                                 st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                                 country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                            },
+                            original_event_data: {
+                                event_name: MetaStandardEvent.ViewContent,
+                                event_time: eventTime,
                             }
                         }
                     ]
                 } 
                 sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-                sendMetaCapi(eventData)
+                sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
             }
         }
     }, [clientInfo])
@@ -407,6 +517,21 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         storeButtonInfo(info)
     }
 
+    //This function is triggered when addReview is clicked
+    const addReview = async (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+        e.preventDefault()
+
+        setModalBackground(true)
+        setLoadingModal(true) 
+
+        await sleep(2)
+
+        notify("info", "You will need to order this product first before you can be able to leave a review")
+
+        setModalBackground(false)
+        setLoadingModal(false)
+    }
+
     //This function helps choose color
     const chooseColor = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>, id: number) => {
         e.preventDefault()
@@ -459,7 +584,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 OS: getOS(),
                 Device: getDevice()
             }
-            storeButtonInfo(info)
+            await storeButtonInfo(info)
 
             return
         } else {
@@ -481,6 +606,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                 unitPrice: customPrice,
                 unitWeight: pWeight,
                 unitHiddenDeliveryFee: deliveryFee_,
+                discountPercent: p.pricing?.discount!,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
                 specs: cartSpecs,
@@ -537,6 +663,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                     setItem(cartName, cart)
                     if (!order) {
                         notify('success', "Product has been added to cart")
+                        console.log("Store cart info ---1")
                         storeCartEvent = true
 
                     }
@@ -560,6 +687,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         setItem(cartName, cart)
                         if (!order) {
                             notify('success', "Product has been updated to cart")
+                            console.log("Store cart info ---2")
                             storeCartEvent = true
                         }
                     }
@@ -615,6 +743,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
         } 
 
         if (storeCartEvent) {
+            console.log("Store this info....")
             //Storing cart infos and events
             await storeCartInfo("Added", clientInfo!, product.name!)
 
@@ -655,12 +784,20 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
                             st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                             country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                        },
+                        original_event_data: {
+                            event_name: MetaStandardEvent.AddToCart,
+                            event_time: eventTime,
                         }
                     }
                 ]
             } 
+
+            console.log('Sending GTM event')
             sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-            sendMetaCapi(eventData)
+
+            console.log('Sending Meta Api event')
+            await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
         }
     }
 
@@ -897,12 +1034,16 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
                             st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                             country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+                        },
+                        original_event_data: {
+                            event_name: MetaStandardEvent.AddToWishlist,
+                            event_time: eventTime,
                         }
                     }
                 ]
             } 
             sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-            sendMetaCapi(eventData)
+            await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
         }
     }
 
@@ -1101,55 +1242,101 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                             <span className={styles.product_about}>{product.description}</span>
                             <div className={styles.product_price_orders_rating}>
                                 <div className={styles.price_orders}>
-                                <div className={styles.product_price}>
-                                    <div className={styles.price}>
-                                        {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
-                                        {clientInfo ? (
-                                            <span>{clientInfo.countryInfo?.currency?.symbol}</span>
-                                        ) : (
-                                            <></>
-                                        )}
+                                    <div className={styles.product_price}>
+                                        <div className={styles.price}>
+                                            {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                                            {clientInfo ? (
+                                                <span>{clientInfo.countryInfo?.currency?.symbol}</span>
+                                            ) : (
+                                                <></>
+                                            )}
+                                            {clientInfo?.countryInfo?.currency?.exchangeRate ? (
+                                                <span>
+                                                    {round(customPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                                </span> 
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </div>
+                                        <div className={styles.slashed_price}>
+                                            {clientInfo ? <span>{clientInfo.countryInfo?.currency?.symbol}</span> : <></>}
+                                            {clientInfo?.countryInfo?.currency?.exchangeRate ? (
+                                                <span>
+                                                    {round(slashedPrice(customPrice * clientInfo.countryInfo.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
+                                                </span>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className={styles.percent}>
+                                        <span>{product.pricing?.discount}% Off</span>
+                                    </div>
+                                    <div className={styles.save}>
                                         {clientInfo?.countryInfo?.currency?.exchangeRate ? (
-                                            <span>
-                                                {round(customPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
-                                            </span> 
+                                            <span>Save {clientInfo.countryInfo?.currency?.symbol}{round((slashedPrice(customPrice, product.pricing?.discount!) - customPrice) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}</span>
                                         ) : (
                                             <></>
                                         )}
                                     </div>
-                                    <div className={styles.slashed_price}>
-                                        {clientInfo ? <span>{clientInfo.countryInfo?.currency?.symbol}</span> : <></>}
-                                        {clientInfo?.countryInfo?.currency?.exchangeRate ? (
-                                            <span>
-                                                {round(slashedPrice(customPrice * clientInfo.countryInfo.currency.exchangeRate, product.pricing?.discount!), 2).toLocaleString("en-US")}
-                                            </span>
-                                        ) : (
-                                            <></>
-                                        )}
+                                {/* product.stock && product.stock <= 20 */}
+                                </div>
+                            </div>
+                            <div className={styles.orders_left_rating}>
+                                <div className={styles.orders_left}>
+                                    <div className={styles.product_orders}>
+                                        {/* <LocalShippingIcon className={styles.icon} /> */}
+                                        <span>{product.orders === 0 ? 51 : product.orders?.toLocaleString("en-US")} sold</span>
                                     </div>
-                                </div>
-                                <div className={styles.product_orders}>
-                                    <LocalShippingIcon className={styles.icon} />
-                                    <span>{product.orders?.toLocaleString("en-US")} orders</span>
-                                </div>
-                                <div className={styles.percent}>
-                                    <span>-{product.pricing?.discount}%</span>
-                                </div>
+                                    <div className={styles.product_left}>
+                                        {showStockLeft ? (
+                                            <>
+                                                <Whatshot className={styles.icon} />
+                                                <span>Only {product.stock} left</span>
+                                            </>
+                                        ) : (
+                                            <span>Limited Stock</span>
+                                        )}
+                                    </div>    
                                 </div>
                                 <div className={styles.rating}>
                                     <div className={styles.stars}>
-                                        {stars.map((star, id) => (
-                                            <Star className={styles.star} key={id} />
-                                        ))}
-                                        <StarHalf className={styles.star} />
+                                        {calculateMeanRating(reviews) === 0 ? (
+                                            <>
+                                                {Array.from({ length: 5 }).map((star, id) => (
+                                                    <StarOutline className={styles.star} key={id} />
+                                                ))}
+                                            </>
+                                        ) : calculateMeanRating(reviews) === 5.0 ? (
+                                            <>
+                                                {Array.from({ length: 5 }).map((_, id) => (
+                                                    <Star className={styles.star} key={id} />
+                                                ))}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {stars.map((_, id) => (
+                                                    <Star className={styles.star} key={id} />
+                                                ))}
+                                                <StarHalf className={styles.star} />
+                                            </>
+                                        )}
                                     </div>
-                                    <span>{product.rating}</span>
+                                    <span>{calculateMeanRating(reviews)}</span>
                                 </div>
+                            </div>
+                            <div className={styles.timeCountdown}>
+                                <span>Special Offer ends in {formatTime(timeLeft)}</span> 
+                                <Schedule style={{ fontSize: "1rem" }}/>
                             </div>
                             <button className={styles.return} onClick={(e) => viewReturnPolicy(e)}>
                                 <span>Return & Refund Policy</span>
                                 <Add style={{ fontSize: "1rem" }}/>
                             </button>
+                            <div className={styles.currentView}>
+                                <span>{viewerCount} people are viewing this now</span> 
+                                <Visibility style={{ fontSize: "1rem" }}/>
+                            </div>
                             <span className={styles.product_deliveryDate}><em>Delivery: {startDeliveryDate} - {endDeliveryDate} <strong>(Free Shipping)</strong></em></span>
                             {product.specification?.colors && product.specification.colors[0] !== "" && product.specification!.colors.length !== 0 ? (
                                 <div className={styles.product_colors}>
@@ -1374,7 +1561,7 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                         <div className={styles.buttons}>
                             <button className={activeInfoBtn === 0 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 0)}>Description</button>
                             <button className={activeInfoBtn === 1 ? styles.activeInfoBtn: ""} onClick={(e) => clickInfoBtn(e, 1)}>Specifications</button>
-                            {/* <button className={activeInfoBtn === 2 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 2)}>Reviews</button> */}
+                            <button className={activeInfoBtn === 2 ? styles.activeInfoBtn : ""} onClick={(e) => clickInfoBtn(e, 2)}>Reviews ({reviews.length})</button>
                         </div>
                         <div className={styles.infoBody}>
                             {activeInfoBtn === 0 ? (
@@ -1418,7 +1605,84 @@ const ProductInfo = ({ product_ }: { product_: IProduct }) => {
                                     </span>
                                 </Fragment>
                             ) : activeInfoBtn === 2 ? (
-                                <></>
+                                <Fragment>
+                                    <div className={styles.heading}>
+                                        <div className={styles.verified}>
+                                            <Verified className={styles.icon} />
+                                            <span>All reviews are from verified purchases</span>
+                                        </div>
+                                        <button className={styles.addReview} onClick={(e) => addReview(e)}>
+                                            <PostAdd className={styles.icon} />
+                                            <span>Add a review</span>
+                                        </button>
+                                    </div>
+                                    <div className={styles.reviews}>
+                                        {reviews && reviews.length !== 0 ? sortMongoQueryByTime(reviews, "latest")?.map((review, id) => (
+                                            <div className={`${styles.review} ${id === reviews.length - 1 ? styles.last_review : ''}`} key={id}>
+                                                <div className={styles.review_header}>
+                                                    <div className={styles.image}>
+                                                        {review.image ? (
+                                                            <Image
+                                                                className={styles.img}
+                                                                src={review.image.src} 
+                                                                height={review.image.height}
+                                                                width={review.image.width}
+                                                                alt="" 
+                                                                unoptimized
+                                                            />
+                                                        ) : (
+                                                            <AccountCircle className={styles.icon} />
+                                                        )}
+                                                    </div>
+                                                    <span className={styles.name}>{maskString(review.name!)}</span>
+                                                    <span className={styles.in}>in</span>
+                                                    <Image 
+                                                        className={styles.flag}
+                                                        src={getCountryInfo(review.country!) ? getCountryInfo(review.country!)?.flag?.src! : clientInfo?.countryInfo?.flag?.src as unknown as string}
+                                                        alt=""
+                                                        width={getCountryInfo(review.country!) ? getCountryInfo(review.country!)?.flag?.width! : clientInfo?.countryInfo?.flag?.width}
+                                                        height={getCountryInfo(review.country!) ? getCountryInfo(review.country!)?.flag?.height! : clientInfo?.countryInfo?.flag?.height}
+                                                    />
+                                                    <span className={styles.on}>on</span>
+                                                    <span className={styles.date}>{formatDateMongo(review.createdAt as unknown as string)}</span>
+                                                </div>
+                                                <div className={styles.review_rating}>
+                                                    {Array.from({ length: review.rating! }).map((star, id) => (
+                                                        <Star className={styles.star} key={id} />
+                                                    ))}
+                                                    {Array.from({ length: 5 - review.rating! }).map((star, id) => (
+                                                        <StarOutline className={styles.star} key={id} />
+                                                    ))}
+                                                </div>
+                                                {review.specs ? (
+                                                    <div className={styles.specs}>
+                                                        {review.specs.size && review.specs.size !== "" ? (
+                                                            <div className={styles.size}>
+                                                                <span>Size: {capitalizeFirstLetter(review.specs.size)}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                        {review.specs.color && review.specs.color !== "" ? (
+                                                            <div className={`${styles.color} ${!review.specs.size ? styles.noSize : ""}`}>
+                                                                <span>Color: {capitalizeFirstLetter(review.specs.color)}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                                <div className={styles.text}>
+                                                    <span>{review.review}</span>
+                                                </div>
+                                            </div>
+                                        )) : (
+                                            <></>
+                                        )}
+                                    </div>
+                                </Fragment>
                             ) : (
                                 <></>
                             )}

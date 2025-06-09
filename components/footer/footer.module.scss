@@ -719,7 +719,7 @@
 
     @include tabletPro {
         //border: 1px solid red;
-        top: 230%;
+        top: 150%;
     } 
 
     @include tabletMini {
@@ -776,7 +776,7 @@
 
     @include tabletMini {
         //border: 1px solid red;
-        top: 235%;
+        //top: 235%;
     } 
 
     @include phonePro {
@@ -865,7 +865,7 @@
     } 
 
     @include tabletMini {
-       top: 170%;
+       //top: 170%;
     }
 
     @include phonePro {

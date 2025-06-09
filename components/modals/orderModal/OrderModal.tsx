@@ -11,7 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits, sendMetaCapi } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from "@/config/interfaces";
-import { getItem, notify, removeItem, setItem, getFacebookCookies } from "@/config/clientUtils";
+import { getItem, notify, removeItem, setItem, getFacebookCookies, getOS, getDevice } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
 import { useSearchParams } from 'next/navigation';
 import { v4 as uuid } from "uuid";
@@ -265,12 +265,16 @@ const OrderModal = () => {
                                     em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
                                     ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
                                     zp: hashValue(deliveryInfo?.postalCode?.trim()!)
+                                },
+                                original_event_data: {
+                                    event_name: MetaStandardEvent.Purchase,
+                                    event_time: eventTime,
                                 }
                             }
                         ]
                     } 
                     sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-                    sendMetaCapi(eventData)
+                    await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
 
                     //setIsLoading(false)
                     //notify('success', "Payment was successful")
@@ -421,25 +425,30 @@ const OrderModal = () => {
                         em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
                         ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
                         zp: hashValue(deliveryInfo?.postalCode?.trim()!)
+                    },
+                    original_event_data: {
+                        event_name: MetaStandardEvent.InitiateCheckout,
+                        event_time: eventTime,
                     }
                 }
             ]
         } 
         sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-        sendMetaCapi(eventData)
+        await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
 
         try {
           const stripe = await stripePromise;
           if (!stripe) throw new Error('Stripe failed to load');
 
-          const amountInCents = Math.round(parseFloat(amount_) * 100);
+          const currency = "NGN" //clientInfo?.countryInfo?.currency
+          const unitAmount = Math.round(parseFloat(amount_) * 100);
           const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
           setItem(transactionIdName, txId_)
     
           const response = await fetch(`${backend}/stripe-checkout`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amountInCents, txId: txId_ }),
+            body: JSON.stringify({ currency: currency, amount: unitAmount, txId: txId_ }),
           });
     
           const { sessionId, error } = await response.json();
@@ -458,7 +467,12 @@ const OrderModal = () => {
           }
         } catch (error: any) {
           console.error('Payment error:', error.message);
-          alert(`An error occurred: ${error.message}`);
+          notify("error", error.message)
+          setSubmit(false)
+          setIsLoading(false)
+          setOrderModal(false)
+          setModalBackground(false)
+          //alert(`An error occurred: ${error.message}`);
         } finally {
             //Setting off the laoding modal
             //setModalBackground(false)

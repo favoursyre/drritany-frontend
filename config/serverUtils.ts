@@ -64,6 +64,7 @@ export const processImage = async (filePath: string): Promise<IImage> => {
         if (!fs.existsSync(filePath)) {
             throw new Error(`File not found at: ${filePath}`);
         } 
+        console.log("File Path: ", filePath)
 
         //Check if the file is an image
         let fileType
@@ -91,6 +92,7 @@ export const processImage = async (filePath: string): Promise<IImage> => {
 
         // Append the file to FormData
         form.append('file', fileStream);
+        console.log("File Form: ", form)
 
         //Sending the form data via HTTP request using axios
         const response = await axios.post(`${backend}/file`, form, {
@@ -174,11 +176,11 @@ class GoogleDriveCRUD {
                 fields: "id, imageMediaMetadata",
             })
             
-            console.log("Response 1: ", response)
+            console.log("GDrive Create File Response 1: ", response)
             //console.log("Response 1: ", response.imageMediaMetadata)
             return response.data
         } catch (error) {
-            console.log(error)
+            console.log("Google Drive add file: ", error)
         }
     }
 
@@ -204,6 +206,7 @@ export const GoogleDriveStore = async () => {
     const googleDrive = new GoogleDriveCRUD()
 
     const addFile = async (file: File, folderId: string | void) => {
+        console.log("Google Drive File: ", file)
         return await googleDrive.addFile(file, folderId)
     }
 

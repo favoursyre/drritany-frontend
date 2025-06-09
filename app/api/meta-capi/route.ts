@@ -1,10 +1,10 @@
 //This is the api route for handling meta conversions api
 
 //Libraries -->
-import { domainName } from '@/config/utils';
+import { domainName, storeEventInfo } from '@/config/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import { IMetaWebEvent } from '@/config/interfaces';
+import { IEventResearch, IMetaWebEvent } from '@/config/interfaces';
 
 //Commencing the code -->
 const apiVersion = process.env.META_API_VERSION!
@@ -14,6 +14,8 @@ const accessToken = process.env.META_ACCESS_TOKEN!
 export async function POST(req: NextRequest) {
   try {
     const eventData = await req.json()
+
+    console.log("Received event data: ", eventData);
 
     //Verifying the env variables
     if (!apiVersion) {

@@ -14,6 +14,9 @@ const productSchema = new Schema<IProduct, IProductModel>(
       required: true,
       trim: true,
     },
+    sampleOrders: {
+      type: Number,
+    },
     category: {
       macro: {
         type: String,
@@ -112,6 +115,15 @@ const productSchema = new Schema<IProduct, IProductModel>(
     orders: {
         type: Number,
         required: true,
+    },
+    addedToCart: {
+        type: Number,
+    },
+    stock: {
+        type: Number,
+    },
+    addedToWishlist: {
+        type: Number,
     },
     description: {
         type: String,

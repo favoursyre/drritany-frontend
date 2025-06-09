@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend, calculateTotalSlashedPrice } from '@/config/utils';
 import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -214,23 +214,24 @@ const Cart = () => {
     //This function calculates the cart discount
     //Generic is for all everyday users while special is for students, military, etc.
     const getCartDiscount = (user: "generic" | "special" = "generic") => {
-        let discount
-        //console.log("Delivery fees: ", cart?.totalHiddenDeliveryFee, cart?.deliveryFee, getCartDeliveryFee())
-        discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
+        let discount = 0
 
-        if (discount < 0) {
-            discount = 0
-            return discount
-        }
+        // console.log("Delivery fees: ", cart?.totalHiddenDeliveryFee, cart?.deliveryFee, getCartDeliveryFee())
+        // discount = cart?.totalHiddenDeliveryFee! - (cart?.deliveryFee! + extraDeliveryFee)
 
-        //I want to deduct about 20% off the discount and reserve the full discount only for students/officers
-        if (user === "generic") {
-            //console.log("Discounts: ", discount, (80/100) * discount)
-            const discount_ = (80/100) * discount
-            return discount_
-        } else if (user === "special") {
-            //Gets the full discount
-        }
+        // if (discount < 0) {
+        //     discount = 0
+        //     return discount
+        // }
+
+        // //I want to deduct about 20% off the discount and reserve the full discount only for students/officers
+        // if (user === "generic") {
+        //     //console.log("Discounts: ", discount, (80/100) * discount)
+        //     const discount_ = (50/100) * discount
+        //     return discount_
+        // } else if (user === "special") {
+        //     //Gets the full discount
+        // }
 
         // const _genDiscount = (80/100) * discount
         // //const _reservedDiscount = (20/100) * discount
@@ -375,7 +376,7 @@ const Cart = () => {
         
         setItem("deliveryFee", getCartDeliveryFee())
         //cart.deliveryFee = getCartDeliveryFee()
-        cart.totalDiscount = getCartDiscount()
+        cart.totalDiscount = (calculateTotalSlashedPrice(cart) - cart.grossTotalPrice) + getCartDiscount()
         cart.tax = taxAmount
         cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
         setItem(cartName, cart)
@@ -386,11 +387,11 @@ const Cart = () => {
 
         if (deliveryInfo) {
             //Validating if the user is from the USA, we only serve US clients for the meantime
-            const usCountryInfo = countryList.find((country) => country.name?.abbreviation === "US")
-            if (deliveryInfo.country !== usCountryInfo?.name?.common) {
-                notify("error", `In the meantime, we don't operate in ${deliveryInfo.country}`)
-                return
-            }
+            // const usCountryInfo = countryList.find((country) => country.name?.abbreviation === "US")
+            // if (deliveryInfo.country !== usCountryInfo?.name?.common) {
+            //     notify("error", `In the meantime, we don't operate in ${deliveryInfo.country}`)
+            //     return
+            // }
 
             setModalBackground(true)
             setOrderModal(true)
@@ -635,7 +636,7 @@ const Cart = () => {
                             )}
                         </div>
                         <div className={styles.price_items}>
-                            <div className={styles.subtotal}>
+                            <div className={styles.grosstotal}>
                                 <span className={styles.title}>Gross Total</span>
                                 <div className={styles.amount}>
                                     {clientInfo?.countryInfo?.currency?.symbol ? (
@@ -645,14 +646,33 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(cart.grossTotalPrice * clientInfo?.countryInfo?.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(calculateTotalSlashedPrice(cart) * clientInfo?.countryInfo?.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    
+                                    {/* slashedPrice(customPrice, product_.pricing.discount) */}
+                                </div>
+                            </div>
+                            {/* <div className={styles.subtotal}>
+                                <span className={styles.title}>Discount</span>
+                                <div className={styles.amount}>
+                                    {clientInfo?.countryInfo?.currency?.symbol ? (
+                                        <span>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
+                                        <span>
+                                            {round((calculateTotalSlashedPrice(cart) - cart.grossTotalPrice) * clientInfo?.countryInfo?.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
                                     )}
                                     
                                 </div>
-                            </div>
+                            </div> */}
                             <div className={styles.discount}>
                                 <span className={styles.title}>Total Discount</span>
                                 <div className={styles.amount}>
@@ -664,7 +684,7 @@ const Cart = () => {
                                     )}
                                     {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                         <span>
-                                            {round(getCartDiscount() * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                            {round(((calculateTotalSlashedPrice(cart) - cart.grossTotalPrice) + getCartDiscount()) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
                                         </span>
                                     ) : (
                                         <></>
@@ -717,8 +737,7 @@ const Cart = () => {
                             <Payment className={styles.icon} />
                             <span>Pay</span>
                         </button>
-                    </div>
-                    
+                    </div>  
                 </div>
             ) : (
                 <></>

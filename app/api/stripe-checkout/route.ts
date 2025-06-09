@@ -1,23 +1,56 @@
 //This is the api route for handling stripe checkout
 
 //Libraries -->
-import { domainName, stripeSecretKey } from '@/config/utils';
+import { convertUnitAmountToCent, domainName, getMinimumStripeAmount, stripeSecretKey } from '@/config/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-
+import axios from 'axios';
 
 //Commencing the code -->
 const stripe = new Stripe(stripeSecretKey as string, {
   //apiVersion: '2023-10-16', // Latest as of March 2025
 });
 
+const exchangeRateApi = process.env.EXCHANGE_RATE_API_KEY!
+
 export async function POST(req: NextRequest) {
   try {
-    const { amount, txId } = await req.json();
+    const { currency, amount, txId } = await req.json();
 
-    if (!amount || amount < 50) {
+    if (!currency) {
       return NextResponse.json(
-        { error: 'Amount must be at least 50 cents' },
+        { error: 'Currency is not given' },
+        { status: 400 }
+      );
+    }
+
+    let exchangeRate = 1
+    if (currency !== "USD") {
+      const url = `https://v6.exchangerate-api.com/v6/${exchangeRateApi}/latest/USD`;
+  
+      const res = await axios.get(url);
+      const rate = res.data.conversion_rates[currency]
+      exchangeRate = rate
+      console.log("Exchange Rate: ", rate)
+
+      if (!rate) {
+        return NextResponse.json(
+          { error: `${currency} exchange rate not found` },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (!amount) {
+      return NextResponse.json(
+        { error: 'Amount not found' },
+        { status: 400 }
+      );
+    }
+
+    if (convertUnitAmountToCent(amount, currency, exchangeRate) < 50) {
+      return NextResponse.json(
+        { error: `Amount must be at least ${getMinimumStripeAmount(currency, exchangeRate)}${currency}`},
         { status: 400 }
       );
     }
@@ -27,7 +60,7 @@ export async function POST(req: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: currency,
             product_data: {
               name: 'Checkout Payment',
               description: 'Your Everyday Marketplace',

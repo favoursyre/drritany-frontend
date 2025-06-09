@@ -3,14 +3,30 @@
 
 ///Libraries -->
 import styles from "./terms.module.scss"
-import { companyName } from "@/config/utils";
+import { companyName, getProducts, getRandomNumber, backend, getProductReviews } from "@/config/utils";
 import Image from "next/image";
-import { getItem } from "@/config/clientUtils";
+import { getItem, setItem } from "@/config/clientUtils";
+import { IProduct, IProductReview } from "@/config/interfaces";
 import { useLoadingModalStore, useModalBackgroundStore } from "@/config/store";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 ///Commencing the code 
-  
+const getUniqueProductIds = (reviews: IProductReview[]): Array<{ productId: string }> => {
+  // Create a Set to store unique productIds
+  const uniqueProductIds = new Set<string>();
+
+  // Loop through the reviews and add the productId to the Set
+  reviews.forEach(review => {
+    if (review.productId) {
+      uniqueProductIds.add(review.productId);
+    }
+  });
+
+  // Convert the Set back to an array of objects
+  return Array.from(uniqueProductIds).map(productId => ({ productId }));
+};
+
 /**
  * @title Terms Component
  * @returns The Terms component
@@ -18,68 +34,83 @@ import { useEffect, useState } from "react";
 const Terms = () => {
 
     //This was used to update all the products
-    // useEffect(() => {
-    //     const _name = "updateProduct"
-    //     const stat = getItem(_name)
-    //     console.log("stat: ", stat)
-    //     if (!stat) {
-    //         //Want to add 2 to every price of goods
-    //         const updateProducts = async () => {
-    //             const getProducts = async (): Promise<Array<IProduct> | undefined> => {
-    //                 try {
-    //                     const res = await fetch(`${backend}/product?action=order`, {
-    //                     method: "GET",
-    //                     cache: "no-store",
-    //                     //next: { revalidate: 120 }
-    //                     })
-                    
-    //                     if (res.ok) {
-    //                     return res.json()
-    //                     } else {
-    //                     getProducts()
-    //                     }
-    //                 } catch (error) {
-    //                     console.error(error);
-    //                 }
-    //             }
-                
-    //             const products = await getProducts()
-    //             if (products) {
-    //                 //const p = products[0]
-    //                 let _n = 1
-    //                 for (const p of products) {
-    //                     const { pricing } = p
-    //                     console.log("Old: ", p, pricing?.basePrice)
-    //                     const _price = pricing?.basePrice! + 2
-    //                     console.log('Price: ', _price)
-    //                     const _pricing: IPricing = { ...pricing, basePrice: _price, }
-    //                     console.log('Pricing: ', _pricing)
-    //                     p.pricing = _pricing
-    //                     console.log("New: ", p)
-    //                     const res = await fetch(`${backend}/product/${p._id}`, {
-    //                         method: "PATCH",
-    //                         body: JSON.stringify(p),
-    //                         headers: {
-    //                             'Content-Type': 'application/json',
-    //                         },
-    //                     })
-                    
-    //                     if (res.ok) {
-    //                         console.log(`Update ${_n}: `, await res.json())
-    //                         _n = _n + 1
-    //                         //notify("success", "Product Updated Successfully")
-    //                         //return
-    //                     }
-    //                 }
-                    
-    //                 setItem(_name, true)
-    //             }
-    //         }
-
-    //         updateProducts()
-    //     }
+    useEffect(() => {
+        const _name = "updateProduct"
+        const stat = getItem(_name)
+        console.log("Stat: ", stat)
+        if (!stat) {
+            //Want to increase the number of orders of all products
+            const updateProducts = async () => {
+                try {
+                    const products = await getProducts() as unknown as Array<IProduct>
+                    const reviews = await getProductReviews() as unknown as Array<IProductReview>
+                    const uniqueids = getUniqueProductIds(reviews)
+                    console.log("Unique Ids: ", uniqueids)
+                    console.log("Length of Unique Ids: ", uniqueids.length)
         
-    // })
+                    if (products) {
+                        //const p = products[0]
+                        let _n = 1
+                        for (const p of products) {
+                            const pExist = uniqueids.some(item => item.productId === p._id)
+
+                            if (!pExist && p.active && p.pricing?.inStock) {
+                                console.log("Updating Product: ", p.name)
+                                //console.log("Product does not exist: ", p._id)
+                                const newOrders = getRandomNumber(107, 593)
+                                const productStock = getRandomNumber(4, 36)
+                                //const { orders } = p
+                                //console.log("Old: ", p, orders)
+                                const _orders = newOrders
+                                console.log('Orders: ', _orders)
+                                p.orders = _orders
+                                p.stock = productStock
+                                console.log('Product Stock: ', productStock)
+                                console.log("New: ", p)
+                                const res = await fetch(`${backend}/product/${p._id}`, {
+                                    method: "PATCH",
+                                    body: JSON.stringify(p),
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                })
+                            
+                                if (res.ok) {
+                                    if (p.active && p.pricing?.inStock) {
+                                        let product = p
+                                        const reviewRes = await axios.post(`${backend}/ai-review`, product, {
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                        });
+
+                                        console.log("review Response: ", reviewRes)
+                                    }
+
+                                    console.log(`Updated ${_n}: `, await res.json())
+                                    _n = _n + 1
+                                    //notify("success", "Product Updated Successfully")
+                                    //return
+                                }
+                            } else {
+                                undefined
+                                console.log("Product already updated: ", p._id)
+                            }
+                        }
+
+                        console.log("All Products Updated Successfully")
+                        
+                        setItem(_name, true)
+                    }
+                } catch (error) {
+                    console.log("Error Updating: ", error)
+                } 
+            }
+
+            updateProducts()   
+        }
+        
+    })
 
     return (
         <>

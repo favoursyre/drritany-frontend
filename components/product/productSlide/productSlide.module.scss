@@ -210,7 +210,8 @@
             }
 
             @include tablet {
-               width: 20%;
+               width: 25%;
+               height: 95%;
             }
 
             @include phonePro {
@@ -553,7 +554,7 @@
     //border: 2px solid black;
 
     @include tabletPro {
-        top: 125%;
+        top: 80%;
     }
 
     @include tabletMini {
@@ -570,11 +571,11 @@
 }
 
 .infoSlide2 {
-    //border: 2px solid black;
+    //border: 2px solid red;
     top: 220%;
 
     @include tabletPro {
-        top: 195%;
+        top: 115%;
     }
 
     @include phonePro {

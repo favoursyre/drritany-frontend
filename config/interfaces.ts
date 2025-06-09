@@ -229,11 +229,15 @@ export interface IProduct {
     images: Array<IImage>,
     active?: boolean,
     orders?: number,
+    addedToCart?: number,
+    addedToWishlist?: number,
+    stock?: number, //This is the total stock available for the product
     rating?: number,
     description?: string,
     extraDescription?: string,
     specification?: ISpecification,
     addDelivery?: boolean,
+    sampleOrders?: number,
     url?: string,
     createdAt?: string,
     updatedAt?: string,
@@ -257,6 +261,7 @@ export interface ICartItem {
     readonly unitPrice: number,
     readonly unitWeight: number,
     readonly unitHiddenDeliveryFee: number,
+    readonly discountPercent: number,
     quantity: number,
     specs?: { 
       color?: string | IImage,
@@ -335,6 +340,7 @@ export interface ICountry {
       }>,
       extraDeliveryPercent: number
     }>,
+    stateTitle?: string,
     location?: ICountryLocation,
     dial_code?: string,
     currency?: ICurrency,
@@ -380,6 +386,35 @@ export interface ICountry {
     updatedAt?: string,
     __v?: number
   }
+
+///Declaring the interface for the testimonial
+export interface IProductReview {
+  _id?: string,
+  productId?: string,
+  userId?: string,
+  specs?: { 
+    color?: string,
+    size?: string
+  },
+  name?: string,
+  image?: IImage,
+  review?: string,
+  rating?: number,
+  country?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  __v?: number
+}
+
+///Declaring the interface for product review mongoose schema static
+export interface IProductReviewModel extends Model<IProductReview> {
+  createProductReview(productReview: IProductReview): Array<IProductReview>,
+  updateProductReview(id: string, productReview: IProductReview): IProductReview,
+  getAllProductReviews(): Array<IProductReview>,
+  getProductReviewById(id: string): Array<IProductReview>
+  getProductReviewByProductId(productId: string): Array<IProductReview>
+  deleteProductReview(id: string): IProductReview
+}
 
 ///Declaring the interface for inquiry
 export interface IInquiry {
@@ -556,6 +591,17 @@ export interface IQueryResearch {
   Region: string,
   Country: string,
   Query: string,
+  Date: string,
+  Time: string,
+  OS: ClientOS,
+  Device: ClientDevice
+}
+
+//This is the interface for event research
+export interface IEventResearch {
+  ID: string,
+  EventName: string,
+  Data: string,
   Date: string,
   Time: string,
   OS: ClientOS,

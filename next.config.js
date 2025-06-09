@@ -21,6 +21,10 @@ const nextConfig = withBundleAnalyzer({
         {
           protocol: 'https',
           hostname: 'flagcdn.com'
+        },
+        {
+          protocol: 'https',
+          hostname: 'www.gravatar.com'
         }
       ],
         //formats: ['image/svg+xml'],

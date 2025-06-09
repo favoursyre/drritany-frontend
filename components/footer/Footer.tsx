@@ -105,6 +105,8 @@ const Footer = () => {
         setModalBackground(true)
         setLoadingModal(true)
 
+        console.log("Social media clicked")
+
         //Arranging button research info
         const info: IButtonResearch = {
             ID: clientInfo?._id!,
@@ -208,7 +210,7 @@ const Footer = () => {
                             <MailOutline className={styles.mail} onClick={(e) => _visitSocialLink(e, "mail")} />
                             <Facebook className={styles.facebook} onClick={(e) => _visitSocialLink(e, "facebook")} />
                             <Instagram className={styles.instagram} onClick={(e) => _visitSocialLink(e, "instagram")} />
-                            {/* <WhatsApp className={styles.whatsapp} onClick={(e) => _visitSocialLink(e, "whatsapp")} /> */}
+                            <WhatsApp className={styles.whatsapp} onClick={(e) => _visitSocialLink(e, "whatsapp")} />
                             <X className={styles.x} onClick={(e) => _visitSocialLink(e, "x")} />
                             {/* <Image 
                                 className={styles.tiktok}

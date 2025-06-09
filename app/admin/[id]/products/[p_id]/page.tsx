@@ -4,9 +4,9 @@
 import AdminProductInfo from '@/components/admin/products/info/ProductInfo';
 import SimilarProduct from '@/components/product/productSlide/ProductSlide';
 import RecommendedProduct from '@/components/product/productSlide/ProductSlide';
-import { getProduct } from '@/config/utils';
+import { getProduct, getProductReviewsByProductId } from '@/config/utils';
 import { Metadata } from 'next';
-import { IProduct, Props } from '@/config/interfaces';
+import { IProduct, Props, IProductReview } from '@/config/interfaces';
 import { dataflow } from 'googleapis/build/src/apis/dataflow';
 
 ///Commencing the code 
@@ -52,6 +52,7 @@ export default async function ProductByIdPage({ params }: Props) {
   const { p_id } = await params
   //const _id = await params.id
   const product = await getProduct(p_id) as unknown as Array<IProduct>
+  const productReviews = await getProductReviewsByProductId(p_id) as unknown as Array<IProductReview>
   console.log("admin product info: ", product)
   //const products_ = await getProducts() as unknown as Array<IProduct>
   //const products = shuffleArray(removeProductFromArray(product[0], products_))

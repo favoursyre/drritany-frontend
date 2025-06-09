@@ -86,7 +86,9 @@ export const removeItem = (key: string) => {
 ///This links opens the social link
 export const visitSocialLink = async (social: string, info: IButtonResearch) => {
     //Storing the button information
+    console.log("social media2 clicked")
     await storeButtonInfo(info)
+    console.log("social media3 clicked")
 
     if (window) {
         if (social === "instagram") {
@@ -100,7 +102,7 @@ export const visitSocialLink = async (social: string, info: IButtonResearch) => 
         } else if (social === "mail") {
             window.open(`mailto:${companyEmail}`, "_blank")
         } else if (social === "whatsapp") {
-            window.open("https://api.whatsapp.com/send?phone=14244282169", "_blank")
+            window.open("https://api.whatsapp.com/send?phone=8619589402657", "_blank")
         } else if (social === "x") {
             window.open("https://x.com/Idealplug", "_blank")
         } else {

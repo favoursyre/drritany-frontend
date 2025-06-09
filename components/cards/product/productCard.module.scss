@@ -20,6 +20,10 @@
         @include size(16%, 50%); 
     }
 
+    @include tabletMini {
+        @include size(20%, 50%); 
+    }
+
     @include phonePro {
         //border: 2px solid $primary-color;
         @include size(28%, 55%);
@@ -38,41 +42,12 @@
     }
 
     .discounts {
-        @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: space-between, $gap: 0%, $flex_d: row);
-        //border:  1px solid red;
+        @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: flex-end, $gap: 0%, $flex_d: row);
+        //border: 1px solid red;
         top: 1%;
         left: 1%;
         @include size(97%, auto);
         z-index: 1;
-
-        .percent {
-            border:  1px solid $primary-color;
-            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 0%, $flex_d: row);
-            padding: 2%;
-            background-color: $secondary-color;
-            left: 2%;
-            top: 2%;
-    
-            @include phoneMini {
-                padding: 1%;
-                left: 1%;
-                top: 1%;
-            }
-    
-            span {
-                @include text-layout($size: 13px, $l_height: 20px, $color: $secondary-color-2);
-                font-weight: 600;
-    
-                @include phonePro {
-                    font-size: 13px;
-                }
-    
-                @include phoneMini {
-                    //height: 40%;
-                    font-size: 10px;
-                }
-            }
-        }
 
         button {
             @include flexBar ($position: relative, $align: center, $justify: center, $gap: 0%);
@@ -101,6 +76,58 @@
         .offer {
             //border: 1px solid red;
             color: $star-color;
+        }
+    }
+
+    .addToCart {
+        @include flexBar ($position: absolute, $wrap: none, $align: center, $justify: flex-end, $gap: 0%, $flex_d: row);
+        //border: 1px solid blue;
+        //border-radius: 50%;
+        top: 50%;
+        //left: 73%;
+        @include size(90%, 15%);
+        z-index: 1;
+        background-color: transparent;
+        //border: none;
+
+        @include tablet {
+            top: 45%;
+        }
+
+        @include phonePro {
+            top: 45%;
+        }
+
+        .addToCartBtn {
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            //border: none;
+            border: 1px solid $primary-color;
+            background-color: $tertiary-color;
+
+            .icon {
+                //display: none;
+                border: 1px solid $primary-color;
+                position: relative;
+                border-radius: 50%;
+                color: $secondary-color-2;
+                padding: 5%;
+                background-color: transparent;
+                font-size: 1.3rem;
+                border: none;
+
+                @include phonePro {
+                    font-size: 1.3rem;
+                }
+            }
+
+            &:hover {
+                .icon {
+                    color: $primary-color;
+                }
+            }
         }
     }
 
@@ -165,43 +192,192 @@
         }
     }
 
-    .card_price {
-        //border: 1px solid red;
-        @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 0%, $flex_d: column);
-        @include size(100%, 20%);
+    .price_sold {
+        //border: 1px solid green;
+        @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 2%, $flex_d: row);
+        @include size(93%, 13%);
+        //overflow: hidden;
 
-        @include tablet {
-            height: 18%;
+        .card_price {
+            //border: 1px solid red;
+            @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 0%, $flex_d: column);
+            @include size(auto, auto);
+    
+            @include tablet {
+                height: 18%;
+            }
+    
+            .price_1 {
+                @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
+                //border: 2px solid red;
+                @include text-layout($size: 13px, $l_height: 20px);
+                @include size(100%, auto);
+
+                @include tabletPro {
+                    line-height: 16px;
+                }
+    
+                @include phonePro {
+                    line-height: 16px;
+                    font-size: 12px;
+                    top: 5%;
+                }
+    
+                @include phoneMini {
+                    height: 40%;
+                    font-size: 10px;
+                }
+            }
+    
+            .price_2 {
+                //border: 2px solid red;
+                @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
+                @include text-layout($size: 11px, $color: $text-color-3, $l_height: 20px);
+                text-decoration: line-through;
+                @include size(100%, auto);
+
+                @include tabletPro {
+                    line-height: 14px;
+                }
+    
+                @include phonePro {
+                    line-height: 14px;
+                }
+    
+                @include phoneMini {
+                    font-size: 8px;
+                }
+            }
         }
 
-        .price_1 {
-            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
-            //border: 2px solid red;
-            @include text-layout($size: 13px, $l_height: 20px);
-            @include size(100%, auto);
+        .percent {
+            border:  1px solid $primary-color;
+            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: center, $gap: 0%, $flex_d: row);
+            padding: 2%;
+            background-color: $secondary-color;
+            left: 2%;
+            top: 2%;
+    
+            @include phoneMini {
+                padding: 1%;
+                left: 1%;
+                top: 1%;
+            }
+    
+            span {
+                @include text-layout($size: 13px, $l_height: 20px, $color: $secondary-color-2);
+                font-weight: 600;
+    
+                @include phonePro {
+                    font-size: 13px;
+                }
+    
+                @include phoneMini {
+                    //height: 40%;
+                    font-size: 10px;
+                }
+            }
+        }
+
+        .product_orders {
+            @include flexBar($position: relative, $justify: center, $gap: 3%, $flex_d: row, $wrap: none, $align: none, $flex: none);
+            border: 1px solid blue;
+            //border: none;
+            @include size(auto, 100%);
+            padding-left: 8px;
+            @include text-layout($size: 13px, $l_height: 24px);
+            //overflow: hidden;
+            //border-left: 1px solid $text-color-3;
+            display: none;
+
+            @include tablet {
+                //width: 55%;
+                display: none;
+            }
 
             @include phonePro {
+                //line-height: 20px;
+                //width: 55%;
+                display: none;
                 font-size: 12px;
-                top: 5%;
+            }
+
+            @include phone {
+                //width: 59%;
+                font-size: 12px;
+                //line-height: 18px;
             }
 
             @include phoneMini {
-                height: 40%;
+                font-size: 10px;
+            }
+
+            .icon {
+                font-size: 1.5rem;
+
+                @include phoneMini {
+                    font-size: 1.3rem;
+                }
+            }
+        }
+    }
+
+    .free_left {
+        //border: 1px solid red;
+        @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: space-between, $gap: 1%, $flex_d: row);
+        @include size(93%, auto);
+
+        @include phonePro {
+            //top: 1%;
+        }
+
+        .free, .sold, .save {
+            //border: 1px solid green;
+            @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 1%, $flex_d: row);
+            //@include size(93%, auto);
+            width: 100%;
+            @include text-layout($size: 12px, $l_height: 18px, $color: $primary-color);
+
+            @include tabletPro {
+                line-height: 16px;
+            }
+
+            @include phonePro {
+                font-size: 12px;
+            }
+
+            @include phoneMini {
                 font-size: 10px;
             }
         }
 
-        .price_2 {
-            //border: 2px solid red;
-            @include flexBar ($position: relative, $wrap: none, $align: center, $justify: flex-start, $gap: 0%);
-            @include text-layout($size: 11px, $color: $text-color-3, $l_height: 20px);
-            text-decoration: line-through;
-            @include size(100%, auto);
+        .left {
+            //border: 1px solid green;
+            @include flexBar ($position: relative, $wrap: none, $align: flex-start, $justify: none, $gap: 1%, $flex_d: row);
+            width: 100%;
+            //@include size(93%, auto);
+            @include text-layout($size: 12px, $l_height: 18px, $color: $primary-color);
 
+            @include tabletPro {
+                line-height: 16px;
+            }
+
+            @include phonePro {
+                font-size: 12px;
+                width: 100%;
+            }
 
             @include phoneMini {
-                font-size: 8px;
+                font-size: 10px;
             }
+
+            .icon {
+                font-size: 1rem;
+            }
+        }
+
+        .left_ {
+            left: -2px;
         }
     }
 

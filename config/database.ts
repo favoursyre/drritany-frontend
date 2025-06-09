@@ -142,32 +142,32 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Alberta",
                 abbreviation: "AB",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "British Columbia",
                 abbreviation: "BC",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Manitoba",
                 abbreviation: "MB",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "New Brunswick",
                 abbreviation: "NB",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Newfoundland and Labrador",
                 abbreviation: "NL",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Nova Scotia",
                 abbreviation: "NS",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Ontario",
@@ -177,37 +177,38 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Prince Edward Island",
                 abbreviation: "PE",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Quebec",
                 abbreviation: "QC",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Saskatchewan",
                 abbreviation: "SK",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Northwest Territories",
                 abbreviation: "NT",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Nunavut",
                 abbreviation: "NU",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             },
             {
                 name: "Yukon",
                 abbreviation: "YT",
-                extraDeliveryPercent: 10,
+                extraDeliveryPercent: 0,
             }
         ],
+        stateTitle: "Province",
         delivery: {
             feePerKg: 0.8,
-            baseNumber: 7
+            baseNumber: 1.9
         }, 
         priceInflation: 0,
         flag: {
@@ -706,7 +707,7 @@ export const countryList: Array<ICountry> = [
             name: "Nigerian Naira",
             abbreviation: "NGN",
             symbol: "₦",
-            exchangeRate: 1300
+            exchangeRate: 1500
         },
         states: [
             {
@@ -997,7 +998,7 @@ export const countryList: Array<ICountry> = [
                 code: "zul"
             }
         ],
-        priceInflation: 15, 
+        //priceInflation: 15, 
         states: [
             {
                 name: "Eastern Cape",
@@ -1120,7 +1121,7 @@ export const countryList: Array<ICountry> = [
         name: {
             common: "United Kingdom",
             official: "United Kingdom of Great Britain and Northern Ireland",
-            abbreviation: 'GB',
+            abbreviation: 'UK',
             demonym: "British",
             capital: "London"
         }, 
@@ -1131,6 +1132,33 @@ export const countryList: Array<ICountry> = [
             symbol: "£",
             exchangeRate: 0.8
         },
+        stateTitle: "Region",
+        states: [
+            { name: "Anguilla", abbreviation: "AI", extraDeliveryPercent: 0 },
+            { name: "Bermuda", abbreviation: "BM", extraDeliveryPercent: 0 },
+            { name: "British Indian Ocean Territory", abbreviation: "IO", extraDeliveryPercent: 0 },
+            { name: "British Virgin Islands", abbreviation: "VG", extraDeliveryPercent: 0 },
+            { name: "Cayman Islands", abbreviation: "KY", extraDeliveryPercent: 0 },
+            { name: "England", abbreviation: "ENG", extraDeliveryPercent: 0 },
+            { name: "Falkland Islands", abbreviation: "FK", extraDeliveryPercent: 0 },
+            { name: "Gibraltar", abbreviation: "GI", extraDeliveryPercent: 0 },
+            { name: "Guernsey", abbreviation: "GG", extraDeliveryPercent: 0 },
+            { name: "Isle of Man", abbreviation: "IM", extraDeliveryPercent: 0 },
+            { name: "Jersey", abbreviation: "JE", extraDeliveryPercent: 0 },
+            { name: "Montserrat", abbreviation: "MS", extraDeliveryPercent: 0 },
+            { name: "Northern Ireland", abbreviation: "NIR", extraDeliveryPercent: 0 },
+            { name: "Pitcairn Islands", abbreviation: "PN", extraDeliveryPercent: 0 },
+            { name: "Scotland", abbreviation: "SCT", extraDeliveryPercent: 0 },
+            { name: "South Georgia & South Sandwich Islands", abbreviation: "GS", extraDeliveryPercent: 0 },
+            { name: "St Helena, Ascension, Tristan da Cunha", abbreviation: "SH", extraDeliveryPercent: 0 },
+            { name: "Turks and Caicos Islands", abbreviation: "TC", extraDeliveryPercent: 0 },
+            { name: "Wales", abbreviation: "WLS", extraDeliveryPercent: 0 }
+        ],
+        delivery: {
+            feePerKg: 0.8,
+            baseNumber: 1.9
+        }, 
+        priceInflation: 0,
         languages: [
             {
                 name: "English",
@@ -1221,6 +1249,7 @@ export const countryList: Array<ICountry> = [
             { name: "Wisconsin", abbreviation: "WI", extraDeliveryPercent: 0 },
             { name: "Wyoming", abbreviation: "WY", extraDeliveryPercent: 0 }
         ],
+        stateTitle: "State",
         delivery: {
             feePerKg: 1,
             baseNumber: 1.9
