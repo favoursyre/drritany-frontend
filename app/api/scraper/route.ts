@@ -11,7 +11,7 @@ import OpenAI from "openai";
 import puppeteer from "puppeteer";
 import * as cheerio from "cheerio"
 import { formatAliexpressImageUrl, backend, getGDriveDirectLink, isImage, extractNum, categories, downloadImageURL, deleteFile, getRating, extractJsonFromMarkdown, getRandomNumber } from "@/config/utils";
-import { processImage } from '@/config/serverUtils';
+import { processImage, uploadImageToDrive } from '@/config/serverUtils';
 
 ///Commencing the code
 //Declaring my AI api
@@ -106,39 +106,69 @@ export async function POST(request: NextRequest) {
         console.log("Info Server: ", info)
         const filePaths: Array<string | undefined> = [...info.videos!]
 
-        // Loop through each URL
-        for (const url of info.images) {
-            try {
-                //console.log(`Downloading image from: ${iam}`);
-                const filePath = await downloadImageURL(url);
-                filePaths.push(filePath);
-                console.log(`Successfully downloaded to: ${filePath}`);
-            } catch (error) {
-                console.error(`Failed to download image from ${url}:`, error);
-                // Continue with next URL even if one fails
-                // If you want to stop on error, you could throw here instead
-            }
-        }
+        // // Loop through each URL
+        // for (const url of info.images) {
+        //     try {
+        //         //console.log(`Downloading image from: ${iam}`);
+        //         const filePath = await downloadImageURL(url);
+        //         filePaths.push(filePath);
+        //         console.log(`Successfully downloaded to: ${filePath}`);
+        //     } catch (error) {
+        //         console.error(`Failed to download image from ${url}:`, error);
+        //         // Continue with next URL even if one fails
+        //         // If you want to stop on error, you could throw here instead
+        //     }
+        // }
 
-        //Next we need to process the images
+        // //Next we need to process the images
+        // const driveImages: Array<IImage> = []
+        // for (const path of filePaths) {
+        //     if (path) {
+        //         try {
+        //             const _img = await processImage(path)
+        //             console.log("Process Image: ", _img)
+        //             //return
+        //             driveImages.push(_img)
+        //         } catch (error) {
+        //             console.log("Processing Error: ", error)
+        //         }
+        //     }
+        // }
+
+        // //Next we delete all the downloaded images
+        // for (const path of filePaths) {
+        //     if (path) {
+        //         await deleteFile(path)
+        //     }
+        // }
+
+        //Uploading images to google drive
+        
+
+        // Process images directly without downloading
         const driveImages: Array<IImage> = []
-        for (const path of filePaths) {
-            if (path) {
-                try {
-                    const _img = await processImage(path)
-                    console.log("Process Image: ", _img)
-                    //return
-                    driveImages.push(_img)
-                } catch (error) {
-                    console.log("Processing Error: ", error)
-                }
+        for (const url of info.images) {
+            console.log("Image URL: ", url)
+            try {
+                const image = await uploadImageToDrive(url, "image");
+                driveImages.push(image);
+                console.log(`Successfully uploaded: ${url}`);
+            } catch (error) {
+                console.error(`Failed to upload ${url}:`, error);
             }
         }
 
-        //Next we delete all the downloaded images
-        for (const path of filePaths) {
-            if (path) {
-                await deleteFile(path)
+        // Process videos (if needed)
+        const driveVideos: IImage[] = [];
+        for (const url of info.videos) {
+            console.log("Video URL: ", url)
+            try {
+                if (url) {
+                    const video = await uploadImageToDrive(url, "video");
+                    driveVideos.push(video);
+                }
+            } catch (error) {
+                console.error(`Failed to upload video ${url}:`, error);
             }
         }
 
@@ -179,7 +209,7 @@ Note:
             addedBy: adminId,
             url: data.url,
             name: info?.name,
-            images: driveImages,
+            images: [...driveVideos, ...driveImages],
             pricing: {
                 basePrice: extractNum(info.price),
                 discount: extractNum(info.discount),

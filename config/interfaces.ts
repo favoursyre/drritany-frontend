@@ -349,6 +349,7 @@ export interface ICountry {
       name?: string, 
       code?: string 
     }>,
+    areaCodeTitle?: string, //This is the title for the area code
     independence?: {
       date?: string, //DD-MM-YYYY
       age?: number //Age in years

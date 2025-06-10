@@ -325,10 +325,10 @@ const OrderFormModal = () => {
     if (label === "country") {
         //Checking if the country is the US
         const _country = e.target.value
-        if (_country !== "United States") {
-            notify("error", "Unfortunately, we only deliver to the US for the meantime")
-            return
-        }
+        // if (_country !== "United States") {
+        //     notify("error", "Unfortunately, we only deliver to the US for the meantime")
+        //     return
+        // }
 
         setCountry(() => _country);
 
@@ -391,44 +391,49 @@ const OrderFormModal = () => {
         const _code = e.target.value
         console.log("Postal Code: ",  _code)
         setPostalCode(() => _code)
-        const _mainCode = extractMainZipCode(_code)
-        if (_mainCode) {
-            console.log("Zip code is valid")
-            
-            setIsLoading(() => true)
-            try {
-                //Verifying the postal code
-                const res = await fetch(`https://api.zippopotam.us/us/${_mainCode}`, {
-                    method: 'GET', // HTTP method
-                });
 
-                if (res.ok) {
-                    const zip = await res.json()
-                    console.log('Zip code: ', zip, country, state)
-                    setMunicipality(() => zip.places[0]["place name"])
+        if (country == "United States") {
+            const _mainCode = extractMainZipCode(_code)
+            if (_mainCode) {
+                console.log("Zip code is valid")
+                
+                setIsLoading(() => true)
+                try {
+                    //Verifying the postal code
+                    const res = await fetch(`https://api.zippopotam.us/us/${_mainCode}`, {
+                        method: 'GET', // HTTP method
+                    });
 
-                    if (zip.country !== country) {
-                        notify("error", `Zip code doesn't match ${country}`)
+                    if (res.ok) {
+                        const zip = await res.json()
+                        console.log('Zip code: ', zip, country, state)
+                        setMunicipality(() => zip.places[0]["place name"])
+
+                        if (zip.country !== country) {
+                            notify("error", `Zip code doesn't match ${country}`)
+                            throw Error
+                            //return
+                        } else if (zip.places[0].state !== state) {
+                            notify("error", `Zip code doesn't match ${state}`)
+                            throw Error
+                        }
+                        
+                        //const placeName = zip.places[0]["place name"]
+                        setIsLoading(() => false)
+                    } else {
+                        notify("error", "Invalid zip code")
                         throw Error
                         //return
-                    } else if (zip.places[0].state !== state) {
-                        notify("error", `Zip code doesn't match ${state}`)
-                        throw Error
+                        //throw new Error("Invalid zip code")
                     }
-                    
-                    //const placeName = zip.places[0]["place name"]
+                } catch (error) {
                     setIsLoading(() => false)
-                } else {
-                    notify("error", "Invalid zip code")
-                    throw Error
-                    //return
-                    //throw new Error("Invalid zip code")
                 }
-            } catch (error) {
-                setIsLoading(() => false)
+            } else {
+                //setMunicipality(() => "")
             }
         } else {
-            setMunicipality(() => "")
+
         }
     }
 };
@@ -629,7 +634,7 @@ const OrderFormModal = () => {
                         type="text"
                         //onChange={(e) => setMunicipality(e.target.value)}
                         value={municipality}
-                        disabled
+                        disabled={country === "United States" ? true : false} //This is disabled because the zip code is used to extract the municipality
                     />
                 </label>
                 <br />

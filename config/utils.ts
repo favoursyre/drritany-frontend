@@ -1043,7 +1043,7 @@ export const getProductReviewsByProductId = async (id: string) => {
 }
 
 //Calculate the mean rating of a product reviews
-export const calculateMeanRating = (reviews: Array<IProductReview>): number => {
+export const calculateMeanRating = (reviews: Array<IProductReview>): string | number => {
   // Filter out reviews with undefined or null ratings
   const validRatings = reviews
     .filter(review => typeof review.rating === 'number')
@@ -1057,7 +1057,7 @@ export const calculateMeanRating = (reviews: Array<IProductReview>): number => {
   // Calculate mean and round to 1 decimal place
   const sum = validRatings.reduce((acc, rating) => acc + rating, 0);
   const mean = sum / validRatings.length;
-  return Number(mean.toFixed(1));
+  return mean.toFixed(1);
 }
 
 //This checks if a checks if a country exists and then returns the country object

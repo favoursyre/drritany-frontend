@@ -1121,7 +1121,7 @@ export const countryList: Array<ICountry> = [
         name: {
             common: "United Kingdom",
             official: "United Kingdom of Great Britain and Northern Ireland",
-            abbreviation: 'UK',
+            abbreviation: 'GB',
             demonym: "British",
             capital: "London"
         }, 
@@ -1154,6 +1154,7 @@ export const countryList: Array<ICountry> = [
             { name: "Turks and Caicos Islands", abbreviation: "TC", extraDeliveryPercent: 0 },
             { name: "Wales", abbreviation: "WLS", extraDeliveryPercent: 0 }
         ],
+        areaCodeTitle: "Postal Code",
         delivery: {
             feePerKg: 0.8,
             baseNumber: 1.9
@@ -1249,6 +1250,7 @@ export const countryList: Array<ICountry> = [
             { name: "Wisconsin", abbreviation: "WI", extraDeliveryPercent: 0 },
             { name: "Wyoming", abbreviation: "WY", extraDeliveryPercent: 0 }
         ],
+        areaCodeTitle: "Zip Code",
         stateTitle: "State",
         delivery: {
             feePerKg: 1,

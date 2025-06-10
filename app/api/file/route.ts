@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ drive, message: "File Added Successful" }, { status: 200 });
     } catch (error: any) {
-        console.log("Error news: ", error.message)
+        console.log("File Post Error: ", error.message)
         return NextResponse.json({ message: error?.message }, { status: 400 });
     } 
 }

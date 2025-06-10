@@ -10,6 +10,7 @@ import FormData from "form-data";
 import axios from "axios";
 import { IImage } from "./interfaces";
 import { drive_v3 } from "googleapis";
+import path from "path";
 import { convertToNodeReadableStream, getGDriveDirectLink, isImage, backend, isVideo, getGDrivePreviewLink } from "./utils";
 
 ///Commencing the code
@@ -62,6 +63,7 @@ export const processImage = async (filePath: string): Promise<IImage> => {
     try {
         // Verify file exists
         if (!fs.existsSync(filePath)) {
+            console.log(`File not found at: ${filePath}`)
             throw new Error(`File not found at: ${filePath}`);
         } 
         console.log("File Path: ", filePath)
@@ -117,6 +119,50 @@ export const processImage = async (filePath: string): Promise<IImage> => {
         throw error;
     }
 }
+
+//This function uploads a file to Google Drive and returns the file metadata
+export const uploadImageToDrive = async (url: string, fileType: "image" | "video"): Promise<IImage> => {
+  try {
+    // 1. Fetch the image as a stream
+    const response = await axios.get(url, {
+      responseType: 'stream',
+    });
+
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch image (${response.status})`);
+    }
+
+    // 2. Create a FormData object with the stream
+    const form = new FormData();
+    const filename = path.basename(new URL(url).pathname) || `image_${Date.now()}.jpg`;
+    
+    // Append the stream as a file
+    form.append('file', response.data, {
+      filename,
+      contentType: response.headers['content-type'] || 'image/jpeg',
+    });
+
+    // 3. Upload directly to Google Drive
+    const driveResponse = await axios.post(`${backend}/file`, form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+    });
+
+    const data = driveResponse.data.drive;
+    return {
+        driveId: data.id!,
+        src: fileType === "image" ? getGDriveDirectLink(data.id!) : getGDrivePreviewLink(data.id!),
+        name: filename,
+        width: fileType === "image" ? 960 : 640,
+        height: fileType === "image" ? 960 : 480,
+        type: fileType,
+    };
+  } catch (error) {
+    console.error('Error uploading image to Drive:', error);
+    throw error;
+  }
+};
 
 ///This function allows one to perform CRUD operation using Google Drive
 class GoogleDriveCRUD {

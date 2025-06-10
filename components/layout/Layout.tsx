@@ -163,7 +163,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 region: info_.region,
                 country: info_.country_name
               },
-              countryInfo: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "UK")
+              countryInfo: country_ ? country_ : countryList.find(country => country.name?.abbreviation === "GB")
             }
             //console.log("")
             //console.log("setting")
