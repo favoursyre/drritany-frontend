@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         const product = await request.json() as unknown as IProduct;
         console.log("Product: ", product);
 
-        const reviewLength = getRandomNumber(2, 6)
+        const reviewLength = getRandomNumber(7, 13)
         console.log("Review Length: ", reviewLength);
 
         const prompt = `
@@ -76,7 +76,7 @@ Strictly follow the following instructions;
 - Insert null in image property
 - Insert the review in the review property, the review must match the product information and be realistic, it should be between 10 - 60 words, use easy-to-understand words and review it like a real person would.
 - Insert a random country name, you must not repeat the same country more than twice and should come from various continents, the name should match the country of the user
-- For the rating, use only numbers between 4 & 5 but use more of 5 (about 85% of the reviews should be 5)
+- For the rating, use only numbers between 4 & 5 but use more of 5 (about 85% of the reviews should be 5, the rest can be 4. I don't need decimal ratings, just whole numbers)
 - Insert a recent date from the range of April 25, 2025 - June 12, 2025, using this format "2025-04-10T08:54:37.228+00:00"
         `;
         console.log("Prompt: ", prompt);

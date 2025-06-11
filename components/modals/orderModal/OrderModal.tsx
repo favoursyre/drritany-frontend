@@ -226,8 +226,8 @@ const OrderModal = () => {
                     setModalBackground(true)
 
                     //Sending a purchase event
-                    const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-                    const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+                    const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+                    const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
                     const eventTime = Math.round(new Date().getTime() / 1000)
                     const eventId = uuid()
                     const userAgent = navigator.userAgent
@@ -259,7 +259,7 @@ const OrderModal = () => {
                                     external_id: hashValue(clientInfo?._id!),
                                     fbc: fbc!,
                                     fbp: fbp!,
-                                    ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                                    ct: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
                                     st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                                     country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
                                     em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
@@ -386,8 +386,8 @@ const OrderModal = () => {
         setIsLoading(true)
 
         //Sending an initiate checkout event
-        const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+        const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
         const eventTime = Math.round(new Date().getTime() / 1000)
         const eventId = uuid()
         const userAgent = navigator.userAgent
@@ -419,7 +419,7 @@ const OrderModal = () => {
                         external_id: hashValue(clientInfo?._id!),
                         fbc: fbc!,
                         fbp: fbp!,
-                        ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                        ct: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
                         st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                         country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
                         em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],

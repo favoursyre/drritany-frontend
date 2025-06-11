@@ -648,8 +648,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                     }
                 }
 
-                const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-                const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+                //const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+                //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
 
                 //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
                 if (index === undefined) {
@@ -748,8 +748,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
             await storeCartInfo("Added", clientInfo!, product.name!)
 
             //Sending page view event to gtm
-            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+            const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+            //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
             const eventTime = Math.round(new Date().getTime() / 1000)
             const eventId = uuid()
             const userAgent = navigator.userAgent
@@ -765,7 +765,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                             content_name: extractBaseTitle(document.title),
                             content_ids:  cart?.cart.map((item) => item._id),
                             content_type: cart?.cart.length === 1 ? "product" : "product_group",
-                            value: round((customPrice * countryInfo_?.currency?.exchangeRate!), 2),
+                            value: round(customPrice * countryInfo_?.currency?.exchangeRate!, 2),
                             currency: countryInfo_?.currency?.abbreviation,
                             content_category: product.category?.micro,
                             contents: cart?.cart.map((item) => ({
@@ -781,8 +781,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                             external_id: hashValue(clientInfo?._id!),
                             fbc: fbc!,
                             fbp: fbp!,
-                            ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                            st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                            //ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                            //st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                             country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
                         },
                         original_event_data: {
@@ -997,8 +997,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
             storeButtonInfo(info)
 
             //Sending page view event to gtm
-            const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-            const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+            const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+            //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
             const eventTime = Math.round(new Date().getTime() / 1000)
             const eventId = uuid()
             const wishList__ = getItem(wishListName) as unknown as Array<IProduct>
@@ -1031,8 +1031,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                             external_id: hashValue(clientInfo?._id!),
                             fbc: fbc!,
                             fbp: fbp!,
-                            ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                            st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                            //ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+                            //st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
                             country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
                         },
                         original_event_data: {
@@ -1307,7 +1307,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                                                     <StarOutline className={styles.star} key={id} />
                                                 ))}
                                             </>
-                                        ) : calculateMeanRating(reviews) === 5.0 ? (
+                                        ) : calculateMeanRating(reviews) === '5.0' ? (
                                             <>
                                                 {Array.from({ length: 5 }).map((_, id) => (
                                                     <Star className={styles.star} key={id} />

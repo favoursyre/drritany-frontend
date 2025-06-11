@@ -108,18 +108,20 @@ export async function POST(request: NextRequest) {
         const filePaths: Array<string | undefined> = [...info.videos!]
 
         // // Loop through each URL
-        // for (const url of info.images) {
-        //     try {
-        //         //console.log(`Downloading image from: ${iam}`);
-        //         const filePath = await downloadImageURL(url);
-        //         filePaths.push(filePath);
-        //         console.log(`Successfully downloaded to: ${filePath}`);
-        //     } catch (error) {
-        //         console.error(`Failed to download image from ${url}:`, error);
-        //         // Continue with next URL even if one fails
-        //         // If you want to stop on error, you could throw here instead
-        //     }
-        // }
+        for (const url of info.images) {
+            try {
+                //console.log(`Downloading image from: ${iam}`);
+                const filePath = await downloadImageURL(url);
+                filePaths.push(filePath);
+                console.log(`Successfully downloaded to: ${filePath}`);
+            } catch (error) {
+                console.error(`Failed to download image from ${url}:`, error);
+                // Continue with next URL even if one fails
+                // If you want to stop on error, you could throw here instead
+            }
+        }
+
+        console.log("File Paths: ", filePaths)
 
         /// I stopped getting the images from aliexpress because vercel shows a 504 and localhost can't connect to google drive for some reasons I know not
         // //Next we need to process the images
@@ -268,11 +270,11 @@ Note:
         console.log("Product Response: ", resProduct)
 
         //Next is to add the arranged product info to the database
-        // const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
+        const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
         return NextResponse.json({ 
             success: true, 

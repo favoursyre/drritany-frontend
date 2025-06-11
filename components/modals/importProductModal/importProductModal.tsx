@@ -75,22 +75,22 @@ const ImportProductModal = () => {
                 const platformData: IMarketPlatform = { name: selectedPlatform, url: platformLink, content: htmlContent}
                 console.log("Platform Data_: ", platformData)
                 const adminId = adminUser?._id
-                
-                const controller = new AbortController();
-                const timeout = 300000 // 5 minutes timeout
-                const timeoutId = setTimeout(() => {
-                    controller.abort();
-                    notify("error", "Request timed out. Please try again.");
-                }, timeout);
+
+                //const controller = new AbortController();
+                //const timeout = 300000 // 5 minutes timeout
+                // const timeoutId = setTimeout(() => {
+                //     controller.abort();
+                //     notify("error", "Request timed out. Please try again.");
+                // }, timeout);
                 const res = await fetch(`${backend}/scraper`, {
                     method: 'POST',
                     body: JSON.stringify({adminId, platformData}),
                     headers: {
-                    'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
                     },
-                    signal: controller.signal
+                    //signal: controller.signal
                 });
-                clearTimeout(timeoutId); // Clear the timeout if the request completes in time
+                //clearTimeout(timeoutId); // Clear the timeout if the request completes in time
                 
                 const data = await res.json();
 
