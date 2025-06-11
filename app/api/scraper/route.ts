@@ -11,7 +11,8 @@ import OpenAI from "openai";
 import puppeteer from "puppeteer";
 import * as cheerio from "cheerio"
 import { formatAliexpressImageUrl, backend, getGDriveDirectLink, isImage, extractNum, categories, downloadImageURL, deleteFile, getRating, extractJsonFromMarkdown, getRandomNumber } from "@/config/utils";
-import { processImage, uploadImageToDrive } from '@/config/serverUtils';
+import { processImage, uploadImageToDrive, uploadWithRetry } from '@/config/serverUtils';
+import { drive } from 'googleapis/build/src/apis/drive';
 
 ///Commencing the code
 //Declaring my AI api
@@ -145,32 +146,40 @@ export async function POST(request: NextRequest) {
         //Uploading images to google drive
         
 
+        //<------------------------------------------------------->
         // Process images directly without downloading
-        const driveImages: Array<IImage> = []
-        for (const url of info.images) {
-            console.log("Image URL: ", url)
-            try {
-                const image = await uploadImageToDrive(url, "image");
-                driveImages.push(image);
-                console.log(`Successfully uploaded: ${url}`);
-            } catch (error) {
-                console.error(`Failed to upload ${url}:`, error);
-            }
-        }
+        // const driveImages: Array<IImage> = []
+        // for (const url of info.images) {
+        //     console.log("Image URL: ", url)
+        //     try {
+        //         const image = await uploadImageToDrive(url, "image");
+        //         driveImages.push(image);
+        //         console.log(`Successfully uploaded: ${url}`);
+        //     } catch (error) {
+        //         console.error(`Failed to upload ${url}:`, error);
+        //     }
+        // }
 
-        // Process videos (if needed)
-        const driveVideos: IImage[] = [];
-        for (const url of info.videos) {
-            console.log("Video URL: ", url)
-            try {
-                if (url) {
-                    const video = await uploadImageToDrive(url, "video");
-                    driveVideos.push(video);
-                }
-            } catch (error) {
-                console.error(`Failed to upload video ${url}:`, error);
-            }
-        }
+
+        // // Process videos (if needed)
+        // const driveVideos: IImage[] = [];
+        // for (const url of info.videos) {
+        //     console.log("Video URL: ", url)
+        //     try {
+        //         if (url) {
+        //             const video = await uploadImageToDrive(url, "video");
+        //             driveVideos.push(video);
+        //         }
+        //     } catch (error) {
+        //         console.error(`Failed to upload video ${url}:`, error);
+        //     }
+        // }
+        //<------------------------------------------------------->
+
+        // Parallel upload with timeout and retries
+        const driveImages = await Promise.all(
+            info.images.map(url => uploadWithRetry(url))
+        );
 
         //Next is to use AI to brush up the product info
         const aiPrompt = `
@@ -209,7 +218,7 @@ Note:
             addedBy: adminId,
             url: data.url,
             name: info?.name,
-            images: [...driveVideos, ...driveImages],
+            images: driveImages,
             pricing: {
                 basePrice: extractNum(info.price),
                 discount: extractNum(info.discount),

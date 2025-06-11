@@ -165,6 +165,19 @@ export const uploadImageToDrive = async (url: string, fileType: "image" | "video
   }
 };
 
+//This function uploads an image to Google Drive with retry logic
+export const uploadWithRetry = async (url: string, retries = 3): Promise<IImage> => {
+  try {
+    return await uploadImageToDrive(url, "image");
+  } catch (error: any) {
+    if (retries > 0 && error.code === 'ECONNABORTED') {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return uploadWithRetry(url, retries - 1);
+    }
+    throw error;
+  }
+}
+
 ///This function allows one to perform CRUD operation using Google Drive
 class GoogleDriveCRUD {
     private oauth2client
