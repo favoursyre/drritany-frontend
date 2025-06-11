@@ -314,7 +314,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
         const intervalId = setInterval(() => {
             setTimeLeft((prevTimeLeft) => {
                 if (prevTimeLeft <= 1000) {
-                    return 74500000; // Optional: Reset to 1 day
+                    return 77500000; // Optional: Reset to 1 day
                 }
                 return prevTimeLeft - 1000;
             });

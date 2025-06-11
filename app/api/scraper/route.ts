@@ -251,6 +251,7 @@ Note:
             headers: {
                 'Content-Type': 'application/json',
             },
+            timeout: 60000,
         });
         const resProduct = res.data.product;
 

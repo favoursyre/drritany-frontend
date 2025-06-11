@@ -147,15 +147,16 @@ export const uploadImageToDrive = async (url: string, fileType: "image" | "video
       headers: {
         ...form.getHeaders(),
       },
+      timeout: 60000, // Set a timeout for the request
     });
 
-    const data = driveResponse.data.drive;
+    const data = driveResponse.data.drive as unknown as drive_v3.Schema$File;
     return {
         driveId: data.id!,
         src: fileType === "image" ? getGDriveDirectLink(data.id!) : getGDrivePreviewLink(data.id!),
         name: filename,
-        width: fileType === "image" ? 960 : 640,
-        height: fileType === "image" ? 960 : 480,
+        width: fileType === "image" ? data.imageMediaMetadata?.width || 960 : 640,
+        height: fileType === "image" ? data.imageMediaMetadata?.height || 960 : 480,
         type: fileType,
     };
   } catch (error) {
