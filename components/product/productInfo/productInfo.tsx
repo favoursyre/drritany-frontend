@@ -60,7 +60,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
     const discountProduct = useDiscountModalStore(state => state.product);
     //const [customPrice, setCustomPrice] = useState<number>(getCustomPricing(product, 0, clientInfo?.country?.name?.common!))
     const [imageIndex, setImageIndex] = useState<number>(0)
-    const [timeLeft, setTimeLeft] = useState<number>(74500000)//(71319000);
+    const [timeLeft, setTimeLeft] = useState<number>(77500000)//(71319000);
     const [videoIndex, setVideoIndex] = useState<number>(0)
     const [activeInfoBtn, setActiveInfoBtn] = useState<number>(0)
     const [addedToCart, setAddedToCart] = useState<boolean>(false)
