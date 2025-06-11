@@ -121,6 +121,7 @@ export async function POST(request: NextRequest) {
         //     }
         // }
 
+        /// I stopped getting the images from aliexpress because vercel shows a 504 and localhost can't connect to google drive for some reasons I know not
         // //Next we need to process the images
         // const driveImages: Array<IImage> = []
         // for (const path of filePaths) {
@@ -177,9 +178,9 @@ export async function POST(request: NextRequest) {
         //<------------------------------------------------------->
 
         // Parallel upload with timeout and retries
-        const driveImages = await Promise.all(
-            info.images.map(url => uploadWithRetry(url))
-        );
+        // const driveImages = await Promise.all(
+        //     info.images.map(url => uploadWithRetry(url))
+        // );
 
         //Next is to use AI to brush up the product info
         const aiPrompt = `
@@ -218,7 +219,7 @@ Note:
             addedBy: adminId,
             url: data.url,
             name: info?.name,
-            images: driveImages,
+            images: [],
             pricing: {
                 basePrice: extractNum(info.price),
                 discount: extractNum(info.discount),
@@ -260,22 +261,22 @@ Note:
             headers: {
                 'Content-Type': 'application/json',
             },
-            timeout: 60000,
+            timeout: 30000,
         });
         const resProduct = res.data.product;
 
         console.log("Product Response: ", resProduct)
 
         //Next is to add the arranged product info to the database
-        const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        // const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
 
         return NextResponse.json({ 
             success: true, 
-            message: res.data.product
+            message: resProduct
         }, { 
             status: 200 
         });
