@@ -402,7 +402,8 @@ export async function getProducts() {
     try {
       const res = await fetch(`${backend}/product?action=latest`, {
         method: "GET",
-        cache: "no-store", // Use "no-store" to always fetch fresh data
+        //cache: "no-store", // Use "no-store" to always fetch fresh data
+        //next: { revalidate: 86400 }
       })
   
       if (res.ok) {
