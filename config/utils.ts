@@ -402,7 +402,7 @@ export async function getProducts() {
     try {
       const res = await fetch(`${backend}/product?action=latest`, {
         method: "GET",
-        //cache: "force-cache"
+        cache: "no-store", // Use "no-store" to always fetch fresh data
       })
   
       if (res.ok) {
@@ -424,7 +424,7 @@ export async function getProductReviews() {
     try {
       const res = await fetch(`${backend}/product-review`, {
         method: "GET",
-        //cache: "force-cache"
+        cache: "no-store", // Use "no-store" to always fetch fresh data
       })
   
       if (res.ok) {
@@ -784,7 +784,8 @@ export const extractNum = (char: string): number => {
     const number = parseFloat(numericString);
 
     if (isNaN(number)) {
-        throw new Error('Input string does not contain a valid number');
+        console.error('Input string does not contain a valid number');
+        return 0
     }
 
     return number;

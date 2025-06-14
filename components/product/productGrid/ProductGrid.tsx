@@ -58,6 +58,8 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
     const [totalBatch, setTotalBatch] = useState<number>()
     const [query, setQuery] = useState<string | undefined>(query_)
 
+    console.log("Products: ", productList.length, products.length)
+
     //Updating products
     // useEffect(() => {
     //     console.log('test p: ', product_)
@@ -100,8 +102,9 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
 
         if (product_ && product_.length > 0) {
             const product__ = product_.slice(0, end)
-            setProductList(() => product_);
-            setProducts(() => product__);
+            console.log("Sliced Products 1: ", product__)
+            setProductList(() => [...product_]);
+            setProducts(() => [...product__]);
             //console.log("Products 2: ", product__)
             const _possibleBatches = Math.ceil(product_.length / limit)
             //console.log("Total batch: ", _possibleBatches)
@@ -111,12 +114,14 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
         //console.log("Products 5: ", products)
         //notify("info", `Len ${products.length}`)
         //setViewProducts(() => newProducts.slice(start, end))
-    }, [product_]);
+    }, [product_, currentBatch, limit]);
 
     //This function filters products
     const _filterProduct = (sort: number) => {
         setSort(false)
         setSortId(sort)
+
+        console.log("filtering products: ", sort)
 
         //let newProducts
         if (sort === 0) {
@@ -154,13 +159,17 @@ const ProductGrid = ({ product_, view_, query_ }: { product_: Array<IProduct>, v
             }
 
             if (productFilter.category) {
+                console.log('Filtering products by category: ', productFilter.category)
                 if (typeof productFilter.category !== "string") {
+                    console.log("Filter Category when not string: ", productFilter.category)
                     const filterCategory = productFilter.category as unknown as ICategory
                     //console.log("Filter Category: ", filterCategory)
                     const start = (currentBatch - 1) * limit
                     const end = start + limit
                     const newProducts = product_.filter((product) => product.category?.mini === filterCategory?.mini)
                     const product__ = newProducts.slice(0, end)
+
+                    console.log("Sliced Products 2: ", product__)
 
                     setProductList(() => [...newProducts])
                     setProducts(() => [...product__])

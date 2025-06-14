@@ -193,7 +193,7 @@ Given the product name "${info.name}", I need the following product informations
 }"
 
 Note:
-- Make a easy-to-understand but well detailed description of the product and assign it to "description"
+- Make a easy-to-understand but well detailed description of the product and assign it to "description" (Don't always start your description with the word "Elevate", "command attention", "step into", try and be more creative and unique)
 - State 3 short benefits of the product and assign it to "benefits"
         `
         const blueZetsu = await BlueZetsu(aiPrompt);
@@ -215,7 +215,7 @@ Note:
         }
 
         //Next step is to arrange all the infos in product info
-        const newOrders = getRandomNumber(227, 753)
+        const newOrders = getRandomNumber(327, 753)
         const productStock = getRandomNumber(4, 30)
         const productData: IProduct = {
             addedBy: adminId,
@@ -270,11 +270,11 @@ Note:
         console.log("Product Response: ", resProduct)
 
         //Next is to add the arranged product info to the database
-        const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        // const reviewRes = await axios.post(`${backend}/ai-review`, resProduct, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
 
         return NextResponse.json({ 
             success: true, 
@@ -284,7 +284,7 @@ Note:
         });
         
     } catch (error: any) {
-        console.error("Error in scraping:", error.message);
+        console.error("Error in scraping:", error);
         if (browser) await browser.close();
         return NextResponse.json({ 
             success: false,

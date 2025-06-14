@@ -5,7 +5,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import styles from "./productSlide.module.scss"
-import { IProduct, ICart, ISlideTitle, IButtonResearch, IClientInfo } from '@/config/interfaces';
+import { IProduct, ICart, ISlideTitle, IButtonResearch, IClientInfo, IProductFilter } from '@/config/interfaces';
 import { routeStyle, cartName, sortProductByActiveStatus, wishListName, shuffleArray, productFilterName, sortMongoQueryByTime, sortProductByOrder, sortProductByRating, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, productsName, sortProductsBySimilarity, removeProductFromArray, sleep, getProducts } from '@/config/utils'
 import ProductCard from '@/components/cards/product/ProductCard';
 import { getDevice, getItem, getOS, notify, setItem, Cache } from '@/config/clientUtils';
@@ -314,43 +314,43 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
       setModalBackground(true)
       setLoadingModal(true)
 
-      let productFilter
-      if (view === "homeSlide1") {
-        productFilter = {
-          filterId: 1,
-          category: "All"
-        }
-      } else if (view === "homeSlide2") {
-        productFilter = {
-          filterId: 0,
-          category: "All"
-        }
-      } else if (view === "homeSlide3") {
-        productFilter = {
-          filterId: 4,
-          category: "All"
-        }
-      } else if (view === "productSlide1") {
-        productFilter = {
-          filterId: 0,
-          category: "All"
-        }
-      } else if (view === "productSlide2") {
-        productFilter = {
-          filterId: 4,
-          category: "All"
-        }
-      } else if (view === "wishSlide2") {
-        productFilter = {
-          filterId: 4,
-          category: "All"
-        }
-      } else if (view === "infoSlide2") {
-        productFilter = {
-          filterId: 4,
-          category: "All"
-        }
-      }
+      // let productFilter
+      // if (view === "homeSlide1") {
+      //   productFilter = {
+      //     filterId: 1,
+      //     category: "All"
+      //   }
+      // } else if (view === "homeSlide2") {
+      //   productFilter = {
+      //     filterId: 0,
+      //     category: "All"
+      //   }
+      // } else if (view === "homeSlide3") {
+      //   productFilter = {
+      //     filterId: 4,
+      //     category: "All"
+      //   }
+      // } else if (view === "productSlide1") {
+      //   productFilter = {
+      //     filterId: 0,
+      //     category: "All"
+      //   }
+      // } else if (view === "productSlide2") {
+      //   productFilter = {
+      //     filterId: 4,
+      //     category: "All"
+      //   }
+      // } else if (view === "wishSlide2") {
+      //   productFilter = {
+      //     filterId: 4,
+      //     category: "All"
+      //   }
+      // } else if (view === "infoSlide2") {
+      //   productFilter = {
+      //     filterId: 4,
+      //     category: "All"
+      //   }
+      // }
 
       //Storing this info in button research
       const info: IButtonResearch = {
@@ -370,7 +370,29 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
       }
       storeButtonInfo(info)
 
-      setItem(productFilterName, productFilter)
+      if (view === "productSlide2") {
+
+        // setModalBackground(false)
+        // setLoadingModal(false)
+
+        window.scrollTo({
+          top: 0, 
+          behavior: 'smooth'
+        })
+
+        await sleep(1)
+
+        window.location.reload()
+        return
+      }
+
+      const filterSettings: IProductFilter = {
+        filterId: 0,
+        category: "All"
+      }
+      setItem(productFilterName, filterSettings)
+
+      //setItem(productFilterName, productFilter)
       router.push('/products')
     }
 
