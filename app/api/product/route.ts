@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: "Wrong action" }, { status: 400 });
         }
         
-        //console.log("Sub: ", products)
+        console.log("Server Products: ", products)
         return NextResponse.json( products , { status: 200 });
     } catch (error: any) {
         console.log("Error test: ", error)

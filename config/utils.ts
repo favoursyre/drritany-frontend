@@ -402,8 +402,8 @@ export async function getProducts() {
     try {
       const res = await fetch(`${backend}/product?action=latest`, {
         method: "GET",
-        //cache: "no-store", // Use "no-store" to always fetch fresh data
-        //next: { revalidate: 86400 }
+        cache: "no-store", // Use "no-store" to always fetch fresh data
+        next: { revalidate: 60 }
       })
   
       if (res.ok) {
@@ -426,6 +426,7 @@ export async function getProductReviews() {
       const res = await fetch(`${backend}/product-review`, {
         method: "GET",
         cache: "no-store", // Use "no-store" to always fetch fresh data
+        next: { revalidate: 60 }
       })
   
       if (res.ok) {
@@ -1004,7 +1005,7 @@ export const getProduct = async (id: string) => {
       const res = await fetch(`${backend}/product/${id}`, {
         method: "GET",
         cache: "no-store",
-        //next: { revalidate: 120 },
+        next: { revalidate: 60 },
       })
   
       if (res.ok) {
@@ -1027,7 +1028,7 @@ export const getProductReviewsByProductId = async (id: string) => {
       const res = await fetch(`${backend}/product-review/${id}?src=productId`, {
         method: "GET",
         cache: "no-store",
-        //next: { revalidate: 120 },
+        next: { revalidate: 60 },
       })
   
       if (res.ok) {
@@ -1431,6 +1432,7 @@ export const getUserOrders = async (userId: string) => {
       const res = await fetch(`${backend}/order?userId=${userId}`, {
         method: "GET",
         cache: "no-store",
+        next: { revalidate: 60 },
       })
   
       if (res.ok) {

@@ -67,7 +67,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
 
         // Cycle all three promos if stock <= 20
         const intervalId = setInterval(() => {
-            console.log("Cycling all promos");
+            //console.log("Cycling all promos");
             setCurrentPromoIndex((prev) => (prev + 1) % 4); // Cycle through 0, 1, 2, 3
         }, 3000); // Switch every 3 seconds
         return () => clearInterval(intervalId); // Cleanup interval
