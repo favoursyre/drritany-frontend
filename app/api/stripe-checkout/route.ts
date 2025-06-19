@@ -69,8 +69,7 @@ export async function POST(req: NextRequest) {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: [
-        'card', 'bacs_debit', 'paypal', 'revolut_pay', 
-        'pay_by_bank', 'klarna', 'afterpay_clearpay'
+        'card', 'paypal', 'revolut_pay', 'afterpay_clearpay'
       ],
       line_items: [
         {

@@ -9,7 +9,7 @@ import { useState, useEffect, useMemo } from "react";
 import type { MouseEvent, TouchEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, extractBaseTitle, hashValue, getCurrentDate, getCurrentTime, storeButtonInfo, removeUndefinedKeys, areObjectsEqual, cartName, storeCartInfo, sendMetaCapi } from "@/config/utils";
-import { getItem, notify, setItem, getDevice, getOS, getFacebookCookies } from "@/config/clientUtils";
+import { getItem, notify, setItem, getDevice, getOS, getFacebookCookies, addToCart } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline, AddShoppingCart, Whatshot } from '@mui/icons-material';
 import Loading from "@/components/loadingCircle/Circle";
@@ -109,7 +109,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     }, [clientInfo])
 
     // Memoize custom price calculation
-    const customPrice = useMemo(() => {
+    const customPrice_ = useMemo(() => {
         if (!clientInfo) return product_.pricing?.basePrice || 0;
         const clientCountry = countryList.find(
             (c) => c.name?.common === clientInfo.countryInfo?.name?.common
@@ -128,9 +128,14 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
         return round(basePrice * exchangeRate, 2);
     }, [product_, clientInfo]);
 
+    // Memoize custom price --- This function is from product info
+    const customPrice = useMemo(() => {
+        return clientInfo ? getCustomPricing(product_, sizeId, clientInfo.countryInfo?.name?.common || "") : product_.pricing?.basePrice || 0;
+    }, [product_, sizeId, clientInfo]);
+
     // Memoize slashed price
     const slashedCustomPrice = useMemo(() => {
-        return product_.pricing?.discount ? round(slashedPrice(customPrice, product_.pricing.discount), 2) : null;
+        return product_.pricing?.discount ? round(slashedPrice(customPrice_, product_.pricing.discount), 2) : null;
     }, [customPrice, product_.pricing?.discount]);
 
     // Determine if stock promo should show (stock defined and <= 20)
@@ -157,7 +162,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
         //Amount saved
         <div key="save" className={styles.save}>
             {clientInfo?.countryInfo?.currency?.exchangeRate ? (
-                <span>Save {clientInfo.countryInfo?.currency?.symbol}{(slashedCustomPrice! - customPrice!).toLocaleString("en-US")}</span>
+                <span>Save {clientInfo.countryInfo?.currency?.symbol}{(slashedCustomPrice! - customPrice_!).toLocaleString("en-US")}</span>
             ) : (
                 <></>
             )}
@@ -327,250 +332,270 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     }
 
     //This function is triggerred when add to cart is clicked
-    const addToCart = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): Promise<void> => {
-        e.preventDefault()
-        e.stopPropagation()
+    // const addToCart = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): Promise<void> => {
+    //     e.preventDefault()
+    //     e.stopPropagation()
         
-        const p = product
-        let storeCartEvent: boolean = false
+    //     const p = product
+    //     let storeCartEvent: boolean = false
 
-        if (p.pricing?.inStock === false) {
-            notify("info", "This product is currently out of stock, check back later!")
+    //     if (p.pricing?.inStock === false) {
+    //         notify("info", "This product is currently out of stock, check back later!")
 
-            //Storing this info in button research
-            const info: IButtonResearch = {
-                ID: clientInfo?._id!,
-                IP: clientInfo?.ipData?.ip!,
-                City: clientInfo?.ipData?.city!,
-                Region: clientInfo?.ipData?.region!,
-                Country: clientInfo?.ipData?.country!,
-                Button_Name: "addToCart()",
-                Button_Info: `Tried adding "${p.name}" to cart in product info but its out of stock`,
-                Page_Title: extractBaseTitle(document.title),
-                Page_URL: routerPath,
-                Date: getCurrentDate(),
-                Time: getCurrentTime(),
-                OS: getOS(),
-                Device: getDevice()
-            }
-            await storeButtonInfo(info)
+    //         //Storing this info in button research
+    //         const info: IButtonResearch = {
+    //             ID: clientInfo?._id!,
+    //             IP: clientInfo?.ipData?.ip!,
+    //             City: clientInfo?.ipData?.city!,
+    //             Region: clientInfo?.ipData?.region!,
+    //             Country: clientInfo?.ipData?.country!,
+    //             Button_Name: "addToCart()",
+    //             Button_Info: `Tried adding "${p.name}" to cart in product info but its out of stock`,
+    //             Page_Title: extractBaseTitle(document.title),
+    //             Page_URL: routerPath,
+    //             Date: getCurrentDate(),
+    //             Time: getCurrentTime(),
+    //             OS: getOS(),
+    //             Device: getDevice()
+    //         }
+    //         await storeButtonInfo(info)
 
-            return
-        } else {
-            setAddToCartIsLoading(() => true)
+    //         return
+    //     } else {
+    //         setAddToCartIsLoading(() => true)
 
-            const pWeight: number = p.specification?.weight as unknown as number
-            const cartSpecs = removeUndefinedKeys({
-                color: p.specification?.colors ? p.specification?.colors[colorId] : undefined,
-                size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
-            })
-            //const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
-            const deliveryFee_ = getDeliveryFee(pWeight, clientInfo?.countryInfo?.name?.common!)
+    //         const pWeight: number = p.specification?.weight as unknown as number
+    //         const cartSpecs = removeUndefinedKeys({
+    //             color: p.specification?.colors ? p.specification?.colors[colorId] : undefined,
+    //             size: p.specification?.sizes ? p.specification?.sizes[sizeId] : undefined
+    //         })
+    //         //const productName = `${p.name} ${formatObjectValues(cartSpecs)}`
+    //         const deliveryFee_ = getDeliveryFee(pWeight, clientInfo?.countryInfo?.name?.common!)
 
-            //Arranging the cart details
-            const cartItem: ICartItem = {
-                _id: p._id!,
-                image: p.images[0],
-                name: p.name,
-                unitPrice: customPrice,
-                unitWeight: pWeight,
-                unitHiddenDeliveryFee: deliveryFee_,
-                discountPercent: p.pricing?.discount!,
-                category: p.category?.mini!,
-                quantity: quantity,
-                subTotalWeight: quantity * pWeight, 
-                specs: cartSpecs,
-                extraDiscount: p.pricing?.extraDiscount!,
-                subTotalHiddenDeliveryFee: deliveryFee_ * quantity,
-                subTotalPrice: customPrice * quantity,
-                subTotalDiscount: 0
-            }
-            //console.log("Quantity: ", quantity)
-            //cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
-            //const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
+    //         //Arranging the cart details
+    //         const cartItem: ICartItem = {
+    //             _id: p._id!,
+    //             image: p.images[0],
+    //             name: p.name,
+    //             unitPrice: customPrice,
+    //             unitWeight: pWeight,
+    //             unitHiddenDeliveryFee: deliveryFee_,
+    //             discountPercent: p.pricing?.discount!,
+    //             category: p.category?.mini!,
+    //             quantity: quantity,
+    //             subTotalWeight: quantity * pWeight, 
+    //             specs: cartSpecs,
+    //             extraDiscount: p.pricing?.extraDiscount!,
+    //             subTotalHiddenDeliveryFee: deliveryFee_ * quantity,
+    //             subTotalPrice: customPrice * quantity,
+    //             subTotalDiscount: 0
+    //         }
+    //         //console.log("Quantity: ", quantity)
+    //         //cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
+    //         //const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
 
-            let discount
-            if (cartItem.extraDiscount?.limit! && cartItem.quantity >= cartItem.extraDiscount?.limit!) {
-                cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * cartItem.subTotalPrice).toFixed(2))
-                //discount = (10 / 100) * totalPrice
-            } else {
-                cartItem.subTotalDiscount = 0
-            }
-            const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
-            const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
-            const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.countryInfo?.name?.common!)
-            const totalHiddenDeliveryFee = Number(cartItem.subTotalHiddenDeliveryFee.toFixed(2))
+    //         let discount
+    //         if (cartItem.extraDiscount?.limit! && cartItem.quantity >= cartItem.extraDiscount?.limit!) {
+    //             cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * cartItem.subTotalPrice).toFixed(2))
+    //             //discount = (10 / 100) * totalPrice
+    //         } else {
+    //             cartItem.subTotalDiscount = 0
+    //         }
+    //         const totalDiscount = Number(cartItem.subTotalDiscount.toFixed(2))
+    //         const totalWeight = Number(cartItem.subTotalWeight.toFixed(2))
+    //         const deliveryFee = getDeliveryFee(totalWeight, clientInfo?.countryInfo?.name?.common!)
+    //         const totalHiddenDeliveryFee = Number(cartItem.subTotalHiddenDeliveryFee.toFixed(2))
 
-            // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
+    //         // const productName = `${product.name} (${cartSpecs.color}, ${typeof cartSpecs.size === "string" ? cartSpecs.size : cartSpecs.size.size})`
 
-            //Checking if cart already exist for the client
-            if (cart) {
-                //console.log(true)
-                //Getting all the cart items with the same cart ID and specs
-                let index!: number
+    //         //Checking if cart already exist for the client
+    //         if (cart) {
+    //             //console.log(true)
+    //             //Getting all the cart items with the same cart ID and specs
+    //             let index!: number
                 
-                for (let i = 0; i < cart.cart.length; i++) {
-                    //console.log("Testing 2: ", cart.cart[i].specs, cartSpecs)
-                    if (cart.cart[i]._id === p._id && areObjectsEqual(cart.cart[i].specs, cartSpecs)) {
-                        index = i
-                        //console.log("Testing: ", areObjectsEqual(cart.cart[i].specs, cartSpecs))
-                        break;
-                    }
-                }
+    //             for (let i = 0; i < cart.cart.length; i++) {
+    //                 //console.log("Testing 2: ", cart.cart[i].specs, cartSpecs)
+    //                 if (cart.cart[i]._id === p._id && areObjectsEqual(cart.cart[i].specs, cartSpecs)) {
+    //                     index = i
+    //                     //console.log("Testing: ", areObjectsEqual(cart.cart[i].specs, cartSpecs))
+    //                     break;
+    //                 }
+    //             }
 
-                //const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-                //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+    //             //const countryInfo_ = countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+    //             //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
 
-                //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
-                if (index === undefined) {
-                    cart.grossTotalPrice = Number((cart.grossTotalPrice + cartItem.subTotalPrice).toFixed(2))
-                    cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
-                    cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
-                    cart.deliveryFee = Number(deliveryFee.toFixed(2))
-                    cart.totalHiddenDeliveryFee = Number((cart.totalHiddenDeliveryFee + totalHiddenDeliveryFee).toFixed(2))
-                    cart.cart.push(cartItem)
-                    setCart(() => cart)
-                    setItem(cartName, cart)
-                    if (!order) {
-                        notify('success', "Product has been added to cart")
-                        storeCartEvent = true
+    //             //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
+    //             if (index === undefined) {
+    //                 cart.grossTotalPrice = Number((cart.grossTotalPrice + cartItem.subTotalPrice).toFixed(2))
+    //                 cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
+    //                 cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
+    //                 cart.deliveryFee = Number(deliveryFee.toFixed(2))
+    //                 cart.totalHiddenDeliveryFee = Number((cart.totalHiddenDeliveryFee + totalHiddenDeliveryFee).toFixed(2))
+    //                 cart.cart.push(cartItem)
+    //                 setCart(() => cart)
+    //                 setItem(cartName, cart)
+    //                 if (!order) {
+    //                     notify('success', "Product has been added to cart")
+    //                     storeCartEvent = true
 
-                    }
-                } else {
-                    if (quantity === cart.cart[index].quantity) {
-                        if (!order) {
-                            notify('warn', "Item has already been added to cart")
-                        }
-                    } else {
-                        cart.cart[index].quantity = quantity
-                        cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
-                        cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
-                        cart.cart[index].subTotalHiddenDeliveryFee = Number((cart.cart[index].unitHiddenDeliveryFee * quantity).toFixed(2))
-                        cart.cart[index].subTotalDiscount = quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
-                        cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
-                        cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
-                        cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
-                        cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
-                        cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
-                        setCart(() => cart)
-                        setItem(cartName, cart)
-                        if (!order) {
-                            notify('success', "Product has been updated to cart")
-                            storeCartEvent = true
-                        }
-                    }
-                }
+    //                 }
+    //             } else {
+    //                 if (quantity === cart.cart[index].quantity) {
+    //                     if (!order) {
+    //                         notify('warn', "Item has already been added to cart")
+    //                     }
+    //                 } else {
+    //                     cart.cart[index].quantity = quantity
+    //                     cart.cart[index].subTotalPrice = Number((cart.cart[index].unitPrice * quantity).toFixed(2))
+    //                     cart.cart[index].subTotalWeight = Number((cart.cart[index].unitWeight * quantity).toFixed(2))
+    //                     cart.cart[index].subTotalHiddenDeliveryFee = Number((cart.cart[index].unitHiddenDeliveryFee * quantity).toFixed(2))
+    //                     cart.cart[index].subTotalDiscount = quantity >= cart.cart[index].extraDiscount?.limit! ? Number(((cart.cart[index].extraDiscount?.percent!/100) * cart.cart[index].subTotalPrice).toFixed(2)) : 0
+    //                     cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
+    //                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
+    //                     cart.totalWeight = Number((cart.cart.reduce((weight: number, cart: ICartItem) => weight + cart.subTotalWeight, 0)).toFixed(2))
+    //                     cart.totalHiddenDeliveryFee = Number((cart.cart.reduce((hiddenDeliveryFee: number, cart: ICartItem) => hiddenDeliveryFee + cart.subTotalHiddenDeliveryFee, 0)).toFixed(2))
+    //                     cart.deliveryFee = Number((getDeliveryFee(cart.totalWeight, clientInfo?.countryInfo?.name?.common!)).toFixed(2))
+    //                     setCart(() => cart)
+    //                     setItem(cartName, cart)
+    //                     if (!order) {
+    //                         notify('success', "Product has been updated to cart")
+    //                         storeCartEvent = true
+    //                     }
+    //                 }
+    //             }
 
-                // const car_ = localStorage.getItem(cartName)
-                // const _car_= JSON.parse(car_ || "{}")
-                // //console.log("cart_: ", _car_)
-            } else {
-                //console.log("No cart: ", false)
+    //             // const car_ = localStorage.getItem(cartName)
+    //             // const _car_= JSON.parse(car_ || "{}")
+    //             // //console.log("cart_: ", _car_)
+    //         } else {
+    //             //console.log("No cart: ", false)
 
-                const cart: ICart = {
-                    grossTotalPrice: cartItem.subTotalPrice,
-                    totalDiscount: totalDiscount,
-                    totalWeight: totalWeight,
-                    totalHiddenDeliveryFee: totalHiddenDeliveryFee,
-                    deliveryFee: deliveryFee,
-                    cart: [cartItem]
-                }
+    //             const cart: ICart = {
+    //                 grossTotalPrice: cartItem.subTotalPrice,
+    //                 totalDiscount: totalDiscount,
+    //                 totalWeight: totalWeight,
+    //                 totalHiddenDeliveryFee: totalHiddenDeliveryFee,
+    //                 deliveryFee: deliveryFee,
+    //                 cart: [cartItem]
+    //             }
 
-                setItem(cartName, cart)
-                //const cart_ = getItem(cartName)
-                //console.log("cart: ", JSON.parse(cart_ || "{}"))
-                if (!order) {
-                    notify('success', "Product has been added to cart")
-                }
+    //             setItem(cartName, cart)
+    //             //const cart_ = getItem(cartName)
+    //             //console.log("cart: ", JSON.parse(cart_ || "{}"))
+    //             if (!order) {
+    //                 notify('success', "Product has been added to cart")
+    //             }
 
-            }
+    //         }
 
-            setAddedToCart(() => true)
+    //         setAddedToCart(() => true)
 
-            //This ends the loading icon
-            //await sleep(0.5)
-            setAddToCartIsLoading(() => false)
+    //         //This ends the loading icon
+    //         //await sleep(0.5)
+    //         setAddToCartIsLoading(() => false)
 
-            //Storing this info in button research
-            const info: IButtonResearch = {
-                ID: clientInfo?._id!,
-                IP: clientInfo?.ipData?.ip!,
-                City: clientInfo?.ipData?.city!,
-                Region: clientInfo?.ipData?.region!,
-                Country: clientInfo?.ipData?.country!,
-                Button_Name: "addToCart()",
-                Button_Info: `Added "${cartItem.name}" to cart in product info`,
-                Page_Title: extractBaseTitle(document.title),
-                Page_URL: routerPath,
-                Date: getCurrentDate(),
-                Time: getCurrentTime(),
-                OS: getOS(),
-                Device: getDevice()
-            }
-            storeButtonInfo(info)
-        } 
+    //         //Storing this info in button research
+    //         const info: IButtonResearch = {
+    //             ID: clientInfo?._id!,
+    //             IP: clientInfo?.ipData?.ip!,
+    //             City: clientInfo?.ipData?.city!,
+    //             Region: clientInfo?.ipData?.region!,
+    //             Country: clientInfo?.ipData?.country!,
+    //             Button_Name: "addToCart()",
+    //             Button_Info: `Added "${cartItem.name}" to cart in product info`,
+    //             Page_Title: extractBaseTitle(document.title),
+    //             Page_URL: routerPath,
+    //             Date: getCurrentDate(),
+    //             Time: getCurrentTime(),
+    //             OS: getOS(),
+    //             Device: getDevice()
+    //         }
+    //         storeButtonInfo(info)
+    //     } 
 
-        if (storeCartEvent) {
-            console.log("Store this info....")
-            //Storing cart infos and events
-            await storeCartInfo("Added", clientInfo!, product.name!)
+    //     if (storeCartEvent) {
+    //         console.log("Store this info....")
+    //         //Storing cart infos and events
+    //         await storeCartInfo("Added", clientInfo!, product.name!)
 
-            //Sending page view event to gtm
-            const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-            //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
-            const eventTime = Math.round(new Date().getTime() / 1000)
-            const eventId = uuid()
-            const userAgent = navigator.userAgent
-            const { fbp, fbc } = getFacebookCookies();
-            const eventData: IMetaWebEvent = {
-                data: [
-                    {
-                        event_name: MetaStandardEvent.AddToCart,
-                        event_time: eventTime,
-                        event_id: eventId,
-                        action_source: MetaActionSource.website,
-                        custom_data: {
-                            content_name: extractBaseTitle(document.title),
-                            content_ids:  cart?.cart.map((item) => item._id),
-                            content_type: cart?.cart.length === 1 ? "product" : "product_group",
-                            value: round(customPrice * countryInfo_?.currency?.exchangeRate!, 2),
-                            currency: countryInfo_?.currency?.abbreviation,
-                            content_category: product.category?.micro,
-                            contents: cart?.cart.map((item) => ({
-                                id: item._id,
-                                //name: item.name,
-                                quantity: item.quantity,
-                                item_price: item.subTotalPrice,
-                            }))
-                        },
-                        user_data: {
-                            client_user_agent: userAgent,
-                            client_ip_address: clientInfo?.ipData?.ip!,
-                            external_id: hashValue(clientInfo?._id!),
-                            fbc: fbc!,
-                            fbp: fbp!,
-                            //ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
-                            //st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                            country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
-                        },
-                        original_event_data: {
-                            event_name: MetaStandardEvent.AddToCart,
-                            event_time: eventTime,
-                        }
-                    }
-                ]
-            } 
+    //         //Sending page view event to gtm
+    //         const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+    //         //const stateInfo_ = countryInfo_?.states?.find((state) => state.name === clientInfo?.ipData?.region)
+    //         const eventTime = Math.round(new Date().getTime() / 1000)
+    //         const eventId = uuid()
+    //         const userAgent = navigator.userAgent
+    //         const { fbp, fbc } = getFacebookCookies();
+    //         const eventData: IMetaWebEvent = {
+    //             data: [
+    //                 {
+    //                     event_name: MetaStandardEvent.AddToCart,
+    //                     event_time: eventTime,
+    //                     event_id: eventId,
+    //                     action_source: MetaActionSource.website,
+    //                     custom_data: {
+    //                         content_name: extractBaseTitle(document.title),
+    //                         content_ids:  cart?.cart.map((item) => item._id),
+    //                         content_type: cart?.cart.length === 1 ? "product" : "product_group",
+    //                         value: round(customPrice * countryInfo_?.currency?.exchangeRate!, 2),
+    //                         currency: countryInfo_?.currency?.abbreviation,
+    //                         content_category: product.category?.micro,
+    //                         contents: cart?.cart.map((item) => ({
+    //                             id: item._id,
+    //                             //name: item.name,
+    //                             quantity: item.quantity,
+    //                             item_price: item.subTotalPrice,
+    //                         }))
+    //                     },
+    //                     user_data: {
+    //                         client_user_agent: userAgent,
+    //                         client_ip_address: clientInfo?.ipData?.ip!,
+    //                         external_id: hashValue(clientInfo?._id!),
+    //                         fbc: fbc!,
+    //                         fbp: fbp!,
+    //                         //ct: hashValue(clientInfo?.ipData?.city?.trim().toLowerCase()!),
+    //                         //st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+    //                         country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!)
+    //                     },
+    //                     original_event_data: {
+    //                         event_name: MetaStandardEvent.AddToCart,
+    //                         event_time: eventTime,
+    //                     }
+    //                 }
+    //             ]
+    //         } 
 
-            console.log('Sending GTM event')
-            sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
+    //         console.log('Sending GTM event')
+    //         sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
 
-            console.log('Sending Meta Api event')
-            await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
-        }
+    //         console.log('Sending Meta Api event')
+    //         await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
+    //     }
 
-        if (routerPath === "/cart") {
-            window.location.reload()
-        }
+    //     if (routerPath === "/cart") {
+    //         window.location.reload()
+    //     }
+    // }
+
+    const addToCart_ = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, order: boolean): Promise<void> => {
+        e.stopPropagation()
+
+        addToCart(
+            e,
+            order,
+            product,
+            clientInfo!,
+            routerPath,
+            customPrice,
+            cart!,
+            colorId,
+            sizeId,
+            setAddToCartIsLoading,
+            setCart,
+            setAddedToCart,
+            quantity
+        )
     }
 
     return (
@@ -601,7 +626,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 )} */}
             </div>
             <div className={styles.addToCart}>
-                <button className={styles.addToCartBtn} onClick={(e) => addToCart(e, false)}>
+                <button className={styles.addToCartBtn} onClick={(e) => addToCart_(e, false)}>
                     {addToCartIsLoading ? (
                         <Loading width="20px" height="20px" />
                     ) : (
@@ -637,7 +662,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                             )}
                             {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                 <span>
-                                    {customPrice.toLocaleString("en-US")}
+                                    {customPrice_.toLocaleString("en-US")}
                                 </span>
                             ) : (
                                 <></>
