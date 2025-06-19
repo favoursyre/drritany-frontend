@@ -2,11 +2,11 @@
 ///Product Info component
 
 ///Libraries -->
-import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo } from "react"
+import React, { useState, useEffect, MouseEvent, Fragment, useRef, useMemo, ChangeEvent } from "react"
 import styles from "./productInfo.module.scss"
 import { IProduct, ICart, ICartItem, IClientInfo, IImage, IProductViewResearch, ISheetInfo, IButtonResearch, IMetaWebEvent, MetaActionSource, MetaStandardEvent, IProductReview } from '@/config/interfaces';
 import { setItem, notify, getItem, getOS, getDevice, getFacebookCookies } from '@/config/clientUtils';
-import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, clientInfoName, hashValue, sendMetaCapi, formatTime, formatDateMongo, maskString, sortMongoQueryByTime, getRandomNumber, getCountryInfo, calculateMeanRating } from '@/config/utils'
+import { round, cartName, getCustomPricing, slashedPrice, deliveryPeriod, getDeliveryFee, wishListName, areObjectsEqual, formatObjectValues, removeUndefinedKeys, checkExtraDiscountOffer, storeWishInfo, storeCartInfo, getCurrentDate, getCurrentTime, backend, statSheetId, sleep, deliveryDuration, capitalizeFirstLetter,extractBaseTitle, storeButtonInfo, clientInfoName, hashValue, sendMetaCapi, formatTime, formatDateMongo, maskString, sortMongoQueryByTime, getRandomNumber, getCountryInfo, calculateMeanRating, customSizeProduct, getSizeRegion, sizeRegionName, getCustomSize } from '@/config/utils'
 import { countryList } from "@/config/database";
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -50,6 +50,8 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
     const [colorId, setColorId] = useState<number>(0)
     //const [selectColor, setSelectColor] = useState<boolean>(false)
     const [sizeId, setSizeId] = useState<number>(0)
+    const sizes = customSizeProduct(product.category?.mini!)
+    const [sizeRegion, setSizeRegion] = useState<string>("")
     //const [selectSize, setSelectSize] = useState<boolean>(false)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
     const setDiscountModal = useDiscountModalStore(state => state.setDiscountModal);
@@ -85,7 +87,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
     //This updates the viewer count every 30secs
     useEffect(() => {
         const interval = setInterval(() => {
-        setViewerCount(getRandomNumber(17, 97));
+            setViewerCount(getRandomNumber(17, 97));
         }, 30000); // 30 seconds
 
         return () => clearInterval(interval); // cleanup on unmount
@@ -93,79 +95,6 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
 
     //console.log("Reviews: ", reviews)
 
-    const productReviews: Array<IProductReview> = [
-        {
-            _id: "1",
-            productId: product._id!,
-            userId: "1",
-            // image: {
-            //     src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
-            //     alt: "User 1",
-            //     width: 80,
-            //     height: 80,
-            //     type: "image",
-            // },
-            name: "John Doe",
-            rating: 4,
-            specs: {
-                color: "",   
-                size: "XL"   
-            },
-            review: "Great product, highly recommend! dkkjjddjd djdkdndd dbbdbdd djdjdjdjdjdjdjdjdjdj dhhdhdh dhdhdhh dhdh hdhdhd dhdhdhdh hddhdh s hsnsnssdh hsbsoens uuwsnosnnsobd usnownddbisosww swsonsdo-pff ueeiforw0iife dpibdepwd wdndw-if iebfefnfo f iepnpif fnindnwpi idnei0np4 inllnpwnd004i d4indpw-04 innsmspn4indp iwns-n4bsssb4n4 inwwonwo4 iwnw94nonwuee iweoneo4nwwenee wnep3nnep3nn3[n3[", 
-            createdAt: "2025-04-15T11:23:45.228+00:00",
-            __v: 0,
-        },
-        {
-            _id: "2",
-            productId: product._id!,
-            userId: "2",
-            image: {
-                src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
-                alt: "User 2",
-                width: 80,
-                height: 80,
-                type: "image",
-            },
-            rating: 5,
-            specs: {
-                color: "Red",  
-            },
-            name: "Jane Smith",
-            review: "Excellent quality and fast shipping.",
-            createdAt: "2025-05-02T14:45:30.228+00:00",
-            __v: 0,
-        },
-        {
-            _id: "3",
-            productId: product._id!,
-            userId: "3",
-            name: "Alice Johnson",
-            rating: 3,
-            specs: { 
-                size: "XL"   
-            },
-            image: {
-                src: "https://www.gravatar.com/avatar/e2f0b887d5e2f1b5e0b2f5e7e3d5f8a?d=identicon",
-                alt: "User 3",
-                width: 80,
-                height: 80,
-                type: "image",
-            },
-            review: "Good value for the price.",
-            createdAt: "2025-06-12T13:17:40.228+00:00",
-            __v: 0,
-        },
-        {
-            _id: "4",
-            productId: product._id!,
-            userId: "3",
-            name: "Alice Jada",
-            rating: 5,
-            review: "Good value for the price.",
-            createdAt: "2025-05-20T16:30:00.228+00:00",
-            __v: 0,
-        }
-    ]
     
       // Fallback: Mark as loaded after a timeout if onLoad doesn't fire
       useEffect(() => {
@@ -297,9 +226,16 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                 clearInterval(interval);
             };
         } else {
-          setModalBackground(false)
+            setModalBackground(false)
             setLoadingModal(false)
             //console.log("Client info detected")
+
+            //Setting size region
+            if (sizes) {
+                const region_ = getSizeRegion(clientInfo.countryInfo?.name?.abbreviation!, sizes)
+                setSizeRegion(() => region_)
+                setItem(sizeRegionName, region_)
+            }
         }  
 
     }, [clientInfo])
@@ -447,6 +383,17 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
         const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
         return [start.toLocaleDateString('en-US', options), end.toLocaleDateString('en-US', options)];
     }, []);
+
+    //This is an onChange function
+    const onChange = (e: ChangeEvent<HTMLSelectElement>, label: string) => {
+        e.preventDefault()
+        const value = e.target.value
+
+        if (label === "sizeRegion") {
+            setSizeRegion(() => value)
+            setItem(sizeRegionName, value)
+        }
+    }
 
     // useEffect(() => {
     //     // This function will be called every time the component is mounted, and
@@ -607,6 +554,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                 unitWeight: pWeight,
                 unitHiddenDeliveryFee: deliveryFee_,
                 discountPercent: p.pricing?.discount!,
+                category: p.category?.mini!,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
                 specs: cartSpecs,
@@ -1386,7 +1334,18 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                             ) : (<></>)}
                             {product.specification?.sizes && product.specification!.sizes[0] !== "" && product.specification!.sizes.length !== 0 ? (
                                 <div className={styles.product_sizes}>
-                                    <span className={styles.span1}>Size</span>
+                                    <div className={styles.div_size}>
+                                        <span className={styles.span1}>Size</span>
+                                        {sizes ? (
+                                            <select value={sizeRegion} onChange={(e) => onChange(e, "sizeRegion")}>
+                                                {sizes.map((size, sid) => (
+                                                    <option value={size.region} key={sid}>{size.region}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </div>
                                     <Swiper
                                         effect={'slide'}
                                         spaceBetween={10}
@@ -1412,7 +1371,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                                     >
                                         {product.specification?.sizes?.map((size, id) => (
                                             <SwiperSlide className={`${styles.slider} ${sizeId === id ? styles.activeSizeBtn : styles.inActiveSizeBtn}`} key={id} onClick={(e) => chooseSize(e, id)}>
-                                                <span>{typeof size === "string" ? size : size.size }</span>
+                                                <span>{typeof size === "string" ? size : getCustomSize(sizeRegion, sizes!, size.size) }</span>
                                             </SwiperSlide>
                                         ))}
                                     </Swiper>
@@ -1658,7 +1617,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
                                                     <div className={styles.specs}>
                                                         {review.specs.size && review.specs.size !== "" ? (
                                                             <div className={styles.size}>
-                                                                <span>Size: {capitalizeFirstLetter(review.specs.size)}</span>
+                                                                <span>Size: {capitalizeFirstLetter(getCustomSize(sizeRegion!, sizes!, review.specs.size!)!)}</span>
                                                             </div>
                                                         ) : (
                                                             <></>

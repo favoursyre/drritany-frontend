@@ -5,7 +5,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
 import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend, calculateTotalSlashedPrice } from '@/config/utils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend, calculateTotalSlashedPrice, slashedPrice, sizeRegionName, getCustomSizeForCart } from '@/config/utils';
 import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -31,8 +31,10 @@ const Cart = () => {
     const router = useRouter()
     const [cartDeliveryFee, setCartDeliveryFee] = useState<number>()
     const [cartDiscount, setCartDiscount] = useState<number>()
+    const [sizeRegion, setSizeRegion] = useState<string>(getItem(sizeRegionName))
     const routerPath = usePathname();
     const [cartInitialRender, setCartInitialRender] = useState(false);
+    //const sizes = customSizeProduct(product.category?.mini!)
     //const clientInfo = useClientInfoStore(state => state.info)
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
@@ -545,7 +547,7 @@ const Cart = () => {
                                             {c?.specs?.size ? (
                                                 <div className={styles.list_size}>
                                                     <strong>Size:</strong>
-                                                    <span className={styles.size}>{typeof c.specs?.size === "string" ? c.specs?.size : c.specs?.size.size}</span>
+                                                    <span className={styles.size}>{typeof c.specs?.size === "string" ? c.specs?.size : getCustomSizeForCart(sizeRegion, c.category, c.specs?.size.size)}</span>
                                                 </div>
                                             ) : (<></>)}
                                         </div>
@@ -559,8 +561,8 @@ const Cart = () => {
                                             <Add className={styles.icon} />
                                         </button>
                                     </div>
-                                    <div className={styles.list_subtotal} onClick={(e) => viewCartItemDiscount(e, cid)}>
-                                        <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.countryInfo?.currency?.symbol}</span>
+                                    <div className={styles.list_cart_price} onClick={(e) => viewCartItemDiscount(e, cid)}>
+                                        {/* <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>{clientInfo?.countryInfo?.currency?.symbol}</span>
                                         {cart && clientInfo?.countryInfo?.currency?.exchangeRate ? (
                                             <span className={getCartDiscount() > 0 ? styles.activeSpan : ""}>
                                                 {round(c.subTotalPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
@@ -572,7 +574,33 @@ const Cart = () => {
                                             <></>
                                         ) : (
                                             <DiscountOutlined className={styles.discountIcon} onClick={(e) => viewCartItemDiscount(e, cid)} />
-                                        )}
+                                        )} */}
+
+                                        <div className={styles.price}>
+                                            {/* <span dangerouslySetInnerHTML={{ __html: decodedString(nairaSymbol) }} /> */}
+                                            {clientInfo ? (
+                                                <span>{clientInfo.countryInfo?.currency?.symbol}</span>
+                                            ) : (
+                                                <></>
+                                            )}
+                                            {clientInfo?.countryInfo?.currency?.exchangeRate ? (
+                                                <span>
+                                                    {round(c.subTotalPrice * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
+                                                </span> 
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </div>
+                                        <div className={styles.slashed_price}>
+                                            {clientInfo ? <span>{clientInfo.countryInfo?.currency?.symbol}</span> : <></>}
+                                            {clientInfo?.countryInfo?.currency?.exchangeRate ? (
+                                                <span>
+                                                    {round(slashedPrice(c.subTotalPrice * clientInfo.countryInfo.currency.exchangeRate, c.discountPercent!), 2).toLocaleString("en-US")}
+                                                </span>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </div>
                                     </div>
                                     <button className={styles.remove} onClick={e => removeItem(e, cid, 0)}>
                                         <DeleteOutline className={styles.icon} />

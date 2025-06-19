@@ -1,7 +1,7 @@
 //This acts as a database for the web app
 
 ///Libraries -->
-import { IFAQState, IQuoteState, ITestimony, ICountry } from "./interfaces";
+import { IFAQState, IQuoteState, ITestimony, ICountry, ISizeChart } from "./interfaces";
 import { companyName, deliveryDuration, deliveryPeriod } from "./sharedUtils";
 
 ///Commencing the code -->
@@ -316,6 +316,34 @@ export const countryList: Array<ICountry> = [
     },
     {
         name: {
+            common: "France",
+            official: "French Republic",
+            abbreviation: 'FR',
+            demonym: "French",
+            capital: "Paris"
+        },
+        dial_code: '+33',
+        currency: {
+            name: "Euro",
+            abbreviation: "EUR",
+            symbol: "€",
+            exchangeRate: 0.93
+        },
+        languages: [
+            {
+                name: "French",
+                code: "fra"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/fr.png',
+            alt: "The flag of France is composed of three equal vertical bands of blue, white and red.",
+            width: 320,
+            height: 213
+        },
+    },
+    {
+        name: {
             common: "Gambia",
             official: "Republic of the Gambia",
             abbreviation: 'GM',
@@ -522,6 +550,34 @@ export const countryList: Array<ICountry> = [
         flag: {
             src: 'https://flagcdn.com/w320/in.png',
             alt: "The flag of India is composed of three equal horizontal bands of saffron, white and green. A navy blue wheel with twenty-four spokes — the Ashoka Chakra — is centered in the white band.",
+            width: 320,
+            height: 213
+        }
+    },
+    {
+        name: {
+            common: "Japan",
+            official: "Japan",
+            abbreviation: 'JP',
+            demonym: "Japanese",
+            capital: "Tokyo"
+        },
+        currency: {
+            name: "Japanese Yen",
+            abbreviation: "JPY",
+            symbol: "¥",
+            exchangeRate: 145.0
+        },
+        dial_code: '+81',
+        languages: [
+            {
+                name: "Japanese",
+                code: "jpn"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/jp.png',
+            alt: "The flag of Japan is composed of a white field with a red disc at its center.",
             width: 320,
             height: 213
         }
@@ -975,6 +1031,46 @@ export const countryList: Array<ICountry> = [
     },
     {
         name: {
+            common: "Singapore",
+            official: "Republic of Singapore",
+            abbreviation: 'SG',
+            demonym: "Singaporean", 
+            capital: "Singapore"
+        },
+        dial_code: '+65',
+        currency: {
+            name: "Singapore Dollar",
+            abbreviation: "SGD",
+            symbol: "S$",
+            exchangeRate: 1.30
+        },
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            },
+            {
+                name: "Mandarin",
+                code: "zho"
+            },
+            {
+                name: "Malay",
+                code: "msa"
+            },
+            {
+                name: "Tamil",
+                code: "tam"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/sg.png',
+            alt: "The flag of Singapore is composed of two equal horizontal bands of red and white, with a white crescent moon and five white five-pointed stars in the canton.",
+            width: 320,
+            height: 213
+        },
+    },
+    {
+        name: {
             common: "South Africa",
             official: "Republic of South Africa",
             abbreviation: 'ZA',
@@ -1116,6 +1212,38 @@ export const countryList: Array<ICountry> = [
             width: 320,
             height: 213
         }
+    },
+    {
+        name: {
+            common: "United Arab Emirates",
+            official: "United Arab Emirates",
+            abbreviation: 'AE',
+            demonym: "Emirati",
+            capital: "Abu Dhabi"
+        },
+        dial_code: '+971',
+        currency: {
+            name: "United Arab Emirates Dirham",
+            abbreviation: "AED",
+            symbol: "د.إ",
+            exchangeRate: 3.67
+        },
+        languages: [
+            {
+                name: "Arabic",
+                code: "ara"
+            },
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: 'https://flagcdn.com/w320/ae.png',
+            alt: "The flag of the United Arab Emirates is composed of three equal horizontal bands of green, white and black, with a vertical red band on the hoist side.",
+            width: 320,
+            height: 213
+        },
     },
     {
         name: {
@@ -1374,6 +1502,24 @@ export const faqs: Array<IFAQState> = [
     {
         question: "How is my data used?",
         answer: "We respect our client's privacy and only use your data solely for the purpose of processing your orders and providing you with the best possible shopping experience."
+    }
+]
+
+//This contains the various shoe sizes for different countries
+export const shoeSizeCharts: Array<ISizeChart> = [
+    {
+        region: "EU",
+        sizes: ["38", "39", "40", "41", "42", "43", "44", "45", "46", "47"]
+    },
+    {
+        region: "US",
+        countries: ["US", "CA"],
+        sizes: ["6", "6.5", "7", "8", "9", "10", "11", "12", "13", "14"]
+    },
+    {
+        region: "UK",
+        countries: ["GB"],
+        sizes: ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"]
     }
 ]
 

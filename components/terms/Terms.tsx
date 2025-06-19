@@ -45,57 +45,95 @@ const Terms = () => {
                     const products = await getProducts() as unknown as Array<IProduct>
                     const reviews = await getProductReviews() as unknown as Array<IProductReview>
                     const uniqueids = getUniqueProductIds(reviews)
-                    console.log("Unique Ids: ", uniqueids)
-                    console.log("Length of Unique Ids: ", uniqueids.length)
+                    //console.log("Unique Ids: ", uniqueids)
+                    //console.log("Length of Unique Ids: ", uniqueids.length)
         
                     if (products) {
                         //const p = products[0]
                         let _n = 1
                         for (const p of products) {
-                            const pExist = uniqueids.some(item => item.productId === p._id)
+                            console.log("Reviewing Product: ", p.name)
 
-                            if (!pExist && p.active && p.pricing?.inStock) {
-                                console.log("Updating Product: ", p.name)
-                                //console.log("Product does not exist: ", p._id)
-                                const newOrders = getRandomNumber(107, 593)
-                                const productStock = getRandomNumber(4, 36)
-                                //const { orders } = p
-                                //console.log("Old: ", p, orders)
-                                const _orders = newOrders
-                                console.log('Orders: ', _orders)
-                                p.orders = _orders
-                                p.stock = productStock
-                                console.log('Product Stock: ', productStock)
-                                console.log("New: ", p)
-                                const res = await fetch(`${backend}/product/${p._id}`, {
-                                    method: "PATCH",
-                                    body: JSON.stringify(p),
+                            const pExist = uniqueids.some(item => item.productId === p._id)
+                            if (p.name === "Spirit Water Bottle" || p._id === "6849456e7455d30aaf906912") {
+                                console.log("Ending the loop: ", p.name)
+                                //If the product is Spirit Water Bottle, then break the loop
+                                break
+                            } else if (!pExist) {
+                                //Updating the product specification to have itemCount of 2
+                                if (p.specification?.itemCount !== 2) {
+                                    console.log("This product does not have itemCount of 2: ", p.name)
+                                    p.specification = {
+                                        ...p.specification,
+                                        itemCount: 2
+                                    }
+                                    console.log("Updated Product: ", p)
+
+                                    const res = await fetch(`${backend}/product/${p._id}`, {
+                                        method: "PATCH",
+                                        body: JSON.stringify(p),
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                    })
+                                }
+
+                                //Updating the product reviews
+                                let product = p
+                                const reviewRes = await axios.post(`${backend}/ai-review`, product, {
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                })
-                            
-                                if (res.ok) {
-                                    if (p.active && p.pricing?.inStock) {
-                                        let product = p
-                                        const reviewRes = await axios.post(`${backend}/ai-review`, product, {
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                        });
+                                });
 
-                                        console.log("review Response: ", reviewRes)
-                                    }
-
-                                    console.log(`Updated ${_n}: `, await res.json())
-                                    _n = _n + 1
-                                    //notify("success", "Product Updated Successfully")
-                                    //return
-                                }
-                            } else {
-                                undefined
-                                console.log("Product already updated: ", p._id)
+                                console.log("review Response: ", reviewRes)
                             }
+
+                            console.log(`Updated ${_n}`)
+                            _n = _n + 1
+
+                            // if (p.active && p.pricing?.inStock) {
+                            //     console.log("Updating Product: ", p.name)
+                            //     //console.log("Product does not exist: ", p._id)
+                            //     const newOrders = getRandomNumber(107, 593)
+                            //     const productStock = getRandomNumber(4, 36)
+                            //     //const { orders } = p
+                            //     //console.log("Old: ", p, orders)
+                            //     const _orders = newOrders
+                            //     console.log('Orders: ', _orders)
+                            //     p.orders = _orders
+                            //     p.stock = productStock
+                            //     console.log('Product Stock: ', productStock)
+                            //     console.log("New: ", p)
+                            //     const res = await fetch(`${backend}/product/${p._id}`, {
+                            //         method: "PATCH",
+                            //         body: JSON.stringify(p),
+                            //         headers: {
+                            //             'Content-Type': 'application/json',
+                            //         },
+                            //     })
+                            
+                            //     if (res.ok) {
+                            //         if (p.active && p.pricing?.inStock) {
+                            //             let product = p
+                            //             const reviewRes = await axios.post(`${backend}/ai-review`, product, {
+                            //                 headers: {
+                            //                     'Content-Type': 'application/json',
+                            //                 },
+                            //             });
+
+                            //             console.log("review Response: ", reviewRes)
+                            //         }
+
+                            //         console.log(`Updated ${_n}: `, await res.json())
+                            //         _n = _n + 1
+                            //         //notify("success", "Product Updated Successfully")
+                            //         //return
+                            //     }
+                            // } else {
+                            //     undefined
+                            //     console.log("Product already updated: ", p._id)
+                            // }
                         }
 
                         console.log("All Products Updated Successfully")

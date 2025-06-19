@@ -334,7 +334,13 @@ const OrderFormModal = () => {
 
         const countryInfo_ = countryList.find(country => country.name?.common === _country) as unknown as ICountry
         setCountryInfo(() => countryInfo_)
-        setState(() => countryInfo_.states![0].name)
+
+        if (countryInfo_.states && countryInfo_.states.length !== 0) {
+            setState(() => countryInfo_.states![0].name)
+        } else {
+            setState(() => "")
+        }
+        
     } else if (label === "state") {
         //console.log("I'm here")
         //console.log("Checking: ", cart, clientInfo?.country?.currency?.exchangeRate)
@@ -632,7 +638,7 @@ const OrderFormModal = () => {
                     <input
                         placeholder="City/Town/Village"
                         type="text"
-                        //onChange={(e) => setMunicipality(e.target.value)}
+                        onChange={(e) => setMunicipality(capitalizeFirstLetter(e.target.value))}
                         value={municipality}
                         disabled={country === "United States" ? true : false} //This is disabled because the zip code is used to extract the municipality
                     />

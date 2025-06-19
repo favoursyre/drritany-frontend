@@ -91,7 +91,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
             };
         } else {
           setModalBackground(false)
-          console.log("setting off modal background 2")
+          //console.log("setting off modal background 2")
             setLoadingModal(false)
             //console.log("Client info detected")
         }  
@@ -419,7 +419,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
             const start = (newBatch - 1) * limit;  // Calculate the start index for the previous batch (newBatch * limit)
             const end = start + limit;
             setViewProducts(() => products?.slice(start, end))
-            console.log('Slide len3: ', _swiper.slides.length)
+            //console.log('Slide len3: ', _swiper.slides.length)
             //_swiper.update();
             _swiper.slideTo(6)
           }
@@ -465,7 +465,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
       
       if (action === "prev") {
         if (true) {
-          console.log("Slide has reached the beginning")
+          //console.log("Slide has reached the beginning")
 
           //Starting loading
           setIsLoading(true)
@@ -476,7 +476,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
             const start = (newBatch - 1) * limit;  // Calculate the start index for the previous batch (newBatch * limit)
             const end = start + limit;
             setViewProducts(() => products?.slice(start, end))
-            console.log('Slide len3: ', _swiper.slides.length)
+            //console.log('Slide len3: ', _swiper.slides.length)
             //_swiper.update();
             _swiper.slideTo(6)
           }
@@ -488,7 +488,7 @@ const ProductSlide = ({ _products, _product, title_, view_ }: { _products: Array
         
       } else if (action === "next") {
         if (_swiper && _swiper.touches.diff < 0) {
-          console.log("Slide has reached the end")
+          //console.log("Slide has reached the end")
 
           //Starting loading
           setIsLoading(true)

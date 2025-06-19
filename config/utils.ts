@@ -3,10 +3,10 @@
 
 ///Libraries --> 
 import React from 'react';
-import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount, IMetaWebEvent, IEventResearch, ClientOS, ClientDevice, ICartItem, IProductReview } from './interfaces';
+import { ICategoryInfo, IOrderSheet, IProduct, ICountry, IEventStatus, PaymentStatus, DeliveryStatus, IImage, IClientInfo, IWishlistResearch, ISheetInfo, IMarketPlatform, IButtonResearch, ICart, ICartItemDiscount, IMetaWebEvent, IEventResearch, ClientOS, ClientDevice, ICartItem, IProductReview, ISizeChart } from './interfaces';
 import styles from "@/styles/_base.module.scss"
 import { Readable } from 'stream';
-import { countryList } from './database';
+import { countryList, shoeSizeCharts } from './database';
 import axios from 'axios';
 import fs from "fs"
 import https from "https"
@@ -93,6 +93,8 @@ export const userIdName: string = "idealPlugUserId"
 export const productsName: string = "idealPlugProducts"
 
 export const transactionIdName: string = "idealPlugTransactionId"
+
+export const sizeRegionName: string = "idealPlugSizeRegion"
 
 //Order name
 export const orderName: string = "idealPlugOrders"
@@ -2584,6 +2586,50 @@ export const categories: Array<ICategoryInfo> = [
         ]
     }
 ]
+
+//This function is for checking if a product needs a custom sizing option based on the country
+export const customSizeProduct = (category: string) => {
+    if (category === "Footwears") {
+        return shoeSizeCharts
+    } else {
+        return undefined
+    }
+}
+
+//This function is for returning the region of a size chart 
+export const getSizeRegion = (countryAbbr: string, sizeCharts: Array<ISizeChart>) => {
+    const upperAbbr = countryAbbr.toUpperCase();
+  
+  const item_ =  sizeCharts.find(chart => 
+    chart.countries?.some(country => country.toUpperCase() === upperAbbr)
+  ) || shoeSizeCharts[0]; // Fallback to EU (first item)
+
+  return item_.region
+}
+
+//This function returns the size of according to the given region 
+export const getCustomSize = (region: string, sizeCharts: Array<ISizeChart>, sizeItem: string | number): string | undefined => {
+    const euRegion = sizeCharts.find((chart) => chart.region === "EU")
+    const euRegionIndex = euRegion?.sizes.findIndex((size) => size === sizeItem);
+
+    const newRegion = sizeCharts.find((chart) => chart.region === region)
+    const size = newRegion?.sizes[euRegionIndex!]
+
+    return size?.toString()
+}
+
+//This function returns the size according to a given region for cart
+export const getCustomSizeForCart = (region: string, category: string, sizeItem: string | number) => {
+    const sizeCharts = customSizeProduct(category)
+
+    if (sizeCharts) {
+        const size = getCustomSize(region, sizeCharts, sizeItem)
+        return size
+    } else {
+        return sizeItem
+    }
+
+}
 
 ///This contains a list of colors for delivery status text
 // export const deliveryStatuses: Array<IEventStatus> = [

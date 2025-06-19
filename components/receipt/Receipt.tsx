@@ -7,7 +7,7 @@ import { useState, useEffect, MouseEvent, FormEvent } from 'react';
 import styles from "./receipt.module.scss"
 import { usePathname, useRouter } from 'next/navigation';
 import { DeliveryStatus, ICountry, IEventStatus, IOrder, PaymentStatus, IButtonResearch, ICartItemDiscount, IClientInfo } from '@/config/interfaces';
-import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName, clientInfoName, calculateTotalSlashedPrice } from '@/config/utils';
+import { formatDateMongo, companyName, deliveryPeriod, round, deliveryStatuses, paymentStatuses, deliveryDuration, getEachCartItemDiscount, storeButtonInfo, getCurrentDate, getCurrentTime, extractBaseTitle, userIdName, clientInfoName, calculateTotalSlashedPrice, getCustomSizeForCart, sizeRegionName } from '@/config/utils';
 import { useClientInfoStore, useModalBackgroundStore, useCartItemDiscountModalStore } from "@/config/store";
 import { Remove, Add, DiscountOutlined } from '@mui/icons-material';
 import { countryList } from '@/config/database';
@@ -27,6 +27,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
     const routerPath = usePathname()
     const [deliveryStatus, setDeliveryStatus] = useState<IEventStatus>()
     const [paymentStatus, setPaymentStatus] = useState<IEventStatus>()
+    const [sizeRegion, setSizeRegion] = useState<string>(getItem(sizeRegionName))
     const [country, setCountry] = useState<ICountry | undefined>(countryList.find((country) => country?.name?.common === order.customerSpec.country))
     //const clientInfo = useClientInfoStore(state => state.info)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground);
@@ -211,7 +212,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                             {p.specs?.size ? (
                                 <div className={styles.cart_size}>
                                     <strong>Size:</strong>
-                                    <span className={styles.size}>{typeof p.specs?.size === "string" ? p.specs?.size : p.specs?.size.size}</span>
+                                    <span className={styles.size}>{typeof p.specs?.size === "string" ? p.specs?.size : getCustomSizeForCart(sizeRegion, p.category, p.specs?.size.size)}</span>
                                 </div>
                             ) : (<></>)}
                         </div>

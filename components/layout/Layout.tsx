@@ -391,10 +391,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             if (currentURL === window.location.href) {
                 undefined
             } else {
-              console.log("url changed")
+              //console.log("url changed")
 
               if (!clientInfo) {
-                console.log("client not detected")
+                //console.log("client not detected")
                 return
               }
                 //console.log("changed")

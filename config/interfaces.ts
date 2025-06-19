@@ -81,6 +81,13 @@ export interface ISpecification {
     }
 }
 
+//This is the interface for the shoe size charts
+export interface ISizeChart {
+  region: string, //2 letter code of the region
+  countries?: Array<string> //2 letter code of the country
+  sizes: Array<number | string>
+}
+
 ///Declaring the interface for inquiry mongoose schema static
 export interface IInquiryModel extends Model<IInquiry> {
   createInquiry(inquiry: IInquiry): Array<IInquiry>,
@@ -262,6 +269,7 @@ export interface ICartItem {
     readonly unitWeight: number,
     readonly unitHiddenDeliveryFee: number,
     readonly discountPercent: number,
+    readonly category: string,
     quantity: number,
     specs?: { 
       color?: string | IImage,
@@ -286,6 +294,7 @@ export interface ICart {
   totalWeight: number,
   totalHiddenDeliveryFee: number,
   deliveryFee: number,
+  //readonly discountPercent: number,
   cart: Array<ICartItem>
 }
 

@@ -74,11 +74,13 @@ Strictly follow the following instructions;
 - Insert null in the userId property
 - Create a fake realistic name (no abbreviations) and insert it in name property
 - Insert null in image property
-- Insert the review in the review property, the review must match the product information and be realistic, it should be between 10 - 60 words, use easy-to-understand words and review it like a real person would.
+- Insert the review in the review property, the review must match the product information and be realistic, it should be between 10 - 60 words, use easy-to-understand words and review it like a real person would and not an AI (Bear in mind that these shoes are for men only, commend things like quality of the shoe, product delivered in good condition, willinglyness to order more, etc., try and be more creative, things that would entice/convince people to make an order).
 - Insert a random country name, you must not repeat the same country more than twice and should come from various continents, the name should match the country of the user
-- For the rating, use only numbers between 4 & 5 but use more of 5 (about 85% of the reviews should be 5, the rest can be 4. I don't need decimal ratings, just whole numbers)
-- Insert a recent date from the range of April 25, 2025 - June 14, 2025, using this format "2025-04-10T08:54:37.228+00:00"
+- For the rating, use only numbers between 4 & 5 but use more of 5 (about 100%-95% of the reviews should be 5, the rest can be 4. I don't need decimal ratings, just whole numbers)
+- Insert a recent date from the range of April 25, 2025 - June 16, 2025, using this format "2025-04-10T08:54:37.228+00:00"
         `;
+
+        //- For the rating, use only numbers between 4 & 5 but use more of 5 (about 100%-90% of the reviews should be 5, the rest can be 4. I don't need decimal ratings, just whole numbers)
         console.log("Prompt: ", prompt);
 
         //Using AI to generate reviews

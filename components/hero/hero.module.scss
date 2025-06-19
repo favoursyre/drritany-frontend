@@ -208,14 +208,21 @@
             }
 
             @include phonePro {
+                justify-content: center;
                 @include text-layout($size: 14px, $color: $tertiary-color, $l_height: 20px);
                 font-weight: 400;
                 text-align: center;
-                @include size(78%, 5%);
+                @include size(98%, 5%);
                 top: -7%;
                 left: 1%;
                 //width: auto;
                 gap: 2%;
+                border: none;
+
+                span {
+                    //border: 2px solid yellow;
+                    //width: 110%;
+                }
             }
 
             @include phoneMini {

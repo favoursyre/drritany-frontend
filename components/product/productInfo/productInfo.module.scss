@@ -869,14 +869,32 @@
                 top: 2%;
             }
 
-            .span1 {
-                //border: 1px solid red;
-                @include text-layout($size: 13px, $l_height: 15px);
-                position: relative;
-                font-weight: 600;
+            .div_size {
+                @include flexBar($position: relative, $display: flex, $justify: flex-start, $align: flex-start, $gap: 2px, $flex_d: row);
+            
+                .span1 {
+                    //border: 1px solid red;
+                    @include text-layout($size: 13px, $l_height: 15px);
+                    position: relative;
+                    font-weight: 600;
 
-                @include phoneMini {
-                    //font-size: 11px;
+                    @include phoneMini {
+                        //font-size: 11px;
+                    }
+                }
+
+                select {
+                    @include text-layout($size: 13px, $l_height: 15px);
+                    position: relative;
+                    top: -2px;
+                    left: 2px;
+                    border: 1px solid $text-color-3;
+                    //border-radius: 4px;
+
+                    &:focus {
+                        //border: 1px solid $primary-color;
+                        outline: 1px solid $primary-color;
+                    }
                 }
             }
 
@@ -1578,7 +1596,7 @@
             @include size(100%, 10%);
 
             .verified {
-                //border: 1px solid green;
+                border: 1px solid green;
                 @include flexBar($position: relative, $justify: flex-start, $gap: 3%, $align: center, $flex_d: row);
                 @include size(30%, 98%);
                 padding-left: 5px;
@@ -1595,7 +1613,10 @@
                 }
 
                 @include phonePro {
-                    @include size(60%, 98%);
+                    @include size(55%, 98%);
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    padding-right: 5px;
                 }
 
                 .icon {
@@ -1616,7 +1637,7 @@
 
                     @include phonePro {
                         font-size: 12px;
-                        line-height: 16px;
+                        line-height: 15px;
                     }
 
                     @include phoneMini {
@@ -1639,6 +1660,9 @@
 
                 @include phonePro {
                     @include size(35%, 98%);
+                    //line-height: 15px;
+                    padding-top: 15px;
+                    padding-bottom: 15px;
                 }
 
                 .icon {
@@ -1648,6 +1672,17 @@
 
                     @include phoneMini {
                         font-size: 1rem;
+                    }
+                }
+
+                span {
+                    //border: 1px solid red;
+
+                    @include phonePro {
+                        //@include size(35%, 98%);
+                        line-height: 15px;
+                        //padding-top: 15px;
+                        //margin-bottom: 15px;
                     }
                 }
 

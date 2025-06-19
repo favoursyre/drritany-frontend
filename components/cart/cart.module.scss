@@ -445,8 +445,8 @@
                         // }
                     }
 
-                    .list_subtotal {
-                        @include flexBar($justify: flex-start, $gap: 1%, $flex_d: row, $align: center);
+                    .list_cart_price {
+                        @include flexBar($justify: center, $gap: 1%, $flex_d: column, $align: flex-start);
                         //border: 1px solid red;
                         @include size(20%, 50%);
                         left: 68%;
@@ -475,9 +475,34 @@
                         }
 
                         @include phonePro {
-                            font-size: 12px;
-                            justify-content: center;
-                            left: 70%;
+                            //font-size: 12px;
+                            align-items: flex-end;
+                            //left: 70%;
+                        }
+
+                        .price {
+                            @include text-layout($size: 15px, $l_height: 15px);
+                            //font-weight: 600;
+                            //border: 2px solid $primary-color;
+        
+                            @include phonePro {
+                                font-size: 12px;
+                            }
+                        }
+        
+                        .slashed_price {
+                            @include text-layout($size: 13px, $color: $text-color-3, $l_height: 15px);
+                            letter-spacing: 0.1px;
+                            text-decoration-line: line-through;    
+                            //border: 2px solid $primary-color; 
+        
+                            @include phonePro {
+                                font-size: 10px;
+                            }
+
+                            @include phoneMini {
+                                font-size: 10px;
+                            }
                         }
                     }
 

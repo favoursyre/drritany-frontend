@@ -193,7 +193,7 @@ Given the product name "${info.name}", I need the following product informations
 }"
 
 Note:
-- Make a easy-to-understand but well detailed description of the product and assign it to "description" (Try and be more creative and unique) 
+- Make a easy-to-understand but well detailed description of the product and assign it to "description" (Don't always start your description with the word "Elevate", "command attention", "step into", "crafted". Try and be more creative and unique, don't add year to the description) 
 - State 3 short benefits of the product and assign it to "benefits"
         `
         //Don't always start your description with the word "Elevate", "command attention", "step into", 

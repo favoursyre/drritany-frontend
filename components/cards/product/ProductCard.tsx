@@ -47,6 +47,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
     const [showFreeShipping, setShowFreeShipping] = useState(true);
     const [width, setWidth] = useState<number>(typeof window !== 'undefined' && window.screen ? window.screen.width : 0)
     const left: boolean = false
+    //console.log('Router Path: ', routerPath)
 
     // Update width on resize
     useEffect(() => {
@@ -319,6 +320,10 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
             }
         }
+
+        if (routerPath === "/wishList") {
+            window.location.reload()
+        }
     }
 
     //This function is triggerred when add to cart is clicked
@@ -371,6 +376,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
                 unitWeight: pWeight,
                 unitHiddenDeliveryFee: deliveryFee_,
                 discountPercent: p.pricing?.discount!,
+                category: p.category?.mini!,
                 quantity: quantity,
                 subTotalWeight: quantity * pWeight, 
                 specs: cartSpecs,
@@ -560,6 +566,10 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
 
             console.log('Sending Meta Api event')
             await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
+        }
+
+        if (routerPath === "/cart") {
+            window.location.reload()
         }
     }
 
