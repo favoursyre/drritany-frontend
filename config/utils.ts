@@ -428,7 +428,7 @@ export async function getProductReviews() {
       const res = await fetch(`${backend}/product-review`, {
         method: "GET",
         cache: "no-store", // Use "no-store" to always fetch fresh data
-        next: { revalidate: 60 }
+        //next: { revalidate: 60 }
       })
   
       if (res.ok) {
@@ -1030,7 +1030,7 @@ export const getProductReviewsByProductId = async (id: string) => {
       const res = await fetch(`${backend}/product-review/${id}?src=productId`, {
         method: "GET",
         cache: "no-store",
-        next: { revalidate: 60 },
+        //next: { revalidate: 60 },
       })
   
       if (res.ok) {
@@ -1434,7 +1434,7 @@ export const getUserOrders = async (userId: string) => {
       const res = await fetch(`${backend}/order?userId=${userId}`, {
         method: "GET",
         cache: "no-store",
-        next: { revalidate: 60 },
+        //next: { revalidate: 60 },
       })
   
       if (res.ok) {
@@ -2609,13 +2609,19 @@ export const getSizeRegion = (countryAbbr: string, sizeCharts: Array<ISizeChart>
 
 //This function returns the size of according to the given region 
 export const getCustomSize = (region: string, sizeCharts: Array<ISizeChart>, sizeItem: string | number): string | undefined => {
-    const euRegion = sizeCharts.find((chart) => chart.region === "EU")
-    const euRegionIndex = euRegion?.sizes.findIndex((size) => size === sizeItem);
+    
+    if (sizeCharts) {
+        const euRegion = sizeCharts.find((chart) => chart.region === "EU")
+        const euRegionIndex = euRegion?.sizes.findIndex((size) => size === sizeItem);
 
-    const newRegion = sizeCharts.find((chart) => chart.region === region)
-    const size = newRegion?.sizes[euRegionIndex!]
+        const newRegion = sizeCharts.find((chart) => chart.region === region)
+        const size = newRegion?.sizes[euRegionIndex!]
 
-    return size?.toString()
+        return size?.toString()
+    } else {
+        return sizeItem.toString()
+    }
+    
 }
 
 //This function returns the size according to a given region for cart

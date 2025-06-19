@@ -55,6 +55,7 @@ const Cart = () => {
     //For client rendering
     useEffect(() => {
         setMounted(true);
+        console.log("Cart Mounted: ", cart)
     }, []);
 
     //Updating the sales tax
@@ -162,7 +163,7 @@ const Cart = () => {
             //setModalState(() => getModalState())
 
             const refreshCart = () => {
-                //console.log("the cart is running")
+                
                 if (cart && clientInfo?.countryInfo?.name?.common) {
                     cart.grossTotalPrice = Number((cart.cart.reduce((total: number, cart: ICartItem) => total + cart.subTotalPrice, 0)).toFixed(2));
                     cart.totalDiscount = Number((cart.cart.reduce((discount: number, cart: ICartItem) => discount + cart.subTotalDiscount, 0)).toFixed(2));
@@ -171,6 +172,8 @@ const Cart = () => {
                     setItem(cartName, cart)
                     const updatedCart = cart
                     setCart(() => ({ ...updatedCart }))
+
+                    console.log("Refreshing cart: ", updatedCart)
                 }
             }
     

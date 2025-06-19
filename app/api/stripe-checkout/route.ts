@@ -5,6 +5,7 @@ import { convertUnitAmountToCent, domainName, getMinimumStripeAmount, stripeSecr
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import axios from 'axios';
+import { ICountry } from '@/config/interfaces';
 
 //Commencing the code -->
 const stripe = new Stripe(stripeSecretKey as string, {
@@ -15,7 +16,11 @@ const exchangeRateApi = process.env.EXCHANGE_RATE_API_KEY!
 
 export async function POST(req: NextRequest) {
   try {
-    const { currency, amount, txId } = await req.json();
+    const { countryInfo, amount, txId } = await req.json();
+
+    const countryInfo_ = countryInfo as unknown as ICountry
+    const currency = countryInfo_.currency?.abbreviation 
+    const exchangeRate = countryInfo_.currency?.exchangeRate
 
     if (!currency) {
       return NextResponse.json(
@@ -24,22 +29,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let exchangeRate = 1
-    if (currency !== "USD") {
-      const url = `https://v6.exchangerate-api.com/v6/${exchangeRateApi}/latest/USD`;
-  
-      const res = await axios.get(url);
-      const rate = res.data.conversion_rates[currency]
-      exchangeRate = rate
-      console.log("Exchange Rate: ", rate)
-
-      if (!rate) {
-        return NextResponse.json(
-          { error: `${currency} exchange rate not found` },
-          { status: 400 }
-        );
-      }
+    if (!exchangeRate) {
+      return NextResponse.json(
+        { error: 'Exchange Rate is not given' },
+        { status: 400 }
+      );
     }
+
+    //let exchangeRate = 1
+    // if (currency !== "USD") {
+    //   const url = `https://v6.exchangerate-api.com/v6/${exchangeRateApi}/latest/USD`;
+  
+    //   const res = await axios.get(url);
+    //   const rate = res.data.conversion_rates[currency]
+    //   exchangeRate = rate
+    //   console.log("Exchange Rate: ", rate)
+
+    //   if (!rate) {
+    //     return NextResponse.json(
+    //       { error: `${currency} exchange rate not found` },
+    //       { status: 400 }
+    //     );
+    //   }
+    // }
 
     if (!amount) {
       return NextResponse.json(
@@ -56,7 +68,10 @@ export async function POST(req: NextRequest) {
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: [
+        'card', 'bacs_debit', 'paypal', 'revolut_pay', 
+        'pay_by_bank', 'klarna', 'afterpay_clearpay'
+      ],
       line_items: [
         {
           price_data: {

@@ -440,7 +440,7 @@ const OrderModal = () => {
           const stripe = await stripePromise;
           if (!stripe) throw new Error('Stripe failed to load');
 
-          const currency = clientInfo?.countryInfo?.currency
+          const countryInfo = clientInfo?.countryInfo
           const unitAmount = Math.round(parseFloat(amount_) * 100);
           const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
           setItem(transactionIdName, txId_)
@@ -448,7 +448,11 @@ const OrderModal = () => {
           const response = await fetch(`${backend}/stripe-checkout`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ currency: currency, amount: unitAmount, txId: txId_ }),
+            body: JSON.stringify({ 
+                countryInfo: countryInfo, 
+                amount: unitAmount, 
+                txId: txId_ 
+            }),
           });
     
           const { sessionId, error } = await response.json();

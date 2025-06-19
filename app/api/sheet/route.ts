@@ -10,14 +10,20 @@ import path from "path";
 import { google } from "googleapis";
 import fs from "fs"
 import { GoogleSheetStore } from "@/config/serverUtils";
-//import { querySheetId } from "@/config/utils";
+import { domainName } from "@/config/utils";
 //import { IInquiry } from "@/config/interfaces";
 
 ///Commencing the code
 
+
 ///Creating a product
 export async function POST(request: NextRequest) {
     try {
+        if (domainName.includes("localhost")) {
+            console.log("You're in development mode")
+            return NextResponse.json({ message: "You're in development mode" }, { status: 200 });
+        }
+
         const queryData: ISheetInfo = await request.json();
         //console.log("in...")
 

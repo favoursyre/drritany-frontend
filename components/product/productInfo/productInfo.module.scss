@@ -1765,7 +1765,7 @@
                     }
 
                     .flag {
-                        //border: 1px solid red;
+                        border: 1px solid $text-color-3;
                         position: relative;
                         @include size(20px, 15px);
                     }
