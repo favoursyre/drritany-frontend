@@ -1087,6 +1087,7 @@ export const convertUnitAmountToCent = (unitAmount: number, currency: string, ex
 
         // Convert to USD cents and round
         const amount = Math.round(amountInUsd * 100);
+        console.log("Converted Amount to Supposed Cents: ", amount)
         return amount
     }
 }

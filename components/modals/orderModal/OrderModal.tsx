@@ -444,13 +444,15 @@ const OrderModal = () => {
           const unitAmount = Math.round(parseFloat(amount_) * 100);
           const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
           setItem(transactionIdName, txId_)
+          console.log("Amount: ", amount_, unitAmount)
     
           const response = await fetch(`${backend}/stripe-checkout`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 countryInfo: countryInfo, 
-                amount: unitAmount, 
+                amount: unitAmount,
+                //unitAmount: unitAmount, 
                 txId: txId_ 
             }),
           });

@@ -67,6 +67,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log("Amount: ", amount)
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: [
         'card', 'afterpay_clearpay'
