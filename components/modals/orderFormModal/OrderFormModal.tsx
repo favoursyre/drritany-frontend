@@ -55,6 +55,9 @@ const OrderFormModal = () => {
       //For client rendering
     useEffect(() => {
         setMounted(true);
+
+        const userId_ = getItem(userIdName)
+        setUserId(userId_)
     }, []);
 
     //Updating client info
@@ -274,7 +277,7 @@ const OrderFormModal = () => {
             notify("error", "Municipality is required")
             return
         } else if (!userId) {
-            notify("error", "User not detected")
+            //notify("error", "User not detected")
             const userId_ = getItem(userIdName)
             setUserId(userId_)
             return

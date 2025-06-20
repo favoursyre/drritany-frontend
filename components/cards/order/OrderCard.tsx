@@ -198,7 +198,7 @@ const OrderCard = ({ order_, view }: { order_: IOrder, view: string | undefined 
     }
 
     return (
-        <main className={`${styles.main} ${getViewClass(view)}`}>
+        <main className={`${styles.main} ${getViewClass(view)}`} onClick={(e) => viewOrder(e, order._id!)}>
             <div className={styles.bio} onClick={(e) => viewOrder(e, order._id!)}>
                 <span>{order.customerSpec.fullName}</span>
                 <span>{order.customerSpec.state}, {order.customerSpec.country}</span>
