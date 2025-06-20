@@ -181,7 +181,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
     const specs = useMemo(() => [
         `SKU: ${product_._id}`,
         `Condition: Brand New`,
-        product_.specification?.brand?.includes("other") ? undefined : `Brand: ${product_.specification?.brand || ""}`,
+        product_.specification?.brand?.toLowerCase().includes("other") ? undefined : `Brand: ${product_.specification?.brand || ""}`,
         product_.specification?.modelNumber ? `Model Number: ${product_.specification.modelNumber}` : undefined,
         `Item Form: ${product_.specification?.itemForm || ""}`,
         `Item Count: ${product_.specification?.itemCount || ""}`,
