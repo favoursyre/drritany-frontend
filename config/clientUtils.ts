@@ -230,12 +230,12 @@ export const addToCart = async (
             subTotalDiscount: 0
         }
         //console.log("Quantity: ", quantity)
-        cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
-        const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
+        //cartItem.subTotalPrice = Number((cartItem.unitPrice * cartItem.quantity).toFixed(2))
+        //const totalPrice = Number(cartItem.subTotalPrice.toFixed(2))
 
         let discount
         if (cartItem.extraDiscount?.limit! && cartItem.quantity >= cartItem.extraDiscount?.limit!) {
-            cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * totalPrice).toFixed(2))
+            cartItem.subTotalDiscount = Number(((cartItem.extraDiscount?.percent! / 100) * cartItem.subTotalPrice).toFixed(2))
             //discount = (10 / 100) * totalPrice
         } else {
             cartItem.subTotalDiscount = 0
@@ -267,7 +267,7 @@ export const addToCart = async (
 
             //const result = cart.cart.some((cart: ICartItem) => cart._id === p._id);
             if (index === undefined) {
-                cart.grossTotalPrice = Number((cart.grossTotalPrice + totalPrice).toFixed(2))
+                cart.grossTotalPrice = Number((cart.grossTotalPrice + cartItem.subTotalPrice).toFixed(2))
                 cart.totalDiscount = Number((cart.totalDiscount + totalDiscount).toFixed(2))
                 cart.totalWeight = Number((cart.totalWeight + totalWeight).toFixed(2))
                 cart.deliveryFee = Number(deliveryFee.toFixed(2))
@@ -314,7 +314,7 @@ export const addToCart = async (
             //console.log("No cart: ", false)
 
             const cart: ICart = {
-                grossTotalPrice: totalPrice,
+                grossTotalPrice: cartItem.subTotalPrice,
                 totalDiscount: totalDiscount,
                 totalWeight: totalWeight,
                 totalHiddenDeliveryFee: totalHiddenDeliveryFee,

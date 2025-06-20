@@ -9,7 +9,7 @@ import Loading from "@/components/loadingCircle/Circle";
 import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits, sendMetaCapi } from "@/config/utils";
+import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits, sendMetaCapi, domainName } from "@/config/utils";
 import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem, getFacebookCookies, getOS, getDevice } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
@@ -371,7 +371,8 @@ const OrderModal = () => {
 
         console.log("Processing the payment...")
         const productSpec: ICart = cart!
-        const amount_ = round(productSpec.overallTotalPrice!, 2).toString()
+        const amount_ = round(productSpec.overallTotalPrice! * clientInfo?.countryInfo?.currency?.exchangeRate!, 2).toString()
+        //{round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
         const _amt = productSpec.grossTotalPrice - productSpec.totalDiscount + productSpec.deliveryFee
         //const _amt_ = round((productSpec.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo?.country?.currency?.exchangeRate!, 1)
         //cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
@@ -502,14 +503,15 @@ const OrderModal = () => {
     //This function is used to view terms 
     const viewTerms = (e: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>) => {
         //Setting the necessary modals
-        setOrderModal(false)
-        setLoadingModal(true)
+        // setOrderModal(false)
+        // setLoadingModal(true)
 
         //Pass the route link here
-        router.push(`/terms`)
+        window.open(`${domainName}/terms`, '_blank')
+        //router.push(`/terms`)
 
-        setModalBackground(false)
-        setLoadingModal(false)
+        // setModalBackground(false)
+        // setLoadingModal(false)
     }
 
   return (

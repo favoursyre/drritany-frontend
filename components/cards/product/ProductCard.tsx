@@ -8,7 +8,7 @@ import { IProduct, IClientInfo, IWishlistResearch, ISheetInfo, IButtonResearch, 
 import { useState, useEffect, useMemo } from "react";
 import type { MouseEvent, TouchEvent } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, extractBaseTitle, hashValue, getCurrentDate, getCurrentTime, storeButtonInfo, removeUndefinedKeys, areObjectsEqual, cartName, storeCartInfo, sendMetaCapi } from "@/config/utils";
+import { slashedPrice, routeStyle, round, wishListName, getCustomPricing, storeWishInfo, getDeliveryFee, clientInfoName, extractBaseTitle, hashValue, getCurrentDate, getCurrentTime, storeButtonInfo, removeUndefinedKeys, areObjectsEqual, cartName, storeCartInfo, sendMetaCapi, domainName } from "@/config/utils";
 import { getItem, notify, setItem, getDevice, getOS, getFacebookCookies, addToCart } from "@/config/clientUtils";
 import { useClientInfoStore, useModalBackgroundStore, useLoadingModalStore } from "@/config/store";
 import { Discount, FavoriteBorder, DeleteOutline, AddShoppingCart, Whatshot } from '@mui/icons-material';
@@ -180,6 +180,7 @@ const ProductCard = ({ product_, view_ }: { product_: IProduct, view_: string | 
         setModalBackground(true)
         setLoadingModal(true)
 
+        //window.open(`${domainName}/products/${id}`, '_blank')
         router.push(`/products/${id}`);
     }
 

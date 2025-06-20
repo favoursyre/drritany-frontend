@@ -384,6 +384,7 @@ const Cart = () => {
         cart.totalDiscount = (calculateTotalSlashedPrice(cart) - cart.grossTotalPrice) + getCartDiscount()
         cart.tax = taxAmount
         cart.overallTotalPrice = cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()
+        //{round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
         setItem(cartName, cart)
         setCart(() => ({ ...cart }))
         //console.log('Cart: ', cart)

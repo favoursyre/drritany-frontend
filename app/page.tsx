@@ -73,7 +73,7 @@ export default async function Home() {
   const start = performance.now()
   const products_ = await getProducts()
   const products = sortProductByActiveStatus(products_, "Active") as unknown as Array<IProduct>
-  console.log("Products: ", products_, products)
+  //console.log("Products: ", products_, products)
   // const productSlide = sortProductByActiveStatus(shuffleArray(products!), "Active") as unknown as Array<IProduct>
   // const newestArrivals = sortProductByLatest(products!)
   // const mostOrdered = sortProductByOrder(products!)
