@@ -1099,12 +1099,12 @@ export const countryList: Array<ICountry> = [
             {
                 name: "Eastern Cape",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Free State",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Gauteng",
@@ -1114,32 +1114,32 @@ export const countryList: Array<ICountry> = [
             {
                 name: "KwaZulu-Natal",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Limpopo",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Mpumalanga",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Northern Cape",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "North West",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             },
             {
                 name: "Western Cape",
                 abbreviation: "",
-                extraDeliveryPercent: 70
+                extraDeliveryPercent: 0
             }
         ],
         flag: {
@@ -1148,6 +1148,9 @@ export const countryList: Array<ICountry> = [
             width: 320,
             height: 213
         }
+    },
+    {
+        
     },
     {
         name: {
