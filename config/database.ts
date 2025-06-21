@@ -556,6 +556,51 @@ export const countryList: Array<ICountry> = [
     },
     {
         name: {
+            common: "Ireland",
+            official: "Republic of Ireland",
+            abbreviation: "IE",
+            demonym: "Irish",
+            capital: "Dublin"
+        },
+        dial_code: "+353",
+        currency: {
+            name: "Euro",
+            abbreviation: "EUR",
+            symbol: "€",
+            exchangeRate: 0.93
+        },
+        stateTitle: "Province",
+        states: [
+            { name: "Connacht", abbreviation: "C", extraDeliveryPercent: 0 },
+            { name: "Leinster", abbreviation: "L", extraDeliveryPercent: 0 },
+            { name: "Munster", abbreviation: "M", extraDeliveryPercent: 0 },
+            { name: "Ulster", abbreviation: "U", extraDeliveryPercent: 0 }
+        ],
+        areaCodeTitle: "Postal Code",
+        delivery: {
+            feePerKg: 0.9,
+            baseNumber: 1.8
+        },
+        priceInflation: 0,
+        languages: [
+            {
+                name: "Irish",
+                code: "gle"
+            },
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: "https://flagcdn.com/w320/ie.png",
+            alt: "The flag of Ireland is composed of three equal vertical bands of green, white and orange.",
+            width: 320,
+            height: 160
+        }
+    },
+    {
+        name: {
             common: "Japan",
             official: "Japan",
             abbreviation: 'JP',
@@ -714,6 +759,50 @@ export const countryList: Array<ICountry> = [
             height: 213
         }
     },
+    {
+        name: {
+            common: "Mexico",
+            official: "United Mexican States",
+            abbreviation: "MX",
+            demonym: "Mexican",
+            capital: "Mexico City"
+        },
+        dial_code: "+52",
+        currency: {
+            name: "Mexican Peso",
+            abbreviation: "MXN",
+            symbol: "$",
+            exchangeRate: 20.5
+        },
+        stateTitle: "State",
+        states: [
+            { name: "Aguascalientes", abbreviation: "AGS", extraDeliveryPercent: 0 },
+            { name: "Baja California", abbreviation: "BC", extraDeliveryPercent: 0 },
+            { name: "Baja California Sur", abbreviation: "BCS", extraDeliveryPercent: 0 },
+            { name: "Campeche", abbreviation: "CAMP", extraDeliveryPercent: 0 },
+            { name: "Chiapas", abbreviation: "CHIS", extraDeliveryPercent: 0 },
+            { name: "Chihuahua", abbreviation: "CHIH", extraDeliveryPercent: 0 },
+            { name: "Mexico City", abbreviation: "CDMX", extraDeliveryPercent: 0 }
+        ],
+        areaCodeTitle: "Postal Code",
+        delivery: {
+            feePerKg: 0.8,
+            baseNumber: 1.9
+        },
+        priceInflation: 0,
+        languages: [
+            {
+                name: "Spanish",
+                code: "spa"
+            }
+        ],
+        flag: {
+            src: "https://flagcdn.com/w320/mx.png",
+            alt: "The flag of Mexico is composed of three equal vertical bands of green, white and red, with the national coat of arms centered in the white band.",
+            width: 320,
+            height: 160
+        }
+    },
     // {
     //     name: {
     //         common: "Mozambique",
@@ -750,6 +839,56 @@ export const countryList: Array<ICountry> = [
     //         height: 213
     //     }
     // },
+    {
+        name: {
+            common: "Namibia",
+            official: "Republic of Namibia",
+            abbreviation: "NA",
+            demonym: "Namibian",
+            capital: "Windhoek"
+        },
+        dial_code: "+264",
+        currency: {
+            name: "Namibian Dollar",
+            abbreviation: "NAD",
+            symbol: "$",
+            exchangeRate: 18.07
+        },
+        stateTitle: "Region",
+        states: [
+            { name: "Erongo", abbreviation: "ER", extraDeliveryPercent: 0 },
+            { name: "Hardap", abbreviation: "HA", extraDeliveryPercent: 0 },
+            { name: "Karas", abbreviation: "KA", extraDeliveryPercent: 0 },
+            { name: "Kavango East", abbreviation: "KE", extraDeliveryPercent: 0 },
+            { name: "Khomas", abbreviation: "KH", extraDeliveryPercent: 0 },
+            { name: "Kunene", abbreviation: "KU", extraDeliveryPercent: 0 },
+            { name: "Ohangwena", abbreviation: "OW", extraDeliveryPercent: 0 },
+            { name: "Omaheke", abbreviation: "OH", extraDeliveryPercent: 0 },
+            { name: "Omusati", abbreviation: "OS", extraDeliveryPercent: 0 },
+            { name: "Oshana", abbreviation: "ON", extraDeliveryPercent: 0 },
+            { name: "Oshikoto", abbreviation: "OT", extraDeliveryPercent: 0 },
+            { name: "Otjozondjupa", abbreviation: "OD", extraDeliveryPercent: 0 },
+            { name: "Zambezi", abbreviation: "CA", extraDeliveryPercent: 0 }
+        ],
+        areaCodeTitle: "Postal Code",
+        delivery: {
+            feePerKg: 0.9,
+            baseNumber: 1.8
+        },
+        priceInflation: 0,
+        languages: [
+            {
+                name: "English",
+                code: "eng"
+            }
+        ],
+        flag: {
+            src: "https://flagcdn.com/w320/na.png",
+            alt: "The flag of Namibia features a white-edged red diagonal band that extends from the lower hoist-side corner to the upper fly-side corner of the field. Above and beneath this band are a blue and green triangle respectively. A gold sun with twelve triangular rays is situated on the hoist side of the upper triangle.",
+            width: 320,
+            height: 160
+        }
+    },
     {
         name: {
             common: "Nigeria",
@@ -1044,6 +1183,10 @@ export const countryList: Array<ICountry> = [
             symbol: "S$",
             exchangeRate: 1.30
         },
+        delivery: {
+            feePerKg: 0.8,
+            baseNumber: 1.9
+        },
         languages: [
             {
                 name: "English",
@@ -1084,6 +1227,10 @@ export const countryList: Array<ICountry> = [
             symbol: "R",
             exchangeRate: 18.48
         },
+        delivery: {
+            feePerKg: 0.8,
+            baseNumber: 1.9
+        },
         languages: [
             {
                 name: "English",
@@ -1094,7 +1241,6 @@ export const countryList: Array<ICountry> = [
                 code: "zul"
             }
         ],
-        //priceInflation: 15, 
         states: [
             {
                 name: "Eastern Cape",
@@ -1148,9 +1294,6 @@ export const countryList: Array<ICountry> = [
             width: 320,
             height: 213
         }
-    },
-    {
-        
     },
     {
         name: {
@@ -1521,7 +1664,7 @@ export const shoeSizeCharts: Array<ISizeChart> = [
     },
     {
         region: "UK",
-        countries: ["GB"],
+        countries: ["GB", "ZA"],
         sizes: ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"]
     }
 ]
