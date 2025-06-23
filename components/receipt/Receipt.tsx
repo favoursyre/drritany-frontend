@@ -225,7 +225,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                                 )}
                                 {order.paymentSpec ? (
                                     <span>
-                                        {round(p.subTotalPrice * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                        {round(p.subTotalPrice * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                                     </span> 
                                 ) : (
                                     <></>
@@ -255,7 +255,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(calculateTotalSlashedPrice(order.productSpec) * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(calculateTotalSlashedPrice(order.productSpec) * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -273,7 +273,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.totalDiscount * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(order.productSpec.totalDiscount * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -291,7 +291,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.deliveryFee * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(order.productSpec.deliveryFee * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -309,7 +309,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.tax! * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(order.productSpec.tax! * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
@@ -326,7 +326,7 @@ const OrderReceipt = ({ order_ }: { order_: IOrder }) => {
                         )}
                         {order && order.paymentSpec ? (
                             <span>
-                                {round(order.productSpec.overallTotalPrice! * order.paymentSpec.exchangeRate, 2).toLocaleString("en-US")}
+                                {round(order.productSpec.overallTotalPrice! * country?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                             </span> 
                         ) : (
                             <></>
