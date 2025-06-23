@@ -6,8 +6,8 @@ import { Order } from "@/models/order";
 import { Product } from "@/models/product";
 import { NextResponse, NextRequest } from "next/server";
 import { sendOrderEmail } from "@/config/email";
-import { ICartItem, IClientInfo, IOrder, IOrderSheet, IProduct } from "@/config/interfaces";
-import { orderSheetId, getCurrentTime, getCurrentDate, round } from "@/config/utils";
+import { ICartItem, IClientInfo, IOrder, IOrderSheet, IProduct, PaymentOption } from "@/config/interfaces";
+import { orderSheetId, getCurrentTime, getCurrentDate, round, domainName } from "@/config/utils";
 import { GoogleSheetStore } from "@/config/serverUtils";
 
 ///Commencing the code
@@ -33,13 +33,14 @@ function getValidQuantity(product: ICartItem): string {
 ///Creating a product
 export async function POST(request: NextRequest) {
     try {
+        const paymentOption = request.nextUrl.searchParams.get("paymentOption") as unknown as PaymentOption | null;
         const data = await request.json();
 
         ///Adding the order to the database
         const { order, clientInfo_ } = data
         await connectMongoDB();
         console.log("Subscriber_: ", data)
-        const order_: IOrder = await Order.processOrder(order)
+        const order_: IOrder = await Order.processOrder(order, paymentOption!)
 
         //Adding the order to Google sheet
         const { customerSpec: customer, productSpec: cart } = order_
@@ -100,17 +101,24 @@ export async function POST(request: NextRequest) {
                     DeliveryFee: `${currencySymbol}${deliveryFee}`, 
                     OverallTotalPrice: `${currencySymbol}${overallTotal}`,
                     DateOrdered: getCurrentDate(), ///Convert the mongodb to date and time format and assign it respectively
-                    TimeOrdered: getCurrentTime()
+                    TimeOrdered: getCurrentTime(),
+                    PaymentStatus: order_.paymentSpec.status,
+                    DeliveryStatus: order_.deliverySpec.status,
                 })
             }
         }
        
         //Adding the orders to the sheet
-        for (let order of orderData) {
-            const google = await GoogleSheetStore(orderSheetId)
-            const sheetRange = `Order_Sheet_US!A:S`
-            const sheet = await google.addSheet(sheetRange, order)
-            console.log("Sheet status: ", sheet)
+        if (domainName.includes("localhost")) {
+            console.log("You're in development mode")
+            //return NextResponse.json({ message: "You're in development mode" }, { status: 200 });
+        } else {
+            for (let order of orderData) {
+                const google = await GoogleSheetStore(orderSheetId)
+                const sheetRange = `Order_Sheet_Global!A:S`
+                const sheet = await google.addSheet(sheetRange, order)
+                console.log("Sheet status: ", sheet)
+            }
         }
         
 
@@ -145,7 +153,7 @@ export async function GET(request: NextRequest) {
             orders = await Order.getOrders()
         }
 
-        console.log("Sub: ", orders)
+        //console.log("Sub: ", orders)
         return NextResponse.json( orders , { status: 200 });
     } catch (error: any) {
         console.log("Error: ", error)

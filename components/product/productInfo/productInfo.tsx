@@ -1021,7 +1021,7 @@ const ProductInfo = ({ product_, reviews_ }: { product_: IProduct, reviews_: Arr
             <div className={styles.header}>
                 <div className={styles.bar}></div>
                 <div className={styles.barTitle}>
-                    <span>Shop more & get more discounts</span>
+                    <span>Shop now & Pay on Delivery</span>
                     {/* <span>{product.category?.macro}</span>
                     {product?.category?.mini ? (
                         <>

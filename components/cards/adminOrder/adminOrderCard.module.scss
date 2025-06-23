@@ -23,6 +23,7 @@
         @include flexBar ($position: relative, $align: center, $justify: flex-start, $gap: 1%, $flex_d: column);
         @include size(20%, 90%);
         //overflow: hidden;
+        //display: hidden;
 
         @include tabletPro {
             gap: 2%;

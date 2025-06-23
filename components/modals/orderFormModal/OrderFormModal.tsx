@@ -639,7 +639,7 @@ const OrderFormModal = () => {
                 <label>
                     Municipality
                     <input
-                        placeholder="City/Town/Village"
+                        placeholder="City/Town"
                         type="text"
                         onChange={(e) => setMunicipality(capitalizeFirstLetter(e.target.value))}
                         value={municipality}

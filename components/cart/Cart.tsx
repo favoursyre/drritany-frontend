@@ -4,14 +4,16 @@
 ///Libraries -->
 import { useState, useEffect, MouseEvent } from 'react';
 import styles from "./cart.module.scss"
-import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice } from '@/config/clientUtils';
-import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend, calculateTotalSlashedPrice, slashedPrice, sizeRegionName, getCustomSizeForCart } from '@/config/utils';
-import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch } from '@/config/interfaces';
+import { setItem, getItem, notify, removeItem as removeItem_ , getOS, getDevice, getFacebookCookies } from '@/config/clientUtils';
+import { cartName, round, getDeliveryFee, sleep, deliveryName, extraDeliveryFeeName, storeCartInfo, getEachCartItemDiscount, getCurrentDate, getCurrentTime, extractBaseTitle, storeButtonInfo, userIdName, clientInfoName, backend, calculateTotalSlashedPrice, slashedPrice, sizeRegionName, getCustomSizeForCart, hashValue, extractOnlyDigits, sendMetaCapi } from '@/config/utils';
+import { ICart, ICartItem, ICartItemDiscount, IClientInfo, ICustomerSpec, IButtonResearch, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from '@/config/interfaces';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useClientInfoStore, useOrderFormModalStore, useModalBackgroundStore, useOrderModalStore, useLoadingModalStore, useCartItemDiscountModalStore } from "@/config/store";
-import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote, DiscountOutlined, Payment } from '@mui/icons-material';
+import { DeleteOutline, AddShoppingCart, ProductionQuantityLimits, LocalShipping, Remove, Add, Close, EditNote, DiscountOutlined, Payment, ArrowForward } from '@mui/icons-material';
 import { countryList } from '@/config/database';
+import { v4 as uuid } from 'uuid';
+import { sendGTMEvent } from "@next/third-parties/google";
 import Taxjar from "taxjar"
 
 ///Commencing the code 
@@ -410,6 +412,7 @@ const Cart = () => {
             
             setModalBackground(true)
             setOrderForm(true)
+            return
             //window.location.reload()
         }
         
@@ -421,7 +424,7 @@ const Cart = () => {
             Region: clientInfo?.ipData?.region!,
             Country: clientInfo?.ipData?.country!,
             Button_Name: "checkoutOrder()",
-            Button_Info: `${deliveryInfo?.fullName}, ${deliveryInfo?.email} - Clicked "pay" in cart`,
+            Button_Info: `${deliveryInfo?.fullName}, ${deliveryInfo?.email} - Clicked "proceed" in cart`,
             Page_Title: extractBaseTitle(document.title),
             Page_URL: routerPath,
             Date: getCurrentDate(),
@@ -430,6 +433,57 @@ const Cart = () => {
             Device: getDevice()
         }
         await storeButtonInfo(info)
+
+        //Sending an initiate checkout event
+        const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
+        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
+        const eventTime = Math.round(new Date().getTime() / 1000)
+        const eventId = uuid()
+        const userAgent = navigator.userAgent
+        const { fbp, fbc } = getFacebookCookies();
+        const eventData: IMetaWebEvent = {
+            data: [
+                {
+                    event_name: MetaStandardEvent.InitiateCheckout,
+                    event_time: eventTime,
+                    event_id: eventId,
+                    action_source: MetaActionSource.website,
+                    custom_data: {
+                        content_name: extractBaseTitle(document.title),
+                        content_ids:  cart?.cart.map((item) => item._id),
+                        content_type: cart?.cart.length === 1 ? "product" : "product_group",
+                        value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
+                        currency: countryInfo_?.currency?.abbreviation,
+                        num_items: cart.cart.reduce((total, item) => total + item.quantity, 0).toString(),
+                        contents: cart.cart.map((item) => ({
+                            id: item._id,
+                            //name: item.name,
+                            quantity: item.quantity,
+                            item_price: item.subTotalPrice,
+                        }))
+                    },
+                    user_data: {
+                        client_user_agent: userAgent,
+                        client_ip_address: clientInfo?.ipData?.ip!,
+                        external_id: hashValue(clientInfo?._id!),
+                        fbc: fbc!,
+                        fbp: fbp!,
+                        ct: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
+                        st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
+                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
+                        em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
+                        ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
+                        zp: hashValue(deliveryInfo?.postalCode?.trim()!)
+                    },
+                    original_event_data: {
+                        event_name: MetaStandardEvent.InitiateCheckout,
+                        event_time: eventTime,
+                    }
+                }
+            ]
+        } 
+        sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
+        await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
     }
 
     ///This function is triggered when the user wants to input a delivery info
@@ -766,8 +820,8 @@ const Cart = () => {
                             </div>
                         </div>
                         <button onClick={(e) => checkoutOrder(e)}>
-                            <Payment className={styles.icon} />
-                            <span>Pay</span>
+                            <ArrowForward className={styles.icon} />
+                            <span>Proceed</span>
                         </button>
                     </div>  
                 </div>

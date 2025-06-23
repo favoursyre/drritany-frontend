@@ -40,13 +40,16 @@ export interface IQuoteState {
  * @notice The interface for Order mongoose schema static
  */
 export interface IOrderModel extends Model<IOrder> {
-  processOrder(order: IOrder): IOrder,
+  processOrder(order: IOrder, paymentOption: PaymentOption | null): IOrder,
   getOrders(): Array<IOrder>,
   getOrderById(id: string): Array<IOrder>,
   getOrderByAccountId(userId: string): Array<IOrder>,
   deleteOrder(id: string): IOrder,
   updateOrder(id: string, order: IOrder): IOrder
-}  
+} 
+
+//The type for payment option
+export type PaymentOption = 'pay-now' | 'pay-on-delivery';
 
 ///Declaring the interface for specification 
 export interface ISpecification {
@@ -498,7 +501,7 @@ export interface IDelivery {
  * @param exchangeRate The exchange rate as at the time of order
  */
 export interface IPayment {
-  readonly txId: string,
+  readonly txId?: string,
   status: PaymentStatus,
   readonly exchangeRate: number
 }
@@ -709,7 +712,8 @@ export interface IOrderSheet {
   TimeOrdered?: string,
   TestGroup?: string,
   LogStatus?: string,
-  DeliveryStatus?: string,
+  DeliveryStatus?: DeliveryStatus,
+  PaymentStatus?: PaymentStatus,
   DateDelivered?: string
 }
 

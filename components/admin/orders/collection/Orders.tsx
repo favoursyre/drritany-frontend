@@ -198,6 +198,7 @@ const AdminOrder = ({ orders_ }: { orders_: Array<IOrder> }) => {
                 <div className={styles.order_carousel}>
                     {orders ? orders.map((order, _id) => (
                         <AdminOrderCard key={_id} order_={order} view={undefined} />
+                        // <></>
                     )) : (<></>)}
                 </div>
                 {/* <div className={styles.pagination_section}>

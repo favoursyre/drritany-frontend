@@ -5,17 +5,31 @@ import { NextRequest, NextResponse } from "next/server";
 import connectMongoDB from "@/config/mongodb";
 import { Order } from "@/models/order";
 import { IResponse, IOrder, Props } from "@/config/interfaces";
+import { sendDeliveryStatusEmail, sendPaymentStatusEmail } from "@/config/email";
 
 ///Commecing code
 //Patching details in a order
 export async function PATCH(request: NextRequest, { params }: Props) {
 
     try {
+        const event = request.nextUrl.searchParams.get("event");
         const { id } = await params;
         const order: IOrder = await request.json();
+        //console.log("Updated Order 1: ", order)
         await connectMongoDB();
-        const product_ = await Order.updateOrder(id, order)
-        return NextResponse.json({ message: "Order Edited Successful", product_ }, { status: 200 });
+        const order_ = await Order.updateOrder(id, order)
+        //console.log("Upated Order 2: ", order_)
+
+        //Sending email to the user about the updated delivery status
+        if (event === "delivery") {
+            const status = await sendDeliveryStatusEmail(order) 
+            console.log('Email: ', await status)
+        } else if (event === "payment") {
+            const status = await sendPaymentStatusEmail(order) 
+            console.log('Email: ', await status)
+        }
+
+        return NextResponse.json({ message: "Order Edited Successful", order_ }, { status: 200 });
 
     } catch (error: any) {
         console.log("Error: ", error)

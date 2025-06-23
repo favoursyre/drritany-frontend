@@ -36,7 +36,7 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
     const setLoadingModal = useLoadingModalStore(state => state.setLoadingModal)
     const setModalBackground = useModalBackgroundStore(state => state.setModalBackground)
     const [admin, setAdmin] = useState<IAdmin>(getItem(adminName))
-    const [totalPrice, setTotalPrice] = useState<number>(order.productSpec.grossTotalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee)
+    //const [totalPrice, setTotalPrice] = useState<number>(order.productSpec.grossTotalPrice - order.productSpec.totalDiscount + order.productSpec.deliveryFee)
     const [clientCountry, setClientCountry] = useState<ICountry>(countryList.find((country) => country.name?.common === order.customerSpec.country)!)
     
     //Updating client info
@@ -101,16 +101,19 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
 
         try {
             const _stat = e.target.value
+            
             if (event === "payment") {
                 const status = Object.values(PaymentStatus).find(status => status === _stat);
                 order.paymentSpec.status = status!
             } else if (event === "delivery") {
                 const status = Object.values(DeliveryStatus).find(status => status === _stat);
                 order.deliverySpec.status = status!
+                console.log("Status: ", status)
             }
-
+            
+            
             //Sending updated data to backend for update
-            const res = await fetch(`${backend}/order/${order._id}`, {
+            const res = await fetch(`${backend}/order/${order._id}?event=${event}`, {
                 method: 'PATCH',
                 //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
                 body: JSON.stringify(order),
@@ -205,7 +208,7 @@ const AdminOrderCard = ({ order_, view }: { order_: IOrder, view: string | undef
                 )}
                 {clientInfo?.countryInfo?.currency?.exchangeRate ? (
                     <span>
-                        {round(totalPrice! * clientInfo?.countryInfo?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
+                        {round(order.productSpec.overallTotalPrice! * clientInfo?.countryInfo?.currency?.exchangeRate!, 2).toLocaleString("en-US")}
                     </span>
                 ) : (
                     <></>

@@ -3,7 +3,7 @@
 ///Libraries -->
 //import "dotenv/config";
 import { Schema, model, Types, models } from "mongoose";
-import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem, DeliveryStatus, PaymentStatus } from "@/config/interfaces";
+import { ICart, ICustomerSpec, IOrder, IOrderModel, ICartItem, DeliveryStatus, PaymentStatus, PaymentOption } from "@/config/interfaces";
 import { Product } from "./product";
 import { trim } from "validator";
 
@@ -120,8 +120,6 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
     paymentSpec: {
       txId: {
         type: String,
-        unique: true,
-        required: true,
         trim: true
       },
       status: {
@@ -143,15 +141,17 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
  * @param productSpec The infos of the product been ordered
  * @returns All FAQs
  */
-orderSchema.statics.processOrder = async function ( order: IOrder ) {
+orderSchema.statics.processOrder = async function ( order: IOrder, paymentOption: PaymentOption ) {
 
   //Create a new order
-  const foundOrder = await this.findOne({ "paymentSpec.txId": order.paymentSpec.txId })
-  console.log('Found Order: ', foundOrder)
+  if (paymentOption === "pay-now") {
+    const foundOrder = await this.findOne({ "paymentSpec.txId": order.paymentSpec.txId })
+    console.log('Found Order: ', foundOrder)
 
-  if (foundOrder) {
-    throw new Error('Duplicate found')
-    return
+    if (foundOrder) {
+      throw new Error('Duplicate found')
+      return
+    }
   } 
 
   const order_ = await this.create(order);

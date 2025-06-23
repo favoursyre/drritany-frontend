@@ -64,10 +64,10 @@ export default async function AdminOrderPage({ searchParams }: Props) {
     const orders = sortMongoQueryByTime(await getOrders(),"latest") as unknown as Array<IOrder>
     //const query = searchParams.query as unknown as string
     const { query } = await searchParams
-    console.log("Query: ", query)
+    //console.log("Query: ", query)
     
     const queriedOrders = sortMongoQueryByTime(await getQueriedOrders(query), "latest") as unknown as Array<IOrder>
-    console.log('testing why: ', orders)
+    //console.log('testing why: ', orders)
 
     // if (!orders || !queriedOrders) {
     //   return

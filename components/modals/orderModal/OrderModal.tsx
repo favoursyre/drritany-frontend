@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { extraDeliveryFeeName, cartName, deliveryName, backend, round, sleep, stripePublishableKey, clientInfoName, orderName, userIdName, transactionIdName, hashValue, extractBaseTitle, extractOnlyDigits, sendMetaCapi, domainName } from "@/config/utils";
-import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, IMetaWebEvent, MetaActionSource, MetaStandardEvent } from "@/config/interfaces";
+import { ICart, ICustomerSpec, IClientInfo, IOrder, IDelivery, DeliveryStatus, IPayment, PaymentStatus, IMetaWebEvent, MetaActionSource, MetaStandardEvent, PaymentOption } from "@/config/interfaces";
 import { getItem, notify, removeItem, setItem, getFacebookCookies, getOS, getDevice } from "@/config/clientUtils";
 import { loadStripe } from '@stripe/stripe-js';
 import { useSearchParams } from 'next/navigation';
@@ -19,6 +19,7 @@ import { countryList } from "@/config/database";
 import { sendGTMEvent } from "@next/third-parties/google";
 
 ///Commencing the code
+
 /**
  * @title Order Modal Component
  * @returns The Order Modal component
@@ -47,6 +48,12 @@ const OrderModal = () => {
     const _clientInfo = getItem(clientInfoName)
     const [clientInfo, setClientInfo] = useState<IClientInfo | undefined>(_clientInfo!)
     const [orderSent, setOrderSent] = useState<boolean>(false)
+    const [selectedPaymentOption, setSelectedPaymentOption] = useState<PaymentOption>('pay-now');
+
+    //This function is used to chose the payment option
+    const handlePaymentOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedPaymentOption(e.target.value as PaymentOption);
+    };
 
     //Updating client info
     useEffect(() => {
@@ -110,8 +117,8 @@ const OrderModal = () => {
                     status: DeliveryStatus.PENDING
                 }
                 const paymentSpec: IPayment = {
-                    txId: getItem(transactionIdName),
-                    status: PaymentStatus.SUCCESS,
+                    txId: selectedPaymentOption === "pay-on-delivery" ? undefined : getItem(transactionIdName),
+                    status: selectedPaymentOption === "pay-on-delivery" ? PaymentStatus.PENDING : PaymentStatus.SUCCESS,
                     exchangeRate: clientInfo_.countryInfo?.currency?.exchangeRate!
                 }
                 console.log("Testing: ", _deliveryFee, getItem(transactionIdName), getItem(userIdName))
@@ -120,7 +127,7 @@ const OrderModal = () => {
                 setModalBackground(true)
                 console.log("Order_: ", orderSpec)
                 //return
-                const res = await fetch(`${backend}/order`, {
+                const res = await fetch(`${backend}/order?paymentOption=${selectedPaymentOption}`, {
                     method: 'POST',
                     //body: JSON.stringify({ customerSpec, productSpec, clientInfo_ }),
                     body: JSON.stringify(orderSpec),
@@ -167,63 +174,6 @@ const OrderModal = () => {
                     //     deliveryFee: 0,
                     //     cart: []
                     // }
-
-                    
-                } else {
-                    //setModalState(() => false)
-                    //notify("error", `Something went wrong`)
-                    throw Error(`${data}`)
-                }
-                
-                //setItem(orderName, order)
-
-                //Send the user an email
-
-                //Setting the modal state to true
-                //setModalState(true)
-            } catch (error) {
-                console.error("error: ", error)
-                //setModalBackground(false)
-                //setOrderModal(false)
-                //notify("error", `${error}`)
-            }
-
-            //setModalState(() => false)
-            //setIsLoading(() => false)
-        } else {
-            notify('error', "Cart is empty")
-            return
-        }
-    }
-
-    //Checking the url to know if stripe payment session is active
-    useEffect(() => {
-        const sessionId = searchParams.get('session_id')
-        if (sessionId && !paymentStatus) {
-            setSubmit(true)
-            setIsLoading(true)
-
-            //Checking the status of the payment
-            const checkStatus = async () => {
-                const response = await fetch(`${backend}/stripe-payment-status`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ sessionId: sessionId }),
-                });
-                const { status, error } = await response.json();
-        
-                if (error) {
-                    setPaymentStatus(`error`);
-                    notify("error", `${error}`)
-                    setSubmit(false)
-                    setIsLoading(false)
-                    setOrderModal(false)
-                    router.push("/cart")
-                } else if (status === 'paid') {
-                    setPaymentStatus('success');
-                    setModalBackground(true)
-                    await processOrder()
-                    setModalBackground(true)
 
                     //Sending a purchase event
                     const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
@@ -277,12 +227,70 @@ const OrderModal = () => {
                     await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
 
                     //setIsLoading(false)
-                    //notify('success', "Payment was successful")
+                    //
 
                     notify("info", "Redirecting you to orders")
                     removeItem("orderId")
                     await sleep(3)
                     router.push(`/order?userId=${userId}`)
+
+                    
+                } else {
+                    //setModalState(() => false)
+                    //notify("error", `Something went wrong`)
+                    throw Error(`${data}`)
+                }
+                
+                //setItem(orderName, order)
+
+                //Send the user an email
+
+                //Setting the modal state to true
+                //setModalState(true)
+            } catch (error) {
+                console.error("error: ", error)
+                //setModalBackground(false)
+                //setOrderModal(false)
+                //notify("error", `${error}`)
+            }
+
+        } else {
+            notify('error', "Cart is empty")
+            return
+        }
+    }
+
+    //Checking the url to know if stripe payment session is active
+    useEffect(() => {
+        const sessionId = searchParams.get('session_id')
+        if (sessionId && !paymentStatus) {
+            setSubmit(true)
+            setIsLoading(true)
+
+            //Checking the status of the payment
+            const checkStatus = async () => {
+                const response = await fetch(`${backend}/stripe-payment-status`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ sessionId: sessionId }),
+                });
+                const { status, error } = await response.json();
+        
+                if (error) {
+                    setPaymentStatus(`error`);
+                    notify("error", `${error}`)
+                    setSubmit(false)
+                    setIsLoading(false)
+                    setOrderModal(false)
+                    router.push("/cart")
+                } else if (status === 'paid') {
+                    setPaymentStatus('success');
+                    setModalBackground(true)
+                    notify('success', "Payment was successful")
+
+                    ///Processing the order
+                    await processOrder()
+                    setModalBackground(true)
                     
                     // setModalBackground(false)
                     // setOrderModal(false)
@@ -344,6 +352,7 @@ const OrderModal = () => {
 //     }
 //   }, [searchParams, txSessionId, paymentStatus]);
 
+
     ///This function is triggered when the background of the modal is clicked
     const closeModal = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): Promise<void> => {
         e.preventDefault()
@@ -369,7 +378,6 @@ const OrderModal = () => {
     const handlePayment = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
         e.preventDefault()
 
-        console.log("Processing the payment...")
         const productSpec: ICart = cart!
         const amount_ = round(productSpec.overallTotalPrice! * clientInfo?.countryInfo?.currency?.exchangeRate!, 2).toString()
         //{round((cart.grossTotalPrice - getCartDiscount() + getCartDeliveryFee()) * clientInfo.countryInfo.currency.exchangeRate, 2).toLocaleString("en-US")}
@@ -386,104 +394,55 @@ const OrderModal = () => {
         setSubmit(true)
         setIsLoading(true)
 
-        //Sending an initiate checkout event
-        const countryInfo_ = clientInfo?.countryInfo //countryList.find((country) => country.name?.common === clientInfo?.ipData?.country)
-        const stateInfo_ = countryInfo_?.states?.find((state) => state.name === deliveryInfo?.state)
-        const eventTime = Math.round(new Date().getTime() / 1000)
-        const eventId = uuid()
-        const userAgent = navigator.userAgent
-        const { fbp, fbc } = getFacebookCookies();
-        const eventData: IMetaWebEvent = {
-            data: [
-                {
-                    event_name: MetaStandardEvent.InitiateCheckout,
-                    event_time: eventTime,
-                    event_id: eventId,
-                    action_source: MetaActionSource.website,
-                    custom_data: {
-                        content_name: extractBaseTitle(document.title),
-                        content_ids:  cart?.cart.map((item) => item._id),
-                        content_type: cart?.cart.length === 1 ? "product" : "product_group",
-                        value: round((cart?.overallTotalPrice! * countryInfo_?.currency?.exchangeRate!), 2),
-                        currency: countryInfo_?.currency?.abbreviation,
-                        num_items: productSpec.cart.reduce((total, item) => total + item.quantity, 0).toString(),
-                        contents: productSpec.cart.map((item) => ({
-                            id: item._id,
-                            //name: item.name,
-                            quantity: item.quantity,
-                            item_price: item.subTotalPrice,
-                        }))
-                    },
-                    user_data: {
-                        client_user_agent: userAgent,
-                        client_ip_address: clientInfo?.ipData?.ip!,
-                        external_id: hashValue(clientInfo?._id!),
-                        fbc: fbc!,
-                        fbp: fbp!,
-                        ct: hashValue(deliveryInfo?.municipality?.trim().toLowerCase()!),
-                        st: hashValue(stateInfo_?.abbreviation?.trim().toLowerCase()!),
-                        country: hashValue(countryInfo_?.name?.abbreviation?.trim().toLowerCase()!),
-                        em: [hashValue(deliveryInfo?.email.trim().toLowerCase()!)],
-                        ph: [hashValue(extractOnlyDigits(deliveryInfo?.phoneNumbers[0]!).trim())],
-                        zp: hashValue(deliveryInfo?.postalCode?.trim()!)
-                    },
-                    original_event_data: {
-                        event_name: MetaStandardEvent.InitiateCheckout,
-                        event_time: eventTime,
-                    }
+        if (selectedPaymentOption === 'pay-on-delivery') {
+            await processOrder(e)
+        } else if (selectedPaymentOption === 'pay-now') {
+            console.log("Processing payment")
+
+            try {
+                const stripe = await stripePromise;
+                if (!stripe) throw new Error('Stripe failed to load');
+
+                const countryInfo = clientInfo?.countryInfo
+                const unitAmount = Math.round(parseFloat(amount_) * 100);
+                const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
+                setItem(transactionIdName, txId_)
+                console.log("Amount: ", amount_, unitAmount)
+            
+                const response = await fetch(`${backend}/stripe-checkout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        countryInfo: countryInfo, 
+                        amount: unitAmount,
+                        //unitAmount: unitAmount, 
+                        txId: txId_ 
+                    }),
+                });
+            
+                const { sessionId, error } = await response.json();
+                if (error) throw new Error(error);
+
+                console.log('Session ID: ', sessionId)
+                setTxSessionId(() => sessionId)
+            
+                const { error: redirectError } = await stripe.redirectToCheckout({
+                    sessionId,
+                });
+            
+                if (redirectError) {
+                    console.error('Redirect error:', redirectError.message);
+                    throw new Error(redirectError.message);
                 }
-            ]
-        } 
-        sendGTMEvent({ event: eventData.data[0].event_name, value: eventData.data[0] })
-        await sendMetaCapi(eventData, clientInfo?._id!, getOS(), getDevice())
-
-        try {
-          const stripe = await stripePromise;
-          if (!stripe) throw new Error('Stripe failed to load');
-
-          const countryInfo = clientInfo?.countryInfo
-          const unitAmount = Math.round(parseFloat(amount_) * 100);
-          const txId_ = `idp_tx_${Date.now()}` //Unique id for this payment
-          setItem(transactionIdName, txId_)
-          console.log("Amount: ", amount_, unitAmount)
-    
-          const response = await fetch(`${backend}/stripe-checkout`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                countryInfo: countryInfo, 
-                amount: unitAmount,
-                //unitAmount: unitAmount, 
-                txId: txId_ 
-            }),
-          });
-    
-          const { sessionId, error } = await response.json();
-          if (error) throw new Error(error);
-
-          console.log('Session ID: ', sessionId)
-          setTxSessionId(() => sessionId)
-    
-          const { error: redirectError } = await stripe.redirectToCheckout({
-            sessionId,
-          });
-    
-          if (redirectError) {
-            console.error('Redirect error:', redirectError.message);
-            throw new Error(redirectError.message);
-          }
-        } catch (error: any) {
-          console.error('Payment error:', error.message);
-          notify("error", error.message)
-          setSubmit(false)
-          setIsLoading(false)
-          setOrderModal(false)
-          setModalBackground(false)
-          //alert(`An error occurred: ${error.message}`);
-        } finally {
-            //Setting off the laoding modal
-            //setModalBackground(false)
-            //setLoadingModal(false)
+            } catch (error: any) {
+                console.error('Payment error:', error.message);
+                notify("error", error.message)
+                setSubmit(false)
+                setIsLoading(false)
+                setOrderModal(false)
+                setModalBackground(false)
+                //alert(`An error occurred: ${error.message}`);
+            }
         }
 
       };
@@ -545,12 +504,36 @@ const OrderModal = () => {
             </div>
         ) : (
             <div className={styles.checkContainer}>
-                <span className={styles.span1}>Payment</span>
-                <span className={styles.span2}>By clicking <strong>Continue</strong>, you agree to our <span onClick={(e) => viewTerms(e)} className={styles.terms}><strong>Terms</strong></span> and your delivery information been correct</span>
+                <span className={styles.span1}>Checkout</span>
+                <span className={styles.span2}>Note: <span className={styles.option}>Pay Now</span> option usually gets more priority in terms of faster delivery. If you click <span className={styles.option}>Pay on Delivery</span>, please make sure you&apos;re physically and financially ready to receive your order as we take a lot of risk & resources in getting your order delivered to you. Thanks for understanding!</span>
+
+                <div className={styles.radioOption}>
+                    <label>
+                        <input
+                            type="radio"
+                            value="pay-now"
+                            checked={selectedPaymentOption === 'pay-now'}
+                            onChange={handlePaymentOptionChange}
+                        />
+                        <span>Pay Now</span>
+                    </label>
+                    
+                    <label>
+                        <input
+                            type="radio"
+                            value="pay-on-delivery"
+                            checked={selectedPaymentOption === 'pay-on-delivery'}
+                            onChange={handlePaymentOptionChange}
+                        />
+                        <span>Pay on Delivery</span>
+                    </label>
+                </div>
+
                 <div className={styles.buttons}>
                     <button className={styles.button1} onClick={(e) => closeModal(e)}><span>Cancel</span></button>
                     <button className={styles.button2} onClick={(e) => handlePayment(e)}><span>Continue</span></button>
                 </div>
+                <span className={styles.span3}>By clicking <strong>Continue</strong>, you agree to our <span onClick={(e) => viewTerms(e)} className={styles.terms}><strong>Terms</strong></span> and your delivery information been correct</span>
             </div>
         )}
     </div>

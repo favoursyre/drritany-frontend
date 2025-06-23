@@ -20,7 +20,7 @@
     }
 
     @include phonePro {
-      @include size(80%, 40%);
+      @include size(80%, 50%);
       //left: 10%;
     }
 
@@ -130,13 +130,13 @@
 
     .checkContainer {
       //border: 1px solid red;
-      @include flexBar ($position: relative, $align: center, $justify: center, $gap: 15%, $flex_d: column);
+      @include flexBar ($position: relative, $align: center, $justify: center, $gap: 5%, $flex_d: column);
       top: 6%;
       @include size(90%, 80%);
 
       @include phonePro {
         //border: 1px solid red;
-        gap: 10%;
+        gap: 5%;
       }
 
       .span1 {
@@ -160,22 +160,70 @@
       .span2 {
         //border: 1px solid green;
         position: relative;
-        @include text-layout($size: 16px, $color: $text-color-1, $l_height: 24px);
+        @include text-layout($size: 14px, $color: $text-color-1, $l_height: 18px);
         text-align: center;
+        color: red;
+        font-style: italic;
 
         @include phone {
-          font-size: 14px;
+          line-height: 15px;
+          font-size: 12px;
         }
 
         @include phoneMini {
-          font-size: 12px;
-          line-height: 18px;
+          font-size: 10px;
+          line-height: 14px;
         }
 
-        .terms {
+        .option {
           color: blue;
-          text-decoration: underline;
-          cursor: pointer;
+          //text-decoration: underline;
+          //cursor: pointer;
+        }
+      }
+
+      .radioOption {
+        @include flexBar ($position: relative, $align: center, $justify: space-between, $gap: 5%, $flex_d: row);
+        //border: 1px solid red;
+        @include size(60%, 30px);
+        margin-top: 2%;
+        margin-bottom: 2%;
+
+        label {
+          //border: 1px solid red;
+          margin: 5px;
+          padding: 5px;
+          gap: 5px;
+          justify-content: center;
+          align-items: center;
+
+          // input {
+          //   //border: 1px solid red;
+          // }
+
+          span {
+            left: 5px;
+            //border: 1px solid red;
+            position: relative;
+
+            @include phonePro {
+              left: 2px;
+              font-size: 12px;
+              top: -3px;
+            }
+          }
+        }
+
+        @include tablet {
+          width: 100%;
+          justify-content: center;
+        }
+
+        @include phonePro {
+          justify-content: center;
+          width: 100%;
+          margin-top: 1.5%;
+          margin-bottom: 1.5%;
         }
       }
 
@@ -218,6 +266,33 @@
 
         .button2 {
           background-color: rgb(54, 207, 54);
+        }
+      }
+
+      .span3 {
+        //border: 1px solid green;
+        position: relative;
+        @include text-layout($size: 12px, $color: $text-color-1, $l_height: 14px);
+        text-align: center;
+        top: -5px;
+
+        @include phonePro {
+          //top: -25px;
+        }
+
+        @include phone {
+          font-size: 10px;
+        }
+
+        @include phoneMini {
+          font-size: 10px;
+          line-height: 12px;
+        }
+
+        .terms {
+          color: blue;
+          text-decoration: underline;
+          cursor: pointer;
         }
       }
     }
